@@ -2,7 +2,4 @@
 /bin/
 /build/
 /.metadata/
-.metadata/.plugins
-.metadata/.lock
-.metadata/.log
-.metadata/.mylyn
+/RemoteSystemsTempFiles/.project
