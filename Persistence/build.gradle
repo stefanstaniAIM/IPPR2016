@@ -5,7 +5,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 jar {
-   baseName = 'persistence'
+   baseName = 'Persistence'
    from('src/main/java') 
    include 'src/main/resources/*.xml'
 }
@@ -17,6 +17,6 @@ repositories {
 dependencies {
 	compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.7'
   	compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.7'
-
+  	
     testCompile 'junit:junit:4.12'
 }
