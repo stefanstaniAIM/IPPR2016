@@ -54,3 +54,6 @@ local.properties
 
 # Code Recommenders
 .recommenders/
+node_modules
+*.map
+/GUI/src/main/webapp/app/*.js
