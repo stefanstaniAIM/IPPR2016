@@ -1,0 +1,2 @@
+include ':Persistence'
+project(':Persistence').projectDir = new File(settingsDir, '../Persistence')
