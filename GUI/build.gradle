@@ -10,6 +10,10 @@ buildscript {
 	}
 }
 
+plugins {
+  id "com.moowork.node" version "0.13"
+}
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'spring-boot'
@@ -30,3 +34,10 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-data-rest')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
+
+node {
+  workDir = file("${project.projectDir}/src/main/webapp/")
+  nodeModulesDir = file("${project.projectDir}/src/main/webapp/node_modules")
+}
+task buildNpm {}
+buildNpm.dependsOn(npm_install)
