@@ -14,20 +14,33 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'spring-boot'
 
+// java version
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+eclipse {
+    classpath {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
 jar {
 	baseName = 'processengine'
 	version = '0.0.1-SNAPSHOT'
 }
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
 
 repositories {
 	mavenCentral()
 }
 
-
 dependencies {
+	// spring boot
 	compile('org.springframework.boot:spring-boot-starter-data-rest')
+
+	// akka
+	compile group: 'com.typesafe.akka', name: 'akka-actor_2.11', version: '2.4.11'
 	
+	// tests	
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
