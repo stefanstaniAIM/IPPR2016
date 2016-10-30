@@ -4,20 +4,12 @@ apply plugin: 'eclipse'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-jar {
-   baseName = 'Persistence'
-   from('src/main/java') 
-   include 'src/main/resources/*.xml'
-}
-
 repositories {
     mavenCentral()
 }
 
-dependencies {
-	compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.7'
-  	compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.7'
-  	
+dependencies {  	
+  	compile group: 'javax.validation', name: 'validation-api', version: '1.1.0.Final'
   	compile 'org.hibernate:hibernate-core:5.2.4.Final'
   	
     testCompile 'junit:junit:4.12'

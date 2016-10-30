@@ -12,6 +12,7 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
+import at.fhjoanneum.ippr.processengine.repositories.ProcessModelController;
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
@@ -28,6 +29,9 @@ class Runner implements CommandLineRunner {
 	@Autowired
 	private SpringExtension springExtension;
 
+	@Autowired
+	private ProcessModelController controller;
+
 	@Override
 	public void run(final String... args) throws Exception {
 		try {
@@ -42,6 +46,8 @@ class Runner implements CommandLineRunner {
 					Timeout.durationToTimeout(duration));
 
 			logger.info("Response: " + Await.result(awaitable, duration));
+
+			// controller.create();
 		} finally {
 			actorSystem.terminate();
 			Await.result(actorSystem.whenTerminated(), Duration.Inf());

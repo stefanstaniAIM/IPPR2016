@@ -35,12 +35,13 @@ repositories {
 }
 
 dependencies {
+	// ippr libraries
+	compile project(':Persistence')
+
 	// spring boot
 	compile 'org.springframework.boot:spring-boot-starter-data-rest'
 	compile 'org.springframework.boot:spring-boot-starter-data-jpa'
-	
-	// ippr libraries
-	compile project(':Persistence')
+	compile 'org.hibernate:hibernate-core:5.2.4.Final'
 	
 	// akka
 	compile group: 'com.typesafe.akka', name: 'akka-actor_2.11', version: '2.4.11'
@@ -48,10 +49,6 @@ dependencies {
 	// database
 	runtime 'mysql:mysql-connector-java'
 	testRuntime 'com.h2database:h2'
-	
-	// utils
-	compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.7'
-  	compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.7'
 	
 	// tests	
 	testCompile 'org.springframework.boot:spring-boot-starter-test'
@@ -61,4 +58,16 @@ test {
     systemProperties = [
             'spring.profiles.active': 'test'
     ]
+}
+
+// utils for all projects
+allprojects {
+    apply plugin: 'java'
+    
+    dependencies {
+	  	compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.7'
+	  	compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.7'
+		compile group: 'com.google.guava', name: 'guava', version: '19.0'
+		compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'      
+	}
 }
