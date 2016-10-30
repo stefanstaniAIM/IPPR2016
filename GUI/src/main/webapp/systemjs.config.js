@@ -38,6 +38,21 @@
         main: './index.js',
         defaultExtension: 'js'
       }
-    }
+    },
+    config: {
+	    transpiler: 'ts',
+	    typescriptOptions: {
+	      emitDecoratorMetadata: true,
+	      experimentalDecorators: true,
+	      module: "commonjs",
+	    },
+	    meta: {
+	        'typescript': {
+	          "exports": "ts"
+	        }
+	    },
+	    map: this.map,
+	    packages: this.packages
+  }
   });
 })(this);

@@ -5,6 +5,7 @@ import { RouterModule }   from '@angular/router';
 
 import { AppComponent }        from './app.component';
 import { DashboardComponent } from './dashboard.component';
+import { NavbarComponent } from './navbar.component';
 @NgModule({
   imports: [
     BrowserModule,
@@ -23,7 +24,8 @@ import { DashboardComponent } from './dashboard.component';
   ],
   declarations: [
     AppComponent,
-    DashboardComponent
+    DashboardComponent,
+    NavbarComponent
   ],
   providers: [
   ],

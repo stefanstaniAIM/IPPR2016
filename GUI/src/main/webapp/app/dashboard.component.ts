@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 @Component({
+  moduleId: module.id,
   selector: 'dashboard',
-  template: '<h2>{{title}}</h2>'
+  templateUrl: 'templates/dashboard.component.html'
 })
 export class DashboardComponent {
     title = "Dashboard"
