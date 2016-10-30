@@ -14,6 +14,9 @@
     "app/app.component.ts",
     "app/app.module.ts",
     "app/dashboard.component.ts",
-    "app/main.ts"
+    "app/main.ts",
+    "app/navbar.component.ts",
+    "typings/globals/node/index.d.ts",
+    "typings/index.d.ts"
   ]
 }
