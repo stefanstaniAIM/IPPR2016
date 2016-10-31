@@ -1,5 +1,5 @@
 package at.fhjoanneum.ippr.persistence.objects.model.enums;
 
-public enum BusinessObjectFieldPermission {
+public enum FieldPermission {
 	READ, NONE, READ_WRITE
 }

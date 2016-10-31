@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.persistence.entities.model;
+package at.fhjoanneum.ippr.persistence.entities.model.subject;
 
 import java.io.Serializable;
 import java.util.List;
@@ -17,9 +17,11 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
-import at.fhjoanneum.ippr.persistence.objects.model.State;
-import at.fhjoanneum.ippr.persistence.objects.model.SubjectModel;
+import at.fhjoanneum.ippr.persistence.entities.model.state.StateImpl;
+import at.fhjoanneum.ippr.persistence.objects.model.state.State;
+import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
 
 @Entity(name = "SUBJECT_MODEL")
 public class SubjectModelImpl implements SubjectModel, Serializable {
@@ -42,10 +44,14 @@ public class SubjectModelImpl implements SubjectModel, Serializable {
 
 	@OneToMany(mappedBy = "subjectModel")
 	@NotNull
-	@Size(min = 1)
-	private List<StateImpl> states;
+	private final List<StateImpl> states = Lists.newArrayList();
 
 	SubjectModelImpl() {
+	}
+
+	SubjectModelImpl(final String name, final String assignedGroup) {
+		this.name = name;
+		this.assignedGroup = assignedGroup;
 	}
 
 	@Override

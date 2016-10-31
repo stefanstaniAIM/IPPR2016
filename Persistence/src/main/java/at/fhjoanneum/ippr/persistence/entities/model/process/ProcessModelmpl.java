@@ -1,8 +1,8 @@
-package at.fhjoanneum.ippr.persistence.entities.model;
+package at.fhjoanneum.ippr.persistence.entities.model.process;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,11 +23,12 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
 
-import at.fhjoanneum.ippr.persistence.objects.model.ProcessModel;
-import at.fhjoanneum.ippr.persistence.objects.model.SubjectModel;
+import at.fhjoanneum.ippr.persistence.entities.model.subject.SubjectModelImpl;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.ProcessModelState;
+import at.fhjoanneum.ippr.persistence.objects.model.process.ProcessModel;
+import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
 
 @Entity(name = "PROCESS_MODEL")
 public class ProcessModelmpl implements ProcessModel, Serializable {
@@ -61,7 +62,7 @@ public class ProcessModelmpl implements ProcessModel, Serializable {
 	@Size(min = 1)
 	@JoinTable(name = "process_subject_model_map", joinColumns = { @JoinColumn(name = "pm_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "sm_id") })
-	private Set<SubjectModelImpl> subjectModels;
+	private List<SubjectModelImpl> subjectModels;
 
 	@NotNull
 	@ManyToOne
@@ -71,11 +72,14 @@ public class ProcessModelmpl implements ProcessModel, Serializable {
 	ProcessModelmpl() {
 	}
 
-	ProcessModelmpl(final String name, final String description, final ProcessModelState state) {
+	ProcessModelmpl(final String name, final String description, final ProcessModelState state,
+			final List<SubjectModelImpl> subjectModels, final SubjectModelImpl starterSubject) {
 		this.name = name;
 		this.description = description;
 		this.createdAt = LocalDateTime.now();
 		this.state = state;
+		this.subjectModels = subjectModels;
+		this.starterSubject = starterSubject;
 	}
 
 	@Override
@@ -104,8 +108,8 @@ public class ProcessModelmpl implements ProcessModel, Serializable {
 	}
 
 	@Override
-	public Set<SubjectModel> getSubjectModels() {
-		return ImmutableSet.copyOf(subjectModels);
+	public List<SubjectModel> getSubjectModels() {
+		return ImmutableList.copyOf(subjectModels);
 	}
 
 	@Override

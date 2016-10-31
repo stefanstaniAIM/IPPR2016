@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.persistence.entities.model;
+package at.fhjoanneum.ippr.persistence.entities.model.state;
 
 import java.io.Serializable;
 import java.util.List;
@@ -24,13 +24,17 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 
-import at.fhjoanneum.ippr.persistence.objects.model.BusinessObjectModel;
-import at.fhjoanneum.ippr.persistence.objects.model.MessageFlow;
-import at.fhjoanneum.ippr.persistence.objects.model.State;
-import at.fhjoanneum.ippr.persistence.objects.model.SubjectModel;
-import at.fhjoanneum.ippr.persistence.objects.model.Transition;
+import at.fhjoanneum.ippr.persistence.entities.model.businessobject.BusinessObjectModelImpl;
+import at.fhjoanneum.ippr.persistence.entities.model.messageflow.MessageFlowImpl;
+import at.fhjoanneum.ippr.persistence.entities.model.subject.SubjectModelImpl;
+import at.fhjoanneum.ippr.persistence.entities.model.transition.TransitionImpl;
+import at.fhjoanneum.ippr.persistence.objects.model.businessobject.BusinessObjectModel;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.StateEventType;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
+import at.fhjoanneum.ippr.persistence.objects.model.messageflow.MessageFlow;
+import at.fhjoanneum.ippr.persistence.objects.model.state.State;
+import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
+import at.fhjoanneum.ippr.persistence.objects.model.transition.Transition;
 
 @Entity(name = "STATE")
 public class StateImpl implements State, Serializable {
@@ -71,16 +75,25 @@ public class StateImpl implements State, Serializable {
 	@OneToMany(mappedBy = "toState")
 	private List<TransitionImpl> toStates;
 
-	@OneToMany
-	@JoinColumn(name = "s_id")
+	@OneToMany(mappedBy = "state")
 	private List<MessageFlowImpl> messageFlows;
 
-	@NotNull
 	@ManyToMany
-	@Size(min = 1)
 	@JoinTable(name = "state_business_object_model_map", joinColumns = {
 			@JoinColumn(name = "s_id") }, inverseJoinColumns = { @JoinColumn(name = "bom_id") })
 	private List<BusinessObjectModelImpl> businessObjectModels;
+
+	StateImpl() {
+
+	}
+
+	StateImpl(final String name, final SubjectModelImpl subjectModel, final StateFunctionType functionType,
+			final StateEventType eventType) {
+		this.name = name;
+		this.subjectModel = subjectModel;
+		this.functionType = functionType;
+		this.eventType = eventType;
+	}
 
 	@Override
 	public String getName() {
@@ -145,6 +158,6 @@ public class StateImpl implements State, Serializable {
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("sId", sId).append("name", name)
-				.toString();
+				.append("functionType", functionType).append("eventType", eventType).toString();
 	}
 }

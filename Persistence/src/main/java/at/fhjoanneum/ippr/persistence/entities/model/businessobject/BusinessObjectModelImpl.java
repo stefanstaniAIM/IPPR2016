@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.persistence.entities.model;
+package at.fhjoanneum.ippr.persistence.entities.model.businessobject;
 
 import java.io.Serializable;
 import java.util.List;
@@ -8,7 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -19,8 +19,11 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 
-import at.fhjoanneum.ippr.persistence.objects.model.BusinessObjectFieldModel;
-import at.fhjoanneum.ippr.persistence.objects.model.BusinessObjectModel;
+import at.fhjoanneum.ippr.persistence.entities.model.businessobject.field.BusinessObjectFieldModelImpl;
+import at.fhjoanneum.ippr.persistence.entities.model.state.StateImpl;
+import at.fhjoanneum.ippr.persistence.objects.model.businessobject.BusinessObjectModel;
+import at.fhjoanneum.ippr.persistence.objects.model.businessobject.field.BusinessObjectFieldModel;
+import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 
 @Entity(name = "BUSINESS_OBJECT_MODEL")
 public class BusinessObjectModelImpl implements BusinessObjectModel, Serializable {
@@ -36,9 +39,19 @@ public class BusinessObjectModelImpl implements BusinessObjectModel, Serializabl
 	@Size(min = 1, max = 100)
 	private String name;
 
-	@OneToMany
-	@JoinColumn(name = "bom_id")
+	@ManyToMany(mappedBy = "businessObjectModels")
+	private List<StateImpl> states;
+
+	@OneToMany(mappedBy = "businessObjectModel")
 	private List<BusinessObjectFieldModelImpl> businessObjectFields;
+
+	BusinessObjectModelImpl() {
+	}
+
+	BusinessObjectModelImpl(final String name, final List<StateImpl> states) {
+		this.name = name;
+		this.states = states;
+	}
 
 	@Override
 	public Long getBomId() {
@@ -53,6 +66,11 @@ public class BusinessObjectModelImpl implements BusinessObjectModel, Serializabl
 	@Override
 	public List<BusinessObjectFieldModel> getBusinessObjectFieldModels() {
 		return ImmutableList.copyOf(businessObjectFields);
+	}
+
+	@Override
+	public List<State> getStates() {
+		return ImmutableList.copyOf(states);
 	}
 
 	@Override

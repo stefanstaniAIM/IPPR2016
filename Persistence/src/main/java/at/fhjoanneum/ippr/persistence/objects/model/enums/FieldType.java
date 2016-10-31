@@ -1,5 +1,5 @@
 package at.fhjoanneum.ippr.persistence.objects.model.enums;
 
-public enum BusinessObjectFieldType {
+public enum FieldType {
 	STRING, NUMBER, DATE, TIMESTAMP, BOOLEAN
 }

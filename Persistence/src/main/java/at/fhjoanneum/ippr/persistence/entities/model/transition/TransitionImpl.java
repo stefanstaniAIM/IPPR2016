@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.persistence.entities.model;
+package at.fhjoanneum.ippr.persistence.entities.model.transition;
 
 import java.io.Serializable;
 
@@ -14,8 +14,9 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.google.common.base.Objects;
 
-import at.fhjoanneum.ippr.persistence.objects.model.State;
-import at.fhjoanneum.ippr.persistence.objects.model.Transition;
+import at.fhjoanneum.ippr.persistence.entities.model.state.StateImpl;
+import at.fhjoanneum.ippr.persistence.objects.model.state.State;
+import at.fhjoanneum.ippr.persistence.objects.model.transition.Transition;
 
 @Entity(name = "TRANSITION")
 public class TransitionImpl implements Transition, Serializable {
@@ -33,6 +34,14 @@ public class TransitionImpl implements Transition, Serializable {
 	@ManyToOne
 	@JoinColumn(name = "to_state")
 	private StateImpl toState;
+
+	TransitionImpl() {
+	}
+
+	TransitionImpl(final StateImpl fromState, final StateImpl toState) {
+		this.fromState = fromState;
+		this.toState = toState;
+	}
 
 	@Override
 	public Long getTId() {
@@ -72,6 +81,6 @@ public class TransitionImpl implements Transition, Serializable {
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("sId", tId)
-				.append("fromState", fromState).append("toState", toState).toString();
+				.append("fromState", fromState.getSId()).append("toState", toState.getSId()).toString();
 	}
 }

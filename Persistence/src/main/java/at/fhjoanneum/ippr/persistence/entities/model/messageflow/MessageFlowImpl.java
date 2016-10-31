@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.persistence.entities.model;
+package at.fhjoanneum.ippr.persistence.entities.model.messageflow;
 
 import java.io.Serializable;
 
@@ -14,8 +14,10 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.google.common.base.Objects;
 
-import at.fhjoanneum.ippr.persistence.objects.model.MessageFlow;
-import at.fhjoanneum.ippr.persistence.objects.model.SubjectModel;
+import at.fhjoanneum.ippr.persistence.entities.model.state.StateImpl;
+import at.fhjoanneum.ippr.persistence.entities.model.subject.SubjectModelImpl;
+import at.fhjoanneum.ippr.persistence.objects.model.messageflow.MessageFlow;
+import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
 
 @Entity(name = "MESSAGE_FLOW")
 public class MessageFlowImpl implements MessageFlow, Serializable {
@@ -33,6 +35,19 @@ public class MessageFlowImpl implements MessageFlow, Serializable {
 	@ManyToOne
 	@JoinColumn(name = "receiver")
 	private SubjectModelImpl receiver;
+
+	@ManyToOne
+	@JoinColumn(name = "s_id")
+	private StateImpl state;
+
+	MessageFlowImpl() {
+	}
+
+	MessageFlowImpl(final SubjectModelImpl sender, final SubjectModelImpl receiver, final StateImpl state) {
+		this.sender = sender;
+		this.receiver = receiver;
+		this.state = state;
+	}
 
 	@Override
 	public Long getMfId() {
@@ -71,6 +86,7 @@ public class MessageFlowImpl implements MessageFlow, Serializable {
 
 	@Override
 	public String toString() {
-		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("mfId", mfId).toString();
+		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("mfId", mfId).append("sender", sender)
+				.append("receiver", receiver).toString();
 	}
 }

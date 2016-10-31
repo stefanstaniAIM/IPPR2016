@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.persistence.entities.model;
+package at.fhjoanneum.ippr.persistence.entities.model.businessobject.field;
 
 import java.io.Serializable;
 
@@ -9,6 +9,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -17,13 +19,25 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.google.common.base.Objects;
 
-import at.fhjoanneum.ippr.persistence.objects.model.BusinessObjectFieldModel;
-import at.fhjoanneum.ippr.persistence.objects.model.enums.BusinessObjectFieldType;
+import at.fhjoanneum.ippr.persistence.entities.model.businessobject.BusinessObjectModelImpl;
+import at.fhjoanneum.ippr.persistence.objects.model.businessobject.BusinessObjectModel;
+import at.fhjoanneum.ippr.persistence.objects.model.businessobject.field.BusinessObjectFieldModel;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldType;
 
 @Entity(name = "BUSINESS_OBJECT_FIELD_MODEL")
 public class BusinessObjectFieldModelImpl implements BusinessObjectFieldModel, Serializable {
 
 	private static final long serialVersionUID = -8651866037837204065L;
+
+	BusinessObjectFieldModelImpl() {
+	}
+
+	BusinessObjectFieldModelImpl(final String fieldName, final BusinessObjectModelImpl businessObjectModel,
+			final FieldType fieldType) {
+		this.fieldName = fieldName;
+		this.businessObjectModel = businessObjectModel;
+		this.fieldType = fieldType;
+	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -37,7 +51,12 @@ public class BusinessObjectFieldModelImpl implements BusinessObjectFieldModel, S
 	@Column
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	private BusinessObjectFieldType fieldType;
+	private FieldType fieldType;
+
+	@NotNull
+	@ManyToOne
+	@JoinColumn(name = "bom_id")
+	private BusinessObjectModelImpl businessObjectModel;
 
 	@Override
 	public Long getBofmId() {
@@ -50,7 +69,12 @@ public class BusinessObjectFieldModelImpl implements BusinessObjectFieldModel, S
 	}
 
 	@Override
-	public BusinessObjectFieldType getFieldType() {
+	public BusinessObjectModel getBusinessObjectModel() {
+		return businessObjectModel;
+	}
+
+	@Override
+	public FieldType getFieldType() {
 		return fieldType;
 	}
 
@@ -77,6 +101,6 @@ public class BusinessObjectFieldModelImpl implements BusinessObjectFieldModel, S
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("bofmId", bofmId)
-				.append("fieldName", fieldName).toString();
+				.append("fieldName", fieldName).append("fieldType", fieldType).toString();
 	}
 }
