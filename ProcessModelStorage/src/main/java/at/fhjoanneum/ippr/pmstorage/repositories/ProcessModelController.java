@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.processengine.repositories;
+package at.fhjoanneum.ippr.pmstorage.repositories;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -84,7 +84,7 @@ public class ProcessModelController {
 		final Transition t8 = new TransitionBuilder().fromState(c4).toState(c5).build();
 
 		final ProcessModel pm = new ProcessModelBuilder().name("Urlaubsantrag")
-				.description("Prozess für Beantragung des Urlaubs").state(ProcessModelState.ACTIVE)
+				.description("Prozess fuer Beantragung des Urlaubs").state(ProcessModelState.ACTIVE)
 				.subjectModels(Lists.newArrayList(maSubject, chefSubject)).starterSubject(maSubject).build();
 
 		final BusinessObjectModel boAntrag = new BusinessObjectModelBuilder().name("Urlaubsantrag").addToState(ma1)

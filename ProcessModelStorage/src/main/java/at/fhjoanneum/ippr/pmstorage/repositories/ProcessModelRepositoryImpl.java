@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.processengine.repositories;
+package at.fhjoanneum.ippr.pmstorage.repositories;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;

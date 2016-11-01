@@ -14,7 +14,10 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'spring-boot'
 
-// java version
+jar {
+	baseName = 'pmstorage'
+	version = '0.0.1-SNAPSHOT'
+}
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -25,24 +28,25 @@ eclipse {
     }
 }
 
-jar {
-	baseName = 'processengine'
-	version = '0.0.1-SNAPSHOT'
-}
-
 repositories {
 	mavenCentral()
 }
 
+
 dependencies {
+	// ippr libraries
+	compile project(':Persistence')
+	
 	// spring boot
 	compile 'org.springframework.boot:spring-boot-starter-data-rest'
+	compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+	compile 'org.hibernate:hibernate-core:5.2.4.Final'
 	
-	// akka
-	compile group: 'com.typesafe.akka', name: 'akka-actor_2.11', version: '2.4.11'
+	// database
+	runtime 'mysql:mysql-connector-java'
+	testRuntime 'com.h2database:h2'
 	
-	// tests	
-	testCompile 'org.springframework.boot:spring-boot-starter-test'
+	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 
 test {

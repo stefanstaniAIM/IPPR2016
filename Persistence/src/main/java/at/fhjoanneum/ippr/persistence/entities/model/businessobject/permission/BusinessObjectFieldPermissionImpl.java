@@ -27,7 +27,7 @@ import at.fhjoanneum.ippr.persistence.objects.model.businessobject.permission.Bu
 import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldPermission;
 import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 
-@Entity(name = "BUSINESS_OBJECT_FIELD_MODEL_PERMISSION")
+@Entity(name = "BUSINESS_OBJECT_FIELD_PERMISSION")
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = { "s_id", "bofm_id" }))
 public class BusinessObjectFieldPermissionImpl implements BusinessObjectFieldPermission, Serializable {
 
