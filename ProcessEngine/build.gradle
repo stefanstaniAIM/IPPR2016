@@ -36,7 +36,11 @@ repositories {
 
 dependencies {
 	// spring boot
-	compile 'org.springframework.boot:spring-boot-starter-data-rest'
+	compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.boot:spring-boot-starter-security")
+    compile("org.springframework.security:spring-security-ldap")
+    compile("org.springframework:spring-tx")
+    compile("org.apache.directory.server:apacheds-server-jndi:1.5.5")
 	
 	// akka
 	compile group: 'com.typesafe.akka', name: 'akka-actor_2.11', version: '2.4.11'
