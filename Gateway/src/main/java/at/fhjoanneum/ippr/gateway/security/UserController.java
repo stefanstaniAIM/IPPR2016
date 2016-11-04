@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.processengine.security;
+package at.fhjoanneum.ippr.gateway.security;
 
 import java.util.Arrays;
 import java.util.Date;
