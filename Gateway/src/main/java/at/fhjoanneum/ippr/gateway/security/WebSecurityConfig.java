@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.processengine.security;
+package at.fhjoanneum.ippr.gateway.security;
 
 // @Configuration
 // @EnableWebSecurity

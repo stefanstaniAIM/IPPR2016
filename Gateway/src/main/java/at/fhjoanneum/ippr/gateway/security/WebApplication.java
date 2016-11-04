@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.processengine.security;
+package at.fhjoanneum.ippr.gateway.security;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;

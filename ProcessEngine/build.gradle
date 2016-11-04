@@ -38,15 +38,6 @@ dependencies {
 	// spring boot
 	compile("org.springframework.boot:spring-boot-starter-web")
 	
-    //compile("org.springframework.boot:spring-boot-starter-security")
-    //compile("org.springframework.security:spring-security-ldap")
-    //compile("org.springframework:spring-tx")
-    //compile("org.apache.directory.server:apacheds-server-jndi:1.5.5")
-	
-	compile group: 'commons-io', name: 'commons-io', version: '2.5'
-	compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.7.0'
-	
-	
 	// akka
 	compile group: 'com.typesafe.akka', name: 'akka-actor_2.11', version: '2.4.11'
 	
