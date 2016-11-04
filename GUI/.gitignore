@@ -17,6 +17,9 @@ local.properties
 .loadpath
 .recommenders
 
+#everything is build locally
+src/main/public
+
 # Eclipse Core
 .project
 
