@@ -1,8 +1,11 @@
 import {Component, ViewEncapsulation} from '@angular/core';
 import {FormGroup, AbstractControl, FormBuilder, Validators} from '@angular/forms';
+import { Headers, RequestOptions, Http, Jsonp } from '@angular/http';
+import { LoginService } from './login.service'
 
 @Component({
   selector: 'login',
+  providers: [LoginService],
   encapsulation: ViewEncapsulation.None,
   styles: [require('./login.scss')],
   template: require('./login.html'),
@@ -10,25 +13,26 @@ import {FormGroup, AbstractControl, FormBuilder, Validators} from '@angular/form
 export class Login {
 
   public form:FormGroup;
-  public email:AbstractControl;
+  public username:AbstractControl;
   public password:AbstractControl;
   public submitted:boolean = false;
 
-  constructor(fb:FormBuilder) {
+  constructor(fb:FormBuilder, private _service:LoginService) {
     this.form = fb.group({
-      'email': ['', Validators.compose([Validators.required, Validators.minLength(4)])],
+      'username': [''],
       'password': ['', Validators.compose([Validators.required, Validators.minLength(4)])]
     });
 
-    this.email = this.form.controls['email'];
+    this.username = this.form.controls['username'];
     this.password = this.form.controls['password'];
   }
 
-  public onSubmit(values:Object):void {
+  public onSubmit(values):void {
     this.submitted = true;
     if (this.form.valid) {
-      // your code goes here
-      // console.log(values);
-    }
-  }
+        var username = values.username;
+        var password = values.password;
+        this._service.login(username, password);
+      }   
+   }
 }
