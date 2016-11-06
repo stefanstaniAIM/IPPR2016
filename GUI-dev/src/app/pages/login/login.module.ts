@@ -2,7 +2,7 @@ import { NgModule }      from '@angular/core';
 import { CommonModule }  from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgaModule } from '../../theme/nga.module';
-import { HttpModule, JsonpModule } from '@angular/http';
+import { NotAuthGuard } from '../../notauth.guard';
 
 import { Login } from './login.component';
 import { routing }       from './login.routing';
@@ -14,12 +14,13 @@ import { routing }       from './login.routing';
     ReactiveFormsModule,
     FormsModule,
     NgaModule,
-    routing,
-    HttpModule,
-    JsonpModule
+    routing
   ],
   declarations: [
     Login
+  ],
+  providers: [
+    NotAuthGuard
   ]
 })
 export default class LoginModule {}

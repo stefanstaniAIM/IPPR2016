@@ -1,11 +1,10 @@
 import {Component, ViewEncapsulation} from '@angular/core';
 import {FormGroup, AbstractControl, FormBuilder, Validators} from '@angular/forms';
-import { Headers, RequestOptions, Http, Jsonp } from '@angular/http';
-import { LoginService } from './login.service'
+import { AuthService } from '../../auth.service'
 
 @Component({
   selector: 'login',
-  providers: [LoginService],
+  providers: [AuthService],
   encapsulation: ViewEncapsulation.None,
   styles: [require('./login.scss')],
   template: require('./login.html'),
@@ -17,7 +16,7 @@ export class Login {
   public password:AbstractControl;
   public submitted:boolean = false;
 
-  constructor(fb:FormBuilder, private _service:LoginService) {
+  constructor(fb:FormBuilder, public authService:AuthService) {
     this.form = fb.group({
       'username': [''],
       'password': ['', Validators.compose([Validators.required, Validators.minLength(4)])]
@@ -32,7 +31,7 @@ export class Login {
     if (this.form.valid) {
         var username = values.username;
         var password = values.password;
-        this._service.login(username, password);
+        this.authService.login(username, password);
       }   
    }
 }

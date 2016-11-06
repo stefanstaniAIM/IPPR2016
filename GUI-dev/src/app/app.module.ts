@@ -4,6 +4,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 import { removeNgStyles, createNewHosts, createInputTransfer } from '@angularclass/hmr';
+import { AUTH_PROVIDERS, provideAuth } from 'angular2-jwt';
+import { AuthService } from './auth.service';
 
 /*
  * Platform and Environment providers/directives/pipes
@@ -50,13 +52,23 @@ type StoreType = {
   ],
   providers: [ // expose our Services and Providers into Angular's dependency injection
     ENV_PROVIDERS,
-    APP_PROVIDERS
+    APP_PROVIDERS,
+    AUTH_PROVIDERS,
+    provideAuth({
+      tokenName: 'token',
+      tokenGetter: () => localStorage.getItem('token'),
+      headerName: 'Authorization',
+      headerPrefix: 'Bearer',
+      globalHeaders: [{ 'Content-Type': 'application/json' }]
+   }),
+   AuthService
   ]
 })
 
 export class AppModule {
 
   constructor(public appRef: ApplicationRef, public appState: AppState) {
+     console.log("CONSTRUCTOR");
   }
 
   hmrOnInit(store: StoreType) {

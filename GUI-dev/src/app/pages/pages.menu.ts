@@ -15,10 +15,10 @@ export const PAGES_MENU = [
         }
       },
       {
-        path: 'login',
+        path: 'admin',
         data: {
           menu: {
-            title: 'login',
+            title: 'admin',
             icon: 'ion-android-login',
             selected: false,
             expanded: false,

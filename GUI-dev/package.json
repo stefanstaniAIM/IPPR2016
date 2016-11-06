@@ -6,7 +6,6 @@
   "homepage": "http://akveo.github.io/ng2-admin/",
   "license": "MIT",
   "dependencies": {
-
     "@angular/common": "2.1.1",
     "@angular/compiler": "2.1.1",
     "@angular/core": "2.1.1",
@@ -16,13 +15,12 @@
     "@angular/platform-browser-dynamic": "2.1.1",
     "@angular/platform-server": "2.1.1",
     "@angular/router": "3.1.1",
-
     "@angularclass/conventions-loader": "^1.0.2",
     "@angularclass/hmr": "~1.2.0",
     "@angularclass/hmr-loader": "~3.0.2",
-
     "amcharts3": "https://github.com/amcharts/amcharts3",
     "ammap3": "https://github.com/amcharts/ammap3",
+    "angular2-jwt": "^0.1.25",
     "animate.css": "^3.5.1",
     "assets-webpack-plugin": "^3.4.0",
     "bootstrap": "4.0.0-alpha.4",

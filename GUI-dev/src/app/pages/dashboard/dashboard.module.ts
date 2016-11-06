@@ -21,6 +21,7 @@ import { PieChartService } from './pieChart/pieChart.service';
 import { TodoService } from './todo/todo.service';
 import { TrafficChartService } from './trafficChart/trafficChart.service';
 import { UsersMapService } from './usersMap/usersMap.service';
+import { AuthGuard } from '../../auth.guard';
 
 @NgModule({
   imports: [
@@ -38,7 +39,7 @@ import { UsersMapService } from './usersMap/usersMap.service';
     Feed,
     Todo,
     Calendar,
-    Dashboard
+    Dashboard,
   ],
   providers: [
     CalendarService,
@@ -47,7 +48,8 @@ import { UsersMapService } from './usersMap/usersMap.service';
     PieChartService,
     TodoService,
     TrafficChartService,
-    UsersMapService
+    UsersMapService,
+    AuthGuard
   ]
 })
 export default class DashboardModule {}
