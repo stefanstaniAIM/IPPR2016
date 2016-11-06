@@ -1,9 +1,8 @@
 package at.fhjoanneum.ippr.gateway.security;
-
 // @Configuration
 // @EnableWebSecurity
-public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
-
+public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter 
+	
   // @Override
   // protected void configure(final HttpSecurity http) throws Exception {
   // http.authorizeRequests().anyRequest().fullyAuthenticated().and().formLogin()
