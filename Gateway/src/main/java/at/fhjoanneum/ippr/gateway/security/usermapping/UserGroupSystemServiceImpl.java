@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import at.fhjoanneum.ippr.gateway.security.persistence.objects.User;
 
 @Service
-public class UserGrupSystemServiceImpl implements UserGroupSystemService {
+public class UserGroupSystemServiceImpl implements UserGroupSystemService {
 
   @Override
   public List<User> getUsers() {
