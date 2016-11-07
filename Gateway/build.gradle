@@ -35,10 +35,23 @@ repositories {
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
+	compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+	compile 'org.hibernate:hibernate-core:5.2.4.Final'
+	compile group: 'javax.validation', name: 'validation-api', version: '1.1.0.Final'
+	
+	// database
+	runtime 'mysql:mysql-connector-java'
+	testRuntime 'com.h2database:h2'
 	
 	// security
 	compile group: 'commons-io', name: 'commons-io', version: '2.5'
 	compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.7.0'
+	
+	// utils
+	compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.7'
+	compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.7'
+	compile group: 'com.google.guava', name: 'guava', version: '19.0'
+	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'    
 	
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }

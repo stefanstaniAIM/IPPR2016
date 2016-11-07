@@ -10,6 +10,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import at.fhjoanneum.ippr.gateway.security.jwt.JwtFilter;
+
 @EnableAutoConfiguration
 @ComponentScan
 @Configuration

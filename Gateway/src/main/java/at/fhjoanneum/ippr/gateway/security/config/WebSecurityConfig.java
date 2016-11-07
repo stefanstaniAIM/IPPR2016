@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.gateway.security;
+package at.fhjoanneum.ippr.gateway.security.config;
 // @Configuration
 // @EnableWebSecurity
 public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter 
