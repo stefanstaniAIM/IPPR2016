@@ -10,9 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.filter.GenericFilterBean;
 
+import at.fhjoanneum.ippr.gateway.security.utils.ExceptionUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureException;
 
 public class JwtFilter extends GenericFilterBean {
 
@@ -23,17 +23,18 @@ public class JwtFilter extends GenericFilterBean {
 
     final String authHeader = request.getHeader("Authorization");
     if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-      throw new ServletException("Missing or invalid Authorization header.");
+      ExceptionUtils.createUnauthorizedException("Missing or invalid Authorization header.", res);
+      return;
     }
 
-    final String token = authHeader.substring(7); // The part after "Bearer "
-
     try {
+      final String token = authHeader.substring(7); // The part after "Bearer "
       final Claims claims =
           Jwts.parser().setSigningKey("secretkey").parseClaimsJws(token).getBody();
       request.setAttribute("claims", claims);
-    } catch (final SignatureException e) {
-      throw new ServletException("Invalid token.");
+    } catch (final Exception e) {
+      ExceptionUtils.createUnauthorizedException("Invalid token", res);
+      return;
     }
 
     chain.doFilter(req, res);
