@@ -10,9 +10,17 @@ public interface User {
 
   String getFirstname();
 
+  void setFirstname(String firstname);
+
   String getLastname();
+
+  void setLastname(String lastname);
 
   String getEmail();
 
+  void setEmail(String email);
+
   List<Group> getGroups();
+
+  void setGroups(List<Group> groups);
 }

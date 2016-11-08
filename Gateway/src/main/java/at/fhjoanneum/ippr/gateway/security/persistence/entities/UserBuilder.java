@@ -19,31 +19,31 @@ public class UserBuilder implements Builder<User> {
   private String email;
   private final List<GroupImpl> groups = Lists.newArrayList();
 
-  UserBuilder systemId(final String systemId) {
+  public UserBuilder systemId(final String systemId) {
     checkArgument(StringUtils.isNotBlank(systemId));
     this.systemId = systemId;
     return this;
   }
 
-  UserBuilder firstname(final String firstname) {
+  public UserBuilder firstname(final String firstname) {
     checkArgument(StringUtils.isNotBlank(firstname));
     this.firstname = firstname;
     return this;
   }
 
-  UserBuilder lastname(final String lastname) {
+  public UserBuilder lastname(final String lastname) {
     checkArgument(StringUtils.isNotBlank(lastname));
     this.lastname = lastname;
     return this;
   }
 
-  UserBuilder email(final String email) {
+  public UserBuilder email(final String email) {
     checkArgument(StringUtils.isNotBlank(email));
     this.email = email;
     return this;
   }
 
-  UserBuilder addGroup(final Group group) {
+  public UserBuilder addGroup(final Group group) {
     checkArgument(group instanceof GroupImpl);
     groups.add((GroupImpl) group);
     return this;

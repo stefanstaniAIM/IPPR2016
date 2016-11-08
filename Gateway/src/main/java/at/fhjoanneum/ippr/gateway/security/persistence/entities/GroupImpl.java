@@ -1,5 +1,7 @@
 package at.fhjoanneum.ippr.gateway.security.persistence.entities;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -10,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.validator.constraints.NotBlank;
@@ -34,12 +37,17 @@ public class GroupImpl implements Group, Serializable {
   @NotBlank
   private String name;
 
+  @Column(unique = true)
+  @NotBlank
+  private String systemId;
+
   @ManyToMany(mappedBy = "groups")
   private final List<UserImpl> users = Lists.newArrayList();
 
   GroupImpl() {}
 
-  GroupImpl(final String name) {
+  GroupImpl(final String systemId, final String name) {
+    this.systemId = systemId;
     this.name = name;
   }
 
@@ -49,8 +57,19 @@ public class GroupImpl implements Group, Serializable {
   }
 
   @Override
+  public String getSystemId() {
+    return systemId;
+  }
+
+  @Override
   public String getName() {
     return name;
+  }
+
+  @Override
+  public void setName(final String name) {
+    checkArgument(StringUtils.isNotBlank(name));
+    this.name = name;
   }
 
   @Override

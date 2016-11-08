@@ -1,7 +1,11 @@
 package at.fhjoanneum.ippr.gateway.security.persistence.entities;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.validator.constraints.NotBlank;
@@ -78,8 +83,20 @@ public class UserImpl implements User, Serializable {
   }
 
   @Override
+  public void setFirstname(final String firstname) {
+    checkArgument(StringUtils.isNotBlank(firstname));
+    this.firstname = firstname;
+  }
+
+  @Override
   public String getLastname() {
     return lastname;
+  }
+
+  @Override
+  public void setLastname(final String lastname) {
+    checkArgument(StringUtils.isNotBlank(lastname));
+    this.lastname = lastname;
   }
 
   @Override
@@ -88,8 +105,22 @@ public class UserImpl implements User, Serializable {
   }
 
   @Override
+  public void setEmail(final String email) {
+    checkArgument(StringUtils.isNotBlank(email));
+    this.email = email;
+  }
+
+  @Override
   public List<Group> getGroups() {
     return ImmutableList.copyOf(groups);
+  }
+
+  @Override
+  public void setGroups(final List<Group> groups) {
+    checkNotNull(groups);
+    this.groups.clear();
+    this.groups = groups.stream().filter(group -> group instanceof GroupImpl)
+        .map(group -> (GroupImpl) group).collect(Collectors.toList());
   }
 
   @Override

@@ -9,9 +9,16 @@ import at.fhjoanneum.ippr.gateway.security.persistence.objects.Group;
 
 public class GroupBuilder implements Builder<Group> {
 
+  private String systemId;
   private String name;
 
-  GroupBuilder name(final String name) {
+  public GroupBuilder systemId(final String systemId) {
+    checkArgument(StringUtils.isNotBlank(systemId));
+    this.systemId = systemId;
+    return this;
+  }
+
+  public GroupBuilder name(final String name) {
     checkArgument(StringUtils.isNotBlank(name));
     this.name = name;
     return this;
@@ -19,8 +26,9 @@ public class GroupBuilder implements Builder<Group> {
 
   @Override
   public Group build() {
+    checkArgument(StringUtils.isNotBlank(systemId));
     checkArgument(StringUtils.isNotBlank(name));
-    return new GroupImpl(name);
+    return new GroupImpl(systemId, name);
   }
 
 
