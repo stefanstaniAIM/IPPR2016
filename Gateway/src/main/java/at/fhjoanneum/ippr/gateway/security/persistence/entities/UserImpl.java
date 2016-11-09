@@ -49,7 +49,7 @@ public class UserImpl implements User, Serializable {
   private String lastname;
 
   @Column
-  private String email;
+  private String username;
 
   @ManyToMany
   @JoinTable(name = "user_group_map", joinColumns = {@JoinColumn(name = "u_id")},
@@ -58,11 +58,11 @@ public class UserImpl implements User, Serializable {
 
   UserImpl() {}
 
-  UserImpl(final String firstname, final String lastname, final String email,
+  UserImpl(final String firstname, final String lastname, final String username,
       final List<GroupImpl> groups, final String systemId) {
     this.firstname = firstname;
     this.lastname = lastname;
-    this.email = email;
+    this.username = username;
     this.groups = groups;
     this.systemId = systemId;
   }
@@ -100,14 +100,8 @@ public class UserImpl implements User, Serializable {
   }
 
   @Override
-  public String getEmail() {
-    return email;
-  }
-
-  @Override
-  public void setEmail(final String email) {
-    checkArgument(StringUtils.isNotBlank(email));
-    this.email = email;
+  public String getUsername() {
+    return username;
   }
 
   @Override

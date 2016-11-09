@@ -16,9 +16,7 @@ public interface User {
 
   void setLastname(String lastname);
 
-  String getEmail();
-
-  void setEmail(String email);
+  String getUsername();
 
   List<Group> getGroups();
 
