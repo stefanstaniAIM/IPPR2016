@@ -17,8 +17,8 @@ public class CacheUser {
   private final String password;
 
   public CacheUser(final String systemId, final String firstname, final String lastname,
-      final String email, final List<CacheGroup> groups) {
-    this(systemId, firstname, lastname, email, groups, StringUtils.EMPTY);
+      final String username, final List<CacheGroup> groups) {
+    this(systemId, firstname, lastname, username, groups, StringUtils.EMPTY);
   }
 
   public CacheUser(final String systemId, final String firstname, final String lastname,

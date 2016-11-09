@@ -1,40 +1,139 @@
 package at.fhjoanneum.ippr.gateway.security.usermapping.retrieval.memory;
 
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.net.URL;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import com.google.common.collect.Lists;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
 
 import at.fhjoanneum.ippr.gateway.security.persistence.entities.cache.CacheGroup;
 import at.fhjoanneum.ippr.gateway.security.persistence.entities.cache.CacheUser;
 import at.fhjoanneum.ippr.gateway.security.usermapping.retrieval.UserGroupSystemRetrievalService;
+import au.com.bytecode.opencsv.CSVReader;
 
 public class UserGroupSystemRetrievalServiceMemoryImpl implements UserGroupSystemRetrievalService {
 
-  private static Map<String, CacheUser> users;
+  private static final Logger LOG =
+      LogManager.getLogger(UserGroupSystemRetrievalServiceMemoryImpl.class);
+
+  private static Map<String, CacheUser> users = null;
 
   @Override
   public Map<String, CacheUser> getSystemUsers() {
     if (users == null) {
-      createMemoryUsers();
+      users = Maps.newHashMap();
+      readCsv();
     }
     return users;
   }
 
-  private void createMemoryUsers() {
-    final CacheGroup groupBoss = new CacheGroup("BOSS", "BOSS");
-    final CacheGroup groupEmployee = new CacheGroup("EMPLOYEE", "EMPLOYEE");
 
-    final CacheUser userA = new CacheUser("111", "Stefan", "Stani",
-        "stefan.stani@edu.fh-joanneum.at", Lists.newArrayList(groupEmployee, groupBoss), "hallo");
-    final CacheUser userB = new CacheUser("222", "Matthias", "Geisriegler",
-        "matthias.geisriegler@edu.fh-joanneum.at", Lists.newArrayList(groupEmployee), "hallo");
-    final CacheUser userC = new CacheUser("333", "Robert", "Singer",
-        "robert.singer@edu.fh-joanneum.at", Lists.newArrayList(groupBoss), "hallo");
+  private void readCsv() {
+    final Map<String, CacheGroup> groups = readGroups();
+    readUsers(groups);
+  }
 
-    users = Maps.newHashMap();
-    users.put(userA.getUsername(), userA);
-    users.put(userB.getUsername(), userB);
-    users.put(userC.getUsername(), userC);
+  private Map<String, CacheGroup> readGroups() {
+    final Map<String, CacheGroup> groups = Maps.newHashMap();
+
+    Reader in = null;
+    CSVReader reader = null;
+
+    try {
+      final URL resource = this.getClass().getResource("/memoryusers/groups.csv");
+      in = new FileReader(resource.getPath());
+      reader = new CSVReader(in, '\n', '\'', 1);
+      String[] nextLine;
+      while ((nextLine = reader.readNext()) != null) {
+        final List<String> values =
+            Splitter.on(';').omitEmptyStrings().trimResults().splitToList(nextLine[0]);
+        final CacheGroup group =
+            new CacheGroup(values.get(GroupRow.SYSTEM_ID.index), values.get(GroupRow.NAME.index));
+        groups.put(group.getSystemId(), group);
+      }
+    } catch (final Exception e) {
+      LOG.error(e.getMessage());
+    } finally {
+      try {
+        if (reader != null)
+          reader.close();
+        if (in != null)
+          in.close();
+      } catch (final IOException e) {
+        LOG.error(e.getMessage());
+      }
+    }
+    return groups;
+  }
+
+  private void readUsers(final Map<String, CacheGroup> groups) {
+    Reader in = null;
+    CSVReader reader = null;
+
+    try {
+      final URL resource = this.getClass().getResource("/memoryusers/users.csv");
+      in = new FileReader(resource.getPath());
+      reader = new CSVReader(in, '\n', '\'', 1);
+      String[] nextLine;
+      while ((nextLine = reader.readNext()) != null) {
+        final List<String> values =
+            Splitter.on(';').omitEmptyStrings().trimResults().splitToList(nextLine[0]);
+
+        final String groupValues = values.get(UserRow.GROUPS.index);
+        final List<CacheGroup> userGroups = Splitter.on(',').omitEmptyStrings().trimResults()
+            .splitToList(groupValues).stream().map(group -> {
+              final CacheGroup cacheGroup = groups.get(group);
+              if (cacheGroup == null) {
+                throw new IllegalStateException("Group definition is missing");
+              }
+              return cacheGroup;
+            }).collect(Collectors.toList());
+
+        final CacheUser cacheUser = new CacheUser(values.get(UserRow.SYSTEM_ID.index),
+            values.get(UserRow.FIRST_NAME.index), values.get(UserRow.LAST_NAME.index),
+            values.get(UserRow.USER_NAME.index), userGroups, values.get(UserRow.PASSWORD.index));
+        users.put(cacheUser.getUsername(), cacheUser);
+      }
+    } catch (final Exception e) {
+      LOG.error(e.getMessage());
+    } finally {
+      try {
+        if (reader != null)
+          reader.close();
+        if (in != null)
+          in.close();
+      } catch (final IOException e) {
+        LOG.error(e.getMessage());
+      }
+    }
+  }
+
+
+  private enum GroupRow {
+    NAME(0), SYSTEM_ID(1);
+
+    private final int index;
+
+    private GroupRow(final int index) {
+      this.index = index;
+    }
+  }
+
+  private enum UserRow {
+    USER_NAME(0), FIRST_NAME(1), LAST_NAME(2), PASSWORD(3), SYSTEM_ID(4), GROUPS(5);
+
+    private final int index;
+
+    private UserRow(final int index) {
+      this.index = index;
+    }
   }
 }

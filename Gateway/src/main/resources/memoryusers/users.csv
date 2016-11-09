@@ -1,0 +1,5 @@
+username;firstname;lastname;password;systemId;groups
+stefan;Stefan;Stani;1234;STANI;EMPLOYEE
+matthias;Matthias;Geisrigler;1234;GEISRIEGLER;EMPLOYEE,ADMIN
+robert;Robert;Singer;1234;SINGER;BOSS
+maksym;Maksym;Kolody;1234;KOLODY;EMPLOYEE
