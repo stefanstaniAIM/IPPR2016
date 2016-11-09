@@ -8,9 +8,10 @@ import javax.transaction.Transactional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.assertj.core.util.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.google.common.collect.Sets;
 
 import at.fhjoanneum.ippr.gateway.security.persistence.entities.GroupBuilder;
 import at.fhjoanneum.ippr.gateway.security.persistence.entities.cache.CacheGroup;
