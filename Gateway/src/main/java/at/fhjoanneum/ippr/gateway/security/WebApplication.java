@@ -39,8 +39,4 @@ public class WebApplication {
 		return bean;
 	}
 
-  public static void main(final String[] args) throws Exception {
-    SpringApplication.run(WebApplication.class, args);
-  }
-
 }

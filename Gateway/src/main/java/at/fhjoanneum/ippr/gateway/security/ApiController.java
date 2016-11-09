@@ -25,4 +25,13 @@ public class ApiController {
 
     return ((List<String>) claims.get("roles")).contains(role);
   }
+  
+  @SuppressWarnings("unchecked")
+  @RequestMapping(value = "roles", method = {RequestMethod.GET, RequestMethod.OPTIONS})
+  public List<String> login(final HttpServletRequest request)
+      throws ServletException {
+    final Claims claims = (Claims) request.getAttribute("claims");
+
+    return (List<String>) claims.get("roles");
+  }
 }

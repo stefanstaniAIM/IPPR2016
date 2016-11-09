@@ -1,6 +1,7 @@
 package at.fhjoanneum.ippr.gateway.security;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,9 +38,10 @@ public class UserController {
     }
     final LoginResponse loginResponse = new LoginResponse(
         Jwts.builder().setSubject(login.name).claim("roles", userDb.get(login.name))
-            .setIssuedAt(new Date()).signWith(SignatureAlgorithm.HS256, "secretkey").compact());
+            .setIssuedAt(new Date()).setExpiration(java.sql.Date.valueOf(LocalDate.now().plusWeeks(1))).signWith(SignatureAlgorithm.HS256, "secretkey").compact());
     return new ResponseEntity<UserController.LoginResponse>(loginResponse, HttpStatus.OK);
   }
+  
 
   @SuppressWarnings("unused")
   private static class UserLogin implements Serializable {
