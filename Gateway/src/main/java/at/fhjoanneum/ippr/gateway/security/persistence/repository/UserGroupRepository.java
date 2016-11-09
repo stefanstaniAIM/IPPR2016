@@ -13,6 +13,8 @@ public interface UserGroupRepository {
 
   Optional<User> getUserBySystemId(final String systemId);
 
+  Optional<User> getUserByUsername(final String username);
+
   Optional<Group> getGroupBySystemId(final String systemId);
 
 }

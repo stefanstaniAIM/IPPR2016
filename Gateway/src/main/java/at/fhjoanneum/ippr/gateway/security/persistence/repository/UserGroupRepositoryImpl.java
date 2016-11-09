@@ -42,6 +42,12 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
   }
 
   @Override
+  public Optional<User> getUserByUsername(final String username) {
+    return Optional.ofNullable(userRepository.findByUsername(username));
+  }
+
+
+  @Override
   public Optional<Group> getGroupBySystemId(final String systemId) {
     return Optional.ofNullable(groupRepository.findBySystemId(systemId));
   }
@@ -50,6 +56,9 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
 
     @Query(value = "SELECT * FROM USER WHERE SYSTEM_ID = :systemId", nativeQuery = true)
     UserImpl findBySystemId(@Param("systemId") String systemId);
+
+    @Query(value = "SELECT * FROM USER WHERE USERNAME = :username", nativeQuery = true)
+    UserImpl findByUsername(@Param("username") String username);
   }
 
   interface GroupRepository extends PagingAndSortingRepository<GroupImpl, Long> {

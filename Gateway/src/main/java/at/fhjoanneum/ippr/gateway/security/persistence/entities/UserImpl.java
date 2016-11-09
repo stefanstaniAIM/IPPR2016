@@ -49,7 +49,7 @@ public class UserImpl implements User, Serializable {
   @NotBlank
   private String lastname;
 
-  @Column
+  @Column(unique = true)
   private String username;
 
   @ManyToMany(fetch = FetchType.EAGER)

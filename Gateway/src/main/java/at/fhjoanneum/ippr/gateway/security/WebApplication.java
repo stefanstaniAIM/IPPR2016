@@ -23,7 +23,7 @@ public class WebApplication {
 
     return registrationBean;
   }
-	}
+
   @Bean
   public FilterRegistrationBean corsFilter() {
     final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

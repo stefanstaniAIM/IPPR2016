@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.gateway.security;
+package at.fhjoanneum.ippr.gateway.security.authentication.controller;
 
 import java.util.List;
 
