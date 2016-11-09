@@ -5,12 +5,13 @@ import java.util.concurrent.Callable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import at.fhjoanneum.ippr.gateway.service.ProcessModelStorageCallerImpl;
+import at.fhjoanneum.ippr.gateway.api.services.ProcessModelStorageCallerImpl;
 
 @RestController
 public class GatewayController {
@@ -26,9 +27,10 @@ public class GatewayController {
   }
 
   @RequestMapping(value = "async1", method = RequestMethod.GET)
-  public @ResponseBody Callable<String> test() {
+  public @ResponseBody Callable<ResponseEntity<String>> test() {
     LOG.debug("Receive");
     return () -> {
+      LOG.debug("Return");
       return processModelStorageCaller.test().get();
     };
   }

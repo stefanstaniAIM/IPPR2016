@@ -52,6 +52,7 @@ dependencies {
 	compile group: 'com.google.guava', name: 'guava', version: '19.0'
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'    
 	compile group: 'net.sf.opencsv', name: 'opencsv', version: '2.3'
+	compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.2'
 	
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }

@@ -9,7 +9,7 @@ public class GatewayConfig {
   @Value("${ipconfig.pmstorage}")
   private String processModelStorageAddress;
 
-  public String ProcessModelStorageAddress() {
+  public String getProcessModelStorageAddress() {
     return processModelStorageAddress;
   }
 }

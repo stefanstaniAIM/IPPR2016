@@ -9,6 +9,6 @@ public class ProcessModelStorageController {
 
   @RequestMapping(value = "test", method = RequestMethod.GET)
   public String test() {
-    return "hello :)";
+    return "hello from the process model storage :)";
   }
 }
