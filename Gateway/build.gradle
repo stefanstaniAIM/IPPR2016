@@ -52,6 +52,7 @@ dependencies {
 	compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.7'
 	compile group: 'com.google.guava', name: 'guava', version: '19.0'
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'    
+	compile group: 'net.sf.opencsv', name: 'opencsv', version: '2.3'
 	
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
