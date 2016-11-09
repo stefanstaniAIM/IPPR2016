@@ -8,9 +8,10 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Maps;
@@ -28,7 +29,7 @@ import at.fhjoanneum.ippr.gateway.security.usermapping.retrieval.UserGroupSystem
 @Service
 public class UserGroupMappingServiceImpl implements UserGroupMappingService {
 
-  private static final Logger LOG = LogManager.getLogger(UserGroupMappingServiceImpl.class);
+  private static final Logger LOG = LoggerFactory.getLogger(UserGroupMappingServiceImpl.class);
 
   final Map<String, Group> groupCache = Maps.newHashMap();
 
@@ -39,12 +40,14 @@ public class UserGroupMappingServiceImpl implements UserGroupMappingService {
   private UserGroupRepository userGroupRepository;
 
   @Override
+  @Async
   public void mapUsers() {
+    LOG.info("Start user mapping");
     final Map<String, CacheUser> systemUsers = retrievalService.getSystemUsers();
-
     storeGroups(systemUsers);
-
     storeUsers(systemUsers);
+    LOG.info("Finished user mapping");
+
   }
 
   @Transactional

@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
@@ -22,7 +22,7 @@ import au.com.bytecode.opencsv.CSVReader;
 public class UserGroupSystemRetrievalServiceMemoryImpl implements UserGroupSystemRetrievalService {
 
   private static final Logger LOG =
-      LogManager.getLogger(UserGroupSystemRetrievalServiceMemoryImpl.class);
+      LoggerFactory.getLogger(UserGroupSystemRetrievalServiceMemoryImpl.class);
 
   private static Map<String, CacheUser> users = null;
 
@@ -63,10 +63,12 @@ public class UserGroupSystemRetrievalServiceMemoryImpl implements UserGroupSyste
       LOG.error(e.getMessage());
     } finally {
       try {
-        if (reader != null)
+        if (reader != null) {
           reader.close();
-        if (in != null)
+        }
+        if (in != null) {
           in.close();
+        }
       } catch (final IOException e) {
         LOG.error(e.getMessage());
       }
@@ -106,10 +108,12 @@ public class UserGroupSystemRetrievalServiceMemoryImpl implements UserGroupSyste
       LOG.error(e.getMessage());
     } finally {
       try {
-        if (reader != null)
+        if (reader != null) {
           reader.close();
-        if (in != null)
+        }
+        if (in != null) {
           in.close();
+        }
       } catch (final IOException e) {
         LOG.error(e.getMessage());
       }

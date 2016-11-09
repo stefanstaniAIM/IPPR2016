@@ -2,8 +2,6 @@ package at.fhjoanneum.ippr.gateway.security.persistence.repository;
 
 import java.util.Optional;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -17,8 +15,6 @@ import at.fhjoanneum.ippr.gateway.security.persistence.objects.User;
 
 @Repository
 public class UserGroupRepositoryImpl implements UserGroupRepository {
-
-  private static final Logger LOG = LogManager.getLogger(UserGroupRepositoryImpl.class);
 
   @Autowired
   private UserRepository userRepository;

@@ -48,8 +48,7 @@ dependencies {
 	compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.7.0'
 	
 	// utils
-	compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.7'
-	compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.7'
+	
 	compile group: 'com.google.guava', name: 'guava', version: '19.0'
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'    
 	compile group: 'net.sf.opencsv', name: 'opencsv', version: '2.3'

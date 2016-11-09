@@ -60,8 +60,7 @@ allprojects {
     apply plugin: 'java'
     
     dependencies {
-	  	compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.7'
-	  	compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.7'
+		compile group: 'org.springframework.boot', name: 'spring-boot-starter-logging', version: '1.4.1.RELEASE'
 		compile group: 'com.google.guava', name: 'guava', version: '19.0'
 		compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'      
 	}

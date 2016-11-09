@@ -4,8 +4,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import at.fhjoanneum.ippr.gateway.security.authentication.AuthenticationService;
@@ -16,7 +16,7 @@ import at.fhjoanneum.ippr.gateway.security.usermapping.retrieval.UserGroupSystem
 
 public class AuthenticationServiceMemoryImpl implements AuthenticationService {
 
-  private static final Logger LOG = LogManager.getLogger(AuthenticationServiceMemoryImpl.class);
+  private static final Logger LOG = LoggerFactory.getLogger(AuthenticationServiceMemoryImpl.class);
 
   @Autowired
   private UserGroupSystemRetrievalService retrievalService;
