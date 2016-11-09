@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -49,20 +50,20 @@ public class UserImpl implements User, Serializable {
   private String lastname;
 
   @Column
-  private String email;
+  private String username;
 
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(name = "user_group_map", joinColumns = {@JoinColumn(name = "u_id")},
       inverseJoinColumns = {@JoinColumn(name = "g_id")})
   private List<GroupImpl> groups = Lists.newArrayList();
 
   UserImpl() {}
 
-  UserImpl(final String firstname, final String lastname, final String email,
+  UserImpl(final String firstname, final String lastname, final String username,
       final List<GroupImpl> groups, final String systemId) {
     this.firstname = firstname;
     this.lastname = lastname;
-    this.email = email;
+    this.username = username;
     this.groups = groups;
     this.systemId = systemId;
   }
@@ -100,14 +101,8 @@ public class UserImpl implements User, Serializable {
   }
 
   @Override
-  public String getEmail() {
-    return email;
-  }
-
-  @Override
-  public void setEmail(final String email) {
-    checkArgument(StringUtils.isNotBlank(email));
-    this.email = email;
+  public String getUsername() {
+    return username;
   }
 
   @Override

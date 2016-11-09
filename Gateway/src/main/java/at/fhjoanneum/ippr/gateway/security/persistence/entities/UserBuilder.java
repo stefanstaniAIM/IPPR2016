@@ -17,7 +17,7 @@ public class UserBuilder implements Builder<User> {
   private String systemId;
   private String firstname;
   private String lastname;
-  private String email;
+  private String username;
   private final List<GroupImpl> groups = Lists.newArrayList();
 
   public UserBuilder systemId(final String systemId) {
@@ -38,9 +38,9 @@ public class UserBuilder implements Builder<User> {
     return this;
   }
 
-  public UserBuilder email(final String email) {
-    checkArgument(StringUtils.isNotBlank(email));
-    this.email = email;
+  public UserBuilder username(final String username) {
+    checkArgument(StringUtils.isNotBlank(username));
+    this.username = username;
     return this;
   }
 
@@ -54,10 +54,10 @@ public class UserBuilder implements Builder<User> {
   public User build() {
     checkArgument(StringUtils.isNotBlank(firstname));
     checkArgument(StringUtils.isNotBlank(lastname));
-    checkArgument(StringUtils.isNotBlank(email));
+    checkArgument(StringUtils.isNotBlank(username));
     checkArgument(!groups.isEmpty());
 
-    return new UserImpl(firstname, lastname, email, groups, systemId);
+    return new UserImpl(firstname, lastname, username, groups, systemId);
   }
 
 }

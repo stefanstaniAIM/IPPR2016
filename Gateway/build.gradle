@@ -34,7 +34,7 @@ repositories {
 
 
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter-web')
+	compile 'org.springframework.boot:spring-boot-starter-web'
 	compile 'org.springframework.boot:spring-boot-starter-data-jpa'
 	compile 'org.hibernate:hibernate-core:5.2.4.Final'
 	compile group: 'javax.validation', name: 'validation-api', version: '1.1.0.Final'

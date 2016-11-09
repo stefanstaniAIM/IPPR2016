@@ -5,11 +5,14 @@ import { AuthHttp, tokenNotExpired } from 'angular2-jwt';
  
 @Injectable()
 export class AuthService {
+   
+   private roles: string[];
  
   constructor(
     private _router: Router,
     private _http: Http,
-    private _authHttp:AuthHttp){}
+    private _authHttp:AuthHttp){
+    }
  
   logout() {
     localStorage.removeItem("token");
@@ -26,24 +29,15 @@ export class AuthService {
        .map(res => res.json())
        .subscribe(
          data => this.saveJwt(data.token),
-         err => console.log(err),
+         err => console.error("Login failed: "+err),
          () => this._router.navigate(['Dashboard'])
        ); 
   }
   
    saveJwt(jwt) {
      if(jwt) {
-       localStorage.setItem('token', jwt)
-       //test get with token
-       this._authHttp.get('http://localhost:10000/api/role/user')
-         .subscribe(
-           data => console.log("Success: "+data),
-           err => console.log("Err: "+err),
-           () => console.log('Request Complete')
-         );
-       
-       console.log("SAVEJWT NAVIGATE");
-       this._router.navigate(['Dashboard']);
+         localStorage.setItem('token', jwt);
+         this.setRoles();
      }
    }
  
@@ -55,5 +49,23 @@ export class AuthService {
 
    isLoggedIn(){
       return tokenNotExpired('token');
+   }
+   
+   getUserData() {
+       return this._authHttp.get('http://localhost:10000/api/roles/').map(res => res.json());
+   }
+   
+   setRoles() {
+      this.getUserData().subscribe(
+        data => {
+         this.roles = data;
+         console.log(this.roles);
+        },
+        err => this.logout()
+      );
+   }
+   
+   getRoles() {
+      return this.roles;
    }
 }

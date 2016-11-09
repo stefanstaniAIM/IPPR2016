@@ -1,6 +1,5 @@
 package at.fhjoanneum.ippr.gateway.security;
 
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -24,19 +23,18 @@ public class WebApplication {
 
     return registrationBean;
   }
-  
-	@Bean
-	public FilterRegistrationBean corsFilter() {
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowCredentials(true);
-		config.addAllowedOrigin("http://localhost:3000");
-		config.addAllowedHeader("*");
-		config.addAllowedMethod("*");
-		source.registerCorsConfiguration("/**", config);
-		FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
-		bean.setOrder(0);
-		return bean;
 	}
-
+  @Bean
+  public FilterRegistrationBean corsFilter() {
+    final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    final CorsConfiguration config = new CorsConfiguration();
+    config.setAllowCredentials(true);
+    config.addAllowedOrigin("http://localhost:3000");
+    config.addAllowedHeader("*");
+    config.addAllowedMethod("*");
+    source.registerCorsConfiguration("/**", config);
+    final FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
+    bean.setOrder(0);
+    return bean;
+  }
 }

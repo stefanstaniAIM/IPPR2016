@@ -67,8 +67,12 @@ type StoreType = {
 
 export class AppModule {
 
-  constructor(public appRef: ApplicationRef, public appState: AppState) {
+  constructor(public appRef: ApplicationRef, public appState: AppState, private _authService: AuthService) {
      console.log("CONSTRUCTOR");
+     if(_authService.isLoggedIn()){
+         _authService.setRoles();
+     }
+     
   }
 
   hmrOnInit(store: StoreType) {
