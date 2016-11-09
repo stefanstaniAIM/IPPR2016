@@ -38,7 +38,7 @@ public class UserBuilder implements Builder<User> {
     return this;
   }
 
-  public UserBuilder email(final String username) {
+  public UserBuilder username(final String username) {
     checkArgument(StringUtils.isNotBlank(username));
     this.username = username;
     return this;

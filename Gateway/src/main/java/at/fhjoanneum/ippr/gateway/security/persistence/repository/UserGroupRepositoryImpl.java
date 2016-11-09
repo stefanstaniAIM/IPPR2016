@@ -27,21 +27,29 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
   private GroupRepository groupRepository;
 
   @Override
-  public void saveUser(final User user) {
-    userRepository.save((UserImpl) user);
+  public User saveUser(final User user) {
+    return userRepository.save((UserImpl) user);
   }
 
   @Override
-  public Optional<Group> getGroup(final String systemId) {
+  public Group saveGroup(final Group group) {
+    return groupRepository.save((GroupImpl) group);
+  }
+
+  @Override
+  public Optional<User> getUserBySystemId(final String systemId) {
+    return Optional.ofNullable(userRepository.findBySystemId(systemId));
+  }
+
+  @Override
+  public Optional<Group> getGroupBySystemId(final String systemId) {
     return Optional.ofNullable(groupRepository.findBySystemId(systemId));
   }
 
-  @Override
-  public void saveGroup(final Group group) {
-    groupRepository.save((GroupImpl) group);
-  }
-
   interface UserRepository extends PagingAndSortingRepository<UserImpl, Long> {
+
+    @Query(value = "SELECT * FROM USER WHERE SYSTEM_ID = :systemId", nativeQuery = true)
+    UserImpl findBySystemId(@Param("systemId") String systemId);
   }
 
   interface GroupRepository extends PagingAndSortingRepository<GroupImpl, Long> {

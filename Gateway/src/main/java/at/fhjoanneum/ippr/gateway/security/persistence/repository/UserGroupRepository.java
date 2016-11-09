@@ -6,10 +6,13 @@ import at.fhjoanneum.ippr.gateway.security.persistence.objects.Group;
 import at.fhjoanneum.ippr.gateway.security.persistence.objects.User;
 
 public interface UserGroupRepository {
-  void saveUser(final User user);
 
-  void saveGroup(final Group group);
+  User saveUser(final User user);
 
-  Optional<Group> getGroup(final String systemId);
+  Group saveGroup(final Group group);
+
+  Optional<User> getUserBySystemId(final String systemId);
+
+  Optional<Group> getGroupBySystemId(final String systemId);
 
 }
