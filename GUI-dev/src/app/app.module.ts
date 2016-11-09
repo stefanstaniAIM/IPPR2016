@@ -1,4 +1,4 @@
-import { NgModule, ApplicationRef } from '@angular/core';
+import { NgModule, ApplicationRef, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
@@ -6,6 +6,8 @@ import { RouterModule } from '@angular/router';
 import { removeNgStyles, createNewHosts, createInputTransfer } from '@angularclass/hmr';
 import { AUTH_PROVIDERS, provideAuth } from 'angular2-jwt';
 import { AuthService } from './auth.service';
+import { User } from './user';
+import { BackendRequestClass } from './backend.request';
 
 /*
  * Platform and Environment providers/directives/pipes
@@ -36,7 +38,7 @@ type StoreType = {
  * `AppModule` is the main entry point into Angular2's bootstraping process
  */
 @NgModule({
-  bootstrap: [App],
+    bootstrap: [App],
   declarations: [
     App
   ],
@@ -61,20 +63,19 @@ type StoreType = {
       headerPrefix: 'Bearer',
       globalHeaders: [{ 'Content-Type': 'application/json' }]
    }),
-   AuthService
-  ]
+   AuthService,
+   User,
+   BackendRequestClass,
+   { provide: APP_INITIALIZER, useFactory: (config: BackendRequestClass) => () => config.load(), deps: [BackendRequestClass], multi: true },
+   ]
 })
 
 export class AppModule {
 
-  constructor(public appRef: ApplicationRef, public appState: AppState, private _authService: AuthService) {
+  constructor(public appRef: ApplicationRef, public appState: AppState) {
      console.log("CONSTRUCTOR");
-     if(_authService.isLoggedIn()){
-         _authService.setRoles();
-     }
-     
   }
-
+  
   hmrOnInit(store: StoreType) {
     if (!store || !store.state) return;
     console.log('HMR store', JSON.stringify(store, null, 2));

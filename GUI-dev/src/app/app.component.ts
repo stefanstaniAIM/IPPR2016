@@ -1,9 +1,10 @@
 import './app.loader.ts';
-import { Component, ViewEncapsulation, ViewContainerRef } from '@angular/core';
+import { Component, ViewEncapsulation, ViewContainerRef, OnInit } from '@angular/core';
 import { GlobalState } from './global.state';
 import { BaImageLoaderService, BaThemePreloader, BaThemeSpinner } from './theme/services';
 import { layoutPaths } from './theme/theme.constants';
 import { BaThemeConfig } from './theme/theme.config';
+import { AuthService } from './auth.service';
 
 /*
  * App Component
@@ -28,7 +29,8 @@ export class App {
               private _imageLoader: BaImageLoaderService,
               private _spinner: BaThemeSpinner,
               private _config: BaThemeConfig,
-              private viewContainerRef: ViewContainerRef) {
+              private viewContainerRef: ViewContainerRef,
+              private _authService: AuthService) {
 
     this._loadImages();
 
@@ -37,6 +39,14 @@ export class App {
     });
   }
 
+  
+  ngOnInit(): void {
+    console.log("OnInit");
+    if(this._authService.isLoggedIn()){
+      this._authService.initUser();
+    }
+  }
+  
   public ngAfterViewInit(): void {
     // hide spinner once all loaders are completed
     BaThemePreloader.load().then((values) => {

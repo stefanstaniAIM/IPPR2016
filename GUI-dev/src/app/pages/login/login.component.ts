@@ -4,7 +4,6 @@ import { AuthService } from '../../auth.service'
 
 @Component({
   selector: 'login',
-  providers: [AuthService],
   encapsulation: ViewEncapsulation.None,
   styles: [require('./login.scss')],
   template: require('./login.html'),

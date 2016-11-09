@@ -22,7 +22,8 @@ export const PAGES_MENU = [
             icon: 'ion-android-login',
             selected: false,
             expanded: false,
-            order: 1
+            order: 1,
+            isAdmin: true
           }
         }
       }

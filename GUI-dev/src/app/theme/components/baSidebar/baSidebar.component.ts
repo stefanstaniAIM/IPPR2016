@@ -3,7 +3,6 @@ import {GlobalState} from '../../../global.state';
 import {layoutSizes} from '../../../theme';
 import {MENU} from '../../../../app/app.menu';
 import * as _ from 'lodash';
-
 @Component({
   selector: 'ba-sidebar',
   encapsulation: ViewEncapsulation.None,

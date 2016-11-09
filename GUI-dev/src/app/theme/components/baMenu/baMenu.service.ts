@@ -1,17 +1,18 @@
 import {Injectable} from '@angular/core';
 import {Router, Routes} from '@angular/router';
+import { User } from '../../../user';
 
 @Injectable()
 export class BaMenuService {
 
   protected _currentMenuItem = {};
 
-  constructor(private _router:Router) {
+  constructor(private _router:Router, private _user:User) {
   }
 
   public convertRoutesToMenus(routes:Routes):any[] {
     let items = this._convertArrayToItems(routes);
-    return this._skipEmpty(items);
+    return this._skipAdmin(this._skipEmpty(items));
   }
 
   public getCurrentItem():any {
@@ -49,6 +50,21 @@ export class BaMenuService {
 
       if (menuItem) {
         menu.push(menuItem);
+      }
+    });
+
+    return [].concat.apply([], menu);
+  }
+  
+    protected _skipAdmin(items:any[]):any[] {
+    let menu = [];
+    items.forEach((item) => {
+      if(item.isAdmin){
+         if(this._user.isAdmin()){
+            menu.push(item);
+         }
+      } else {
+         menu.push(item);
       }
     });
 

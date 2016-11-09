@@ -4,6 +4,7 @@ import {Subscription} from 'rxjs/Rx';
 
 import {BaMenuService} from './baMenu.service';
 import {GlobalState} from '../../../global.state';
+import {User} from '../../../user';
 
 @Component({
   selector: 'ba-menu',
@@ -27,7 +28,7 @@ export class BaMenu {
   protected _onRouteChange:Subscription;
   public outOfArea:number = -200;
 
-  constructor(private _router:Router, private _service:BaMenuService, private _state:GlobalState) {
+  constructor(private _router:Router, private _service:BaMenuService, private _state:GlobalState,  private _user:User) {
     this._onRouteChange = this._router.events.subscribe((event) => {
 
       if (event instanceof NavigationEnd) {
@@ -49,6 +50,7 @@ export class BaMenu {
   }
 
   public ngOnInit():void {
+    this._user.get();
     this.menuItems = this._service.convertRoutesToMenus(this.menuRoutes);
   }
 
@@ -60,7 +62,7 @@ export class BaMenu {
     this.showHoverElem = true;
     this.hoverElemHeight = $event.currentTarget.clientHeight;
     // TODO: get rid of magic 66 constant
-    this.hoverElemTop = $event.currentTarget.getBoundingClientRect().top - 66;
+    this.hoverElemTop = $event.currentTargetff.getBoundingClientRect().top - 66;
   }
 
   public toggleSubMenu($event):boolean {
