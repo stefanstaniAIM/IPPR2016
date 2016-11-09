@@ -24,13 +24,14 @@ public class UserGroupSystemRetrievalServiceMemoryImpl implements UserGroupSyste
   private void createMemoryUsers() {
     final CacheGroup groupBoss = new CacheGroup("BOSS", "BOSS");
     final CacheGroup groupEmployee = new CacheGroup("EMPLOYEE", "EMPLOYEE");
+    final CacheGroup groupAdmin = new CacheGroup("ADMIN", "ADMIN");
 
     final CacheUser userA = new CacheUser("111", "Stefan", "Stani",
         "stefan.stani@edu.fh-joanneum.at", Lists.newArrayList(groupEmployee, groupBoss), "hallo");
     final CacheUser userB = new CacheUser("222", "Matthias", "Geisriegler",
-        "matthias.geisriegler@edu.fh-joanneum.at", Lists.newArrayList(groupEmployee), "hallo");
+        "matthias.geisriegler@edu.fh-joanneum.at", Lists.newArrayList(groupEmployee, groupAdmin), "hallo");
     final CacheUser userC = new CacheUser("333", "Robert", "Singer",
-        "robert.singer@edu.fh-joanneum.at", Lists.newArrayList(groupBoss), "hallo");
+        "robert.singer@edu.fh-joanneum.at", Lists.newArrayList(groupBoss, groupBoss, groupAdmin), "hallo");
 
     users = Maps.newHashMap();
     users.put(userA.getUsername(), userA);
