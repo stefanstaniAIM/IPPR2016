@@ -3,14 +3,13 @@ package at.fhjoanneum.ippr.gateway.security.persistence.entities;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.io.Serializable;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -18,13 +17,11 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.validator.constraints.NotBlank;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import at.fhjoanneum.ippr.gateway.security.persistence.objects.Group;
-import at.fhjoanneum.ippr.gateway.security.persistence.objects.User;
 
 @Entity(name = "USER_GROUP")
+@XmlRootElement
 public class GroupImpl implements Group, Serializable {
 
   private static final long serialVersionUID = -3752242631499306265L;
@@ -40,9 +37,6 @@ public class GroupImpl implements Group, Serializable {
   @Column(unique = true)
   @NotBlank
   private String systemId;
-
-  @ManyToMany(mappedBy = "groups")
-  private final List<UserImpl> users = Lists.newArrayList();
 
   GroupImpl() {}
 
@@ -70,11 +64,6 @@ public class GroupImpl implements Group, Serializable {
   public void setName(final String name) {
     checkArgument(StringUtils.isNotBlank(name));
     this.name = name;
-  }
-
-  @Override
-  public List<User> getUser() {
-    return ImmutableList.copyOf(users);
   }
 
   @Override

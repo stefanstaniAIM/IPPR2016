@@ -11,6 +11,8 @@ public interface UserGroupRepository {
 
   Group saveGroup(final Group group);
 
+  Optional<User> getUserByUserId(final Long userId);
+
   Optional<User> getUserBySystemId(final String systemId);
 
   Optional<User> getUserByUsername(final String username);

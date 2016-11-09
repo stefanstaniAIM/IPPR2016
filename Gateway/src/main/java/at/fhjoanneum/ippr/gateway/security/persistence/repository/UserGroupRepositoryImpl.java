@@ -37,6 +37,11 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
   }
 
   @Override
+  public Optional<User> getUserByUserId(final Long userId) {
+    return Optional.ofNullable(userRepository.findOne(userId));
+  }
+
+  @Override
   public Optional<User> getUserBySystemId(final String systemId) {
     return Optional.ofNullable(userRepository.findBySystemId(systemId));
   }

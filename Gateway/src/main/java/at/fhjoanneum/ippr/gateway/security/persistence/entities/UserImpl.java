@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -30,6 +31,7 @@ import at.fhjoanneum.ippr.gateway.security.persistence.objects.Group;
 import at.fhjoanneum.ippr.gateway.security.persistence.objects.User;
 
 @Entity(name = "USER")
+@XmlRootElement
 public class UserImpl implements User, Serializable {
 
   private static final long serialVersionUID = -1301447708340607361L;

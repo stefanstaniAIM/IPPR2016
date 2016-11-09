@@ -1,7 +1,5 @@
 package at.fhjoanneum.ippr.gateway.security.persistence.objects;
 
-import java.util.List;
-
 public interface Group {
   Long getGId();
 
@@ -10,6 +8,4 @@ public interface Group {
   String getName();
 
   void setName(String name);
-
-  List<User> getUser();
 }
