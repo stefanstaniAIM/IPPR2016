@@ -30,7 +30,7 @@ public class ProcessModelStorageCallerImpl {
 
   @Async
   public Future<ResponseEntity<String>> test() throws URISyntaxException {
-    LOG.debug("different thread");
+    LOG.debug("Create request to service");
     final URIBuilder uri =
         new URIBuilder(gatewayConfig.getProcessModelStorageAddress()).setPath("/test");
     final String url = uri.toString();

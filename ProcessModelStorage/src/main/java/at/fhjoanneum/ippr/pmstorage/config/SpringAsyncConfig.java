@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.gateway.config;
+package at.fhjoanneum.ippr.pmstorage.config;
 
 import java.util.concurrent.Executor;
 
@@ -13,8 +13,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @EnableAsync
 public class SpringAsyncConfig implements AsyncConfigurer {
 
-  @Override
   @Bean
+  @Override
   public Executor getAsyncExecutor() {
     final ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
     taskExecutor.setCorePoolSize(1);

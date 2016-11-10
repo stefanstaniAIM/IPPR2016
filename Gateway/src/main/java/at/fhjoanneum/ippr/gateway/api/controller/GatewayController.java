@@ -26,11 +26,11 @@ public class GatewayController {
     return "hello from gateway :)";
   }
 
-  @RequestMapping(value = "async1", method = RequestMethod.GET)
+  @RequestMapping(value = "async", method = RequestMethod.GET)
   public @ResponseBody Callable<ResponseEntity<String>> test() {
-    LOG.debug("Receive");
+    LOG.debug("Receive request");
     return () -> {
-      LOG.debug("Return");
+      LOG.debug("Return response");
       return processModelStorageCaller.test().get();
     };
   }
