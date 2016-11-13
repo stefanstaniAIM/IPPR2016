@@ -14,9 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 
+import at.fhjoanneum.ippr.commons.dto.pmstorage.ProcessModelDTO;
+import at.fhjoanneum.ippr.commons.dto.pmstorage.SubjectModelDTO;
 import at.fhjoanneum.ippr.persistence.entities.model.process.ProcessModelImpl;
-import at.fhjoanneum.ippr.pmstorage.dto.ProcessModelDTO;
-import at.fhjoanneum.ippr.pmstorage.dto.SubjectModelDTO;
 import at.fhjoanneum.ippr.pmstorage.repositories.ProcessModelRepository;
 
 

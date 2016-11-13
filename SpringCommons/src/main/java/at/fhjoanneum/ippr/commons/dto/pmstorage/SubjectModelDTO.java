@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.pmstorage.dto;
+package at.fhjoanneum.ippr.commons.dto.pmstorage;
 
 public class SubjectModelDTO {
 

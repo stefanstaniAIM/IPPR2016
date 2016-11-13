@@ -1,9 +1,10 @@
-package at.fhjoanneum.ippr.pmstorage.dto;
+package at.fhjoanneum.ippr.commons.dto.pmstorage;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
+
 
 @XmlRootElement
 public class ProcessModelDTO {

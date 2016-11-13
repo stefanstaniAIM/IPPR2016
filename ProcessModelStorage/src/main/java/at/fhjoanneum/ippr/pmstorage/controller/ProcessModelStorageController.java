@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import at.fhjoanneum.ippr.pmstorage.dto.ProcessModelDTO;
+import at.fhjoanneum.ippr.commons.dto.pmstorage.ProcessModelDTO;
 import at.fhjoanneum.ippr.pmstorage.services.ProcessModelStorageServiceImpl;
 import at.fhjoanneum.ippr.pmstorage.services.impl.ProcessModelServiceImpl;
 
