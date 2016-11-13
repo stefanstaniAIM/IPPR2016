@@ -11,14 +11,14 @@ import at.fhjoanneum.ippr.pmstorage.repositories.ProcessModelController;
 @Component
 class Runner implements CommandLineRunner {
 
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
-	private ProcessModelController controller;
+  @Autowired
+  private ProcessModelController controller;
 
-	@Override
-	public void run(final String... args) throws Exception {
+  @Override
+  public void run(final String... args) throws Exception {
 
-		// controller.create();
-	}
+    // controller.create();
+  }
 }

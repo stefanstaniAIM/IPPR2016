@@ -32,7 +32,7 @@ import at.fhjoanneum.ippr.persistence.objects.model.process.ProcessModel;
 import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
 
 @Entity(name = "PROCESS_MODEL")
-public class ProcessModelmpl implements ProcessModel, Serializable {
+public class ProcessModelImpl implements ProcessModel, Serializable {
 
   private static final long serialVersionUID = -7935085761537865714L;
 
@@ -70,9 +70,9 @@ public class ProcessModelmpl implements ProcessModel, Serializable {
   @JoinColumn(name = "starter_subject")
   private SubjectModelImpl starterSubject;
 
-  ProcessModelmpl() {}
+  ProcessModelImpl() {}
 
-  ProcessModelmpl(final String name, final String description, final ProcessModelState state,
+  ProcessModelImpl(final String name, final String description, final ProcessModelState state,
       final List<SubjectModelImpl> subjectModels, final SubjectModelImpl starterSubject) {
     this.name = name;
     this.description = description;

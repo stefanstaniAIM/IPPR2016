@@ -13,7 +13,6 @@ public class ProcessModelStorageServiceImpl {
 
   private static final Logger LOG = LoggerFactory.getLogger(ProcessModelStorageServiceImpl.class);
 
-
   @Async
   public Future<String> test() {
     LOG.debug("Return result");

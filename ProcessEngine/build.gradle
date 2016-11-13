@@ -39,7 +39,7 @@ dependencies {
 	compile("org.springframework.boot:spring-boot-starter-web")
 	
 	// akka
-	compile group: 'com.typesafe.akka', name: 'akka-actor_2.11', version: '2.4.11'
+	compile group: 'com.typesafe.akka', name: 'akka-actor_2.11', version: '2.4.12'
 	
 	// tests	
 	testCompile 'org.springframework.boot:spring-boot-starter-test'

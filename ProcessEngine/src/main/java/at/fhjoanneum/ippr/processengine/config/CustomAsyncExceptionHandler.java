@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.pmstorage.config;
+package at.fhjoanneum.ippr.processengine.config;
 
 import java.lang.reflect.Method;
 
@@ -13,7 +13,7 @@ public class CustomAsyncExceptionHandler implements AsyncUncaughtExceptionHandle
   @Override
   public void handleUncaughtException(final Throwable throwable, final Method method,
       final Object... params) {
-    LOG.error("Exception message - " + throwable.getCause().getMessage());
+    LOG.error("Exception message - " + throwable.getMessage());
     LOG.error("Method name - " + method.getName());
     for (final Object param : params) {
       LOG.error("Parameter value - " + param);

@@ -70,8 +70,8 @@ public class ProcessModelBuilder implements Builder<ProcessModel> {
     checkArgument(!subjectModels.isEmpty());
     checkNotNull(starterSubject);
 
-    final ProcessModelmpl processModel =
-        new ProcessModelmpl(name, description, state, subjectModels, starterSubject);
+    final ProcessModelImpl processModel =
+        new ProcessModelImpl(name, description, state, subjectModels, starterSubject);
     return processModel;
   }
 }
