@@ -1,10 +1,15 @@
 package at.fhjoanneum.ippr.commons.dto.pmstorage;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class SubjectModelDTO {
 
-  private final Long smId;
-  private final String name;
-  private final String group;
+  private Long smId;
+  private String name;
+  private String group;
+
+  public SubjectModelDTO() {}
 
   public SubjectModelDTO(final Long smId, final String name, final String group) {
     this.smId = smId;

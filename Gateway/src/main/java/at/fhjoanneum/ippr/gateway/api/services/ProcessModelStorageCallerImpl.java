@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.AsyncRestTemplate;
 
+import at.fhjoanneum.ippr.commons.dto.pmstorage.ProcessModelDTO;
 import at.fhjoanneum.ippr.gateway.api.config.GatewayConfig;
 
 @Service
@@ -29,11 +30,12 @@ public class ProcessModelStorageCallerImpl {
   }
 
   @Async
-  public Future<ResponseEntity<String>> test() throws URISyntaxException {
-    LOG.debug("Create request to service");
-    final URIBuilder uri =
-        new URIBuilder(gatewayConfig.getProcessModelStorageAddress()).setPath("/test");
-    final String url = uri.toString();
-    return restTemplate.getForEntity(url, String.class);
+  public Future<ResponseEntity<ProcessModelDTO[]>> findActiveProcesses(final int page,
+      final int size) throws URISyntaxException {
+    LOG.debug("Create request to process model storage");
+    final URIBuilder uri = new URIBuilder(gatewayConfig.getProcessModelStorageAddress())
+        .setPath("/processes").addParameter("page", "" + page).addParameter("size", "" + size);
+    return restTemplate.getForEntity(uri.toString(), ProcessModelDTO[].class);
   }
+
 }

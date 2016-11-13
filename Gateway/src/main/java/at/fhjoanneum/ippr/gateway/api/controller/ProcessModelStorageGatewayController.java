@@ -2,36 +2,30 @@ package at.fhjoanneum.ippr.gateway.api.controller;
 
 import java.util.concurrent.Callable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import at.fhjoanneum.ippr.commons.dto.pmstorage.ProcessModelDTO;
 import at.fhjoanneum.ippr.gateway.api.services.ProcessModelStorageCallerImpl;
 
 @RestController
-public class GatewayController {
-
-  private static final Logger LOG = LoggerFactory.getLogger(GatewayController.class);
+public class ProcessModelStorageGatewayController {
 
   @Autowired
   private ProcessModelStorageCallerImpl processModelStorageCaller;
 
-  @RequestMapping(value = "hello", method = RequestMethod.GET)
-  public String hello() {
-    return "hello from gateway :)";
-  }
-
-  @RequestMapping(value = "async", method = RequestMethod.GET)
-  public @ResponseBody Callable<ResponseEntity<String>> test() {
-    LOG.debug("Receive request");
+  @RequestMapping(name = "processes", method = RequestMethod.GET,
+      produces = "application/json; charset=UTF-8")
+  public @ResponseBody Callable<ResponseEntity<ProcessModelDTO[]>> findActiveProcesses(
+      @RequestParam(value = "page", required = true) final int page,
+      @RequestParam(value = "size", required = false, defaultValue = "10") final int size) {
     return () -> {
-      LOG.debug("Return response");
-      return processModelStorageCaller.test().get();
+      return processModelStorageCaller.findActiveProcesses(page, size).get();
     };
   }
 }

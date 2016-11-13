@@ -23,10 +23,14 @@ dependencies {
 allprojects {
     apply plugin: 'java'
     
-    dependencies {
+    dependencies {    
 		compile group: 'org.springframework.boot', name: 'spring-boot-starter-logging', version: '1.4.1.RELEASE'
 		compile group: 'com.google.guava', name: 'guava', version: '19.0'
 		compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'    
-		compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.2' 
+		compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.2' 	
+		compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.8.4'
+		compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-parameter-names', version: '2.8.4'
+		compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.8.4'
+		compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.8.4'
 	}
 }

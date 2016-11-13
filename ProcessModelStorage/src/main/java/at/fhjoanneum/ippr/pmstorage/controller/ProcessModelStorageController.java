@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import at.fhjoanneum.ippr.commons.dto.pmstorage.ProcessModelDTO;
-import at.fhjoanneum.ippr.pmstorage.services.ProcessModelStorageServiceImpl;
 import at.fhjoanneum.ippr.pmstorage.services.impl.ProcessModelServiceImpl;
 
 @RestController
@@ -24,19 +23,7 @@ public class ProcessModelStorageController {
   private static final Logger LOG = LoggerFactory.getLogger(ProcessModelStorageController.class);
 
   @Autowired
-  private ProcessModelStorageServiceImpl processModelStorageService;
-
-  @Autowired
   private ProcessModelServiceImpl processModelService;
-
-  @RequestMapping(value = "test", method = RequestMethod.GET)
-  public @ResponseBody Callable<String> test() {
-    LOG.debug("Received request");
-    return () -> {
-      LOG.debug("Waiting for service response");
-      return processModelStorageService.test().get();
-    };
-  }
 
   @RequestMapping(value = "processes", method = RequestMethod.GET,
       produces = "application/json; charset=UTF-8")

@@ -9,11 +9,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class ProcessModelDTO {
 
-  private final Long pmId;
-  private final String name;
-  private final String desription;
-  private final LocalDateTime createdAt;
-  private final List<SubjectModelDTO> subjectModels;
+  private Long pmId;
+  private String name;
+  private String desription;
+  private LocalDateTime createdAt;
+  private List<SubjectModelDTO> subjectModels;
+
+  public ProcessModelDTO() {}
 
   public ProcessModelDTO(final Long pmId, final String name, final String desription,
       final LocalDateTime createdAt, final List<SubjectModelDTO> subjectModels) {
