@@ -35,6 +35,7 @@ repositories {
 
 dependencies {
 	// ippr libraries
+	compile project(':SpringCommons')
 	compile project(':Persistence')
 	
 	// spring boot
@@ -53,15 +54,4 @@ test {
     systemProperties = [
             'spring.profiles.active': 'test'
     ]
-}
-
-// utils for all projects
-allprojects {
-    apply plugin: 'java'
-    
-    dependencies {
-		compile group: 'org.springframework.boot', name: 'spring-boot-starter-logging', version: '1.4.1.RELEASE'
-		compile group: 'com.google.guava', name: 'guava', version: '19.0'
-		compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'      
-	}
 }

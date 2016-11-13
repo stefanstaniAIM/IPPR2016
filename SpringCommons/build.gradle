@@ -1,0 +1,32 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+eclipse {
+    classpath {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {  	
+    testCompile 'junit:junit:4.12'
+}
+
+// utils for all projects
+allprojects {
+    apply plugin: 'java'
+    
+    dependencies {
+		compile group: 'org.springframework.boot', name: 'spring-boot-starter-logging', version: '1.4.1.RELEASE'
+		compile group: 'com.google.guava', name: 'guava', version: '19.0'
+		compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'    
+		compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.2' 
+	}
+}

@@ -34,6 +34,9 @@ repositories {
 
 
 dependencies {
+	// ippr libraries
+	compile project(':SpringCommons')
+
 	compile 'org.springframework.boot:spring-boot-starter-web'
 	compile 'org.springframework.boot:spring-boot-starter-data-jpa'
 	compile 'org.hibernate:hibernate-core:5.2.4.Final'
@@ -47,10 +50,7 @@ dependencies {
 	compile group: 'commons-io', name: 'commons-io', version: '2.5'
 	compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.7.0'
 	
-	// utils
-	
-	compile group: 'com.google.guava', name: 'guava', version: '19.0'
-	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'    
+	// utils   
 	compile group: 'net.sf.opencsv', name: 'opencsv', version: '2.3'
 	compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.2'
 	

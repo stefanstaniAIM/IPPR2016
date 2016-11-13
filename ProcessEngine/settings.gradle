@@ -1,5 +1,2 @@
-include ':Persistence'
-project(':Persistence').projectDir = new File(settingsDir, '../Persistence')
-
 include ':SpringCommons'
 project(':SpringCommons').projectDir = new File(settingsDir, '../SpringCommons')
