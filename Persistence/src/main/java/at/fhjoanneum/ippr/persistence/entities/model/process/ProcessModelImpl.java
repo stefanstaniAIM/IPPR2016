@@ -40,7 +40,7 @@ public class ProcessModelImpl implements ProcessModel, Serializable {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long pmId;
 
-  @Column(unique = true)
+  @Column
   @NotBlank
   @Size(min = 1, max = 100)
   private String name;

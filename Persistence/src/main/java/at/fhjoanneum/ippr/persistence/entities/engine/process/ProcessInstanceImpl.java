@@ -1,0 +1,120 @@
+package at.fhjoanneum.ippr.persistence.entities.engine.process;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
+
+import at.fhjoanneum.ippr.persistence.entities.engine.subject.SubjectImpl;
+import at.fhjoanneum.ippr.persistence.entities.model.process.ProcessModelImpl;
+import at.fhjoanneum.ippr.persistence.objects.engine.enums.ProcessInstanceState;
+import at.fhjoanneum.ippr.persistence.objects.engine.process.ProcessInstance;
+import at.fhjoanneum.ippr.persistence.objects.engine.subject.Subject;
+
+@Entity(name = "PROCESS_INSTANCE")
+public class ProcessInstanceImpl implements ProcessInstance, Serializable {
+
+  private static final long serialVersionUID = -4574968938479681668L;
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Long piId;
+
+  @ManyToOne
+  @JoinColumn(name = "pmId")
+  @NotNull
+  private ProcessModelImpl processModel;
+
+  @Column
+  private LocalDateTime startTime;
+
+  @Column
+  private LocalDateTime endTime;
+
+  @Column
+  @NotNull
+  @Enumerated(EnumType.STRING)
+  private ProcessInstanceState state;
+
+  @ManyToMany
+  @JoinTable(name = "process_subject_instance_map", joinColumns = {@JoinColumn(name = "pi_id")},
+      inverseJoinColumns = {@JoinColumn(name = "s_id")})
+  private final List<SubjectImpl> subjects = Lists.newArrayList();
+
+  ProcessInstanceImpl() {}
+
+  ProcessInstanceImpl(final ProcessModelImpl processModel, final LocalDateTime startTime) {
+    this.processModel = processModel;
+    this.startTime = LocalDateTime.now();
+    this.state = ProcessInstanceState.ACTIVE;
+  }
+
+  @Override
+  public Long getPiId() {
+    return piId;
+  }
+
+  @Override
+  public ProcessInstanceState getState() {
+    return state;
+  }
+
+  @Override
+  public LocalDateTime getStartTime() {
+    return startTime;
+  }
+
+  @Override
+  public LocalDateTime getEndTime() {
+    return endTime;
+  }
+
+  @Override
+  public List<Subject> getSubjects() {
+    return Lists.newArrayList(subjects);
+  }
+
+  @Override
+  public boolean equals(final Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (!ProcessInstance.class.isAssignableFrom(obj.getClass())) {
+      return false;
+    }
+    final ProcessInstance other = (ProcessInstance) obj;
+    if ((this.piId == null) ? (other.getPiId() != null) : !this.piId.equals(other.getPiId())) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(piId);
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("piId", piId)
+        .append("state", state).toString();
+  }
+}
