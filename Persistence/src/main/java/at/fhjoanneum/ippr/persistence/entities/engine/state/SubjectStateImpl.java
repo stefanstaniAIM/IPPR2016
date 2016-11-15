@@ -41,6 +41,15 @@ public class SubjectStateImpl implements SubjectState, Serializable {
   @JoinColumn(name = "s_id")
   private SubjectImpl subject;
 
+  SubjectStateImpl() {}
+
+  SubjectStateImpl(final StateImpl currentState, final ProcessInstanceImpl processInstance,
+      final SubjectImpl subject) {
+    this.currentState = currentState;
+    this.processInstance = processInstance;
+    this.subject = subject;
+  }
+
   @Override
   public State getCurrentState() {
     return currentState;
