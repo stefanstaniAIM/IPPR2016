@@ -15,6 +15,7 @@ import at.fhjoanneum.ippr.gateway.security.jwt.JwtFilter;
 @ComponentScan
 @Configuration
 public class WebApplication {
+
   @Bean
   public FilterRegistrationBean jwtFilter() {
     final FilterRegistrationBean registrationBean = new FilterRegistrationBean();

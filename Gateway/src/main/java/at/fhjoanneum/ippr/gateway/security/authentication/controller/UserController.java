@@ -3,7 +3,9 @@ package at.fhjoanneum.ippr.gateway.security.authentication.controller;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import at.fhjoanneum.ippr.gateway.security.authentication.AuthenticationService;
+import at.fhjoanneum.ippr.gateway.security.persistence.objects.Group;
 import at.fhjoanneum.ippr.gateway.security.persistence.objects.User;
 import at.fhjoanneum.ippr.gateway.security.persistence.repository.UserGroupRepository;
 import io.jsonwebtoken.Claims;
@@ -45,9 +48,12 @@ public class UserController {
 
     final User user = userOpt.get();
 
+    final List<String> groups =
+        user.getGroups().stream().map(Group::getName).collect(Collectors.toList());
+
     final LoginResponse loginResponse = new LoginResponse(Jwts.builder()
-        .setSubject(user.getUsername()).claim("userId", user.getUId()).setIssuedAt(new Date())
-        .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusWeeks(1)))
+        .setSubject(user.getUsername()).claim("userId", user.getUId()).claim("groups", groups)
+        .setIssuedAt(new Date()).setExpiration(java.sql.Date.valueOf(LocalDate.now().plusWeeks(1)))
         .signWith(SignatureAlgorithm.HS256, "secretkey").compact());
 
     return new ResponseEntity<UserController.LoginResponse>(loginResponse, HttpStatus.OK);

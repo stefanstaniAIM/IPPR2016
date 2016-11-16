@@ -4,13 +4,14 @@ package at.fhjoanneum.ippr.pmstorage.services.impl;
 import java.util.List;
 import java.util.concurrent.Future;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 
@@ -27,7 +28,7 @@ public class ProcessModelServiceImpl {
   private ProcessModelRepository processModelRepository;
 
   @Async
-  @Transactional(readOnly = true)
+  @Transactional
   public Future<List<ProcessModelDTO>> findActiveProcessModels(final Pageable pageable) {
     final Page<ProcessModelImpl> results = processModelRepository.findActiveProcesses(pageable);
 

@@ -46,10 +46,6 @@ dependencies {
 	runtime 'mysql:mysql-connector-java'
 	testRuntime 'com.h2database:h2'
 	
-	// security
-	compile group: 'commons-io', name: 'commons-io', version: '2.5'
-	compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.7.0'
-	
 	// utils   
 	compile group: 'net.sf.opencsv', name: 'opencsv', version: '2.3'
 	compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.2'

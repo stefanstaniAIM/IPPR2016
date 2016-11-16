@@ -3,6 +3,8 @@ package at.fhjoanneum.ippr.pmstorage.controller;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +30,12 @@ public class ProcessModelStorageController {
   @RequestMapping(value = "processes", method = RequestMethod.GET,
       produces = "application/json; charset=UTF-8")
   public @ResponseBody Callable<List<ProcessModelDTO>> getAllProcesses(
+      final HttpServletRequest request,
       @RequestParam(value = "page", required = true) final int page,
       @RequestParam(value = "size", required = false, defaultValue = "10") final int size) {
     return () -> {
-      LOG.debug("Received request to show all active processes");
+      final GatewayUser gatewayUser = new GatewayUser(request);
+      LOG.info(gatewayUser.toString());
       final PageRequest pageRequest =
           new PageRequest(page, size, new Sort(Sort.Direction.ASC, "name"));
 
