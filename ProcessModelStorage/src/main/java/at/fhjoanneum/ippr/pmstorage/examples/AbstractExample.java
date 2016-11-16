@@ -5,6 +5,8 @@ import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 
 import at.fhjoanneum.ippr.persistence.objects.model.businessobject.BusinessObjectModel;
 import at.fhjoanneum.ippr.persistence.objects.model.businessobject.field.BusinessObjectFieldModel;
@@ -16,11 +18,32 @@ import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
 import at.fhjoanneum.ippr.persistence.objects.model.transition.Transition;
 
 @Transactional
-public abstract class AbstractExample {
+public abstract class AbstractExample implements CommandLineRunner {
 
   private static final Logger LOG = LoggerFactory.getLogger(AbstractExample.class);
 
+  @Autowired
+  private ExampleConfiguration exampleConfiguration;
+
   protected abstract EntityManager getEntityManager();
+
+  protected abstract void createData();
+
+  protected abstract String getName();
+
+  @Override
+  public void run(final String... args) throws Exception {
+    if (exampleConfiguration.isInsertExamplesEnabled()) {
+      LOG.info(
+          "#######################################################################################################");
+      LOG.info("Test data for example process: {}", getName());
+      createData();
+      LOG.info(
+          "#######################################################################################################");
+    } else {
+      LOG.info("Examples won't be inserted since 'ippr.insert-examples.enabled' is false");
+    }
+  }
 
   protected void saveProcessModel(final ProcessModel processModel) {
     getEntityManager().persist(processModel);

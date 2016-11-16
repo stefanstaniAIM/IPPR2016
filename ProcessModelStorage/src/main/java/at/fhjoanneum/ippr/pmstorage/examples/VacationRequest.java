@@ -6,7 +6,6 @@ import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
@@ -35,7 +34,7 @@ import at.fhjoanneum.ippr.persistence.objects.model.transition.Transition;
 
 @Component
 @Transactional
-public class VacationRequest extends AbstractExample implements CommandLineRunner {
+public class VacationRequest extends AbstractExample {
 
   private static final Logger LOG = LoggerFactory.getLogger(VacationRequest.class);
 
@@ -48,11 +47,7 @@ public class VacationRequest extends AbstractExample implements CommandLineRunne
   }
 
   @Override
-  public void run(final String... args) throws Exception {
-    createExample();
-  }
-
-  private void createExample() {
+  protected void createData() {
     final SubjectModel employee =
         new SubjectModelBuilder().name("Employee").assignedGroup("Employee").build();
     final SubjectModel boss = new SubjectModelBuilder().name("Boss").assignedGroup("Boss").build();
@@ -173,5 +168,10 @@ public class VacationRequest extends AbstractExample implements CommandLineRunne
         boFromPermissionBoss1, boFromPermissionBoss2, okFormFieldInformationPermission1,
         okFormFieldInformationPermission2, nokFormFieldInformationPermission1,
         nokFormFieldInformationPermission2);
+  }
+
+  @Override
+  protected String getName() {
+    return "Vacation Request";
   }
 }
