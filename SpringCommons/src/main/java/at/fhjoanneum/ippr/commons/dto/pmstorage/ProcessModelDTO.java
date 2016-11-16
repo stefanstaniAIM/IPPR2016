@@ -11,17 +11,17 @@ public class ProcessModelDTO {
 
   private Long pmId;
   private String name;
-  private String desription;
+  private String description;
   private LocalDateTime createdAt;
   private List<SubjectModelDTO> subjectModels;
 
   public ProcessModelDTO() {}
 
-  public ProcessModelDTO(final Long pmId, final String name, final String desription,
+  public ProcessModelDTO(final Long pmId, final String name, final String description,
       final LocalDateTime createdAt, final List<SubjectModelDTO> subjectModels) {
     this.pmId = pmId;
     this.name = name;
-    this.desription = desription;
+    this.description = description;
     this.createdAt = createdAt;
     this.subjectModels = subjectModels;
   }
@@ -34,8 +34,8 @@ public class ProcessModelDTO {
     return name;
   }
 
-  public String getDesription() {
-    return desription;
+  public String getDescription() {
+    return description;
   }
 
   public LocalDateTime getCreatedAt() {

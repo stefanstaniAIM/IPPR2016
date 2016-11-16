@@ -19,6 +19,6 @@ class Runner implements CommandLineRunner {
   @Override
   public void run(final String... args) throws Exception {
 
-    // controller.create();
+    controller.create();
   }
 }
