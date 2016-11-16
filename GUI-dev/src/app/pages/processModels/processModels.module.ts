@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { NgaModule } from '../../theme/nga.module';
 
 import { ProcessModels } from './processModels.component';
+import { ProcessModelsService } from './processModels.service';
 import { routing }       from './processModels.routing';
 
 import { AuthGuard } from '../../auth.guard';
@@ -19,7 +20,8 @@ import { AuthGuard } from '../../auth.guard';
     ProcessModels,
   ],
   providers: [
-    AuthGuard
+    AuthGuard,
+    ProcessModelsService
   ]
 })
 export default class ProcessModelsModule {}

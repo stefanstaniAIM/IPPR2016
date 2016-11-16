@@ -62,7 +62,7 @@ export class BaMenu {
     this.showHoverElem = true;
     this.hoverElemHeight = $event.currentTarget.clientHeight;
     // TODO: get rid of magic 66 constant
-    this.hoverElemTop = $event.currentTargetff.getBoundingClientRect().top - 66;
+    this.hoverElemTop = $event.currentTarget.getBoundingClientRect().top - 66;
   }
 
   public toggleSubMenu($event):boolean {

@@ -19,7 +19,7 @@ export const PAGES_MENU = [
         data: {
           menu: {
             title: 'Prozessmodelle',
-            icon: 'ion-android-login',
+            icon: 'ion-document',
             selected: false,
             expanded: false,
             order: 1,
@@ -31,7 +31,7 @@ export const PAGES_MENU = [
         data: {
           menu: {
             title: 'Prozesse',
-            icon: 'ion-document',
+            icon: 'ion-clipboard',
             selected: false,
             expanded: false,
             order: 2,
