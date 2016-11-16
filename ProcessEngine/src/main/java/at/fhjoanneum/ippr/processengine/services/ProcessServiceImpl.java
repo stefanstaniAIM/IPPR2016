@@ -12,12 +12,10 @@ import org.springframework.stereotype.Service;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
-import akka.actor.Props;
 import akka.pattern.PatternsCS;
 import akka.util.Timeout;
-import at.fhjoanneum.ippr.processengine.akka.config.AkkaApplicationContext;
+import at.fhjoanneum.ippr.processengine.akka.config.SpringExtension;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStartMessage;
-import at.fhjoanneum.ippr.processengine.test.ProcessSupervisorActor;
 import scala.concurrent.duration.Duration;
 
 @Service
@@ -27,14 +25,13 @@ public class ProcessServiceImpl implements ProcessService {
 
   private final static Timeout TIMEOUT = new Timeout(Duration.create(10, TimeUnit.SECONDS));
 
-  private final ActorSystem system;
+
   private final ActorRef processSupervisorActor;
 
   @Autowired
-  public ProcessServiceImpl(final AkkaApplicationContext applicationContext) {
-    system = applicationContext.getActorSystem();
-    processSupervisorActor =
-        system.actorOf(Props.create(ProcessSupervisorActor.class), "ProcessSupervisorActor");
+  public ProcessServiceImpl(final ActorSystem actorSystem, final SpringExtension springExtension) {
+    processSupervisorActor = actorSystem.actorOf(springExtension.props("ProcessSupervisorActor"),
+        "processSupervisorActor");
   }
 
   @Async

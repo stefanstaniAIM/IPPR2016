@@ -27,10 +27,11 @@ public class AkkaSelector {
     try {
       final Future<ActorRef> fut = sel.resolveOne(TIMEOUT);
       final ActorRef ref = Await.result(fut, TIMEOUT.duration());
-      LOG.debug("Actor [{}] is existing in context [{}]", path, context.system());
+      LOG.debug("Actor [{}] is existing in context [{}], use this actor", path, context.system());
       return Optional.of(ref);
     } catch (final Exception e) {
-      LOG.debug("Actor [{}] is not existing or answering in context [{}]", path, context.system());
+      LOG.debug("Actor [{}] is not existing or answering in context [{}], therefore create new one",
+          path, context.system());
       return Optional.empty();
     }
   }
