@@ -7,10 +7,6 @@ const routes: Routes = [
     loadChildren: () => System.import('./login/login.module')
   },
   {
-    path: 'register',
-    loadChildren: () => System.import('./register/register.module')
-  },
-  {
     path: 'pages',
     component: Pages,
     children: [
