@@ -1,5 +1,8 @@
 package at.fhjoanneum.ippr.persistence.entities.engine.state;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -56,6 +59,8 @@ public class SubjectStateImpl implements SubjectState, Serializable {
   }
 
   public void setCurrentState(final State currentState) {
+    checkNotNull(currentState);
+    checkArgument(currentState instanceof SubjectStateImpl);
     this.currentState = (StateImpl) currentState;
   }
 

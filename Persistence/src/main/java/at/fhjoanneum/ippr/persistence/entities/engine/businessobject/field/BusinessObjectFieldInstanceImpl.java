@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.persistence.entities.engine.businessobject;
+package at.fhjoanneum.ippr.persistence.entities.engine.businessobject.field;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import at.fhjoanneum.ippr.persistence.entities.engine.businessobject.BusinessObjectInstanceImpl;
 import at.fhjoanneum.ippr.persistence.entities.model.businessobject.field.BusinessObjectFieldModelImpl;
 import at.fhjoanneum.ippr.persistence.objects.engine.businessobject.BusinessObjectFieldInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.businessobject.BusinessObjectInstance;
@@ -43,6 +44,13 @@ public class BusinessObjectFieldInstanceImpl implements BusinessObjectFieldInsta
     this.businessObjectInstance = businessObjectInstance;
     this.businessObjectFieldModel = businessObjectFieldModel;
   }
+
+  BusinessObjectFieldInstanceImpl(final BusinessObjectInstanceImpl businessObjectInstance,
+      final BusinessObjectFieldModelImpl businessObjectFieldModel, final String value) {
+    this(businessObjectInstance, businessObjectFieldModel);
+    this.value = value;
+  }
+
 
   @Override
   public String getValue() {

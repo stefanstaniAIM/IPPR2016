@@ -12,9 +12,13 @@ public interface ProcessInstance {
 
   ProcessInstanceState getState();
 
+  void setState(ProcessInstanceState state);
+
   LocalDateTime getStartTime();
 
   LocalDateTime getEndTime();
+
+  void setEndTime();
 
   List<Subject> getSubjects();
 }

@@ -1,5 +1,7 @@
 package at.fhjoanneum.ippr.persistence.entities.engine.process;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -57,12 +59,13 @@ public class ProcessInstanceImpl implements ProcessInstance, Serializable {
   @ManyToMany
   @JoinTable(name = "process_subject_instance_map", joinColumns = {@JoinColumn(name = "pi_id")},
       inverseJoinColumns = {@JoinColumn(name = "s_id")})
-  private final List<SubjectImpl> subjects = Lists.newArrayList();
+  private List<SubjectImpl> subjects = Lists.newArrayList();
 
   ProcessInstanceImpl() {}
 
-  ProcessInstanceImpl(final ProcessModelImpl processModel, final LocalDateTime startTime) {
+  ProcessInstanceImpl(final ProcessModelImpl processModel, final List<SubjectImpl> subjects) {
     this.processModel = processModel;
+    this.subjects = subjects;
     this.startTime = LocalDateTime.now();
     this.state = ProcessInstanceState.ACTIVE;
   }
@@ -78,6 +81,12 @@ public class ProcessInstanceImpl implements ProcessInstance, Serializable {
   }
 
   @Override
+  public void setState(final ProcessInstanceState state) {
+    checkNotNull(state);
+    this.state = state;
+  }
+
+  @Override
   public LocalDateTime getStartTime() {
     return startTime;
   }
@@ -85,6 +94,11 @@ public class ProcessInstanceImpl implements ProcessInstance, Serializable {
   @Override
   public LocalDateTime getEndTime() {
     return endTime;
+  }
+
+  @Override
+  public void setEndTime() {
+    this.endTime = LocalDateTime.now();
   }
 
   @Override

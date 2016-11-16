@@ -14,6 +14,7 @@ import javax.persistence.OneToMany;
 
 import com.google.common.collect.Lists;
 
+import at.fhjoanneum.ippr.persistence.entities.engine.businessobject.field.BusinessObjectFieldInstanceImpl;
 import at.fhjoanneum.ippr.persistence.entities.engine.process.ProcessInstanceImpl;
 import at.fhjoanneum.ippr.persistence.entities.model.businessobject.BusinessObjectModelImpl;
 import at.fhjoanneum.ippr.persistence.objects.engine.businessobject.BusinessObjectFieldInstance;
