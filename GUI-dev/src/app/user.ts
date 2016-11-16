@@ -26,7 +26,7 @@ export class User {
    public isAdmin() {
       
       //return true;
-      return this.groups.filter(function(group){return group.name === "ADMIN"}).length ? true : false;
+      return this.groups.filter(function(group){return group.name.toLowerCase() === "admin"}).length ? true : false;
    }
 
 }

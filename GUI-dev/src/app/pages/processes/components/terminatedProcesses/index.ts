@@ -1,0 +1,1 @@
+export * from './terminatedProcesses.component';

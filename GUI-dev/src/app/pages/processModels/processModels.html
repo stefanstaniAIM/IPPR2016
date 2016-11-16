@@ -1,0 +1,23 @@
+<div class="row">
+   <table class="table table-striped">
+      <thead>
+         <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Beschreibung</th>
+            <th>Erstelldatum</th>
+            <th>Aktion</th>
+         </tr>
+      </thead>
+      <tbody>
+         <tr *ngFor="let processModel of processModels">
+            <td>{{ processModel.pmId }}</td>
+            <td>{{ processModel.name }}</td>
+            <td>{{ processModel.description }}</td>
+            <td>{{ processModel.createdAt }}</td>
+            <td><button class="btn btn-primary btn-sm" (click)="newProcess(processModel.pmId)">Start</button></td>
+         </tr>
+      </tbody>
+   </table>
+</div>
+
