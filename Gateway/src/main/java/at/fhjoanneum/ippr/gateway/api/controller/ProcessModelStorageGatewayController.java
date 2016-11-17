@@ -38,4 +38,16 @@ public class ProcessModelStorageGatewayController {
       return processModelStorageCaller.findActiveProcesses(user, page, size).get();
     };
   }
+
+  @RequestMapping(value = "api/processesToStart", method = RequestMethod.GET,
+      produces = "application/json; charset=UTF-8")
+  public @ResponseBody Callable<ResponseEntity<ProcessModelDTO[]>> findActiveProcessesToStart(
+      final HttpServletRequest request,
+      @RequestParam(value = "page", required = true) final int page,
+      @RequestParam(value = "size", required = false, defaultValue = "10") final int size) {
+    return () -> {
+      final HttpHeaderUser user = new HttpHeaderUser(request);
+      return processModelStorageCaller.findActiveProcessesToStart(user, page, size).get();
+    };
+  }
 }
