@@ -6,6 +6,8 @@ import java.util.concurrent.Future;
 
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +26,8 @@ import at.fhjoanneum.ippr.pmstorage.services.ProcessModelService;
 
 @Service
 public class ProcessModelServiceImpl implements ProcessModelService {
+
+  private static final Logger LOG = LoggerFactory.getLogger(ProcessModelServiceImpl.class);
 
   @Autowired
   private ProcessModelRepository processModelRepository;
