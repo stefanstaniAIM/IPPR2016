@@ -3,6 +3,7 @@ import { AuthGuard } from '../../auth.guard';
 import { Processes } from './processes.component';
 import { ActiveProcesses } from './components/activeProcesses/activeProcesses.component';
 import { TerminatedProcesses } from './components/terminatedProcesses/terminatedProcesses.component';
+import { StartableProcesses } from './components/startableProcesses/startableProcesses.component';
 
 // noinspection TypeScriptValidateTypes
 const routes: Routes = [
@@ -12,7 +13,8 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       { path: 'active', component: ActiveProcesses },
-      { path: 'terminated', component: TerminatedProcesses }
+      { path: 'terminated', component: TerminatedProcesses },
+      { path: 'startable', component: StartableProcesses }
     ]
   }
 ];

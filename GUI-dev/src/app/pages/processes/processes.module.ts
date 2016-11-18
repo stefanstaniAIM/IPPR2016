@@ -8,8 +8,10 @@ import { routing }       from './processes.routing';
 
 import { ActiveProcesses } from './components/activeProcesses/activeProcesses.component';
 import { TerminatedProcesses } from './components/terminatedProcesses/terminatedProcesses.component';
+import { StartableProcesses } from './components/startableProcesses/startableProcesses.component';
 import { ActiveProcessesService } from './components/activeProcesses/activeProcesses.service';
 import { TerminatedProcessesService } from './components/terminatedProcesses/terminatedProcesses.service';
+import { StartableProcessesService } from './components/startableProcesses/startableProcesses.service';
 
 import { AuthGuard } from '../../auth.guard';
 
@@ -23,12 +25,14 @@ import { AuthGuard } from '../../auth.guard';
   declarations: [
     Processes,
     ActiveProcesses,
-    TerminatedProcesses
+    TerminatedProcesses,
+    StartableProcesses
   ],
   providers: [
     AuthGuard,
     ActiveProcessesService,
-    TerminatedProcessesService
+    TerminatedProcessesService,
+    StartableProcessesService
   ]
 })
 export default class ProcessesModule {}

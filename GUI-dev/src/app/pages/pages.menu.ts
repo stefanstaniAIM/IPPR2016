@@ -38,6 +38,14 @@ export const PAGES_MENU = [
           }
         },
         children: [
+         {
+            path: 'startable',
+            data: {
+              menu: {
+                title: 'Prozess starten'
+              }
+            }
+          },
           {
             path: 'active',
             data: {
