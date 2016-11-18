@@ -37,7 +37,6 @@ public class ProcessServiceImpl implements ProcessService {
   @Async
   @Override
   public Future<Object> startProcess(final Long processId) {
-    LOG.debug("asynchron");
     final CompletableFuture<Object> response =
         PatternsCS.ask(processSupervisorActor, new ProcessStartMessage(processId), TIMEOUT)
             .toCompletableFuture();
