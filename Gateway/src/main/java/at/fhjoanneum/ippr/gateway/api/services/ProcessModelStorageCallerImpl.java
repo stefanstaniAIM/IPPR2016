@@ -41,4 +41,19 @@ public class ProcessModelStorageCallerImpl {
     return restTemplate.exchange(uri.toString(), HttpMethod.GET, entity, ProcessModelDTO[].class);
   }
 
+  @Async
+  public Future<ResponseEntity<ProcessModelDTO[]>> findActiveProcessesToStart(
+      final HttpHeaderUser httpHeaderUser, final int page, final int size)
+      throws URISyntaxException {
+    LOG.debug("Create request to process model storage");
+    final AsyncRestTemplate restTemplate = new AsyncRestTemplate();
+
+
+    final URIBuilder uri =
+        new URIBuilder(gatewayConfig.getProcessModelStorageAddress()).setPath("/processesToStart")
+            .addParameter("page", "" + page).addParameter("size", "" + size);
+
+    final HttpEntity<String> entity = new HttpEntity<String>(null, httpHeaderUser.getHttpHeaders());
+    return restTemplate.exchange(uri.toString(), HttpMethod.GET, entity, ProcessModelDTO[].class);
+  }
 }
