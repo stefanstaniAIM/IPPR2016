@@ -15,19 +15,7 @@ export const PAGES_MENU = [
         }
       },
       {
-        path: 'processModels',
-        data: {
-          menu: {
-            title: 'Prozessmodelle',
-            icon: 'ion-document',
-            selected: false,
-            expanded: false,
-            order: 1,
-          }
-        }
-      },
-      {
-        path: 'processes',
+        path: 'myprocesses',
         data: {
           menu: {
             title: 'Prozesse',
@@ -68,14 +56,40 @@ export const PAGES_MENU = [
         path: 'admin',
         data: {
           menu: {
-            title: 'admin',
-            icon: 'ion-android-login',
+            title: 'Admin',
+            icon: 'ion-android-settings',
             selected: false,
             expanded: false,
             order: 3,
             isAdmin: true
           }
-        }
+        },
+        children: [
+         {
+            path: 'models',
+            data: {
+              menu: {
+                title: 'Prozessmodelle'
+              }
+            }
+          },
+          {
+            path: 'active',
+            data: {
+              menu: {
+                title: 'Aktive Prozesse'
+              }
+            }
+          },
+          {
+            path: 'terminated',
+            data: {
+              menu: {
+                title: 'Beendete Prozesse'
+              }
+            }
+          }
+        ]
       }
     ]
   }

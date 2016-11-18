@@ -1,20 +1,18 @@
-import {Component, ViewEncapsulation} from '@angular/core';
+import { Component } from '@angular/core';
 import { OnInit } from '@angular/core';
 import { ProcessModelsService } from './processModels.service';
 
 @Component({
-  selector: 'processModels',
-  encapsulation: ViewEncapsulation.None,
-  styles: [require('./processModels.scss')],
+  selector: 'models',
+  styles: [],
   template: require('./processModels.html')
 })
 export class ProcessModels implements OnInit {
-
    processModels = [];
+   error = undefined;
 
-  constructor(protected service:ProcessModelsService) {
-  }
-  
+  constructor(protected service:ProcessModelsService) {}
+
   ngOnInit(): void {
    this.service.getProcessModels()
       .subscribe(
@@ -22,13 +20,12 @@ export class ProcessModels implements OnInit {
             console.log(data);
             this.processModels = JSON.parse(data['_body']);
          },
-         err => console.log('ERROR: '+err),
+         err => this.error = err,
          () => console.log('Request Complete')
        );
   }
 
-  newProcess(pmId:number):void {
-      console.log("start new process: " +pmId);
+  deleteProcessModel(pmId:number):void {
+      console.log("delete processModel: " +pmId);
   }
-  
 }

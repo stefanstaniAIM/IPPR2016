@@ -4,7 +4,7 @@ import { ActiveProcessesService } from './activeProcesses.service';
 @Component({
   selector: 'activeProcesses',
   styles: [],
-  template: `<router-outlet></router-outlet>`
+  template:  require('./activeProcesses.html')
 })
 export class ActiveProcesses {
 

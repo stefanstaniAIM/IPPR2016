@@ -12,8 +12,8 @@ const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', loadChildren: () => System.import('./dashboard/dashboard.module') },
-      { path: 'processModels', loadChildren: () => System.import('./processModels/processModels.module') },
-      { path: 'processes', loadChildren: () => System.import('./processes/processes.module') },
+      { path: 'myprocesses', loadChildren: () => System.import('./myprocesses/myprocesses.module') },
+      { path: 'admin', loadChildren: () => System.import('./admin/admin.module') },
     ]
   }
 ];

@@ -3,15 +3,15 @@ import { CommonModule }  from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgaModule } from '../../theme/nga.module';
 
-import { Processes } from './processes.component';
-import { routing }       from './processes.routing';
+import { Admin } from './admin.component';
+import { routing }       from './admin.routing';
 
 import { ActiveProcesses } from './components/activeProcesses/activeProcesses.component';
 import { TerminatedProcesses } from './components/terminatedProcesses/terminatedProcesses.component';
-import { StartableProcesses } from './components/startableProcesses/startableProcesses.component';
+import { ProcessModels } from './components/processModels/processModels.component';
 import { ActiveProcessesService } from './components/activeProcesses/activeProcesses.service';
 import { TerminatedProcessesService } from './components/terminatedProcesses/terminatedProcesses.service';
-import { StartableProcessesService } from './components/startableProcesses/startableProcesses.service';
+import { ProcessModelsService } from './components/processModels/processModels.service';
 
 import { AuthGuard } from '../../auth.guard';
 
@@ -23,16 +23,16 @@ import { AuthGuard } from '../../auth.guard';
     routing
   ],
   declarations: [
-    Processes,
+    Admin,
     ActiveProcesses,
     TerminatedProcesses,
-    StartableProcesses
+    ProcessModels
   ],
   providers: [
     AuthGuard,
     ActiveProcessesService,
     TerminatedProcessesService,
-    StartableProcessesService
+    ProcessModelsService
   ]
 })
-export default class ProcessesModule {}
+export default class AdminModule {}

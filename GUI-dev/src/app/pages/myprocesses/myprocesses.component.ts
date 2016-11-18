@@ -1,11 +1,11 @@
 import {Component} from '@angular/core';
 
 @Component({
-  selector: 'processes',
+  selector: 'myprocesses',
   styles: [],
   template: `<router-outlet></router-outlet>`
 })
-export class Processes {
+export class MyProcesses {
 
   constructor() {
   }

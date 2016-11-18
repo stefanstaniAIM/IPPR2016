@@ -4,7 +4,7 @@ import { TerminatedProcessesService } from './terminatedProcesses.service';
 @Component({
   selector: 'terminatedProcesses',
   styles: [],
-  template: `<router-outlet></router-outlet>`
+  template: require('./terminatedProcesses.html')
 })
 export class TerminatedProcesses {
 

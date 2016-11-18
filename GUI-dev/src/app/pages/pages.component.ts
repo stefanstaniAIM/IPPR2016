@@ -13,12 +13,13 @@ import {Component, ViewEncapsulation} from '@angular/core';
       </div>
     </div>
     <footer class="al-footer clearfix">
-      <div class="al-footer-right">&copy; 2016 - 2017 Geisriegler, Kolodyi, Stani</div>
+      <div class="al-footer-right">&copy; 2016 - 2017 Geisriegler, Kolodiy, Stani</div>
     </footer>
     <ba-back-top position="200"></ba-back-top>
     `
 })
 export class Pages {
+
   constructor() {
   }
 

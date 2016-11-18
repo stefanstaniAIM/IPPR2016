@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
 import { OnInit } from '@angular/core';
 import { StartableProcessesService } from './startableProcesses.service';
 
@@ -8,11 +8,10 @@ import { StartableProcessesService } from './startableProcesses.service';
   template: require('./startableProcesses.html')
 })
 export class StartableProcesses implements OnInit {
-
    processModels = [];
+   error = undefined;
 
-  constructor(protected service:StartableProcessesService) {
-  }
+  constructor(protected service:StartableProcessesService) {}
 
   ngOnInit(): void {
    this.service.getProcessModels()
@@ -21,7 +20,7 @@ export class StartableProcesses implements OnInit {
             console.log(data);
             this.processModels = JSON.parse(data['_body']);
          },
-         err => console.log('ERROR: '+err),
+         err => this.error = err,
          () => console.log('Request Complete')
        );
   }

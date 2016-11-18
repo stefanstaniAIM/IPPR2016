@@ -1,6 +1,14 @@
+
+<div class="alert alert-danger alert-dismissible fade in" role="alert" *ngIf="error">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+  <strong>Error!</strong> {{error}}
+</div>
 <div class="row">
    <ba-card class="col-xlg-12 col-xl-12 col-lg-12 col-sm-12 col-xs-12">
-      <table class="table table-striped">
+      <h4 *ngIf="processModels.length < 1">Es gibt keine Prozesse, die Sie starten können!</h4>
+      <table class="table table-striped" *ngIf="processModels.length > 0">
          <thead>
             <tr>
                <th>#</th>
@@ -16,7 +24,7 @@
                <td>{{ processModel.name }}</td>
                <td>{{ processModel.description }}</td>
                <td>{{ processModel.createdAt }}</td>
-               <td><button class="btn btn-primary btn-sm" (click)="newProcess(processModel.pmId)">Start</button></td>
+               <td><button class="btn btn-primary btn-sm" (click)="deleteProcessModel(processModel.pmId)">Löschen</button></td>
             </tr>
          </tbody>
       </table>
