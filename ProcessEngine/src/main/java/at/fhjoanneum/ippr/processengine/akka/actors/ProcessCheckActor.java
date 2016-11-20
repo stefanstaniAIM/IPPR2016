@@ -1,7 +1,7 @@
 package at.fhjoanneum.ippr.processengine.akka.actors;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -11,6 +11,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import com.google.common.collect.Sets;
+import com.google.common.collect.Sets.SetView;
 
 import akka.actor.UntypedActor;
 import at.fhjoanneum.ippr.persistence.objects.model.process.ProcessModel;
@@ -42,11 +45,16 @@ public class ProcessCheckActor extends UntypedActor {
       if (optProcessModel.isPresent()) {
         final ProcessModel pm = optProcessModel.get();
 
-        final List<Long> storedSmIds =
-            pm.getSubjectModels().stream().map(SubjectModel::getSmId).collect(Collectors.toList());
+        final Set<Long> storedSmIds =
+            pm.getSubjectModels().stream().map(SubjectModel::getSmId).collect(Collectors.toSet());
+        final Set<Long> retrievedSmIds = Sets.newHashSet(msg.getSmIds());
 
-        checkResult = true;
-
+        final SetView<Long> difference = Sets.difference(storedSmIds, retrievedSmIds);
+        if (!difference.isEmpty()) {
+          LOG.error("Could not find the SM_IDs {}", difference);
+        } else {
+          checkResult = true;
+        }
       } else {
         LOG.error("Could not find process model for PM_ID [{}]", msg.getPmId());
       }
