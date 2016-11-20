@@ -11,7 +11,7 @@ import com.typesafe.config.ConfigFactory;
 import akka.actor.ActorSystem;
 
 @Configuration
-public class ApplicationConfiguration {
+public class AkkaApplicationConfiguration {
 
   @Autowired
   private ApplicationContext applicationContext;

@@ -2,18 +2,18 @@ package at.fhjoanneum.ippr.processengine.akka.messages.process;
 
 public class ProcessStartMessage {
 
-  private final Long processId;
+  private final Long pmId;
 
-  public ProcessStartMessage(final Long processId) {
-    this.processId = processId;
+  public ProcessStartMessage(final Long pmId) {
+    this.pmId = pmId;
   }
 
-  public Long getProcessId() {
-    return processId;
+  public Long getPmId() {
+    return pmId;
   }
 
   @Override
   public String toString() {
-    return "ProcessStartMessage [" + processId + "]";
+    return "ProcessStartMessage [" + pmId + "]";
   }
 }

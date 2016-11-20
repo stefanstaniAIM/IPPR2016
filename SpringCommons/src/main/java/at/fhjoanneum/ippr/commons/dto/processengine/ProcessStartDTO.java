@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ProcessStartDTO {
 
   private Long pmId;
-  private List<UserGroupAssignment> assignments;
+  private List<UserGroupAssignmentDTO> assignments;
 
   public ProcessStartDTO() {}
 
@@ -16,7 +16,7 @@ public class ProcessStartDTO {
     return pmId;
   }
 
-  public List<UserGroupAssignment> getAssignments() {
+  public List<UserGroupAssignmentDTO> getAssignments() {
     return assignments;
   }
 }

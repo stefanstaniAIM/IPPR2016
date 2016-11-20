@@ -19,14 +19,14 @@ public class ProcessInstanceBuilder implements Builder<ProcessInstance> {
   private ProcessModelImpl processModel;
   private final List<SubjectImpl> subjects = Lists.newArrayList();
 
-  ProcessInstanceBuilder processModel(final ProcessModel processModel) {
+  public ProcessInstanceBuilder processModel(final ProcessModel processModel) {
     checkNotNull(processModel);
     checkArgument(processModel instanceof ProcessModelImpl);
     this.processModel = (ProcessModelImpl) processModel;
     return this;
   }
 
-  ProcessInstanceBuilder addSubject(final Subject subject) {
+  public ProcessInstanceBuilder addSubject(final Subject subject) {
     checkNotNull(subject);
     checkArgument(subject instanceof SubjectImpl);
     this.subjects.add((SubjectImpl) subject);

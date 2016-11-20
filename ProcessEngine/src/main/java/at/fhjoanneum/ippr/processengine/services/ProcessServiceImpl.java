@@ -1,8 +1,11 @@
 package at.fhjoanneum.ippr.processengine.services;
 
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +17,13 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.pattern.PatternsCS;
 import akka.util.Timeout;
+import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartedDTO;
 import at.fhjoanneum.ippr.processengine.akka.config.SpringExtension;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStartMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStartedMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.check.ProcessCheckResponseMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.check.ProcessToCheckMessage;
 import scala.concurrent.duration.Duration;
 
 @Service
@@ -25,6 +33,11 @@ public class ProcessServiceImpl implements ProcessService {
 
   private final static Timeout TIMEOUT = new Timeout(Duration.create(10, TimeUnit.SECONDS));
 
+  @Autowired
+  private ActorSystem actorSystem;
+
+  @Autowired
+  private SpringExtension springExtension;
 
   private final ActorRef processSupervisorActor;
 
@@ -36,11 +49,44 @@ public class ProcessServiceImpl implements ProcessService {
 
   @Async
   @Override
-  public Future<Object> startProcess(final Long processId) {
-    final CompletableFuture<Object> response =
-        PatternsCS.ask(processSupervisorActor, new ProcessStartMessage(processId), TIMEOUT)
-            .toCompletableFuture();
+  public Future<ProcessStartedDTO> startProcess(final ProcessStartDTO processStartDTO) {
+    final CompletableFuture<ProcessStartedDTO> future = new CompletableFuture<>();
+    LOG.info("Ask ProcessCheckActor if parameters are correct for PM_ID [{}]",
+        processStartDTO.getPmId());
 
-    return response;
+    final ActorRef processCheckActor = actorSystem.actorOf(
+        springExtension.props("ProcessCheckActor"), "processCheckActor-" + new Random().nextInt());
+
+    final List<Long> subjects = processStartDTO.getAssignments().stream()
+        .map(assignment -> assignment.getSmId()).collect(Collectors.toList());
+
+    PatternsCS
+        .ask(processCheckActor, new ProcessToCheckMessage(processStartDTO.getPmId(), subjects),
+            TIMEOUT)
+        .toCompletableFuture().thenApply(obj -> (ProcessCheckResponseMessage) obj).whenComplete(
+            (msg, exc) -> handleCheckProcessResponse(processStartDTO.getPmId(), future, msg));
+
+    return future;
+  }
+
+  private void handleCheckProcessResponse(final Long processId,
+      final CompletableFuture<ProcessStartedDTO> future,
+      final ProcessCheckResponseMessage checkMsg) {
+    if (checkMsg.isCorrect()) {
+      PatternsCS.ask(processSupervisorActor, new ProcessStartMessage(processId), TIMEOUT)
+          .toCompletableFuture().thenApply(obj -> (ProcessStartedMessage) obj)
+          .whenComplete((msg, exc) -> handleProcessStartedResponse(future, msg, exc));
+    } else {
+      future.complete(new ProcessStartedDTO(null, "Process check returned false"));
+    }
+  }
+
+  private void handleProcessStartedResponse(final CompletableFuture<ProcessStartedDTO> future,
+      final ProcessStartedMessage msg, final Throwable exc) {
+    if (exc != null) {
+      future.complete(new ProcessStartedDTO(null, exc.getCause().getMessage()));
+    } else {
+      future.complete(new ProcessStartedDTO(msg.getProcessId(), null));
+    }
   }
 }

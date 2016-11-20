@@ -8,12 +8,12 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  */
 @XmlRootElement
-public class UserGroupAssignment {
+public class UserGroupAssignmentDTO {
   private Long smId;
   private Long userId;
   private Long groupId;
 
-  public UserGroupAssignment() {}
+  public UserGroupAssignmentDTO() {}
 
   public Long getSmId() {
     return smId;
