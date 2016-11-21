@@ -61,6 +61,7 @@ public class ProcessCheckActor extends UntypedActor {
 
       LOG.info("Result of process check = {}", checkResult);
       getSender().tell(new ProcessCheckResponseMessage(checkResult), getSelf());
+      getContext().stop(getSelf());
     } else {
       unhandled(obj);
     }
