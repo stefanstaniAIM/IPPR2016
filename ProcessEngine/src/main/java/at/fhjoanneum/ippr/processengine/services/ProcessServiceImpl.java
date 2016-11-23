@@ -1,7 +1,7 @@
 package at.fhjoanneum.ippr.processengine.services;
 
 import java.util.List;
-import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -55,7 +55,7 @@ public class ProcessServiceImpl implements ProcessService {
         processStartDTO.getPmId());
 
     final ActorRef processCheckActor = actorSystem.actorOf(
-        springExtension.props("ProcessCheckActor"), "processCheckActor-" + new Random().nextInt());
+        springExtension.props("ProcessCheckActor"), "processCheckActor-" + UUID.randomUUID());
 
     final List<Long> subjects = processStartDTO.getAssignments().stream()
         .map(assignment -> assignment.getSmId()).collect(Collectors.toList());
@@ -63,18 +63,26 @@ public class ProcessServiceImpl implements ProcessService {
     PatternsCS
         .ask(processCheckActor, new ProcessToCheckMessage(processStartDTO.getPmId(), subjects),
             TIMEOUT)
-        .toCompletableFuture().thenApply(obj -> (ProcessCheckResponseMessage) obj).whenComplete(
-            (msg, exc) -> handleCheckProcessResponse(processStartDTO.getPmId(), future, msg));
+        .toCompletableFuture().thenApply(obj -> (ProcessCheckResponseMessage) obj)
+        .whenComplete((msg, exc) -> handleCheckProcessResponse(processStartDTO, future, msg));
 
     return future;
   }
 
-  private void handleCheckProcessResponse(final Long processId,
+  private void handleCheckProcessResponse(final ProcessStartDTO processStartDTO,
       final CompletableFuture<ProcessStartedDTO> future,
       final ProcessCheckResponseMessage checkMsg) {
     if (checkMsg.isCorrect()) {
-      PatternsCS.ask(processSupervisorActor, new ProcessStartMessage(processId), TIMEOUT)
-          .toCompletableFuture().thenApply(obj -> (ProcessStartedMessage) obj)
+      final List<ProcessStartMessage.UserGroupAssignment> assignments =
+          processStartDTO.getAssignments().stream()
+              .map(entry -> new ProcessStartMessage.UserGroupAssignment(entry.getSmId(),
+                  entry.getUserId(), entry.getGroupId()))
+              .collect(Collectors.toList());
+      final ProcessStartMessage processStartMessage =
+          new ProcessStartMessage(processStartDTO.getPmId(), assignments);
+
+      PatternsCS.ask(processSupervisorActor, processStartMessage, TIMEOUT).toCompletableFuture()
+          .thenApply(obj -> (ProcessStartedMessage) obj)
           .whenComplete((msg, exc) -> handleProcessStartedResponse(future, msg, exc));
     } else {
       future.complete(new ProcessStartedDTO(null, "Process check returned false"));

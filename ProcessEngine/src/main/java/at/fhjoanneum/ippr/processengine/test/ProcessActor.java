@@ -1,5 +1,9 @@
 package at.fhjoanneum.ippr.processengine.test;
 
+import java.util.Optional;
+
+import javax.transaction.Transactional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,10 +11,18 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import akka.actor.UntypedActor;
+import at.fhjoanneum.ippr.persistence.entities.engine.process.ProcessInstanceBuilder;
+import at.fhjoanneum.ippr.persistence.entities.engine.process.ProcessInstanceImpl;
+import at.fhjoanneum.ippr.persistence.entities.engine.subject.SubjectBuilder;
+import at.fhjoanneum.ippr.persistence.objects.engine.subject.Subject;
+import at.fhjoanneum.ippr.persistence.objects.model.process.ProcessModel;
+import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStartMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStartMessage.UserGroupAssignment;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStartedMessage;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessModelRepository;
+import at.fhjoanneum.ippr.processengine.repositories.SubjectModelRepository;
 
 @Component("ProcessActor")
 @Scope("prototype")
@@ -20,6 +32,9 @@ public class ProcessActor extends UntypedActor {
 
   @Autowired
   private ProcessModelRepository processModelRepository;
+
+  @Autowired
+  private SubjectModelRepository subjectModelRepository;
 
   @Autowired
   private ProcessInstanceRepository processInstanceRepository;
@@ -33,10 +48,39 @@ public class ProcessActor extends UntypedActor {
     }
   }
 
+  @Transactional
   private void handleProcessStartMessage(final ProcessStartMessage msg) {
-    LOG.info("Handle ProcessStartMessage and will create new process instance");
+    try {
+      LOG.info("Handle ProcessStartMessage and will create new process instance");
+      final ProcessInstanceBuilder processBuilder = new ProcessInstanceBuilder();
+
+      final Optional<ProcessModel> processModel =
+          Optional.ofNullable(processModelRepository.findOne(msg.getPmId()));
+      if (!processModel.isPresent()) {
+        throw new IllegalStateException("Could not find process model");
+      }
+      processBuilder.processModel(processModel.get());
+
+      msg.getUserGroupAssignments().stream().forEach(entry -> createSubject(processBuilder, entry));
+
+      processInstanceRepository.save((ProcessInstanceImpl) processBuilder.build());
+    } catch (final Exception e) {
+      getSender().tell(new akka.actor.Status.Failure(e), getSelf());
+    }
+
 
     getSender().tell(new ProcessStartedMessage(2222L), getSelf());
-    getSender().tell(new akka.actor.Status.Failure(new Exception("oh no no no")), getSelf());
+  }
+
+  private void createSubject(final ProcessInstanceBuilder processBuilder,
+      final UserGroupAssignment entry) {
+    final Optional<SubjectModel> subjectModel =
+        Optional.ofNullable(subjectModelRepository.findOne(entry.getSmId()));
+    if (!subjectModel.isPresent()) {
+      throw new IllegalStateException("Could not find subject model");
+    }
+    final Subject subject = new SubjectBuilder().subjectModel(subjectModel.get())
+        .userId(entry.getUserId()).groupId(entry.getGroupId()).build();
+    processBuilder.addSubject(subject);
   }
 }

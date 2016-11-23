@@ -14,20 +14,20 @@ public class SubjectBuilder implements Builder<Subject> {
   private Long userId;
   private Long groupId;
 
-  SubjectBuilder subjectModel(final SubjectModel subjectModel) {
+  public SubjectBuilder subjectModel(final SubjectModel subjectModel) {
     checkNotNull(subjectModel);
     checkArgument(subjectModel instanceof SubjectModelImpl);
     this.subjectModel = (SubjectModelImpl) subjectModel;
     return this;
   }
 
-  SubjectBuilder userId(final Long userId) {
+  public SubjectBuilder userId(final Long userId) {
     checkNotNull(userId);
     this.userId = userId;
     return this;
   }
 
-  SubjectBuilder groupId(final Long groupId) {
+  public SubjectBuilder groupId(final Long groupId) {
     checkNotNull(groupId);
     this.groupId = groupId;
     return this;
