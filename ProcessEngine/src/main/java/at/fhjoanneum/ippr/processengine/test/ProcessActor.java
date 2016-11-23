@@ -21,7 +21,6 @@ import at.fhjoanneum.ippr.persistence.objects.model.process.ProcessModel;
 import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStartMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStartMessage.UserGroupAssignment;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStartedMessage;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessModelRepository;
 import at.fhjoanneum.ippr.processengine.repositories.SubjectModelRepository;
@@ -47,15 +46,15 @@ public class ProcessActor extends UntypedActor {
 
   @Override
   public void onReceive(final Object msg) throws Throwable {
-    if (msg instanceof ProcessStartMessage) {
-      handleProcessStartMessage((ProcessStartMessage) msg);
+    if (msg instanceof ProcessStartMessage.Request) {
+      handleProcessStartMessage((ProcessStartMessage.Request) msg);
     } else {
       unhandled(msg);
     }
   }
 
   @Transactional
-  private void handleProcessStartMessage(final ProcessStartMessage msg) {
+  private void handleProcessStartMessage(final ProcessStartMessage.Request msg) {
     try {
       LOG.info("Handle ProcessStartMessage and will create new process instance");
       final ProcessInstanceBuilder processBuilder = new ProcessInstanceBuilder();
@@ -74,7 +73,7 @@ public class ProcessActor extends UntypedActor {
           processInstanceRepository.save((ProcessInstanceImpl) processBuilder.build());
       LOG.info("Created new process instance: {}", processInstance);
 
-      getSender().tell(new ProcessStartedMessage(processInstance.getPiId()), getSelf());
+      getSender().tell(new ProcessStartMessage.Response(processInstance.getPiId()), getSelf());
     } catch (final Exception e) {
       getSender().tell(new akka.actor.Status.Failure(e), getSelf());
     }

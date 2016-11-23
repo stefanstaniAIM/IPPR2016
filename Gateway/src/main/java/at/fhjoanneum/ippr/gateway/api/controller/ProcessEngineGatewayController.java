@@ -20,6 +20,7 @@ import at.fhjoanneum.ippr.gateway.api.controller.user.HttpHeaderUser;
 import at.fhjoanneum.ippr.gateway.api.services.impl.ProcessEngineCallerImpl;
 
 @RestController
+@RequestMapping(produces = "application/json; charset=UTF-8")
 public class ProcessEngineGatewayController {
 
   private static final Logger LOG =
@@ -28,14 +29,22 @@ public class ProcessEngineGatewayController {
   @Autowired
   private ProcessEngineCallerImpl processEngineCaller;
 
-  @RequestMapping(value = "api/startProcess", method = RequestMethod.POST,
-      consumes = "application/json", produces = "application/json; charset=UTF-8")
+  @RequestMapping(value = "api/startProcess", method = RequestMethod.POST)
   public @ResponseBody Callable<ResponseEntity<ProcessStartedDTO>> startProcess(
       @RequestBody final ProcessStartDTO processStartDTO, final HttpServletRequest request) {
 
     return () -> {
       final HttpHeaderUser user = new HttpHeaderUser(request);
       return processEngineCaller.startProcess(processStartDTO, user).get();
+    };
+  }
+
+  @RequestMapping(value = "api/amountOfActiveProcesses", method = RequestMethod.GET)
+  public @ResponseBody Callable<ResponseEntity<Long>> getAmountOfActiveProcesses(
+      final HttpServletRequest request) {
+
+    return () -> {
+      return processEngineCaller.getAmountOfActiveProcesses().get();
     };
   }
 }

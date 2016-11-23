@@ -19,6 +19,7 @@ import at.fhjoanneum.ippr.gateway.api.controller.user.HttpHeaderUser;
 import at.fhjoanneum.ippr.gateway.api.services.impl.ProcessModelStorageCallerImpl;
 
 @RestController
+@RequestMapping(produces = "application/json; charset=UTF-8")
 public class ProcessModelStorageGatewayController {
 
   private static final Logger LOG =
@@ -27,8 +28,7 @@ public class ProcessModelStorageGatewayController {
   @Autowired
   private ProcessModelStorageCallerImpl processModelStorageCaller;
 
-  @RequestMapping(value = "api/processes", method = RequestMethod.GET,
-      produces = "application/json; charset=UTF-8")
+  @RequestMapping(value = "api/processes", method = RequestMethod.GET)
   public @ResponseBody Callable<ResponseEntity<ProcessModelDTO[]>> findActiveProcesses(
       final HttpServletRequest request,
       @RequestParam(value = "page", required = true) final int page,
@@ -39,8 +39,7 @@ public class ProcessModelStorageGatewayController {
     };
   }
 
-  @RequestMapping(value = "api/processesToStart", method = RequestMethod.GET,
-      produces = "application/json; charset=UTF-8")
+  @RequestMapping(value = "api/processesToStart", method = RequestMethod.GET)
   public @ResponseBody Callable<ResponseEntity<ProcessModelDTO[]>> findActiveProcessesToStart(
       final HttpServletRequest request,
       @RequestParam(value = "page", required = true) final int page,

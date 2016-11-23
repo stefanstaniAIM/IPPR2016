@@ -20,8 +20,8 @@ import akka.util.Timeout;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartedDTO;
 import at.fhjoanneum.ippr.processengine.akka.config.SpringExtension;
+import at.fhjoanneum.ippr.processengine.akka.messages.analysis.AmountOfActiveProcessesMessages;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStartMessage;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStartedMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.check.ProcessCheckResponseMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.check.ProcessToCheckMessage;
 import scala.concurrent.duration.Duration;
@@ -40,6 +40,8 @@ public class ProcessServiceImpl implements ProcessService {
   private SpringExtension springExtension;
 
   private final ActorRef processSupervisorActor;
+
+
 
   @Autowired
   public ProcessServiceImpl(final ActorSystem actorSystem, final SpringExtension springExtension) {
@@ -78,11 +80,11 @@ public class ProcessServiceImpl implements ProcessService {
               .map(entry -> new ProcessStartMessage.UserGroupAssignment(entry.getSmId(),
                   entry.getUserId(), entry.getGroupId()))
               .collect(Collectors.toList());
-      final ProcessStartMessage processStartMessage =
-          new ProcessStartMessage(processStartDTO.getPmId(), assignments);
+      final ProcessStartMessage.Request processStartMessage =
+          new ProcessStartMessage.Request(processStartDTO.getPmId(), assignments);
 
       PatternsCS.ask(processSupervisorActor, processStartMessage, TIMEOUT).toCompletableFuture()
-          .thenApply(obj -> (ProcessStartedMessage) obj)
+          .thenApply(obj -> (ProcessStartMessage.Response) obj)
           .whenComplete((msg, exc) -> handleProcessStartedResponse(future, msg, exc));
     } else {
       future.complete(new ProcessStartedDTO(null, "Process check returned false"));
@@ -90,11 +92,26 @@ public class ProcessServiceImpl implements ProcessService {
   }
 
   private void handleProcessStartedResponse(final CompletableFuture<ProcessStartedDTO> future,
-      final ProcessStartedMessage msg, final Throwable exc) {
+      final ProcessStartMessage.Response msg, final Throwable exc) {
     if (exc != null) {
       future.complete(new ProcessStartedDTO(null, exc.getCause().getMessage()));
     } else {
       future.complete(new ProcessStartedDTO(msg.getProcessId(), null));
     }
+  }
+
+  @Async
+  @Override
+  public Future<Long> getAmountOfActiveProcesses() {
+    final CompletableFuture<Long> future = new CompletableFuture<>();
+
+    final ActorRef analysisActor = actorSystem.actorOf(
+        springExtension.props("ProcessAnalysisActor"), "processAnalysisActor-" + UUID.randomUUID());
+
+    PatternsCS.ask(analysisActor, new AmountOfActiveProcessesMessages.Request(), TIMEOUT)
+        .toCompletableFuture().thenApply(obj -> (AmountOfActiveProcessesMessages.Response) obj)
+        .whenComplete((msg, exc) -> future.complete(msg.getAmount()));
+
+    return future;
   }
 }

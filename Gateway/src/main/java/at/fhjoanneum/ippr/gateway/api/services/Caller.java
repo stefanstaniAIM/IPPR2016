@@ -18,7 +18,9 @@ public interface Caller {
   public default <I, O> Future<ResponseEntity<O>> createRequest(final URIBuilder uri,
       final HttpMethod method, final I body, final Class<O> returnClazz, final HttpHeaders header) {
     final AsyncRestTemplate restTemplate = new AsyncRestTemplate();
-    header.setContentType(MediaType.APPLICATION_JSON);
+    if (header != null) {
+      header.setContentType(MediaType.APPLICATION_JSON);
+    }
 
     HttpEntity<?> entity;
     if (body != null) {

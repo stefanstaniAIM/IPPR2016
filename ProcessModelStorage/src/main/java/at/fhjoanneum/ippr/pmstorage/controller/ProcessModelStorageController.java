@@ -20,6 +20,7 @@ import at.fhjoanneum.ippr.commons.dto.pmstorage.ProcessModelDTO;
 import at.fhjoanneum.ippr.pmstorage.services.ProcessModelService;
 
 @RestController
+@RequestMapping(produces = "application/json; charset=UTF-8")
 public class ProcessModelStorageController {
 
   private static final Logger LOG = LoggerFactory.getLogger(ProcessModelStorageController.class);
@@ -27,8 +28,7 @@ public class ProcessModelStorageController {
   @Autowired
   private ProcessModelService processModelService;
 
-  @RequestMapping(value = "processes", method = RequestMethod.GET,
-      produces = "application/json; charset=UTF-8")
+  @RequestMapping(value = "processes", method = RequestMethod.GET)
   public @ResponseBody Callable<List<ProcessModelDTO>> getAllProcesses(
       final HttpServletRequest request,
       @RequestParam(value = "page", required = true) final int page,
@@ -41,8 +41,7 @@ public class ProcessModelStorageController {
     };
   }
 
-  @RequestMapping(value = "processesToStart", method = RequestMethod.GET,
-      produces = "application/json; charset=UTF-8")
+  @RequestMapping(value = "processesToStart", method = RequestMethod.GET)
   public @ResponseBody Callable<List<ProcessModelDTO>> getProcessesToStart(
       final HttpServletRequest request,
       @RequestParam(value = "page", required = true) final int page,

@@ -42,4 +42,12 @@ public class ProcessEngineCallerImpl implements Caller {
     final HttpHeaders header = headerUser.getHttpHeaders();
     return createRequest(uri, HttpMethod.POST, processStartDTO, ProcessStartedDTO.class, header);
   }
+
+  @Async
+  public Future<ResponseEntity<Long>> getAmountOfActiveProcesses() throws URISyntaxException {
+    final URIBuilder uri =
+        new URIBuilder(gatewayConfig.getProcessEngineAddress()).setPath("/amountOfActiveProcesses");
+
+    return createRequest(uri, HttpMethod.GET, null, Long.class, null);
+  }
 }

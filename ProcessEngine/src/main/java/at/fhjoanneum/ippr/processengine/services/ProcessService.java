@@ -8,4 +8,6 @@ import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartedDTO;
 public interface ProcessService {
 
   Future<ProcessStartedDTO> startProcess(final ProcessStartDTO processStartDTO);
+
+  Future<Long> getAmountOfActiveProcesses();
 }

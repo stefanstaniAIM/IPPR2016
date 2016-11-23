@@ -4,26 +4,39 @@ import java.util.List;
 
 public class ProcessStartMessage {
 
-  private final Long pmId;
-  private final List<UserGroupAssignment> userGroupAssignments;
+  public static class Request {
+    private final Long pmId;
+    private final List<UserGroupAssignment> userGroupAssignments;
 
-  public ProcessStartMessage(final Long pmId,
-      final List<UserGroupAssignment> userGroupAssignments) {
-    this.pmId = pmId;
-    this.userGroupAssignments = userGroupAssignments;
+    public Request(final Long pmId, final List<UserGroupAssignment> userGroupAssignments) {
+      this.pmId = pmId;
+      this.userGroupAssignments = userGroupAssignments;
+    }
+
+    public Long getPmId() {
+      return pmId;
+    }
+
+    public List<UserGroupAssignment> getUserGroupAssignments() {
+      return userGroupAssignments;
+    }
+
+    @Override
+    public String toString() {
+      return "ProcessStartMessage [" + pmId + "]";
+    }
   }
 
-  public Long getPmId() {
-    return pmId;
-  }
+  public static class Response {
+    private final Long processId;
 
-  public List<UserGroupAssignment> getUserGroupAssignments() {
-    return userGroupAssignments;
-  }
+    public Response(final Long processId) {
+      this.processId = processId;
+    }
 
-  @Override
-  public String toString() {
-    return "ProcessStartMessage [" + pmId + "]";
+    public Long getProcessId() {
+      return processId;
+    }
   }
 
   public static class UserGroupAssignment {
