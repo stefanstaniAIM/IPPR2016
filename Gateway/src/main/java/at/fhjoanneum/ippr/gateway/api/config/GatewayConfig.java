@@ -9,7 +9,14 @@ public class GatewayConfig {
   @Value("${ipconfig.pmstorage}")
   private String processModelStorageAddress;
 
+  @Value("${ipconfig.engine}")
+  private String processEngineAddress;
+
   public String getProcessModelStorageAddress() {
     return processModelStorageAddress;
+  }
+
+  public String getProcessEngineAddress() {
+    return processEngineAddress;
   }
 }

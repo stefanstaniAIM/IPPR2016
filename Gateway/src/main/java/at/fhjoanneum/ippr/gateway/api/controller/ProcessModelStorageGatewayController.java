@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import at.fhjoanneum.ippr.commons.dto.pmstorage.ProcessModelDTO;
 import at.fhjoanneum.ippr.gateway.api.controller.user.HttpHeaderUser;
-import at.fhjoanneum.ippr.gateway.api.services.ProcessModelStorageCallerImpl;
+import at.fhjoanneum.ippr.gateway.api.services.impl.ProcessModelStorageCallerImpl;
 
 @RestController
 public class ProcessModelStorageGatewayController {

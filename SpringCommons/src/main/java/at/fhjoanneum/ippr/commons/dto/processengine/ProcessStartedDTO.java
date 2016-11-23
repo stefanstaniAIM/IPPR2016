@@ -1,11 +1,15 @@
 package at.fhjoanneum.ippr.commons.dto.processengine;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class ProcessStartedDTO {
-  private final Long piId;
-  private final String error;
+public class ProcessStartedDTO implements Serializable {
+  private Long piId;
+  private String error;
+
+  public ProcessStartedDTO() {}
 
   public ProcessStartedDTO(final Long piId, final String error) {
     this.piId = piId;

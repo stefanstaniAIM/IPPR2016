@@ -30,7 +30,7 @@ public class WebApplication {
     final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     final CorsConfiguration config = new CorsConfiguration();
     config.setAllowCredentials(true);
-    config.addAllowedOrigin("http://localhost:3000");
+    config.addAllowedOrigin("*");
     config.addAllowedHeader("*");
     config.addAllowedMethod("*");
     source.registerCorsConfiguration("/**", config);

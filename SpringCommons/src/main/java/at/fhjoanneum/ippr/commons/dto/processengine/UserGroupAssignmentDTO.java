@@ -1,5 +1,7 @@
 package at.fhjoanneum.ippr.commons.dto.processengine;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -8,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  */
 @XmlRootElement
-public class UserGroupAssignmentDTO {
+public class UserGroupAssignmentDTO implements Serializable {
   private Long smId;
   private Long userId;
   private Long groupId;

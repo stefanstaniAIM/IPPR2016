@@ -2,6 +2,8 @@ package at.fhjoanneum.ippr.processengine.controller;
 
 import java.util.concurrent.Callable;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +27,7 @@ public class ProcessEngineController {
 
   @RequestMapping(value = "startProcess", method = RequestMethod.POST,
       produces = "application/json; charset=UTF-8")
-  public @ResponseBody Callable<ProcessStartedDTO> startProcess(
+  public @ResponseBody Callable<ProcessStartedDTO> startProcess(final HttpServletRequest request,
       @RequestBody final ProcessStartDTO processStartDTO) {
     LOG.info("Received request to start process with PM_ID [{}]", processStartDTO.getPmId());
 
