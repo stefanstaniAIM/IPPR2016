@@ -14,6 +14,8 @@ import akka.actor.UntypedActor;
 import at.fhjoanneum.ippr.persistence.entities.engine.process.ProcessInstanceBuilder;
 import at.fhjoanneum.ippr.persistence.entities.engine.process.ProcessInstanceImpl;
 import at.fhjoanneum.ippr.persistence.entities.engine.subject.SubjectBuilder;
+import at.fhjoanneum.ippr.persistence.entities.engine.subject.SubjectImpl;
+import at.fhjoanneum.ippr.persistence.objects.engine.process.ProcessInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.subject.Subject;
 import at.fhjoanneum.ippr.persistence.objects.model.process.ProcessModel;
 import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
@@ -23,6 +25,7 @@ import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStartedMess
 import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessModelRepository;
 import at.fhjoanneum.ippr.processengine.repositories.SubjectModelRepository;
+import at.fhjoanneum.ippr.processengine.repositories.SubjectReposistory;
 
 @Component("ProcessActor")
 @Scope("prototype")
@@ -38,6 +41,9 @@ public class ProcessActor extends UntypedActor {
 
   @Autowired
   private ProcessInstanceRepository processInstanceRepository;
+
+  @Autowired
+  private SubjectReposistory subjectRepository;
 
   @Override
   public void onReceive(final Object msg) throws Throwable {
@@ -61,26 +67,36 @@ public class ProcessActor extends UntypedActor {
       }
       processBuilder.processModel(processModel.get());
 
-      msg.getUserGroupAssignments().stream().forEach(entry -> createSubject(processBuilder, entry));
+      msg.getUserGroupAssignments().stream().map(entry -> createSubject(processBuilder, entry))
+          .forEach(subject -> subjectRepository.save((SubjectImpl) subject));
 
-      processInstanceRepository.save((ProcessInstanceImpl) processBuilder.build());
+      final ProcessInstance processInstance =
+          processInstanceRepository.save((ProcessInstanceImpl) processBuilder.build());
+      LOG.info("Created new process instance: {}", processInstance);
+
+      getSender().tell(new ProcessStartedMessage(processInstance.getPiId()), getSelf());
     } catch (final Exception e) {
       getSender().tell(new akka.actor.Status.Failure(e), getSelf());
     }
-
-
-    getSender().tell(new ProcessStartedMessage(2222L), getSelf());
   }
 
-  private void createSubject(final ProcessInstanceBuilder processBuilder,
-      final UserGroupAssignment entry) {
+  private Subject createSubject(final ProcessInstanceBuilder processBuilder,
+      final UserGroupAssignment entry) throws IllegalStateException {
     final Optional<SubjectModel> subjectModel =
         Optional.ofNullable(subjectModelRepository.findOne(entry.getSmId()));
     if (!subjectModel.isPresent()) {
       throw new IllegalStateException("Could not find subject model");
     }
-    final Subject subject = new SubjectBuilder().subjectModel(subjectModel.get())
-        .userId(entry.getUserId()).groupId(entry.getGroupId()).build();
+
+    final SubjectBuilder builder = new SubjectBuilder().subjectModel(subjectModel.get());
+    if (entry.getUserId() != null) {
+      builder.userId(entry.getUserId());
+    } else {
+      builder.groupId(entry.getGroupId());
+    }
+
+    final Subject subject = builder.build();
     processBuilder.addSubject(subject);
+    return subject;
   }
 }
