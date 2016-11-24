@@ -1,7 +1,8 @@
 package at.fhjoanneum.ippr.processengine.test;
 
 import java.util.Optional;
-import java.util.Random;
+
+import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,9 +12,22 @@ import org.springframework.stereotype.Component;
 
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
+import at.fhjoanneum.ippr.persistence.entities.engine.process.ProcessInstanceBuilder;
+import at.fhjoanneum.ippr.persistence.entities.engine.process.ProcessInstanceImpl;
+import at.fhjoanneum.ippr.persistence.entities.engine.subject.SubjectBuilder;
+import at.fhjoanneum.ippr.persistence.entities.engine.subject.SubjectImpl;
+import at.fhjoanneum.ippr.persistence.objects.engine.process.ProcessInstance;
+import at.fhjoanneum.ippr.persistence.objects.engine.subject.Subject;
+import at.fhjoanneum.ippr.persistence.objects.model.process.ProcessModel;
+import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
 import at.fhjoanneum.ippr.processengine.akka.AkkaSelector;
 import at.fhjoanneum.ippr.processengine.akka.config.SpringExtension;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStartMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStartMessage.UserGroupAssignment;
+import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
+import at.fhjoanneum.ippr.processengine.repositories.ProcessModelRepository;
+import at.fhjoanneum.ippr.processengine.repositories.SubjectModelRepository;
+import at.fhjoanneum.ippr.processengine.repositories.SubjectReposistory;
 
 @Component("ProcessSupervisorActor")
 @Scope("prototype")
@@ -24,30 +38,78 @@ public class ProcessSupervisorActor extends UntypedActor {
   private final AkkaSelector akkaSelector = new AkkaSelector();
 
   @Autowired
+  private ProcessModelRepository processModelRepository;
+  @Autowired
+  private SubjectModelRepository subjectModelRepository;
+  @Autowired
+  private ProcessInstanceRepository processInstanceRepository;
+  @Autowired
+  private SubjectReposistory subjectRepository;
+
+  @Autowired
   private SpringExtension springExtension;
 
   @Override
-  public void onReceive(final Object msg) throws Throwable {
-    if (msg instanceof ProcessStartMessage) {
-      LOG.info("Received {} and forward it to process", msg);
+  public void onReceive(final Object obj) throws Throwable {
+    if (obj instanceof ProcessStartMessage.Request) {
+      LOG.info("Received {} and create actor for it", obj);
+      final ProcessStartMessage.Request msg = (ProcessStartMessage.Request) obj;
+      handleProcessStartMessage(msg);
+    } else {
+      unhandled(obj);
+    }
+  }
 
-      // TODO retrieve everything from database and create new instance
-      final int id = new Random().nextInt();
-      final String processInstanceId = "Process_" + id;
+  @Transactional
+  private void handleProcessStartMessage(final ProcessStartMessage.Request msg) {
+    try {
+      LOG.info("Handle ProcessStartMessage and will create new process instance");
+      final ProcessInstanceBuilder processBuilder = new ProcessInstanceBuilder();
 
+      final Optional<ProcessModel> processModel =
+          Optional.ofNullable(processModelRepository.findOne(msg.getPmId()));
+      if (!processModel.isPresent()) {
+        throw new IllegalStateException("Could not find process model");
+      }
+      processBuilder.processModel(processModel.get());
+
+      msg.getUserGroupAssignments().stream().map(entry -> createSubject(processBuilder, entry))
+          .forEach(subject -> subjectRepository.save((SubjectImpl) subject));
+
+      final ProcessInstance processInstance =
+          processInstanceRepository.save((ProcessInstanceImpl) processBuilder.build());
+      LOG.info("Created new process instance: {}", processInstance);
+
+      final String processInstanceId = "Process_" + processInstance.getPiId();
       final Optional<ActorRef> actorOpt = akkaSelector.findActor(getContext(), processInstanceId);
       if (!actorOpt.isPresent()) {
-        getContext().actorOf(springExtension.props("ProcessActor"), processInstanceId).forward(msg,
-            getContext());
-
-        // getContext().actorOf(Props.create(ProcessActor.class), processInstanceId).forward(msg,
-        // getContext());
-      } else {
-        actorOpt.get().forward(msg, getContext());
+        getContext().actorOf(springExtension.props("ProcessActor"), processInstanceId);
       }
-    } else {
-      unhandled(msg);
+
+      getSender().tell(new ProcessStartMessage.Response(processInstance.getPiId()), getSelf());
+    } catch (final Exception e) {
+      getSender().tell(new akka.actor.Status.Failure(e), getSelf());
     }
+  }
+
+  private Subject createSubject(final ProcessInstanceBuilder processBuilder,
+      final UserGroupAssignment entry) throws IllegalStateException {
+    final Optional<SubjectModel> subjectModel =
+        Optional.ofNullable(subjectModelRepository.findOne(entry.getSmId()));
+    if (!subjectModel.isPresent()) {
+      throw new IllegalStateException("Could not find subject model");
+    }
+
+    final SubjectBuilder builder = new SubjectBuilder().subjectModel(subjectModel.get());
+    if (entry.getUserId() != null) {
+      builder.userId(entry.getUserId());
+    } else {
+      builder.groupId(entry.getGroupId());
+    }
+
+    final Subject subject = builder.build();
+    processBuilder.addSubject(subject);
+    return subject;
   }
 
 }

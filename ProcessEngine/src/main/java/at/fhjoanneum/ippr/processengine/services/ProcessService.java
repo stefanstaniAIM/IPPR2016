@@ -10,4 +10,6 @@ public interface ProcessService {
   Future<ProcessStartedDTO> startProcess(final ProcessStartDTO processStartDTO);
 
   Future<Long> getAmountOfActiveProcesses();
+
+  Future<Long> getAmountOfActiveProcessesPerUser(Long userId);
 }

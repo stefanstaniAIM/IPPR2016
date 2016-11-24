@@ -18,8 +18,7 @@ import com.google.common.collect.Sets.SetView;
 import akka.actor.UntypedActor;
 import at.fhjoanneum.ippr.persistence.objects.model.process.ProcessModel;
 import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.check.ProcessCheckResponseMessage;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.check.ProcessToCheckMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.check.ProcessCheckMessage;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessModelRepository;
 
 @Component("ProcessCheckActor")
@@ -34,8 +33,8 @@ public class ProcessCheckActor extends UntypedActor {
   @Transactional
   @Override
   public void onReceive(final Object obj) throws Throwable {
-    if (obj instanceof ProcessToCheckMessage) {
-      final ProcessToCheckMessage msg = (ProcessToCheckMessage) obj;
+    if (obj instanceof ProcessCheckMessage.Request) {
+      final ProcessCheckMessage.Request msg = (ProcessCheckMessage.Request) obj;
       LOG.debug("Received ProcessToCheckMessage for PM_ID [{}]", msg.getPmId());
 
       boolean checkResult = false;
@@ -60,7 +59,7 @@ public class ProcessCheckActor extends UntypedActor {
       }
 
       LOG.info("Result of process check = {}", checkResult);
-      getSender().tell(new ProcessCheckResponseMessage(checkResult), getSelf());
+      getSender().tell(new ProcessCheckMessage.Response(checkResult), getSelf());
       getContext().stop(getSelf());
     } else {
       unhandled(obj);

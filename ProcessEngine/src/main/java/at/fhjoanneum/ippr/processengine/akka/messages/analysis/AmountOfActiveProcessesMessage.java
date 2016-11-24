@@ -1,6 +1,6 @@
 package at.fhjoanneum.ippr.processengine.akka.messages.analysis;
 
-public class AmountOfActiveProcessesMessages {
+public class AmountOfActiveProcessesMessage {
 
   public static class Request {
   }

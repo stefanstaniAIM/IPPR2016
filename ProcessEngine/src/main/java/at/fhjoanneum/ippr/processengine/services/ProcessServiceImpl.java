@@ -19,11 +19,12 @@ import akka.pattern.PatternsCS;
 import akka.util.Timeout;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartedDTO;
+import at.fhjoanneum.ippr.persistence.objects.engine.enums.ProcessInstanceState;
 import at.fhjoanneum.ippr.processengine.akka.config.SpringExtension;
-import at.fhjoanneum.ippr.processengine.akka.messages.analysis.AmountOfActiveProcessesMessages;
+import at.fhjoanneum.ippr.processengine.akka.messages.analysis.AmountOfActiveProcessesMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.analysis.AmountOfProcessesPerUserMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStartMessage;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.check.ProcessCheckResponseMessage;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.check.ProcessToCheckMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.check.ProcessCheckMessage;
 import scala.concurrent.duration.Duration;
 
 @Service
@@ -40,8 +41,6 @@ public class ProcessServiceImpl implements ProcessService {
   private SpringExtension springExtension;
 
   private final ActorRef processSupervisorActor;
-
-
 
   @Autowired
   public ProcessServiceImpl(final ActorSystem actorSystem, final SpringExtension springExtension) {
@@ -63,9 +62,9 @@ public class ProcessServiceImpl implements ProcessService {
         .map(assignment -> assignment.getSmId()).collect(Collectors.toList());
 
     PatternsCS
-        .ask(processCheckActor, new ProcessToCheckMessage(processStartDTO.getPmId(), subjects),
-            TIMEOUT)
-        .toCompletableFuture().thenApply(obj -> (ProcessCheckResponseMessage) obj)
+        .ask(processCheckActor,
+            new ProcessCheckMessage.Request(processStartDTO.getPmId(), subjects), TIMEOUT)
+        .toCompletableFuture().thenApply(obj -> (ProcessCheckMessage.Response) obj)
         .whenComplete((msg, exc) -> handleCheckProcessResponse(processStartDTO, future, msg));
 
     return future;
@@ -73,7 +72,7 @@ public class ProcessServiceImpl implements ProcessService {
 
   private void handleCheckProcessResponse(final ProcessStartDTO processStartDTO,
       final CompletableFuture<ProcessStartedDTO> future,
-      final ProcessCheckResponseMessage checkMsg) {
+      final ProcessCheckMessage.Response checkMsg) {
     if (checkMsg.isCorrect()) {
       final List<ProcessStartMessage.UserGroupAssignment> assignments =
           processStartDTO.getAssignments().stream()
@@ -105,13 +104,36 @@ public class ProcessServiceImpl implements ProcessService {
   public Future<Long> getAmountOfActiveProcesses() {
     final CompletableFuture<Long> future = new CompletableFuture<>();
 
-    final ActorRef analysisActor = actorSystem.actorOf(
-        springExtension.props("ProcessAnalysisActor"), "processAnalysisActor-" + UUID.randomUUID());
+    final ActorRef analysisActor = getAnalysisActor();
 
-    PatternsCS.ask(analysisActor, new AmountOfActiveProcessesMessages.Request(), TIMEOUT)
-        .toCompletableFuture().thenApply(obj -> (AmountOfActiveProcessesMessages.Response) obj)
+    PatternsCS.ask(analysisActor, new AmountOfActiveProcessesMessage.Request(), TIMEOUT)
+        .toCompletableFuture().thenApply(obj -> (AmountOfActiveProcessesMessage.Response) obj)
         .whenComplete((msg, exc) -> future.complete(msg.getAmount()));
 
     return future;
+  }
+
+
+  @Async
+  @Override
+  public Future<Long> getAmountOfActiveProcessesPerUser(final Long userId) {
+    final CompletableFuture<Long> future = new CompletableFuture<>();
+
+    final ActorRef analysisActor = getAnalysisActor();
+
+    PatternsCS.ask(analysisActor,
+        new AmountOfProcessesPerUserMessage.Request(userId, ProcessInstanceState.ACTIVE), TIMEOUT)
+        .toCompletableFuture().thenApply(obj -> (AmountOfProcessesPerUserMessage.Response) obj)
+        .whenComplete((msg, exc) -> {
+          future.complete(msg.getAmount());
+        });
+
+    return future;
+  }
+
+  private ActorRef getAnalysisActor() {
+    final ActorRef analysisActor = actorSystem.actorOf(
+        springExtension.props("ProcessAnalysisActor"), "processAnalysisActor-" + UUID.randomUUID());
+    return analysisActor;
   }
 }

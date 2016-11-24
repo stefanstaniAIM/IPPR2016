@@ -50,4 +50,13 @@ public class ProcessEngineCallerImpl implements Caller {
 
     return createRequest(uri, HttpMethod.GET, null, Long.class, null);
   }
+
+  @Async
+  public Future<ResponseEntity<Long>> getAmountOfActiveProcessesPerUser(final Long userId)
+      throws URISyntaxException {
+    final URIBuilder uri = new URIBuilder(gatewayConfig.getProcessEngineAddress())
+        .setPath("/amountOfActiveProcessesPerUser/" + userId);
+
+    return createRequest(uri, HttpMethod.GET, null, Long.class, null);
+  }
 }
