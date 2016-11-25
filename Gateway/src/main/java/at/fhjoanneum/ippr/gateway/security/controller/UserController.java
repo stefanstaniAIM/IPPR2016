@@ -1,10 +1,11 @@
-package at.fhjoanneum.ippr.gateway.security.authentication.controller;
+package at.fhjoanneum.ippr.gateway.security.controller;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
@@ -13,30 +14,33 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import at.fhjoanneum.ippr.commons.dto.user.UserDTO;
 import at.fhjoanneum.ippr.gateway.security.authentication.AuthenticationService;
 import at.fhjoanneum.ippr.gateway.security.persistence.objects.Group;
 import at.fhjoanneum.ippr.gateway.security.persistence.objects.User;
-import at.fhjoanneum.ippr.gateway.security.persistence.repository.UserGroupRepository;
+import at.fhjoanneum.ippr.gateway.security.services.UserGroupService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 @RestController
+@RequestMapping(produces = "application/json; charset=UTF-8")
 public class UserController {
 
   @Autowired
   private AuthenticationService authenticationService;
 
   @Autowired
-  private UserGroupRepository userGroupRepository;
+  private UserGroupService userGroupService;
 
-  @RequestMapping(value = "user/login", method = RequestMethod.POST,
-      produces = "application/json; charset=UTF-8")
+  @RequestMapping(value = "user/login", method = RequestMethod.POST)
   public ResponseEntity<LoginResponse> login(@RequestBody final UserLogin login) {
 
     final Optional<User> userOpt =
@@ -59,13 +63,21 @@ public class UserController {
     return new ResponseEntity<UserController.LoginResponse>(loginResponse, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "api/me", method = {RequestMethod.GET},
-      produces = "application/json; charset=UTF-8")
+  @RequestMapping(value = "api/me", method = {RequestMethod.GET})
   public User login(final HttpServletRequest request) throws ServletException {
     final Claims claims = (Claims) request.getAttribute("claims");
     final Integer userId = (Integer) claims.get("userId");
 
-    return userGroupRepository.getUserByUserId(userId.longValue()).get();
+    return userGroupService.getUserByUserId(userId.longValue());
+  }
+
+  @RequestMapping(value = "api/process/possibleUsers/{group}", method = RequestMethod.GET)
+  public @ResponseBody Callable<List<UserDTO>> getPossibleUsers(
+      @PathVariable("group") final String group) {
+
+    return () -> {
+      return userGroupService.getPossibleUsersOfGroup(group).get();
+    };
   }
 
   private static class UserLogin implements Serializable {

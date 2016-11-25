@@ -23,7 +23,7 @@ import at.fhjoanneum.ippr.gateway.security.persistence.entities.cache.CacheGroup
 import at.fhjoanneum.ippr.gateway.security.persistence.entities.cache.CacheUser;
 import at.fhjoanneum.ippr.gateway.security.persistence.objects.Group;
 import at.fhjoanneum.ippr.gateway.security.persistence.objects.User;
-import at.fhjoanneum.ippr.gateway.security.persistence.repository.UserGroupRepository;
+import at.fhjoanneum.ippr.gateway.security.repositories.UserGroupRepository;
 import at.fhjoanneum.ippr.gateway.security.usermapping.retrieval.UserGroupSystemRetrievalService;
 
 @Service
