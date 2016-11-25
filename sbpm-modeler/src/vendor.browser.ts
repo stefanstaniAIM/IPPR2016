@@ -21,6 +21,10 @@ import '@angularclass/hmr';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mergeMap';
 
+//Custom imports
+import 'fabric/dist/fabric.js';
+import 'ng2-bootstrap';
+
 if ('production' === ENV) {
   // Production
 

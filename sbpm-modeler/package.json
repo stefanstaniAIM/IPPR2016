@@ -79,12 +79,15 @@
     "@angularclass/hmr-loader": "~3.0.2",
     "assets-webpack-plugin": "^3.4.0",
     "core-js": "^2.4.1",
+    "fabric": "^1.7.0",
     "http-server": "^0.9.0",
     "ie-shim": "^0.1.0",
+    "ng2-bootstrap": "^1.1.16",
     "rxjs": "5.0.0-beta.12",
     "zone.js": "~0.6.26"
   },
   "devDependencies": {
+    "@types/fabric": "^1.5.19",
     "@types/hammerjs": "^2.0.33",
     "@types/jasmine": "^2.2.34",
     "@types/node": "^6.0.38",
