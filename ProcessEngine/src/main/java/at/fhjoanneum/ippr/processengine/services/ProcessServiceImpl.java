@@ -40,13 +40,11 @@ public class ProcessServiceImpl implements ProcessService {
   @Autowired
   private SpringExtension springExtension;
 
-  private final ActorRef processSupervisorActor;
+  @Autowired
+  private ActorRef processSupervisorActor;
 
   @Autowired
-  public ProcessServiceImpl(final ActorSystem actorSystem, final SpringExtension springExtension) {
-    processSupervisorActor = actorSystem.actorOf(springExtension.props("ProcessSupervisorActor"),
-        "processSupervisorActor");
-  }
+  private ActorRef userSupervisorActor;
 
   @Async
   @Override
