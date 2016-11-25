@@ -1,17 +1,19 @@
 import { Component } from '@angular/core';
 import { OnInit } from '@angular/core';
-import { StartableProcessesService } from './startableProcesses.service';
+import { ProcessesService } from '../../Processes.service';
+import { ModalModule } from 'ng2-bootstrap/ng2-bootstrap';
 
 @Component({
   selector: 'startableProcesses',
-  styles: [],
+  styles: [require('./startableProcesses.scss')],
   template: require('./startableProcesses.html')
 })
 export class StartableProcesses implements OnInit {
    processModels = [];
    msg = undefined;
+   selectedProcessModel = {name: "Kein Modell ausgewählt"};
 
-  constructor(protected service:StartableProcessesService) {}
+  constructor(protected service:ProcessesService) {}
 
   ngOnInit(): void {
    this.service.getProcessModels()
@@ -35,4 +37,13 @@ export class StartableProcesses implements OnInit {
           () => console.log('Request Complete')
         );
   }
+
+  selectProcessModel(pm):void {
+    this.selectedProcessModel = pm;
+  }
+
+  unselectProcessModel():void {
+    this.selectedProcessModel = undefined;
+  }
+
 }

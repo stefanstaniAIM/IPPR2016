@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import { ActiveProcessesService } from './activeProcesses.service';
+import { ProcessesService } from '../../Processes.service';
 
 @Component({
   selector: 'activeProcesses',
@@ -8,6 +8,6 @@ import { ActiveProcessesService } from './activeProcesses.service';
 })
 export class ActiveProcesses {
 
-  constructor(protected service: ActiveProcessesService) {
+  constructor(protected service: ProcessesService) {
   }
 }

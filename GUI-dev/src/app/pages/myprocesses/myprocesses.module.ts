@@ -2,6 +2,7 @@ import { NgModule }      from '@angular/core';
 import { CommonModule }  from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgaModule } from '../../theme/nga.module';
+import { ModalModule } from 'ng2-bootstrap/ng2-bootstrap';
 
 import { MyProcesses } from './myprocesses.component';
 import { routing }       from './myprocesses.routing';
@@ -10,9 +11,7 @@ import { Pipes }       from '../../pipes/pipes.module';
 import { ActiveProcesses } from './components/activeProcesses/activeProcesses.component';
 import { TerminatedProcesses } from './components/terminatedProcesses/terminatedProcesses.component';
 import { StartableProcesses } from './components/startableProcesses/startableProcesses.component';
-import { ActiveProcessesService } from './components/activeProcesses/activeProcesses.service';
-import { TerminatedProcessesService } from './components/terminatedProcesses/terminatedProcesses.service';
-import { StartableProcessesService } from './components/startableProcesses/startableProcesses.service';
+import { ProcessesService } from './Processes.service';
 
 import { AuthGuard } from '../../auth.guard';
 
@@ -22,7 +21,8 @@ import { AuthGuard } from '../../auth.guard';
     FormsModule,
     NgaModule,
     routing,
-    Pipes
+    Pipes,
+    ModalModule
   ],
   declarations: [
     MyProcesses,
@@ -32,9 +32,7 @@ import { AuthGuard } from '../../auth.guard';
   ],
   providers: [
     AuthGuard,
-    ActiveProcessesService,
-    TerminatedProcessesService,
-    StartableProcessesService
+    ProcessesService
   ]
 })
 export default class MyProcessesModule {}
