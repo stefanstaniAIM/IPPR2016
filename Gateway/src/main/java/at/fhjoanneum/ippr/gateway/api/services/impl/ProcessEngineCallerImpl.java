@@ -37,7 +37,7 @@ public class ProcessEngineCallerImpl implements Caller {
     LOG.debug("Create request to start process instance");
 
     final URIBuilder uri =
-        new URIBuilder(gatewayConfig.getProcessEngineAddress()).setPath("/startProcess");
+        new URIBuilder(gatewayConfig.getProcessEngineAddress()).setPath("/processes/startProcess");
 
     final HttpHeaders header = headerUser.getHttpHeaders();
     return createRequest(uri, HttpMethod.POST, processStartDTO, ProcessStartedDTO.class, header);
@@ -45,8 +45,8 @@ public class ProcessEngineCallerImpl implements Caller {
 
   @Async
   public Future<ResponseEntity<Long>> getAmountOfActiveProcesses() throws URISyntaxException {
-    final URIBuilder uri =
-        new URIBuilder(gatewayConfig.getProcessEngineAddress()).setPath("/amountOfActiveProcesses");
+    final URIBuilder uri = new URIBuilder(gatewayConfig.getProcessEngineAddress())
+        .setPath("/processes/amountOfActiveProcesses");
 
     return createRequest(uri, HttpMethod.GET, null, Long.class, null);
   }
@@ -55,7 +55,7 @@ public class ProcessEngineCallerImpl implements Caller {
   public Future<ResponseEntity<Long>> getAmountOfActiveProcessesPerUser(final Long userId)
       throws URISyntaxException {
     final URIBuilder uri = new URIBuilder(gatewayConfig.getProcessEngineAddress())
-        .setPath("/amountOfActiveProcessesPerUser/" + userId);
+        .setPath("/processes/amountOfActiveProcessesPerUser/" + userId);
 
     return createRequest(uri, HttpMethod.GET, null, Long.class, null);
   }

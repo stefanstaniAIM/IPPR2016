@@ -39,7 +39,7 @@ public class ProcessModelStorageGatewayController {
     };
   }
 
-  @RequestMapping(value = "api/processesToStart", method = RequestMethod.GET)
+  @RequestMapping(value = "api/processes/toStart", method = RequestMethod.GET)
   public @ResponseBody Callable<ResponseEntity<ProcessModelDTO[]>> findActiveProcessesToStart(
       final HttpServletRequest request,
       @RequestParam(value = "page", required = true) final int page,

@@ -30,7 +30,7 @@ public class ProcessEngineController {
   @Autowired
   private ProcessService processService;
 
-  @RequestMapping(value = "startProcess", method = RequestMethod.POST)
+  @RequestMapping(value = "processes/startProcess", method = RequestMethod.POST)
   public @ResponseBody Callable<ResponseEntity<ProcessStartedDTO>> startProcess(
       final HttpServletRequest request, @RequestBody final ProcessStartDTO processStartDTO) {
     LOG.info("Received request to start process with PM_ID [{}]", processStartDTO.getPmId());
@@ -47,7 +47,7 @@ public class ProcessEngineController {
     };
   }
 
-  @RequestMapping(value = "amountOfActiveProcesses", method = RequestMethod.GET)
+  @RequestMapping(value = "processes/amountOfActiveProcesses", method = RequestMethod.GET)
   public @ResponseBody Callable<Long> getAmountOfActiveProcesses(final HttpServletRequest request) {
     LOG.info("Received request to return the amount of processes");
 
@@ -56,7 +56,8 @@ public class ProcessEngineController {
     };
   }
 
-  @RequestMapping(value = "amountOfActiveProcessesPerUser/{userId}", method = RequestMethod.GET)
+  @RequestMapping(value = "processes/amountOfActiveProcessesPerUser/{userId}",
+      method = RequestMethod.GET)
   public @ResponseBody Callable<Long> getAmountOfActiveProcessesPerUser(
       final HttpServletRequest request, @PathVariable("userId") final Long userId) {
     LOG.info("Received request to return the amount of processes per user for userId: {}", userId);

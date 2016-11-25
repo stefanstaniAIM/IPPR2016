@@ -48,7 +48,7 @@ public class ProcessModelStorageCallerImpl implements Caller {
     LOG.debug("Create request to process model storage");
 
     final URIBuilder uri =
-        new URIBuilder(gatewayConfig.getProcessModelStorageAddress()).setPath("/processesToStart")
+        new URIBuilder(gatewayConfig.getProcessModelStorageAddress()).setPath("/processes/toStart")
             .addParameter("page", "" + page).addParameter("size", "" + size);
 
     return createRequest(uri, HttpMethod.GET, null, ProcessModelDTO[].class,

@@ -30,7 +30,7 @@ public class ProcessEngineGatewayController {
   @Autowired
   private ProcessEngineCallerImpl processEngineCaller;
 
-  @RequestMapping(value = "api/startProcess", method = RequestMethod.POST)
+  @RequestMapping(value = "api/processes/startProcess", method = RequestMethod.POST)
   public @ResponseBody Callable<ResponseEntity<ProcessStartedDTO>> startProcess(
       @RequestBody final ProcessStartDTO processStartDTO, final HttpServletRequest request) {
 
@@ -40,7 +40,7 @@ public class ProcessEngineGatewayController {
     };
   }
 
-  @RequestMapping(value = "api/amountOfActiveProcesses", method = RequestMethod.GET)
+  @RequestMapping(value = "api/processes/amountOfActiveProcesses", method = RequestMethod.GET)
   public @ResponseBody Callable<ResponseEntity<Long>> getAmountOfActiveProcesses(
       final HttpServletRequest request) {
 
@@ -49,7 +49,8 @@ public class ProcessEngineGatewayController {
     };
   }
 
-  @RequestMapping(value = "api/amountOfActiveProcessesPerUser/{userId}", method = RequestMethod.GET)
+  @RequestMapping(value = "api/processes/amountOfActiveProcessesPerUser/{userId}",
+      method = RequestMethod.GET)
   public @ResponseBody Callable<ResponseEntity<Long>> getAmountOfActiveProcesses(
       final HttpServletRequest request, @PathVariable("userId") final Long userId) {
 

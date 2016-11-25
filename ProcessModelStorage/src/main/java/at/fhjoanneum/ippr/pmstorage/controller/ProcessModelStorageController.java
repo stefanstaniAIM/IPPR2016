@@ -41,7 +41,7 @@ public class ProcessModelStorageController {
     };
   }
 
-  @RequestMapping(value = "processesToStart", method = RequestMethod.GET)
+  @RequestMapping(value = "processes/toStart", method = RequestMethod.GET)
   public @ResponseBody Callable<List<ProcessModelDTO>> getProcessesToStart(
       final HttpServletRequest request,
       @RequestParam(value = "page", required = true) final int page,
