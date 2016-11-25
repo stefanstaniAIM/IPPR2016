@@ -26,10 +26,10 @@ public class UserGroupServiceImpl implements UserGroupService {
 
   @Async
   @Override
-  public Future<List<UserDTO>> getPossibleUsersOfGroup(final String groupName) {
-    final List<User> users = userGroupRepository.getUsersByGroupName(groupName);
+  public Future<List<UserDTO>> getPossibleUsersOfGroup(final String groupname) {
+    final List<User> users = userGroupRepository.getUsersByGroupName(groupname);
     return new AsyncResult<List<UserDTO>>(users.stream()
-        .map(user -> new UserDTO(user.getUId(), user.getFirstname(), user.getLastname()))
+        .map(user -> new UserDTO(user.getUId(), user.getFirstname(), user.getLastname(), groupname))
         .collect(Collectors.toList()));
   }
 }
