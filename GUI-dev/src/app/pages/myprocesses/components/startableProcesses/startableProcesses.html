@@ -1,8 +1,8 @@
-<div class="alert alert-danger alert-dismissible fade in" role="alert" *ngIf="error">
+<div class="alert alert-info alert-dismissible fade in" [class.alert-danger]="msg.type === 'error'" [class.alert-success]="msg.type === 'success'" role="alert" *ngIf="msg">
   <button type="button" class="close" data-dismiss="alert" aria-label="Close">
     <span aria-hidden="true">&times;</span>
   </button>
-  <strong>Error!</strong> {{error}}
+    {{msg.text}}
 </div>
 <div class="row">
    <ba-card class="col-xlg-12 col-xl-12 col-lg-12 col-sm-12 col-xs-12">
@@ -22,8 +22,8 @@
                <td>{{ processModel.pmId }}</td>
                <td>{{ processModel.name }}</td>
                <td>{{ processModel.description }}</td>
-               <td>{{ processModel.createdAt }}</td>
-               <td><button class="btn btn-primary btn-sm" (click)="newProcess(processModel.pmId)">Start</button></td>
+               <td>{{ processModel.createdAt | commaDate }}</td>
+               <td><button class="btn btn-primary btn-sm" (click)="startProcess(processModel.pmId)">Start</button></td>
             </tr>
          </tbody>
       </table>

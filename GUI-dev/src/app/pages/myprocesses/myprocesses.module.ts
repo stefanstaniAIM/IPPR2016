@@ -5,6 +5,7 @@ import { NgaModule } from '../../theme/nga.module';
 
 import { MyProcesses } from './myprocesses.component';
 import { routing }       from './myprocesses.routing';
+import { Pipes }       from '../../pipes/pipes.module';
 
 import { ActiveProcesses } from './components/activeProcesses/activeProcesses.component';
 import { TerminatedProcesses } from './components/terminatedProcesses/terminatedProcesses.component';
@@ -20,7 +21,8 @@ import { AuthGuard } from '../../auth.guard';
     CommonModule,
     FormsModule,
     NgaModule,
-    routing
+    routing,
+    Pipes
   ],
   declarations: [
     MyProcesses,

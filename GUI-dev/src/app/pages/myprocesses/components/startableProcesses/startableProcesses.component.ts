@@ -9,7 +9,7 @@ import { StartableProcessesService } from './startableProcesses.service';
 })
 export class StartableProcesses implements OnInit {
    processModels = [];
-   error = undefined;
+   msg = undefined;
 
   constructor(protected service:StartableProcessesService) {}
 
@@ -17,15 +17,22 @@ export class StartableProcesses implements OnInit {
    this.service.getProcessModels()
       .subscribe(
          data => {
-            console.log(data);
             this.processModels = JSON.parse(data['_body']);
          },
-         err => this.error = err,
+         err => this.msg = {text: err, type: 'error'},
          () => console.log('Request Complete')
        );
   }
 
-  newProcess(pmId:number):void {
-      console.log("start new process: " +pmId);
+  startProcess(pmId:number):void {
+      this.service.startProcess(pmId)
+        .subscribe(
+          data => {
+            this.msg = {text: "Process started", type: 'success'}
+            //auf die Prozessanzeigeseite leiten
+          },
+          err => this.msg = {text: err, type: 'error'},
+          () => console.log('Request Complete')
+        );
   }
 }

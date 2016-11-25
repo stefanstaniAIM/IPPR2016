@@ -8,7 +8,6 @@ import { AUTH_PROVIDERS, provideAuth } from 'angular2-jwt';
 import { AuthService } from './auth.service';
 import { User } from './user';
 import { BackendRequestClass } from './backend.request';
-
 /*
  * Platform and Environment providers/directives/pipes
  */
@@ -75,7 +74,7 @@ export class AppModule {
   constructor(public appRef: ApplicationRef, public appState: AppState) {
      console.log("CONSTRUCTOR");
   }
-  
+
   hmrOnInit(store: StoreType) {
     if (!store || !store.state) return;
     console.log('HMR store', JSON.stringify(store, null, 2));
