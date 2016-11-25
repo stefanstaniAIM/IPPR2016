@@ -20,5 +20,7 @@ public interface UserGroupRepository {
 
   Optional<Group> getGroupBySystemId(final String systemId);
 
+  Optional<Group> getGroupByGroupName(final String groupName);
+
   List<User> getUsersByGroupName(final String groupName);
 }

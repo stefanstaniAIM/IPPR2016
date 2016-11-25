@@ -56,6 +56,11 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
   }
 
   @Override
+  public Optional<Group> getGroupByGroupName(final String groupName) {
+    return Optional.ofNullable(groupRepository.findByGroupName(groupName));
+  }
+
+  @Override
   public Optional<Group> getGroupBySystemId(final String systemId) {
     return Optional.ofNullable(groupRepository.findBySystemId(systemId));
   }
@@ -78,5 +83,9 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
 
     @Query(value = "SELECT * FROM USER_GROUP WHERE SYSTEM_ID = :systemId", nativeQuery = true)
     GroupImpl findBySystemId(@Param("systemId") String systemId);
+
+    @Query(value = "SELECT * FROM USER_GROUP WHERE lower(NAME) = lower(:groupName)",
+        nativeQuery = true)
+    GroupImpl findByGroupName(@Param("groupName") String groupName);
   }
 }

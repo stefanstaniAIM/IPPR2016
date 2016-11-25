@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
 import at.fhjoanneum.ippr.commons.dto.user.UserDTO;
+import at.fhjoanneum.ippr.gateway.security.persistence.objects.Group;
 import at.fhjoanneum.ippr.gateway.security.persistence.objects.User;
 import at.fhjoanneum.ippr.gateway.security.repositories.UserGroupRepository;
 
@@ -26,10 +27,12 @@ public class UserGroupServiceImpl implements UserGroupService {
 
   @Async
   @Override
-  public Future<List<UserDTO>> getPossibleUsersOfGroup(final String groupName) {
-    final List<User> users = userGroupRepository.getUsersByGroupName(groupName);
-    return new AsyncResult<List<UserDTO>>(users.stream()
-        .map(user -> new UserDTO(user.getUId(), user.getFirstname(), user.getLastname()))
-        .collect(Collectors.toList()));
+  public Future<List<UserDTO>> getPossibleUsersOfGroup(final String groupname) {
+    final Group group = userGroupRepository.getGroupByGroupName(groupname).get();
+
+    final List<User> users = userGroupRepository.getUsersByGroupName(groupname);
+    return new AsyncResult<List<UserDTO>>(
+        users.stream().map(user -> new UserDTO(user.getUId(), user.getFirstname(),
+            user.getLastname(), groupname, group.getGId())).collect(Collectors.toList()));
   }
 }
