@@ -1,5 +1,6 @@
-package at.fhjoanneum.ippr.gateway.security.persistence.repository;
+package at.fhjoanneum.ippr.gateway.security.repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import at.fhjoanneum.ippr.gateway.security.persistence.objects.Group;
@@ -19,4 +20,5 @@ public interface UserGroupRepository {
 
   Optional<Group> getGroupBySystemId(final String systemId);
 
+  List<User> getUsersByGroupName(final String groupName);
 }

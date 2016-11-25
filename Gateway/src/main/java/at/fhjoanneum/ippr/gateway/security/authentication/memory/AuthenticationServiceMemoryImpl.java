@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import at.fhjoanneum.ippr.gateway.security.authentication.AuthenticationService;
 import at.fhjoanneum.ippr.gateway.security.persistence.entities.cache.CacheUser;
 import at.fhjoanneum.ippr.gateway.security.persistence.objects.User;
-import at.fhjoanneum.ippr.gateway.security.persistence.repository.UserGroupRepository;
+import at.fhjoanneum.ippr.gateway.security.repositories.UserGroupRepository;
 import at.fhjoanneum.ippr.gateway.security.usermapping.retrieval.UserGroupSystemRetrievalService;
 
 public class AuthenticationServiceMemoryImpl implements AuthenticationService {
