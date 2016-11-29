@@ -1,0 +1,70 @@
+.sm-container {
+  height: 100%;
+  width: 100%;
+  font-family: 'Roboto', sans-serif;
+  //background-color: beige;
+
+  .sm-nav-collapsed {
+    position: fixed;
+    top: 0%;
+    left: 0%;
+    height: 5vh;
+    background-color: #ffa0a0;
+    padding-left: 0.8vw;
+    padding-right: 0.8vw;
+    line-height: 4.3em;
+    cursor: pointer;
+    box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.15);
+  }
+
+  .sm-nav {
+    position: fixed;
+    top: 0%;
+    left: 0%;
+    height: 100%;
+    width: 15vw;
+
+    box-shadow: 3px 0px 5px 0px rgba(0, 0, 0, 0.15);
+
+    background-color: #fff7f7; //#f2f2f2;
+
+    // Navigation header
+    .sm-nav-header {
+      height: 5vh;
+      font-weight: bold;
+      background-color: #ffa0a0;
+
+      .sm-nav-header-text {
+        width: 80%;
+        float: left;
+        text-align: left;
+        padding-left: 0.8vw;
+        line-height: 3.4em;
+      }
+
+      .sm-nav-header-toggle-btn {
+        width: 20%;
+        float: left;
+        text-align: right;
+        padding-right: 0.8vw;
+        line-height: 4.3em;
+        cursor: pointer;
+      }
+    }
+
+    .sm-nav-subelement {
+      padding-left: 0.8vw;
+      padding-right: 0.8vw;
+    }
+  }
+
+  .sm-fast-nav {
+    position: fixed;
+    visibility: hidden;
+  }
+
+  .sm-modeling-board {
+    position: fixed;
+    visibility: hidden;
+  }
+}

@@ -12,7 +12,7 @@ import { AppState } from './app.service';
 @Component({
   selector: 'app',
   encapsulation: ViewEncapsulation.None,
-  styles: ['./app.component.scss'],
+  styleUrls: ['./app.component.scss'],
   template: '<router-outlet></router-outlet>'
 })
 export class AppComponent {
@@ -22,7 +22,7 @@ export class AppComponent {
   }
 
   ngOnInit() {
-    
+
   }
 
 }
