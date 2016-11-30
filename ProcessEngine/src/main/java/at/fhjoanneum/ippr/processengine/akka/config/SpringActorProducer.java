@@ -7,8 +7,9 @@ import akka.actor.IndirectActorProducer;
 
 public class SpringActorProducer implements IndirectActorProducer {
 
-  final private ApplicationContext applicationContext;
-  final private String actorBeanName;
+  private final ApplicationContext applicationContext;
+  private final String actorBeanName;
+  private Object[] args;
 
   public SpringActorProducer(final ApplicationContext applicationContext,
       final String actorBeanName) {
@@ -16,9 +17,19 @@ public class SpringActorProducer implements IndirectActorProducer {
     this.actorBeanName = actorBeanName;
   }
 
+  public SpringActorProducer(final ApplicationContext applicationContext,
+      final String actorBeanName, final Object... args) {
+    this(applicationContext, actorBeanName);
+    this.args = args;
+  }
+
   @Override
   public Actor produce() {
-    return (Actor) applicationContext.getBean(actorBeanName);
+    if (args == null) {
+      return (Actor) applicationContext.getBean(actorBeanName);
+    } else {
+      return (Actor) applicationContext.getBean(actorBeanName, args);
+    }
   }
 
   @SuppressWarnings("unchecked")

@@ -18,21 +18,21 @@ public class SubjectStateBuilder implements Builder<SubjectState> {
   private ProcessInstanceImpl processInstance;
   private SubjectImpl subject;
 
-  SubjectStateBuilder state(final State state) {
+  public SubjectStateBuilder state(final State state) {
     checkNotNull(state);
     checkArgument(state instanceof StateImpl);
     this.state = (StateImpl) state;
     return this;
   }
 
-  SubjectStateBuilder processInstance(final ProcessInstance processInstance) {
+  public SubjectStateBuilder processInstance(final ProcessInstance processInstance) {
     checkNotNull(processInstance);
     checkArgument(processInstance instanceof ProcessInstanceImpl);
     this.processInstance = (ProcessInstanceImpl) processInstance;
     return this;
   }
 
-  SubjectStateBuilder subject(final Subject subject) {
+  public SubjectStateBuilder subject(final Subject subject) {
     checkNotNull(subject);
     checkArgument(subject instanceof SubjectImpl);
     this.subject = (SubjectImpl) subject;

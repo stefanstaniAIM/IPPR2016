@@ -12,15 +12,16 @@ public class UserDTO implements Serializable {
   private Long uId;
   private String firstname;
   private String lastname;
-  private String groupname;
+  private GroupDTO group;
 
   public UserDTO() {}
 
   public UserDTO(final Long uId, final String firstname, final String lastname,
-      final String groupname) {
+      final String groupname, final Long groupId) {
     this.uId = uId;
     this.firstname = firstname;
     this.lastname = lastname;
+    this.group = new GroupDTO(groupId, groupname);
   }
 
   public Long getUId() {
@@ -35,7 +36,7 @@ public class UserDTO implements Serializable {
     return lastname;
   }
 
-  public String getGroupname() {
-    return groupname;
+  public GroupDTO getGroup() {
+    return group;
   }
 }

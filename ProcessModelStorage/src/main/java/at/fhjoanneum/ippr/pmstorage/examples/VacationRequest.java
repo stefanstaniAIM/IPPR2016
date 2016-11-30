@@ -150,9 +150,10 @@ public class VacationRequest extends AbstractExample {
     final Transition empT3 =
         new TransitionBuilder().fromState(empState3).toState(empState4).build();
 
-    final ProcessModel pm = new ProcessModelBuilder().name("Vacation request")
-        .description("Request for vation").state(ProcessModelState.ACTIVE)
-        .subjectModels(Lists.newArrayList(boss, employee)).starterSubject(employee).build();
+    final ProcessModel pm =
+        new ProcessModelBuilder().name("Vacation request").description("Request for vacation")
+            .state(ProcessModelState.ACTIVE).subjectModels(Lists.newArrayList(boss, employee))
+            .starterSubject(employee).version(1.1F).build();
 
     saveSubjectModels(boss, employee);
     saveProcessModel(pm);

@@ -10,7 +10,7 @@ import akka.actor.UntypedActor;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessModelRepository;
 import at.fhjoanneum.ippr.processengine.repositories.SubjectModelRepository;
-import at.fhjoanneum.ippr.processengine.repositories.SubjectReposistory;
+import at.fhjoanneum.ippr.processengine.repositories.SubjectRepository;
 
 @Component("ProcessActor")
 @Scope("prototype")
@@ -28,7 +28,7 @@ public class ProcessActor extends UntypedActor {
   private ProcessInstanceRepository processInstanceRepository;
 
   @Autowired
-  private SubjectReposistory subjectRepository;
+  private SubjectRepository subjectRepository;
 
   @Override
   public void onReceive(final Object msg) throws Throwable {

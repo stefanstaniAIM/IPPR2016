@@ -1,0 +1,40 @@
+<div class="sm-container">
+
+  <div class="sm-nav-collapsed" [@sideNavCollapsedSlideInOut]="sideNavCollapsedState" (click)="toggleMenu()">
+    <i class="material-icons">menu</i>
+  </div>
+
+  <div class="sm-nav" [@sideNavOpenedSlideInOut]="sideNavOpenedState">
+    <div class="sm-nav-header">
+      <div class="sm-nav-header-text">
+        <span>Pallet</span>
+      </div>
+      <div class="sm-nav-header-toggle-btn" (click)="toggleMenu()">
+        <div>
+          <i class="material-icons">menu</i>
+        </div>
+      </div>
+    </div>
+    <div class="sm-nav-subelement">
+      <span>Basic elements</span>
+      <div class="well">Some content</div>
+    </div>
+    <div class="sm-nav-subelement">
+      <span>Message types</span>
+    </div>
+    <div class="sm-nav-subelement">
+      <span>Navigation</span>
+    </div>
+    <div class="sm-nav-subelement">
+      <span>Actions</span>
+    </div>
+  </div>
+
+  <div class="sm-modeling-board">
+    Tset
+  </div>
+
+  <div class="sm-fast-nav">
+    Test
+  </div>
+</div>

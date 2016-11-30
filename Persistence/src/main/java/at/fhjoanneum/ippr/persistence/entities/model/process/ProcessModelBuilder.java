@@ -20,6 +20,7 @@ public class ProcessModelBuilder implements Builder<ProcessModel> {
   private ProcessModelState state;
   private List<SubjectModelImpl> subjectModels;
   private SubjectModelImpl starterSubject;
+  private float version;
 
   public ProcessModelBuilder name(final String name) {
     isNotBlank(name, "processName");
@@ -56,6 +57,12 @@ public class ProcessModelBuilder implements Builder<ProcessModel> {
     return this;
   }
 
+  public ProcessModelBuilder version(final float version) {
+    checkNotNull(version);
+    this.version = version;
+    return this;
+  }
+
   @Override
   public ProcessModel build() {
     isNotBlank(name);
@@ -64,9 +71,10 @@ public class ProcessModelBuilder implements Builder<ProcessModel> {
     checkNotNull(subjectModels);
     checkArgument(!subjectModels.isEmpty());
     checkNotNull(starterSubject);
+    checkNotNull(version);
 
     final ProcessModelImpl processModel =
-        new ProcessModelImpl(name, description, state, subjectModels, starterSubject);
+        new ProcessModelImpl(name, description, state, subjectModels, starterSubject, version);
     return processModel;
   }
 }

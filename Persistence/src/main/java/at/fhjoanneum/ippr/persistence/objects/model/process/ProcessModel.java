@@ -8,15 +8,17 @@ import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
 
 public interface ProcessModel {
 
-	Long getPmId();
+  Long getPmId();
 
-	String getName();
+  String getName();
 
-	String getDescription();
+  String getDescription();
 
-	LocalDateTime createdAt();
+  LocalDateTime createdAt();
 
-	List<SubjectModel> getSubjectModels();
+  List<SubjectModel> getSubjectModels();
 
-	void setState(ProcessModelState state);
+  void setState(ProcessModelState state);
+
+  float getVersion();
 }

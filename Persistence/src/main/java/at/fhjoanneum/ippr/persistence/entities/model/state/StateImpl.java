@@ -84,9 +84,7 @@ public class StateImpl implements State, Serializable {
       inverseJoinColumns = {@JoinColumn(name = "bom_id")})
   private List<BusinessObjectModelImpl> businessObjectModels;
 
-  StateImpl() {
-
-  }
+  StateImpl() {}
 
   StateImpl(final String name, final SubjectModelImpl subjectModel,
       final StateFunctionType functionType, final StateEventType eventType) {

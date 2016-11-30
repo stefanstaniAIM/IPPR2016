@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -56,7 +57,7 @@ public class ProcessInstanceImpl implements ProcessInstance, Serializable {
   @Enumerated(EnumType.STRING)
   private ProcessInstanceState state;
 
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(name = "process_subject_instance_map", joinColumns = {@JoinColumn(name = "pi_id")},
       inverseJoinColumns = {@JoinColumn(name = "s_id")})
   private List<SubjectImpl> subjects = Lists.newArrayList();

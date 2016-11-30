@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
+import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 
 @Configuration
@@ -24,6 +25,18 @@ public class AkkaApplicationConfiguration {
     final ActorSystem actorSystem = ActorSystem.create("ProcessEngine", akkaConfiguration());
     springExtension.initialize(applicationContext);
     return actorSystem;
+  }
+
+  @Bean
+  public ActorRef processSupervisorActor() {
+    return actorSystem().actorOf(springExtension.props("ProcessSupervisorActor"),
+        "ProcessSupervisorActor");
+  }
+
+  @Bean
+  public ActorRef userSupervisorActor() {
+    return actorSystem().actorOf(springExtension.props("UserSupervisorActor"),
+        "UserSupervisorActor");
   }
 
   @Bean
