@@ -46,7 +46,7 @@ public class SubjectStateImpl implements SubjectState, Serializable {
   @JoinColumn(name = "piId")
   private ProcessInstanceImpl processInstance;
 
-  @OneToOne
+  @OneToOne // (mappedBy = "subjectState")
   @JoinColumn(name = "s_id")
   private SubjectImpl subject;
 

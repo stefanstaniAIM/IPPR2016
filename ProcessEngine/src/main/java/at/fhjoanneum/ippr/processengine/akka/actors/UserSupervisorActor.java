@@ -22,6 +22,7 @@ import at.fhjoanneum.ippr.persistence.objects.engine.subject.Subject;
 import at.fhjoanneum.ippr.processengine.akka.AkkaSelector;
 import at.fhjoanneum.ippr.processengine.akka.config.Global;
 import at.fhjoanneum.ippr.processengine.akka.config.SpringExtension;
+import at.fhjoanneum.ippr.processengine.akka.messages.EmptyMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ActorInitializeMessage;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 
@@ -77,7 +78,7 @@ public class UserSupervisorActor extends UntypedActor {
             LOG.error("Could not initialize the subjects to start state");
           } else {
             LOG.info("All subjects are in start state, notify service");
-            service.tell(new Object(), getSelf());
+            service.tell(new EmptyMessage(), getSelf());
           }
         });
   }
@@ -92,8 +93,8 @@ public class UserSupervisorActor extends UntypedActor {
         final Optional<ActorRef> actorOpt = akkaSelector.findActor(getContext(), userId);
 
         if (!actorOpt.isPresent()) {
-          processUsers.add(getContext()
-              .actorOf(springExtension.props("ProcessUserActor", subject.getUser()), userId));
+          processUsers.add(
+              getContext().actorOf(springExtension.props("UserActor", subject.getUser()), userId));
         } else {
           processUsers.add(actorOpt.get());
         }

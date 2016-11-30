@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartedDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStateDTO;
 import at.fhjoanneum.ippr.processengine.services.ProcessService;
 
 @RestController
@@ -64,6 +65,16 @@ public class ProcessEngineController {
 
     return () -> {
       return processService.getAmountOfActiveProcessesPerUser(userId).get();
+    };
+  }
+
+  @RequestMapping(value = "processes/state/{piId}", method = RequestMethod.GET)
+  public @ResponseBody Callable<ProcessStateDTO> getStateOfProcessInstance(
+      final HttpServletRequest request, @PathVariable("piId") final Long piId) {
+    LOG.info("Received request to return state information of process for piId: {}", piId);
+
+    return () -> {
+      return processService.getStateOfProcessInstance(piId).get();
     };
   }
 }
