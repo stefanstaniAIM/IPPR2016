@@ -70,16 +70,21 @@ public class ProcessModelImpl implements ProcessModel, Serializable {
   @JoinColumn(name = "starter_subject")
   private SubjectModelImpl starterSubject;
 
+  @Column(precision = 2, scale = 1)
+  private float version;
+
   ProcessModelImpl() {}
 
   ProcessModelImpl(final String name, final String description, final ProcessModelState state,
-      final List<SubjectModelImpl> subjectModels, final SubjectModelImpl starterSubject) {
+      final List<SubjectModelImpl> subjectModels, final SubjectModelImpl starterSubject,
+      final float version) {
     this.name = name;
     this.description = description;
     this.createdAt = LocalDateTime.now();
     this.state = state;
     this.subjectModels = subjectModels;
     this.starterSubject = starterSubject;
+    this.version = version;
   }
 
   @Override
@@ -111,6 +116,11 @@ public class ProcessModelImpl implements ProcessModel, Serializable {
   public List<SubjectModel> getSubjectModels() {
     return ImmutableList.copyOf(subjectModels);
   }
+
+  @Override
+  public float getVersion() {
+    return version;
+  };
 
   @Override
   public boolean equals(final Object obj) {
