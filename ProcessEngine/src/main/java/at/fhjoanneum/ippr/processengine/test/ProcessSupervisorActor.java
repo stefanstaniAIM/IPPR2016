@@ -2,8 +2,6 @@ package at.fhjoanneum.ippr.processengine.test;
 
 import java.util.Optional;
 
-import javax.transaction.Transactional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +25,7 @@ import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStartMessag
 import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessModelRepository;
 import at.fhjoanneum.ippr.processengine.repositories.SubjectModelRepository;
-import at.fhjoanneum.ippr.processengine.repositories.SubjectReposistory;
+import at.fhjoanneum.ippr.processengine.repositories.SubjectRepository;
 
 @Component("ProcessSupervisorActor")
 @Scope("prototype")
@@ -35,7 +33,8 @@ public class ProcessSupervisorActor extends UntypedActor {
 
   private final static Logger LOG = LoggerFactory.getLogger(ProcessSupervisorActor.class);
 
-  private final AkkaSelector akkaSelector = new AkkaSelector();
+  @Autowired
+  private AkkaSelector akkaSelector;
 
   @Autowired
   private ProcessModelRepository processModelRepository;
@@ -44,8 +43,7 @@ public class ProcessSupervisorActor extends UntypedActor {
   @Autowired
   private ProcessInstanceRepository processInstanceRepository;
   @Autowired
-  private SubjectReposistory subjectRepository;
-
+  private SubjectRepository subjectRepository;
   @Autowired
   private SpringExtension springExtension;
 
@@ -60,7 +58,6 @@ public class ProcessSupervisorActor extends UntypedActor {
     }
   }
 
-  @Transactional
   private void handleProcessStartMessage(final ProcessStartMessage.Request msg) {
     try {
       LOG.info("Handle ProcessStartMessage and will create new process instance");
@@ -80,10 +77,11 @@ public class ProcessSupervisorActor extends UntypedActor {
           processInstanceRepository.save((ProcessInstanceImpl) processBuilder.build());
       LOG.info("Created new process instance: {}", processInstance);
 
-      final String processInstanceId = "Process_" + processInstance.getPiId();
+      final String processInstanceId = "Process-" + processInstance.getPiId();
       final Optional<ActorRef> actorOpt = akkaSelector.findActor(getContext(), processInstanceId);
       if (!actorOpt.isPresent()) {
         getContext().actorOf(springExtension.props("ProcessActor"), processInstanceId);
+        LOG.info("Created new actor for process instance: {}", processInstanceId);
       }
 
       getSender().tell(new ProcessStartMessage.Response(processInstance.getPiId()), getSelf());
