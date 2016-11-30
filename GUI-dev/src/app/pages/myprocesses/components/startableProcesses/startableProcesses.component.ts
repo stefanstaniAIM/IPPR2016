@@ -30,20 +30,20 @@ export class StartableProcesses implements OnInit {
        );
   }
 
-  startProcess(pmId:number):void {
-      this.service.startProcess(pmId)
-        .subscribe(
-          data => {
-            this.msg = {text: "Process started", type: 'success'};
-            this.modal.hide();
-            //auf die Prozessanzeigeseite leiten
-          },
-          err =>{
-            this.msg = {text: err, type: 'error'}
-            this.modal.hide();
-          },
-          () => console.log("Request done")
-        );
+  startProcess(pmId:number, assignments):void {
+    this.service.startProcess(pmId, (<any>Object).values(assignments))
+      .subscribe(
+        data => {
+          this.msg = {text: "Process started", type: 'success'};
+          this.modal.hide();
+          //auf die Prozessanzeigeseite leiten
+        },
+        err =>{
+          this.msg = {text: err, type: 'error'}
+          this.modal.hide();
+        },
+        () => console.log("Request done")
+      );
   }
 
   selectProcessModel(pm):void {
@@ -58,7 +58,7 @@ export class StartableProcesses implements OnInit {
         subscribe(
           data => {
                 let users = JSON.parse(data['_body']);
-                this.possibleUserAssignments.push({groupName: sm.group, users: users});
+                this.possibleUserAssignments.push({groupName: sm.group, smId: sm.smId, users: users});
                 this.selectedUserAssignments[sm.group] = undefined;
                 this.modal.show();
                 console.log(this.possibleUserAssignments);

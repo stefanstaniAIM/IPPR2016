@@ -43,13 +43,13 @@
             <label for="sel1">Select list:</label>
             <!--Todo set ngModel for selectfields ? -->
             <select class="form-control bootsrap-select" *ngFor="let assignment of possibleUserAssignments" [(ngModel)]="selectedUserAssignments[assignment.groupName]" (ngModelChange)="onChange($event, assignment.groupName)" required>
-              <option *ngFor="let user of assignment.users" [ngValue]="user">{{user.lastname}} {{user.firstname}}</option>
+              <option *ngFor="let user of assignment.users" [ngValue]="{smId: assignment.smId, userId: user.uid}">{{user.lastname}} {{user.firstname}}</option>
             </select>
           </div>
          </div>
          <div class="modal-footer">
            <button type="button" class="btn btn-warning" data-dismiss="modal" (click)="unselectProcessModel()">Abbrechen</button>
-           <button type="button" class="btn btn-primary" (click)="startProcess(selectedProcessModel.pmId)" [disabled]="!isSelectionValid">Starten</button>
+           <button type="button" class="btn btn-primary" (click)="startProcess(selectedProcessModel.pmId, selectedUserAssignments)" [disabled]="!isSelectionValid">Starten</button>
          </div>
        </div>
      </div>
