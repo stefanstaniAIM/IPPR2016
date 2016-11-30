@@ -10,7 +10,7 @@ export class ProcessesService {
     return this._authHttp.get('http://localhost:10000/api/processes/toStart?page=0');
    }
 
-   startProcess(pmId: number){
+   startProcess(pmId: number, subjectModels = []){
      return this._authHttp.post('http://localhost:10000/api/processes/startProcess', {
       "pmId": pmId,
       "assignments": [

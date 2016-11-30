@@ -13,6 +13,9 @@ export class StartableProcesses implements OnInit {
    processModels = [];
    msg = undefined;
    selectedProcessModel = {name: "Kein Modell ausgewählt"};
+   possibleUserAssignments = [];
+   selectedUserAssignments = {};
+   isSelectionValid = false;
 
   constructor(protected service:ProcessesService) {}
 
@@ -44,13 +47,48 @@ export class StartableProcesses implements OnInit {
   }
 
   selectProcessModel(pm):void {
+    var that = this;
+    this.isSelectionValid = false;
+    this.possibleUserAssignments = [];
     this.selectedProcessModel = pm;
-    this.modal.show()
+    const subjectModels = pm.subjectModels;
+    subjectModels.forEach(
+      sm => {
+        that.service.getPossibleUsersForProcessModel(sm.group).
+        subscribe(
+          data => {
+                let users = JSON.parse(data['_body']);
+                this.possibleUserAssignments.push({groupName: sm.group, users: users});
+                this.selectedUserAssignments[sm.group] = undefined;
+                this.modal.show();
+                console.log(this.possibleUserAssignments);
+          },
+          err =>{
+            this.msg = {text: err, type: 'error'}
+            this.possibleUserAssignments = [];
+            this.modal.hide();
+          },
+          () => console.log("Request done")
+        );
+      });
   }
 
   unselectProcessModel():void {
     this.selectedProcessModel = {name: "Kein Prozess ausgewählt"};
+    this.possibleUserAssignments = [];
+    this.isSelectionValid = false;
     this.modal.hide();
+  }
+
+  onChange(e, groupName) {
+    var that = this;
+    Object.keys(that.selectedUserAssignments).forEach(function(x) {
+      if(that.selectedUserAssignments[x]){
+        that.isSelectionValid = true;
+      } else {
+        that.isSelectionValid = false;
+      }
+    })
   }
 
 }
