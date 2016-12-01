@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.processengine.test;
+package at.fhjoanneum.ippr.processengine.akka.actors;
 
 import java.util.Optional;
 
@@ -22,6 +22,7 @@ import at.fhjoanneum.ippr.processengine.akka.AkkaSelector;
 import at.fhjoanneum.ippr.processengine.akka.config.SpringExtension;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStartMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStartMessage.UserGroupAssignment;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStateMessage;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessModelRepository;
 import at.fhjoanneum.ippr.processengine.repositories.SubjectModelRepository;
@@ -51,15 +52,19 @@ public class ProcessSupervisorActor extends UntypedActor {
   public void onReceive(final Object obj) throws Throwable {
     if (obj instanceof ProcessStartMessage.Request) {
       LOG.info("Received {} and create actor for it", obj);
-      final ProcessStartMessage.Request msg = (ProcessStartMessage.Request) obj;
-      handleProcessStartMessage(msg);
+      handleProcessStartMessage(obj);
+    } else if (obj instanceof ProcessStateMessage.Request) {
+      LOG.info("Received {} and will create state repsonse", obj);
+      handleProcessStateMessage(obj);
     } else {
       unhandled(obj);
     }
   }
 
-  private void handleProcessStartMessage(final ProcessStartMessage.Request msg) {
+  private void handleProcessStartMessage(final Object obj) {
     try {
+      final ProcessStartMessage.Request msg = (ProcessStartMessage.Request) obj;
+
       LOG.info("Handle ProcessStartMessage and will create new process instance");
       final ProcessInstanceBuilder processBuilder = new ProcessInstanceBuilder();
 
@@ -77,10 +82,11 @@ public class ProcessSupervisorActor extends UntypedActor {
           processInstanceRepository.save((ProcessInstanceImpl) processBuilder.build());
       LOG.info("Created new process instance: {}", processInstance);
 
-      final String processInstanceId = "Process-" + processInstance.getPiId();
+      final String processInstanceId = getProcessActorId(processInstance.getPiId());
       final Optional<ActorRef> actorOpt = akkaSelector.findActor(getContext(), processInstanceId);
       if (!actorOpt.isPresent()) {
-        getContext().actorOf(springExtension.props("ProcessActor"), processInstanceId);
+        getContext().actorOf(springExtension.props("ProcessActor", processInstance.getPiId()),
+            processInstanceId);
         LOG.info("Created new actor for process instance: {}", processInstanceId);
       }
 
@@ -88,6 +94,10 @@ public class ProcessSupervisorActor extends UntypedActor {
     } catch (final Exception e) {
       getSender().tell(new akka.actor.Status.Failure(e), getSelf());
     }
+  }
+
+  private String getProcessActorId(final Long piId) {
+    return "Process-" + piId;
   }
 
   private Subject createSubject(final ProcessInstanceBuilder processBuilder,
@@ -110,4 +120,19 @@ public class ProcessSupervisorActor extends UntypedActor {
     return subject;
   }
 
+  private void handleProcessStateMessage(final Object obj) {
+    final ProcessStateMessage.Request msg = (ProcessStateMessage.Request) obj;
+
+    final String processInstanceId = getProcessActorId(msg.getPiId());
+    final Optional<ActorRef> actorOpt = akkaSelector.findActor(getContext(), processInstanceId);
+
+    if (!actorOpt.isPresent()) {
+      final String error = "Could not find process actor for: " + processInstanceId;
+      getSender().tell(new akka.actor.Status.Failure(new IllegalArgumentException(error)),
+          getSelf());
+      return;
+    }
+
+    actorOpt.get().forward(msg, getContext());
+  }
 }

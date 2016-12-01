@@ -19,6 +19,7 @@ import akka.actor.ActorSystem;
 import akka.pattern.PatternsCS;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartedDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStateDTO;
 import at.fhjoanneum.ippr.persistence.objects.engine.enums.ProcessInstanceState;
 import at.fhjoanneum.ippr.processengine.akka.config.Global;
 import at.fhjoanneum.ippr.processengine.akka.config.SpringExtension;
@@ -26,6 +27,7 @@ import at.fhjoanneum.ippr.processengine.akka.messages.analysis.AmountOfActivePro
 import at.fhjoanneum.ippr.processengine.akka.messages.analysis.AmountOfProcessesPerUserMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ActorInitializeMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStartMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStateMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.check.ProcessCheckMessage;
 
 @Service
@@ -100,7 +102,7 @@ public class ProcessServiceImpl implements ProcessService {
               LOG.error(errorText);
               future.complete(new ProcessStartedDTO(null, errorText));
             } else {
-              LOG.info("Process instance was sucessfully created");
+              LOG.info("Process instance was sucessfully created PI_ID [{}]", msg.getProcessId());
               future.complete(new ProcessStartedDTO(msg.getProcessId(), null));
             }
           });
@@ -143,5 +145,21 @@ public class ProcessServiceImpl implements ProcessService {
     final ActorRef analysisActor = actorSystem.actorOf(
         springExtension.props("ProcessAnalysisActor"), "ProcessAnalysisActor-" + UUID.randomUUID());
     return analysisActor;
+  }
+
+  @Override
+  public Future<ProcessStateDTO> getStateOfProcessInstance(final Long piId) {
+    final CompletableFuture<ProcessStateDTO> future = new CompletableFuture<>();
+
+    PatternsCS.ask(processSupervisorActor, new ProcessStateMessage.Request(piId), Global.TIMEOUT)
+        .toCompletableFuture().whenComplete((msg, exc) -> {
+          if (exc == null) {
+            future.complete(((ProcessStateMessage.Response) msg).getProcessStateDTO());
+          } else {
+            future.completeExceptionally(exc);
+          }
+        });
+
+    return future;
   }
 }

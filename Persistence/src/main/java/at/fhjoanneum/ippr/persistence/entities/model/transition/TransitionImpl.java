@@ -41,9 +41,13 @@ public class TransitionImpl implements Transition, Serializable {
 
   TransitionImpl() {}
 
-  TransitionImpl(final StateImpl fromState, final StateImpl toState, final Long timeout) {
+  TransitionImpl(final StateImpl fromState, final StateImpl toState) {
     this.fromState = fromState;
     this.toState = toState;
+  }
+
+  TransitionImpl(final StateImpl fromState, final StateImpl toState, final Long timeout) {
+    this(fromState, toState);
     this.timeout = timeout;
   }
 

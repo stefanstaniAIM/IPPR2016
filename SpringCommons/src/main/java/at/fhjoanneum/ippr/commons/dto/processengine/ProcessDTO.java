@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.processengine.dto;
+package at.fhjoanneum.ippr.commons.dto.processengine;
 
 import javax.xml.bind.annotation.XmlRootElement;
 

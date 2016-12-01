@@ -38,7 +38,10 @@ public class TransitionBuilder implements Builder<Transition> {
     checkNotNull(fromState);
     checkNotNull(toState);
 
-    return new TransitionImpl(fromState, toState, timeout);
+    if (timeout != null) {
+      return new TransitionImpl(fromState, toState, timeout);
+    }
+    return new TransitionImpl(fromState, toState);
   }
 
 }
