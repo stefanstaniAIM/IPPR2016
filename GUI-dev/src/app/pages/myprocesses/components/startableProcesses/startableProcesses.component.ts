@@ -36,7 +36,7 @@ export class StartableProcesses implements OnInit {
         data => {
           this.msg = {text: "Process started", type: 'success'};
           this.modal.hide();
-          //auf die Prozessanzeigeseite leiten
+          //ToDo auf die Prozessanzeigeseite leiten
         },
         err =>{
           this.msg = {text: err, type: 'error'}
