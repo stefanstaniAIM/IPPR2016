@@ -80,15 +80,4 @@ export class StartableProcesses implements OnInit {
     this.modal.hide();
   }
 
-  onChange(e, groupName) {
-    var that = this;
-    Object.keys(that.selectedUserAssignments).forEach(function(x) {
-      if(that.selectedUserAssignments[x]){
-        that.isSelectionValid = true;
-      } else {
-        that.isSelectionValid = false;
-      }
-    })
-  }
-
 }
