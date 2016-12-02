@@ -1,5 +1,7 @@
 package at.fhjoanneum.ippr.processengine.repositories;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
@@ -10,6 +12,9 @@ import at.fhjoanneum.ippr.persistence.entities.engine.process.ProcessInstanceImp
 @Repository
 public interface ProcessInstanceRepository
     extends PagingAndSortingRepository<ProcessInstanceImpl, Long> {
+
+  @Query(value = "SELECT * FROM PROCESS_INSTANCE p WHERE p.state = :state", nativeQuery = true)
+  List<ProcessInstanceImpl> getProcessesWithState(@Param("state") String state);
 
   @Query(value = "SELECT COUNT(p.pi_id) FROM PROCESS_INSTANCE p WHERE p.state = :state",
       nativeQuery = true)

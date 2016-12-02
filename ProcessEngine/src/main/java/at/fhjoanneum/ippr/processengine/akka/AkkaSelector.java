@@ -34,9 +34,7 @@ public class AkkaSelector {
       LOG.debug("Actor [{}] is existing in context [{}], use this actor", path, context.system());
       return Optional.of(ref);
     } catch (final Exception e) {
-      LOG.debug(
-          "Actor [{}] is not existing or answering in context [{}], therefore new one should be created",
-          path, context.system());
+      LOG.debug("Actor [{}] is not existing or answering in context [{}]", path, context.system());
       return Optional.empty();
     }
   }

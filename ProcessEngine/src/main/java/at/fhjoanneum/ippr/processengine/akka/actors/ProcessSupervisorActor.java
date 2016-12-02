@@ -23,6 +23,7 @@ import at.fhjoanneum.ippr.processengine.akka.config.SpringExtension;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStartMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStartMessage.UserGroupAssignment;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStateMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessWakeUpMessage;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessModelRepository;
 import at.fhjoanneum.ippr.processengine.repositories.SubjectModelRepository;
@@ -56,6 +57,8 @@ public class ProcessSupervisorActor extends UntypedActor {
     } else if (obj instanceof ProcessStateMessage.Request) {
       LOG.info("Received {} and will create state repsonse", obj);
       handleProcessStateMessage(obj);
+    } else if (obj instanceof ProcessWakeUpMessage.Request) {
+      handleProcessWakeUpMessage(obj);
     } else {
       unhandled(obj);
     }
@@ -134,5 +137,20 @@ public class ProcessSupervisorActor extends UntypedActor {
     }
 
     actorOpt.get().forward(msg, getContext());
+  }
+
+  private void handleProcessWakeUpMessage(final Object obj) {
+    final ProcessWakeUpMessage.Request msg = (ProcessWakeUpMessage.Request) obj;
+
+    final String processInstanceId = getProcessActorId(msg.getPiId());
+    final Optional<ActorRef> actorOpt = akkaSelector.findActor(getContext(), processInstanceId);
+
+    if (!actorOpt.isPresent()) {
+      getContext().actorOf(springExtension.props("ProcessActor", msg.getPiId()), processInstanceId);
+      LOG.info("Created new actor for process instance after wake up message: {}",
+          processInstanceId);
+    }
+
+    getSender().tell(new ProcessWakeUpMessage.Response(msg.getPiId()), getSelf());
   }
 }
