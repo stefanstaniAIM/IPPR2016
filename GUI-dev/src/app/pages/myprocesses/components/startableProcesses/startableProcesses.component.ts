@@ -36,7 +36,7 @@ export class StartableProcesses implements OnInit {
         data => {
           this.msg = {text: "Process started", type: 'success'};
           this.modal.hide();
-          //auf die Prozessanzeigeseite leiten
+          //ToDo auf die Prozessanzeigeseite leiten
         },
         err =>{
           this.msg = {text: err, type: 'error'}
@@ -78,17 +78,6 @@ export class StartableProcesses implements OnInit {
     this.possibleUserAssignments = [];
     this.isSelectionValid = false;
     this.modal.hide();
-  }
-
-  onChange(e, groupName) {
-    var that = this;
-    Object.keys(that.selectedUserAssignments).forEach(function(x) {
-      if(that.selectedUserAssignments[x]){
-        that.isSelectionValid = true;
-      } else {
-        that.isSelectionValid = false;
-      }
-    })
   }
 
 }
