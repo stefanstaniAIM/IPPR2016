@@ -10,11 +10,11 @@
     left: 0%;
     height: 5vh;
     background-color: #ffa0a0;
-    padding-left: 0.8vw;
-    padding-right: 0.8vw;
+    padding-left: 13px;
+    padding-right: 13px;
     line-height: 4.3em;
     cursor: pointer;
-    box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.15);
+    box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.13);
   }
 
   .sm-nav {
@@ -22,9 +22,9 @@
     top: 0%;
     left: 0%;
     height: 100%;
-    width: 15vw;
+    width: 13vw;
 
-    box-shadow: 3px 0px 5px 0px rgba(0, 0, 0, 0.15);
+    box-shadow: 3px 0px 5px 0px rgba(0, 0, 0, 0.13);
 
     background-color: #fff7f7; //#f2f2f2;
 
@@ -36,26 +36,63 @@
 
       .sm-nav-header-text {
         width: 80%;
+        height: inherit;
         float: left;
         text-align: left;
-        padding-left: 0.8vw;
+        padding-left: 13px;
         line-height: 3.4em;
       }
 
       .sm-nav-header-toggle-btn {
         width: 20%;
+        height: inherit;
         float: left;
         text-align: right;
-        padding-right: 0.8vw;
+        padding-right: 13px;
         line-height: 4.3em;
         cursor: pointer;
       }
     }
 
-    .sm-nav-subelement {
-      padding-left: 0.8vw;
-      padding-right: 0.8vw;
+    .well {
+      background-color: white;
+      margin: 0px;
     }
+
+    .sm-nav-element-navigation, .sm-nav-element-message-types {
+      .btn {
+        width: 100%;
+        text-align: left;
+        margin-bottom: 1px;
+        border-radius: 0px;
+        background-color: transparent;
+      }
+    }
+
+    .sm-nav-element-actions {
+
+      .btn {
+        width: 100%;
+        text-align: left;
+        margin-bottom: 1px;
+        border-radius: 0px;
+        background-color: transparent;
+        padding-bottom: 2px;
+
+        .btn-icon {
+          float: left;
+          width: 15%;
+          padding-top: 2px;
+        }
+
+        .btn-text {
+          width: 85%;
+          line-height: 2.3em;
+          float: left;
+        }
+      }
+    }
+
   }
 
   .sm-fast-nav {
@@ -67,4 +104,5 @@
     position: fixed;
     visibility: hidden;
   }
+
 }

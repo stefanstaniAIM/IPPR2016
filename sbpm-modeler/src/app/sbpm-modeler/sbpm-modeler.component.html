@@ -10,24 +10,49 @@
         <span>Pallet</span>
       </div>
       <div class="sm-nav-header-toggle-btn" (click)="toggleMenu()">
-        <div>
-          <i class="material-icons">menu</i>
-        </div>
+        <i class="material-icons">menu</i>
       </div>
     </div>
-    <div class="sm-nav-subelement">
-      <span>Basic elements</span>
-      <div class="well">Some content</div>
-    </div>
-    <div class="sm-nav-subelement">
-      <span>Message types</span>
-    </div>
-    <div class="sm-nav-subelement">
-      <span>Navigation</span>
-    </div>
-    <div class="sm-nav-subelement">
-      <span>Actions</span>
-    </div>
+
+    <sm-nav-element heading="Basic elements">
+      <div class="well">
+        Test
+      </div>
+    </sm-nav-element>
+
+    <sm-nav-element heading="Message types" class="sm-nav-element-message-types">
+      <div class="sm-nav-element-content">
+        <button type="button" class="btn">Create a new message type</button>
+        <button type="button" class="btn">Vie message types</button>
+      </div>
+    </sm-nav-element>
+
+    <sm-nav-element heading="Navigation" class="sm-nav-element-navigation">
+      <div class="sm-nav-element-content">
+        <button type="button" class="btn">Change view</button>
+        <button type="button" class="btn">Change subject</button>
+      </div>
+    </sm-nav-element>
+
+    <sm-nav-element heading="Actions" class="sm-nav-element-actions">
+        <button type="button" class="btn">
+          <div class="btn-icon"><i class="material-icons">insert_drive_file</i></div>
+          <div class="btn-text"><span>New file</span></div>
+        </button>
+        <button type="button" class="btn">
+          <div class="btn-icon"><i class="material-icons">folder_open</i></div>
+          <div class="btn-text"><span>Open existing XML file</span></div>
+        </button>
+        <button type="button" class="btn">
+          <div class="btn-icon"><i class="material-icons">file_download</i></div>
+          <div class="btn-text"><span>Save XML file</span></div>
+        </button>
+        <button type="button" class="btn">
+          <div class="btn-icon"><i class="material-icons">photo</i></div>
+          <div class="btn-text"><span>Save as SVG file</span></div>
+        </button>
+    </sm-nav-element>
+
   </div>
 
   <div class="sm-modeling-board">

@@ -1,0 +1,13 @@
+<div class="sm-nav-element">
+  <div class="sm-nav-element-header" (click)="isVisible = !isVisible">
+    <div class="sm-nav-element-header-text">
+      <span>{{heading}}</span>
+    </div>
+    <div class="sm-nav-element-header-btn">
+      <i class="material-icons">{{isVisible ? 'keyboard_arrow_down' : 'keyboard_arrow_right'}}</i>
+    </div>
+  </div>
+  <div class="sm-nav-element-container" [@accMenuSlideInOut]="isVisible">
+    <ng-content></ng-content>
+  </div>
+</div>

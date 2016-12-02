@@ -1,4 +1,4 @@
-import { Component, trigger, state, style, transition, animate } from '@angular/core';
+import {Component, trigger, state, style, transition, animate} from '@angular/core';
 
 @Component({
   selector: 'sbpm-modeler',
@@ -12,8 +12,8 @@ import { Component, trigger, state, style, transition, animate } from '@angular/
       state('out', style({
         transform: 'translate3d(0, 0, 0)'
       })),
-      transition('in => out', animate('1000ms ease-in-out')),
-      transition('out => in', animate('1000ms ease-in-out'))
+      transition('in => out', animate('300ms ease-in-out')),
+      transition('out => in', animate('300ms ease-in-out'))
     ]),
     trigger('sideNavCollapsedSlideInOut', [
       state('in', style({
@@ -22,9 +22,9 @@ import { Component, trigger, state, style, transition, animate } from '@angular/
       state('out', style({
         transform: 'translate3d(0, 0, 0)'
       })),
-      transition('in => out', animate('1000ms ease-in-out')),
-      transition('out => in', animate('1000ms ease-in-out'))
-    ]),
+      transition('in => out', animate('300ms ease-in-out')),
+      transition('out => in', animate('300ms ease-in-out'))
+    ])
   ]
 })
 export class SbpmModelerComponent {
@@ -37,8 +37,8 @@ export class SbpmModelerComponent {
     console.log('hello `sbpm-modeler` component');
   }
 
-  sideNavOpenedState:string = 'out';
-  sideNavCollapsedState:string = 'in';
+  sideNavOpenedState: string = 'out';
+  sideNavCollapsedState: string = 'in';
 
   toggleMenu() {
     // 1-line if statement that toggles the value:
