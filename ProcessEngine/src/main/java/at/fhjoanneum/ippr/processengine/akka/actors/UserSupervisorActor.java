@@ -2,9 +2,13 @@ package at.fhjoanneum.ippr.processengine.akka.actors;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +28,11 @@ import at.fhjoanneum.ippr.processengine.akka.config.Global;
 import at.fhjoanneum.ippr.processengine.akka.config.SpringExtension;
 import at.fhjoanneum.ippr.processengine.akka.messages.EmptyMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ActorInitializeMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.UserActorInitializeMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.UserActorInitializeMessage.Request;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 
+@Transactional
 @Component("UserSupervisorActor")
 @Scope("prototype")
 public class UserSupervisorActor extends UntypedActor {
@@ -62,13 +69,14 @@ public class UserSupervisorActor extends UntypedActor {
     }
 
     final ProcessInstance processInstance = processInstanceOpt.get();
-    final List<ActorRef> actors = getActors(processInstance.getSubjects());
-    LOG.debug("Send ActorInitializeMessage.Request to actors: {}", actors);
+    final List<Pair<ActorRef, Request>> actorsWithMessage =
+        getActorsWithMessage(processInstance.getPiId(), processInstance.getSubjects());
+    LOG.debug("Send ActorInitializeMessage.Request to actors: {}", actorsWithMessage);
 
-    final List<CompletableFuture<Object>> futures = actors.stream()
-        .map(actor -> PatternsCS.ask(actor, msg, Global.TIMEOUT).toCompletableFuture())
+    final List<CompletableFuture<Object>> futures = actorsWithMessage.stream()
+        .map(pair -> PatternsCS.ask(pair.getLeft(), pair.getRight(), Global.TIMEOUT)
+            .toCompletableFuture())
         .collect(Collectors.toList());
-
 
     final ActorRef service = getSender();
 
@@ -83,8 +91,9 @@ public class UserSupervisorActor extends UntypedActor {
         });
   }
 
-  private List<ActorRef> getActors(final List<Subject> subjects) {
-    final List<ActorRef> processUsers = Lists.newArrayList();
+  private List<Pair<ActorRef, UserActorInitializeMessage.Request>> getActorsWithMessage(
+      final Long piId, final List<Subject> subjects) {
+    final List<Pair<ActorRef, UserActorInitializeMessage.Request>> actors = Lists.newArrayList();
 
     subjects.forEach(subject -> {
       if (subject.getUser() != null) {
@@ -93,16 +102,23 @@ public class UserSupervisorActor extends UntypedActor {
         final Optional<ActorRef> actorOpt = akkaSelector.findActor(getContext(), userId);
 
         if (!actorOpt.isPresent()) {
-          processUsers.add(
-              getContext().actorOf(springExtension.props("UserActor", subject.getUser()), userId));
+          actors.add(Pair.of(
+              getContext().actorOf(springExtension.props("UserActor", subject.getUser()), userId),
+              new UserActorInitializeMessage.Request(piId, subject.getSId())));
         } else {
-          processUsers.add(actorOpt.get());
+          actors.add(Pair.of(actorOpt.get(),
+              new UserActorInitializeMessage.Request(piId, subject.getSId())));
         }
-      } else {
+      } else if (subject.getGroup() != null) {
         // TODO add group support
+      } else {
+        LOG.debug("Will create temporary actor since user or group is not set");
+        actors.add(Pair.of(
+            getContext().actorOf(springExtension.props("UserActor", Global.DESTROY_ID),
+                String.valueOf(UUID.randomUUID())),
+            new UserActorInitializeMessage.Request(piId, subject.getSId())));
       }
     });
-    return processUsers;
+    return actors;
   }
-
 }

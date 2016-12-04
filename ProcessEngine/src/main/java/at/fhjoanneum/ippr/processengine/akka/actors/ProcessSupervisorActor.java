@@ -1,12 +1,20 @@
 package at.fhjoanneum.ippr.processengine.akka.actors;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+
+import com.google.common.collect.Lists;
 
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
@@ -29,6 +37,7 @@ import at.fhjoanneum.ippr.processengine.repositories.ProcessModelRepository;
 import at.fhjoanneum.ippr.processengine.repositories.SubjectModelRepository;
 import at.fhjoanneum.ippr.processengine.repositories.SubjectRepository;
 
+@Transactional
 @Component("ProcessSupervisorActor")
 @Scope("prototype")
 public class ProcessSupervisorActor extends UntypedActor {
@@ -78,7 +87,16 @@ public class ProcessSupervisorActor extends UntypedActor {
       }
       processBuilder.processModel(processModel.get());
 
-      msg.getUserGroupAssignments().stream().map(entry -> createSubject(processBuilder, entry))
+      final SubjectModel starterSubjectModel = processModel.get().getStarterSubjectModel();
+      final List<UserGroupAssignment> assignments = Lists.newArrayList(
+          new UserGroupAssignment(starterSubjectModel.getSmId(), msg.getStartUserId(), null));
+
+      assignments.addAll(processModel.get().getSubjectModels().stream()
+          .filter(subjectModel -> !subjectModel.getSmId().equals(starterSubjectModel.getSmId()))
+          .map(subjectModel -> new UserGroupAssignment(subjectModel.getSmId(), null, null))
+          .collect(Collectors.toList()));
+
+      assignments.stream().map(entry -> createSubject(processBuilder, entry))
           .forEach(subject -> subjectRepository.save((SubjectImpl) subject));
 
       final ProcessInstance processInstance =
@@ -91,9 +109,16 @@ public class ProcessSupervisorActor extends UntypedActor {
         getContext().actorOf(springExtension.props("ProcessActor", processInstance.getPiId()),
             processInstanceId);
         LOG.info("Created new actor for process instance: {}", processInstanceId);
-      }
 
-      getSender().tell(new ProcessStartMessage.Response(processInstance.getPiId()), getSelf());
+        TransactionSynchronizationManager
+            .registerSynchronization(new TransactionSynchronizationAdapter() {
+              @Override
+              public void afterCommit() {
+                getSender().tell(new ProcessStartMessage.Response(processInstance.getPiId()),
+                    getSelf());
+              }
+            });
+      }
     } catch (final Exception e) {
       getSender().tell(new akka.actor.Status.Failure(e), getSelf());
     }
@@ -114,7 +139,7 @@ public class ProcessSupervisorActor extends UntypedActor {
     final SubjectBuilder builder = new SubjectBuilder().subjectModel(subjectModel.get());
     if (entry.getUserId() != null) {
       builder.userId(entry.getUserId());
-    } else {
+    } else if (entry.getGroupId() != null) {
       builder.groupId(entry.getGroupId());
     }
 

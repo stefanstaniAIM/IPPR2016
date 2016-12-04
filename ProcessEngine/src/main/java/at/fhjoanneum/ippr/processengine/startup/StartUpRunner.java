@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Lists;
@@ -32,6 +33,7 @@ public class StartUpRunner implements CommandLineRunner {
   @Autowired
   private ActorRef processSupervisorActor;
 
+  @Async
   @Transactional
   @Override
   public void run(final String... args) throws Exception {

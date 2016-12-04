@@ -1,10 +1,8 @@
 package at.fhjoanneum.ippr.processengine.services;
 
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -58,12 +56,9 @@ public class ProcessServiceImpl implements ProcessService {
     final ActorRef processCheckActor = actorSystem.actorOf(
         springExtension.props("ProcessCheckActor"), "processCheckActor-" + UUID.randomUUID());
 
-    final List<Long> subjects = processStartDTO.getAssignments().stream()
-        .map(assignment -> assignment.getSmId()).collect(Collectors.toList());
-
     PatternsCS
-        .ask(processCheckActor,
-            new ProcessCheckMessage.Request(processStartDTO.getPmId(), subjects), Global.TIMEOUT)
+        .ask(processCheckActor, new ProcessCheckMessage.Request(processStartDTO.getPmId()),
+            Global.TIMEOUT)
         .toCompletableFuture().thenApply(obj -> (ProcessCheckMessage.Response) obj)
         .whenComplete((msg, exc) -> handleCheckProcessResponse(processStartDTO, future, msg));
 
@@ -74,13 +69,8 @@ public class ProcessServiceImpl implements ProcessService {
       final CompletableFuture<ProcessStartedDTO> future,
       final ProcessCheckMessage.Response checkMsg) {
     if (checkMsg.isCorrect()) {
-      final List<ProcessStartMessage.UserGroupAssignment> assignments =
-          processStartDTO.getAssignments().stream()
-              .map(entry -> new ProcessStartMessage.UserGroupAssignment(entry.getSmId(),
-                  entry.getUserId(), entry.getGroupId()))
-              .collect(Collectors.toList());
-      final ProcessStartMessage.Request processStartMessage =
-          new ProcessStartMessage.Request(processStartDTO.getPmId(), assignments);
+      final ProcessStartMessage.Request processStartMessage = new ProcessStartMessage.Request(
+          processStartDTO.getPmId(), processStartDTO.getStartUserId());
 
       PatternsCS.ask(processSupervisorActor, processStartMessage, Global.TIMEOUT)
           .toCompletableFuture().thenApply(obj -> (ProcessStartMessage.Response) obj)

@@ -118,6 +118,11 @@ public class ProcessModelImpl implements ProcessModel, Serializable {
   }
 
   @Override
+  public SubjectModel getStarterSubjectModel() {
+    return starterSubject;
+  }
+
+  @Override
   public float getVersion() {
     return version;
   };

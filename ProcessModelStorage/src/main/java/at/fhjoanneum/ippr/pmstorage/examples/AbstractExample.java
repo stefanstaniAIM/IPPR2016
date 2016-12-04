@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.scheduling.annotation.Async;
 
 import at.fhjoanneum.ippr.persistence.objects.model.businessobject.BusinessObjectModel;
 import at.fhjoanneum.ippr.persistence.objects.model.businessobject.field.BusinessObjectFieldModel;
@@ -31,6 +32,7 @@ public abstract class AbstractExample implements CommandLineRunner {
 
   protected abstract String getName();
 
+  @Async
   @Override
   public void run(final String... args) throws Exception {
     if (exampleConfiguration.isInsertExamplesEnabled()) {

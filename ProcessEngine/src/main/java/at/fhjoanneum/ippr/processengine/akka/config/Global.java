@@ -10,4 +10,6 @@ public class Global {
   public Global() {}
 
   public final static Timeout TIMEOUT = new Timeout(Duration.create(5, TimeUnit.SECONDS));
+
+  public final static Long DESTROY_ID = -1L;
 }

@@ -18,6 +18,8 @@ public interface ProcessModel {
 
   List<SubjectModel> getSubjectModels();
 
+  SubjectModel getStarterSubjectModel();
+
   void setState(ProcessModelState state);
 
   float getVersion();

@@ -1,24 +1,22 @@
 package at.fhjoanneum.ippr.processengine.akka.messages.process;
 
-import java.util.List;
-
 public class ProcessStartMessage {
 
   public static class Request {
     private final Long pmId;
-    private final List<UserGroupAssignment> userGroupAssignments;
+    private final Long startUserId;
 
-    public Request(final Long pmId, final List<UserGroupAssignment> userGroupAssignments) {
+    public Request(final Long pmId, final Long startUserId) {
       this.pmId = pmId;
-      this.userGroupAssignments = userGroupAssignments;
+      this.startUserId = startUserId;
     }
 
     public Long getPmId() {
       return pmId;
     }
 
-    public List<UserGroupAssignment> getUserGroupAssignments() {
-      return userGroupAssignments;
+    public Long getStartUserId() {
+      return startUserId;
     }
 
     @Override
@@ -61,7 +59,5 @@ public class ProcessStartMessage {
     public Long getGroupId() {
       return groupId;
     }
-
-
   }
 }

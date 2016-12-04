@@ -11,6 +11,9 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class UserGroupAssignmentDTO implements Serializable {
+
+  private static final long serialVersionUID = -7561118542979780949L;
+
   private Long smId;
   private Long userId;
   private Long groupId;

@@ -36,7 +36,6 @@ public class SubjectBuilder implements Builder<Subject> {
   @Override
   public Subject build() {
     checkNotNull(subjectModel);
-    checkArgument(groupId != null || userId != null);
     return new SubjectImpl(userId, groupId, subjectModel);
   }
 
