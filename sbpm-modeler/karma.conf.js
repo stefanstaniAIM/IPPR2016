@@ -39,7 +39,7 @@ module.exports = function(config) {
 
         ngHtml2JsPreprocessor: {
             stripPrefix: 'src/',
-            moduleName: 'angularSeedApp'
+            moduleName: 'sbpm-modeler'
         },
 
         browsers: ['PhantomJS'],

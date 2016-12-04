@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('angularSeedApp')
+        .module('sbpm-modeler')
         .directive('acmeNavbar', acmeNavbar);
 
     /** @ngInject */

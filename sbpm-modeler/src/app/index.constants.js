@@ -3,7 +3,7 @@
     'use strict';
 
     angular
-        .module('angularSeedApp')
+        .module('sbpm-modeler')
         .constant('malarkey', malarkey)
         .constant('toastr', toastr)
         .constant('moment', moment);
