@@ -1,6 +1,5 @@
 {
     "name": "sbpm-modeler",
-    "version": "0.0.1",
     "dependencies": {
         "angular-animate": "~1.4.0",
         "angular-cookies": "~1.4.0",

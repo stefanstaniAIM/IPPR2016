@@ -1,6 +1,6 @@
 {
     "name": "sbpm-modeler",
-    "description": "An Angular 2 application that can be used to model S-BPM processes.",
+    "description": "An AngularJs application that can be used to model S-BPM processes.",
     "version": "0.0.1",
     "keywords": [
         "angular2",
