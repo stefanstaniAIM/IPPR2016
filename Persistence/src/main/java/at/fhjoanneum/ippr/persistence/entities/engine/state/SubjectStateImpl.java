@@ -115,7 +115,7 @@ public class SubjectStateImpl implements SubjectState, Serializable {
 
   @Override
   public LocalDateTime getLastChanged() {
-    return getLastChanged();
+    return lastChanged;
   }
 
   @Override

@@ -1,5 +1,6 @@
 package at.fhjoanneum.ippr.processengine.akka.actors;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -76,8 +77,9 @@ public class ProcessActor extends UntypedActor {
     final String functionType = subjectState.getCurrentState().getFunctionType().name();
     final String receiveSubjectState = subjectState.getReceiveSubjectState() != null
         ? subjectState.getReceiveSubjectState().name() : null;
+    final LocalDateTime lastChanged = subjectState.getLastChanged();
 
     return new SubjectStateDTO(ssId, userId, subjectName, stateName, functionType,
-        receiveSubjectState);
+        receiveSubjectState, lastChanged);
   }
 }

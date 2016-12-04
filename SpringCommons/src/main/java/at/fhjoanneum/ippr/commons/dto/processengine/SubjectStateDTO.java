@@ -1,6 +1,7 @@
 package at.fhjoanneum.ippr.commons.dto.processengine;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -15,17 +16,20 @@ public class SubjectStateDTO implements Serializable {
   private String stateName;
   private String stateFunctionType;
   private String receiveState;
+  private LocalDateTime lastChanged;
 
   public SubjectStateDTO() {}
 
   public SubjectStateDTO(final Long ssId, final Long userId, final String subjectName,
-      final String stateName, final String stateFunctionType, final String receiveState) {
+      final String stateName, final String stateFunctionType, final String receiveState,
+      final LocalDateTime lastChanged) {
     this.ssId = ssId;
     this.userId = userId;
     this.subjectName = subjectName;
     this.stateName = stateName;
     this.stateFunctionType = stateFunctionType;
     this.receiveState = receiveState;
+    this.lastChanged = lastChanged;
   }
 
   public Long getSsId() {
@@ -50,5 +54,9 @@ public class SubjectStateDTO implements Serializable {
 
   public String getReceiveState() {
     return receiveState;
+  }
+
+  public LocalDateTime getLastChanged() {
+    return lastChanged;
   }
 }

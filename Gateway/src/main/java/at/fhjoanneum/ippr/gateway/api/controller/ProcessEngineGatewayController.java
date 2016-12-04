@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartedDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStateDTO;
 import at.fhjoanneum.ippr.gateway.api.controller.user.HttpHeaderUser;
 import at.fhjoanneum.ippr.gateway.api.services.impl.ProcessEngineCallerImpl;
 
@@ -56,6 +57,15 @@ public class ProcessEngineGatewayController {
 
     return () -> {
       return processEngineCaller.getAmountOfActiveProcessesPerUser(userId).get();
+    };
+  }
+
+  @RequestMapping(value = "api/processes/state/{piId}", method = RequestMethod.GET)
+  public @ResponseBody Callable<ResponseEntity<ProcessStateDTO>> getProcessState(
+      final HttpServletRequest request, @PathVariable("piId") final Long piId) {
+
+    return () -> {
+      return processEngineCaller.getProcessState(piId).get();
     };
   }
 }

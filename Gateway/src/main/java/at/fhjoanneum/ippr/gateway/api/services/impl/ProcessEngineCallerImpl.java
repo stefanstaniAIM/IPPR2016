@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartedDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStateDTO;
 import at.fhjoanneum.ippr.gateway.api.config.GatewayConfig;
 import at.fhjoanneum.ippr.gateway.api.controller.user.HttpHeaderUser;
 import at.fhjoanneum.ippr.gateway.api.services.Caller;
@@ -58,5 +59,14 @@ public class ProcessEngineCallerImpl implements Caller {
         .setPath("/processes/amountOfActiveProcessesPerUser/" + userId);
 
     return createRequest(uri, HttpMethod.GET, null, Long.class, null);
+  }
+
+  @Async
+  public Future<ResponseEntity<ProcessStateDTO>> getProcessState(final Long piId)
+      throws URISyntaxException {
+    final URIBuilder uri =
+        new URIBuilder(gatewayConfig.getProcessEngineAddress()).setPath("processes/state/" + piId);
+
+    return createRequest(uri, HttpMethod.GET, null, ProcessStateDTO.class, null);
   }
 }
