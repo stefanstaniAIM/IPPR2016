@@ -10,9 +10,9 @@
         $stateProvider
             .state('home', {
                 url: '/',
-                templateUrl: 'app/main/main.html',
-                controller: 'MainController',
-                controllerAs: 'main'
+                templateUrl: 'app/main/sbpm-modeler.template.html',
+                controller: 'SbpmModelerController',
+                controllerAs: 'smctrl'
             });
 
         $urlRouterProvider.otherwise('/');

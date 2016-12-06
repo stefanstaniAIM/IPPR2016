@@ -1,0 +1,43 @@
+// Sidenav closed
+.sidenav-left-closed {
+    width: 57px;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+}
+
+.sidenav-left-closed-toogle {
+    transition: 0.3s;
+    transform: translate3d(0px,0px,0px);
+}
+
+.sidenav-left-closed-toogle.ng-hide {
+    transition: 0.3s;
+    transform: translate3d(-57px,0px,0px);
+}
+
+
+.sidenav-left-opened {
+
+    //md-button custom styles
+    .md-button {
+        text-align:left;
+        text-transform: none;
+    }
+
+    //md-subheader custon styles
+    .sidenav-left-md-subheader {
+        .md-subheader-inner {
+            padding: 0px;
+
+
+        }
+
+        .sidenav-left-md-subheader-header {
+            padding-left: 16px;
+            padding-top: 12px;
+        }
+    }
+
+}
+
