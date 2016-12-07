@@ -25,6 +25,7 @@ import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 import at.fhjoanneum.ippr.processengine.akka.config.Global;
 import at.fhjoanneum.ippr.processengine.akka.messages.EmptyMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.UserActorInitializeMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.UserActorWakeUpMessage;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 import at.fhjoanneum.ippr.processengine.repositories.StateRepository;
 import at.fhjoanneum.ippr.processengine.repositories.SubjectRepository;
@@ -56,6 +57,8 @@ public class UserActor extends UntypedActor {
   public void onReceive(final Object obj) throws Throwable {
     if (obj instanceof UserActorInitializeMessage.Request) {
       handleActorInitializeMessage(obj);
+    } else if (obj instanceof UserActorWakeUpMessage.Request) {
+      handleUserWakeUpMessage(obj);
     } else {
       unhandled(obj);
     }
@@ -100,4 +103,8 @@ public class UserActor extends UntypedActor {
     }
   }
 
+  private void handleUserWakeUpMessage(final Object obj) {
+    final UserActorWakeUpMessage.Request msg = (UserActorWakeUpMessage.Request) obj;
+    getSender().tell(new UserActorWakeUpMessage.Request(msg.getUserId()), getSelf());
+  }
 }

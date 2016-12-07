@@ -30,6 +30,7 @@ import at.fhjoanneum.ippr.processengine.akka.messages.EmptyMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ActorInitializeMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.UserActorInitializeMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.UserActorInitializeMessage.Request;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.UserActorWakeUpMessage;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 
 @Transactional
@@ -52,6 +53,8 @@ public class UserSupervisorActor extends UntypedActor {
   public void onReceive(final Object obj) throws Throwable {
     if (obj instanceof ActorInitializeMessage.Request) {
       handleActorInitializeMessage(obj);
+    } else if (obj instanceof UserActorWakeUpMessage.Request) {
+      handleUserWakeUpMessage(obj);
     } else {
       unhandled(obj);
     }
@@ -120,5 +123,19 @@ public class UserSupervisorActor extends UntypedActor {
       }
     });
     return actors;
+  }
+
+  private void handleUserWakeUpMessage(final Object obj) {
+    final UserActorWakeUpMessage.Request msg = (UserActorWakeUpMessage.Request) obj;
+    final String userId = "ProcessUser-" + msg.getUserId();
+    final Optional<ActorRef> actorOpt = akkaSelector.findActor(getContext(), userId);
+
+    ActorRef actor = null;
+    if (!actorOpt.isPresent()) {
+      actor = getContext().actorOf(springExtension.props("UserActor", msg.getUserId()), userId);
+    } else {
+      actor = actorOpt.get();
+    }
+    actor.forward(msg, getContext());
   }
 }
