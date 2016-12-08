@@ -1,5 +1,6 @@
 package at.fhjoanneum.ippr.processengine.controller;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,9 +15,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import at.fhjoanneum.ippr.commons.dto.processengine.ProcessInfoDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartedDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStateDTO;
@@ -75,6 +78,29 @@ public class ProcessEngineController {
 
     return () -> {
       return processService.getStateOfProcessInstance(piId).get();
+    };
+  }
+
+  @RequestMapping(value = "processes/{state}", method = RequestMethod.GET)
+  public @ResponseBody Callable<List<ProcessInfoDTO>> getProcessesInfoOfState(
+      @PathVariable("state") final String state,
+      @RequestParam(value = "page", required = true) final int page,
+      @RequestParam(value = "size", required = false, defaultValue = "10") final int size) {
+
+    return () -> {
+      return processService.getProcessesInfoOfState(state, page, size).get();
+    };
+  }
+
+
+  @RequestMapping(value = "processes/{state}/{user}", method = RequestMethod.GET)
+  public @ResponseBody Callable<List<ProcessInfoDTO>> getProcessesInfoOfUserAndState(
+      @PathVariable("user") final Long user, @PathVariable("state") final String state,
+      @RequestParam(value = "page", required = true) final int page,
+      @RequestParam(value = "size", required = false, defaultValue = "10") final int size) {
+
+    return () -> {
+      return processService.getProcessesInfoOfUserAndState(user, state, page, size).get();
     };
   }
 }

@@ -31,6 +31,7 @@ import at.fhjoanneum.ippr.persistence.entities.model.process.ProcessModelImpl;
 import at.fhjoanneum.ippr.persistence.objects.engine.enums.ProcessInstanceState;
 import at.fhjoanneum.ippr.persistence.objects.engine.process.ProcessInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.subject.Subject;
+import at.fhjoanneum.ippr.persistence.objects.model.process.ProcessModel;
 
 @Entity(name = "PROCESS_INSTANCE")
 public class ProcessInstanceImpl implements ProcessInstance, Serializable {
@@ -46,11 +47,16 @@ public class ProcessInstanceImpl implements ProcessInstance, Serializable {
   @NotNull
   private ProcessModelImpl processModel;
 
+  @NotNull
   @Column
   private LocalDateTime startTime;
 
   @Column
   private LocalDateTime endTime;
+
+  @NotNull
+  @Column
+  private Long startUserId;
 
   @Column
   @NotNull
@@ -64,11 +70,13 @@ public class ProcessInstanceImpl implements ProcessInstance, Serializable {
 
   ProcessInstanceImpl() {}
 
-  ProcessInstanceImpl(final ProcessModelImpl processModel, final List<SubjectImpl> subjects) {
+  ProcessInstanceImpl(final ProcessModelImpl processModel, final List<SubjectImpl> subjects,
+      final Long startUserId) {
     this.processModel = processModel;
     this.subjects = subjects;
     this.startTime = LocalDateTime.now();
     this.state = ProcessInstanceState.ACTIVE;
+    this.startUserId = startUserId;
   }
 
   @Override
@@ -79,6 +87,16 @@ public class ProcessInstanceImpl implements ProcessInstance, Serializable {
   @Override
   public ProcessInstanceState getState() {
     return state;
+  }
+
+  @Override
+  public ProcessModel getProcessModel() {
+    return processModel;
+  }
+
+  @Override
+  public Long getStartUserId() {
+    return startUserId;
   }
 
   @Override

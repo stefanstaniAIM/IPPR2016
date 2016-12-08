@@ -2,12 +2,15 @@ package at.fhjoanneum.ippr.processengine.repositories;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import at.fhjoanneum.ippr.persistence.entities.engine.process.ProcessInstanceImpl;
+import at.fhjoanneum.ippr.persistence.objects.engine.enums.ProcessInstanceState;
 
 @Repository
 public interface ProcessInstanceRepository
@@ -25,4 +28,14 @@ public interface ProcessInstanceRepository
           + "JOIN SUBJECT s on s.s_id = psm.s_id WHERE p.state = :state and s.user_id = :userId",
       nativeQuery = true)
   Long getAmountOfProcessesPerUser(@Param("state") String state, @Param("userId") Long userId);
+
+  @Query(value = "SELECT p FROM PROCESS_INSTANCE p WHERE p.state = :state", nativeQuery = false)
+  Page<ProcessInstanceImpl> getProcessesInfoOfState(Pageable pageable,
+      @Param("state") ProcessInstanceState state);
+
+  @Query(
+      value = "SELECT p FROM PROCESS_INSTANCE p JOIN p.subjects s WHERE s.userId = :user AND p.state = :state",
+      nativeQuery = false)
+  Page<ProcessInstanceImpl> getProcessesInfoOfUserAndState(Pageable pageable,
+      @Param("user") Long user, @Param("state") ProcessInstanceState state);
 }
