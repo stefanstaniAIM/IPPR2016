@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -18,16 +20,19 @@ import com.google.common.collect.Lists;
 
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
+import at.fhjoanneum.ippr.commons.dto.processengine.ProcessInfoDTO;
 import at.fhjoanneum.ippr.persistence.entities.engine.process.ProcessInstanceBuilder;
 import at.fhjoanneum.ippr.persistence.entities.engine.process.ProcessInstanceImpl;
 import at.fhjoanneum.ippr.persistence.entities.engine.subject.SubjectBuilder;
 import at.fhjoanneum.ippr.persistence.entities.engine.subject.SubjectImpl;
+import at.fhjoanneum.ippr.persistence.objects.engine.enums.ProcessInstanceState;
 import at.fhjoanneum.ippr.persistence.objects.engine.process.ProcessInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.subject.Subject;
 import at.fhjoanneum.ippr.persistence.objects.model.process.ProcessModel;
 import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
 import at.fhjoanneum.ippr.processengine.akka.AkkaSelector;
 import at.fhjoanneum.ippr.processengine.akka.config.SpringExtension;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessInfoMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStartMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStartMessage.UserGroupAssignment;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStateMessage;
@@ -68,6 +73,8 @@ public class ProcessSupervisorActor extends UntypedActor {
       handleProcessStateMessage(obj);
     } else if (obj instanceof ProcessWakeUpMessage.Request) {
       handleProcessWakeUpMessage(obj);
+    } else if (obj instanceof ProcessInfoMessage.Request) {
+      handleProcessInfoMessage(obj);
     } else {
       unhandled(obj);
     }
@@ -98,6 +105,8 @@ public class ProcessSupervisorActor extends UntypedActor {
 
       assignments.stream().map(entry -> createSubject(processBuilder, entry))
           .forEach(subject -> subjectRepository.save((SubjectImpl) subject));
+
+      processBuilder.startUserId(msg.getStartUserId());
 
       final ProcessInstance processInstance =
           processInstanceRepository.save((ProcessInstanceImpl) processBuilder.build());
@@ -177,5 +186,35 @@ public class ProcessSupervisorActor extends UntypedActor {
     }
 
     getSender().tell(new ProcessWakeUpMessage.Response(msg.getPiId()), getSelf());
+  }
+
+  private void handleProcessInfoMessage(final Object obj) {
+    final ProcessInfoMessage.Request msg = (ProcessInfoMessage.Request) obj;
+
+    final PageRequest pageRequest =
+        new PageRequest(msg.getPage(), msg.getSize(), new Sort(Sort.Direction.DESC, "startTime"));
+
+
+    List<ProcessInstance> content = null;
+    if (msg.getUser() == null) {
+      LOG.debug("Received ProcessInfoMessage to show all processes");
+      content = Lists.newArrayList(processInstanceRepository
+          .getProcessesInfoOfState(pageRequest, ProcessInstanceState.valueOf(msg.getState()))
+          .getContent());
+    } else {
+      LOG.debug("Received ProcessInfoMessage to show all processes of involved user [{}]",
+          msg.getUser());
+      content =
+          Lists.newArrayList(processInstanceRepository.getProcessesInfoOfUserAndState(pageRequest,
+              msg.getUser(), ProcessInstanceState.valueOf(msg.getState())).getContent());
+    }
+
+    final List<ProcessInfoDTO> processesInfo = content.stream().map(process -> {
+      final String processName = process.getProcessModel().getName();
+      return new ProcessInfoDTO(process.getPiId(), process.getStartTime(), process.getEndTime(),
+          processName, process.getStartUserId());
+    }).collect(Collectors.toList());
+
+    getSender().tell(new ProcessInfoMessage.Response(processesInfo), getSelf());
   }
 }

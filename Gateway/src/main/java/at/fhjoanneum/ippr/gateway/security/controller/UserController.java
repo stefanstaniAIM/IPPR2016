@@ -71,6 +71,12 @@ public class UserController {
     return userGroupService.getUserByUserId(userId.longValue());
   }
 
+  @RequestMapping(value = "api/user/{userId}", method = RequestMethod.GET)
+  public User getUser(final HttpServletRequest request,
+      @PathVariable(name = "userId", required = true) final Long userId) {
+    return userGroupService.getUserByUserId(userId);
+  }
+
   @RequestMapping(value = "api/processes/possibleUsers/{group}", method = RequestMethod.GET)
   public @ResponseBody Callable<List<UserDTO>> getPossibleUsers(
       @PathVariable("group") final String group) {

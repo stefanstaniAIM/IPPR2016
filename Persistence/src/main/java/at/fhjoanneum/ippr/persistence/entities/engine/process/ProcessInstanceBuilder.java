@@ -18,6 +18,8 @@ public class ProcessInstanceBuilder implements Builder<ProcessInstance> {
 
   private ProcessModelImpl processModel;
   private final List<SubjectImpl> subjects = Lists.newArrayList();
+  private Long startUserId;
+
 
   public ProcessInstanceBuilder processModel(final ProcessModel processModel) {
     checkNotNull(processModel);
@@ -33,10 +35,16 @@ public class ProcessInstanceBuilder implements Builder<ProcessInstance> {
     return this;
   }
 
+  public ProcessInstanceBuilder startUserId(final Long startUserId) {
+    checkNotNull(startUserId);
+    this.startUserId = startUserId;
+    return this;
+  }
+
   @Override
   public ProcessInstance build() {
     checkNotNull(processModel);
     checkArgument(!subjects.isEmpty());
-    return new ProcessInstanceImpl(processModel, subjects);
+    return new ProcessInstanceImpl(processModel, subjects, startUserId);
   }
 }

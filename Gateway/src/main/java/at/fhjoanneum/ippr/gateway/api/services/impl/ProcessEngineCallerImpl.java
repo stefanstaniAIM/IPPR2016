@@ -16,6 +16,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import at.fhjoanneum.ippr.commons.dto.processengine.ProcessInfoDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartedDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStateDTO;
@@ -68,5 +69,23 @@ public class ProcessEngineCallerImpl implements Caller {
         new URIBuilder(gatewayConfig.getProcessEngineAddress()).setPath("processes/state/" + piId);
 
     return createRequest(uri, HttpMethod.GET, null, ProcessStateDTO.class, null);
+  }
+
+  public Future<ResponseEntity<ProcessInfoDTO[]>> getProcessesInfoOfState(final String state,
+      final int page, final int size) throws URISyntaxException {
+    final URIBuilder uri =
+        new URIBuilder(gatewayConfig.getProcessEngineAddress()).setPath("processes/" + state)
+            .addParameter("page", String.valueOf(page)).addParameter("size", String.valueOf(size));
+
+    return createRequest(uri, HttpMethod.GET, null, ProcessInfoDTO[].class, null);
+  }
+
+  public Future<ResponseEntity<ProcessInfoDTO[]>> getProcessesInfoOfUserAndState(final Long user,
+      final String state, final int page, final int size) throws URISyntaxException {
+    final URIBuilder uri = new URIBuilder(gatewayConfig.getProcessEngineAddress())
+        .setPath("processes/" + state + "/" + user).addParameter("page", String.valueOf(page))
+        .addParameter("size", String.valueOf(size));
+
+    return createRequest(uri, HttpMethod.GET, null, ProcessInfoDTO[].class, null);
   }
 }

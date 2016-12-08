@@ -2,40 +2,33 @@ package at.fhjoanneum.ippr.commons.dto.processengine;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class ProcessStateDTO implements Serializable {
+public class ProcessInfoDTO implements Serializable {
 
-  private static final long serialVersionUID = 6802550001350674258L;
+  private static final long serialVersionUID = 4432720548280531738L;
 
   private Long piId;
-  private String status;
   private LocalDateTime startTime;
   private LocalDateTime endTime;
-  private List<SubjectStateDTO> subjects;
   private String processName;
+  private Long startUserId;
 
-  public ProcessStateDTO() {}
+  public ProcessInfoDTO() {}
 
-  public ProcessStateDTO(final Long piId, final String status, final LocalDateTime startTime,
-      final LocalDateTime endTime, final List<SubjectStateDTO> subjects, final String processName) {
+  public ProcessInfoDTO(final Long piId, final LocalDateTime startTime, final LocalDateTime endTime,
+      final String processName, final Long startUserId) {
     this.piId = piId;
-    this.status = status;
     this.startTime = startTime;
     this.endTime = endTime;
-    this.subjects = subjects;
     this.processName = processName;
+    this.startUserId = startUserId;
   }
 
   public Long getPiId() {
     return piId;
-  }
-
-  public String getStatus() {
-    return status;
   }
 
   public LocalDateTime getStartTime() {
@@ -46,11 +39,11 @@ public class ProcessStateDTO implements Serializable {
     return endTime;
   }
 
-  public List<SubjectStateDTO> getSubjects() {
-    return subjects;
-  }
-
   public String getProcessName() {
     return processName;
+  }
+
+  public Long getStartUserId() {
+    return startUserId;
   }
 }

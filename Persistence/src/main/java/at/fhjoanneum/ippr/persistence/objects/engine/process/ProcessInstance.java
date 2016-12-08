@@ -5,10 +5,13 @@ import java.util.List;
 
 import at.fhjoanneum.ippr.persistence.objects.engine.enums.ProcessInstanceState;
 import at.fhjoanneum.ippr.persistence.objects.engine.subject.Subject;
+import at.fhjoanneum.ippr.persistence.objects.model.process.ProcessModel;
 
 public interface ProcessInstance {
 
   Long getPiId();
+
+  ProcessModel getProcessModel();
 
   ProcessInstanceState getState();
 
@@ -17,6 +20,8 @@ public interface ProcessInstance {
   LocalDateTime getStartTime();
 
   LocalDateTime getEndTime();
+
+  Long getStartUserId();
 
   void setEndTime();
 
