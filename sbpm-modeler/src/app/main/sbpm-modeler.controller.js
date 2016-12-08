@@ -6,5 +6,8 @@
         .controller('SbpmModelerController', SbpmModelerController);
 
     /** @ngInject */
-    function SbpmModelerController() {}
+    function SbpmModelerController($log, modeler) {
+
+
+    }
 })();
