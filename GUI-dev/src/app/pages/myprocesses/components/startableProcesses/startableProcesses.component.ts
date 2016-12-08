@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { OnInit } from '@angular/core';
 import { ProcessesService } from '../../Processes.service';
-import { ModalModule, ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
+//import { ModalModule, ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
 
 @Component({
   selector: 'startableProcesses',
@@ -9,7 +9,7 @@ import { ModalModule, ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
   template: require('./startableProcesses.html')
 })
 export class StartableProcesses implements OnInit {
-   @ViewChild('lgModal') public modal:ModalDirective;
+   //@ViewChild('lgModal') public modal:ModalDirective;
    processModels = [];
    msg = undefined;
    selectedProcessModel = {name: "Kein Modell ausgewählt"};
@@ -30,23 +30,23 @@ export class StartableProcesses implements OnInit {
        );
   }
 
-  startProcess(pmId:number, assignments):void {
-    this.service.startProcess(pmId, (<any>Object).values(assignments))
+  startProcess(pmId:number):void {
+    this.service.startProcess(pmId)
       .subscribe(
         data => {
           this.msg = {text: "Process started", type: 'success'};
-          this.modal.hide();
+          //this.modal.hide();
           //ToDo auf die Prozessanzeigeseite leiten
         },
         err =>{
           this.msg = {text: err, type: 'error'}
-          this.modal.hide();
+          //this.modal.hide();
         },
         () => console.log("Request done")
       );
   }
 
-  selectProcessModel(pm):void {
+  /*selectProcessModel(pm):void {
     var that = this;
     this.isSelectionValid = false;
     this.possibleUserAssignments = [];
@@ -78,6 +78,6 @@ export class StartableProcesses implements OnInit {
     this.possibleUserAssignments = [];
     this.isSelectionValid = false;
     this.modal.hide();
-  }
+  }*/
 
 }

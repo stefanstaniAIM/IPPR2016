@@ -9,6 +9,7 @@ import { routing }       from './myprocesses.routing';
 import { Pipes }       from '../../pipes/pipes.module';
 
 import { ActiveProcesses } from './components/activeProcesses/activeProcesses.component';
+import { ActiveProcessDetail } from './components/activeProcessDetail/activeProcessDetail.component';
 import { TerminatedProcesses } from './components/terminatedProcesses/terminatedProcesses.component';
 import { StartableProcesses } from './components/startableProcesses/startableProcesses.component';
 import { ProcessesService } from './Processes.service';
@@ -27,6 +28,7 @@ import { AuthGuard } from '../../auth.guard';
   declarations: [
     MyProcesses,
     ActiveProcesses,
+    ActiveProcessDetail,
     TerminatedProcesses,
     StartableProcesses
   ],

@@ -1,1 +1,1 @@
-export * from './activeProcesses.component';
+export * from './activeProcessDetail.component';
