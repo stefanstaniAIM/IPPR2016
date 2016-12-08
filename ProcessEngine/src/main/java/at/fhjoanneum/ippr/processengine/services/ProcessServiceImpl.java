@@ -1,5 +1,6 @@
 package at.fhjoanneum.ippr.processengine.services;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.pattern.PatternsCS;
+import at.fhjoanneum.ippr.commons.dto.processengine.ProcessInfoDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartedDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStateDTO;
@@ -24,6 +26,7 @@ import at.fhjoanneum.ippr.processengine.akka.config.SpringExtension;
 import at.fhjoanneum.ippr.processengine.akka.messages.analysis.AmountOfActiveProcessesMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.analysis.AmountOfProcessesPerUserMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ActorInitializeMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessInfoMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStartMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStateMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.check.ProcessCheckMessage;
@@ -145,6 +148,26 @@ public class ProcessServiceImpl implements ProcessService {
         .toCompletableFuture().whenComplete((msg, exc) -> {
           if (exc == null) {
             future.complete(((ProcessStateMessage.Response) msg).getProcessStateDTO());
+          } else {
+            future.completeExceptionally(exc);
+          }
+        });
+
+    return future;
+  }
+
+  @Async
+  @Override
+  public Future<List<ProcessInfoDTO>> getProcessesInfoOfState(final String state, final int page,
+      final int size) {
+    final CompletableFuture<List<ProcessInfoDTO>> future = new CompletableFuture<>();
+
+    PatternsCS
+        .ask(processSupervisorActor,
+            new ProcessInfoMessage.Request(state.toUpperCase(), page, size), Global.TIMEOUT)
+        .toCompletableFuture().whenComplete((msg, exc) -> {
+          if (exc == null) {
+            future.complete(((ProcessInfoMessage.Response) msg).getProcesses());
           } else {
             future.completeExceptionally(exc);
           }

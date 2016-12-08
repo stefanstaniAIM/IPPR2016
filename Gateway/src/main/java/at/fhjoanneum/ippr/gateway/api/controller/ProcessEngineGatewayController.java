@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import at.fhjoanneum.ippr.commons.dto.processengine.ProcessInfoDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartedDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStateDTO;
@@ -66,6 +68,17 @@ public class ProcessEngineGatewayController {
 
     return () -> {
       return processEngineCaller.getProcessState(piId).get();
+    };
+  }
+
+  @RequestMapping(value = "api/processes/{state}", method = RequestMethod.GET)
+  public @ResponseBody Callable<ResponseEntity<ProcessInfoDTO[]>> getProcessesInfoOfState(
+      final HttpServletRequest request, @PathVariable("state") final String state,
+      @RequestParam(value = "page", required = true) final int page,
+      @RequestParam(value = "size", required = false, defaultValue = "10") final int size) {
+
+    return () -> {
+      return processEngineCaller.getProcessesInfoOfState(state, page, size).get();
     };
   }
 }
