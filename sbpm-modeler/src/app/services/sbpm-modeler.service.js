@@ -6,13 +6,23 @@
         .factory('modeler', modeler);
 
     /** @ngInject */
-    function modeler($log, storage) {
+    function modeler($log, modelerStorage) {
+
+        var TAG = 'sbpm-modeler.service: ';
 
         var service = {};
 
-        service.checkLocalStorage = function () {
-            //
-        };
+        function init() {
+            $log.debug(TAG + 'initiating modelerSettings in localStorage');
+            if (modelerStorage.getModelerSettings() === null) {
+                $log.debug(TAG + 'initiating modelerSettings done');
+                modelerStorage.initModelerSettings();
+            } else {
+                $log.debug(TAG + 'modelerSettings already defined');
+            }
+        }
+
+        init();
 
         return service;
 
