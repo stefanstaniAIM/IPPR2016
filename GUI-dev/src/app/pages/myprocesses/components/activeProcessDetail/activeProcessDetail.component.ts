@@ -25,9 +25,43 @@ export class ActiveProcessDetail implements OnInit {
       stateFunctionType: string,
       stateName: string,
       subjectName: string,
-      userId: number
+      userId: number,
+      user: any
     }]
   };
+  businessObject = {
+    fields:[
+      {
+        type: "text",
+        name: "Textfeld",
+        description: "Textfeld für XY",
+        value: "Default Value",
+        minlength: 5,
+        maxlength: 20,
+        required: true,
+        readonly: false
+      },
+      {
+        type: "number",
+        name: "Nummernfeld",
+        description: "Nummernfeld für XY",
+        value: 123,
+        min: 5,
+        max: 200,
+        required: true,
+        readonly: false
+      },
+      {
+        type: "checkbox",
+        name: "Checkbox",
+        description: "Checkbox für XY",
+        value: true,
+        readonly: true
+      }
+    ]
+  }
+
+  businessObjectValues = {};
 
   constructor(protected service: ProcessesService, protected spinner:BaThemeSpinner, protected route: ActivatedRoute, protected router: Router) {
   }
@@ -42,6 +76,12 @@ export class ActiveProcessDetail implements OnInit {
     .subscribe(
         data => {
           this.subjectsState = JSON.parse(data['_body']);
+          this.subjectsState.subjects.forEach(s => {
+                 this.service.getUserById(s.userId).subscribe(
+                   data => s.user = JSON.parse(data['_body']),
+                   err => s.user = {username: "Unbekannt"}
+                 );
+          });
           this.spinner.hide();
         },
         err =>{
@@ -50,5 +90,15 @@ export class ActiveProcessDetail implements OnInit {
           this.spinner.hide();
         }
       );
+  }
+
+  logForm(value: any) {
+    console.log(value);
+  }
+
+  //dirty hack so that the value of the checkbox changes (otherwise the form submit value will stay the original value)
+  onChangeCheckboxFn(that, element){
+    var name = element.name.split("-:_")[0];
+    that.model._parent.form.controls[name].setValue(element.checked)
   }
 }

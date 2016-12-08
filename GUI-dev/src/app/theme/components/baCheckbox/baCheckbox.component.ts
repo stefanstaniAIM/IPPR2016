@@ -11,6 +11,8 @@ export class BaCheckbox implements ControlValueAccessor {
   @Input() label:string;
   @Input() value:string;
   @Input() baCheckboxClass:string;
+  @Input() name:string;
+  @Input() onChangeCheckboxFn;
 
   public model: NgModel;
   public state: boolean;

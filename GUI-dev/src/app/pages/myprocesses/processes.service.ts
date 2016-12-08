@@ -38,8 +38,8 @@ export class ProcessesService {
       return this._authHttp.get('http://localhost:10000/api/processes/active?page=0');
    }
 
-   getActiveProcessesForUser(userId:number){
-     return this._authHttp.get('http://localhost:10000/api/processes/active/'+userId+'?page=0');
+   getActiveProcessesForUser(){
+     return this._authHttp.get('http://localhost:10000/api/processes/active/'+this._user.getUid()+'?page=0');
    }
 
    getUserById(userId:number){

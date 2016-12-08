@@ -18,7 +18,7 @@
          <thead>
             <tr>
                <th>Subjektname</th>
-               <th>User-Id</th>
+               <th>User</th>
                <th>Status</th>
                <th>Typ</th>
                <th>Letzte Änderung</th>
@@ -27,7 +27,7 @@
          <tbody>
             <tr *ngFor="let subject of subjectsState.subjects">
                <td>{{ subject.subjectName }}</td>
-               <td>{{ subject.userId || "Noch keinem User zugewiesen" }}</td>
+               <td>{{ subject.user ? subject.user.username : "Noch keinem User zugewiesen" }}</td>
                <td>{{ subject.stateName }}</td>
                <td>{{ subject.stateFunctionType }}</td>
                <td>{{ subject.lastChanged | commaDate | date:'dd.MM.yyyy HH:mm:ss' }}
@@ -35,4 +35,65 @@
          </tbody>
       </table>
    </ba-card>
+</div>
+<!-- Business Objects Form -->
+<div class="row">
+  <div class="col-md-12">
+  <ba-card title="Business Objects" baCardClass="with-scroll">
+    <form #form="ngForm" (ngSubmit)="logForm(form.value)">
+      <div *ngFor="let field of businessObject.fields">
+        <div class="form-group">
+          <div [ngSwitch]="field.type">
+            <label class="control-label" *ngIf="field.type !== 'checkbox'">{{field.description}}</label>
+            <input type="text" *ngSwitchCase="'text'" class="form-control" id="{{field.id}}" name="{{field.name}}" [ngModel]="field.value" [attr.maxlength]="field.maxlength" [attr.minlength]="field.minlength" [attr.required]="field.required" [readonly]="field.readonly">
+            <input type="number" *ngSwitchCase="'number'" class="form-control" id="{{field.id}}" name="{{field.name}}" [ngModel]="field.value" [attr.max]="field.max" [attr.min]="field.min" [attr.required]="field.required" [readonly]="field.readonly">
+            <ba-checkbox *ngSwitchCase="'checkbox'" name="{{field.readonly ? field.name + '-:_control' : field.name }}" [ngModel]="field.value" [value]="field.value" [label]="field.description" [onChangeCheckboxFn]="onChangeCheckboxFn" [disabled]="field.readonly"></ba-checkbox>
+          </div>
+          <input type="checkbox" *ngIf="field.type === 'checkbox' && field.readonly" name="{{field.name}}" [ngModel]="field.value" value="{{field.value}}" style="display:none" /> <!-- Dirty Hack for sending checkbox value if checkbox is readonly (angular does not send hidden fields) -->
+
+        </div>
+      </div>
+      <button type="submit">Submit</button>
+    </form>
+    <!-- <div class="form-group has-success">
+      <label class="control-label" for="inputSuccess1">Input with success</label>
+      <input type="text" class="form-control" id="inputSuccess1">
+    </div>
+    <div class="form-group has-warning">
+      <label class="control-label" for="inputWarning1">Input with warning</label>
+      <input type="text" class="form-control" id="inputWarning1">
+    </div>
+    <div class="form-group has-error">
+      <label class="control-label" for="inputError1">Input with error</label>
+      <input type="text" class="form-control" id="inputError1">
+    </div>
+    <ba-multi-checkbox [(ngModel)]="checkboxModel" [propertiesMapping]="checkboxPropertiesMapping"></ba-multi-checkbox>
+    <div class="form-group has-success has-feedback">
+      <label class="control-label" for="inputSuccess2">Input with success</label>
+      <input type="text" class="form-control" id="inputSuccess2" aria-describedby="inputSuccess2Status">
+      <i class="ion-checkmark-circled form-control-feedback" aria-hidden="true"></i>
+      <span id="inputSuccess2Status" class="sr-only">(success)</span>
+    </div>
+    <div class="form-group has-warning has-feedback">
+      <label class="control-label" for="inputWarning2">Input with warning</label>
+      <input type="text" class="form-control" id="inputWarning2" aria-describedby="inputWarning2Status">
+      <i class="ion-alert-circled form-control-feedback" aria-hidden="true"></i>
+      <span id="inputWarning2Status" class="sr-only">(warning)</span>
+    </div>
+    <div class="form-group has-error has-feedback">
+      <label class="control-label" for="inputError2">Input with error</label>
+      <input type="text" class="form-control" id="inputError2" aria-describedby="inputError2Status">
+      <i class="ion-android-cancel form-control-feedback" aria-hidden="true"></i>
+      <span id="inputError2Status" class="sr-only">(error)</span>
+    </div>
+    <div class="form-group has-success has-feedback">
+      <label class="control-label" for="inputGroupSuccess1">Input group with success</label>
+      <div class="input-group">
+        <span class="input-group-addon addon-left">@</span>
+        <input type="text" class="form-control" id="inputGroupSuccess1" aria-describedby="inputGroupSuccess1Status">
+      </div>
+      <i class="ion-checkmark-circled form-control-feedback" aria-hidden="true"></i>
+      <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+    </div> -->
+  </ba-card>
 </div>
