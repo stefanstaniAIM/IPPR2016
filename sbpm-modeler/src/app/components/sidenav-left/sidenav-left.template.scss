@@ -1,0 +1,25 @@
+// Sidenav closed
+.sidenav-left-closed {
+    width: 57px;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 8999;
+}
+
+.sidenav-left-closed-toogle {
+    transition: 0.3s;
+    transform: translate3d(0px, 0px, 0px);
+}
+
+.sidenav-left-closed-toogle.ng-hide {
+    transition: 0.3s;
+    transform: translate3d(-57px, 0px, 0px);
+}
+
+.sidenav-left-opened {
+
+    z-index: 9000;
+
+}
+

@@ -12,7 +12,7 @@
                 url: '/',
                 templateUrl: 'app/main/sbpm-modeler.template.html',
                 controller: 'SbpmModelerController',
-                controllerAs: 'smctrl'
+                controllerAs: 'sm'
             });
 
         $urlRouterProvider.otherwise('/');

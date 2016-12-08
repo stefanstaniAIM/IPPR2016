@@ -1,79 +1,9 @@
 <div flex layout="column">
 
-    <md-sidenav class="sidenav-left-opened" md-is-open="true" md-component-id="sidenav-left" md-whiteframe="4"
-                md-disable-backdrop="false">
-        <md-toolbar class="md-theme-indigo md-toolbar-tools">
-            <div flex>Pallet</div>
-            <md-button class="md-icon-button" ng-click="smctrl.toogleSidenav()">
-                <md-icon>menu</md-icon>
-            </md-button>
-        </md-toolbar>
-        <md-content>
-            <md-list flex>
-                <md-subheader class="md-no-sticky">Basic elements</md-subheader>
-                <md-list-item>
-                    Test
-                </md-list-item>
-                <md-divider></md-divider>
-                <md-subheader class="md-no-sticky">Message types</md-subheader>
-                <md-list-item>
-                    <div class="md-list-item-text" layout="column" flex>
-                        <md-button class="md-button" flex>Create a new message type</md-button>
-                        <md-button class="md-button" flex>View message types</md-button>
-                    </div>
-                </md-list-item>
-                <md-divider></md-divider>
-                <md-subheader class="md-no-sticky" ng-init="checked = true" ng-click="checked = !checked">Navigation</md-subheader>
-                <md-list-item ng-show="checked">
-                    <div class="md-list-item-text" layout="column" flex>
-                        <md-button class="md-button" flex>Change view</md-button>
-                        <md-button class="md-button" flex>Change subject</md-button>
-                    </div>
-                </md-list-item>
-                <md-divider></md-divider>
-                <md-subheader class="sidenav-left-md-subheader md-no-sticky" layout="column" ng-init="s4Checked = true">
-                    <div layout="row">
-                        <span class="sidenav-left-md-subheader-header" flex>Actions</span>
-                        <md-button class="md-icon-button" ng-click="s4Checked = !s4Checked">
-                            <md-icon>{{s4Checked ? 'keyboard_arrow_down' : 'keyboard_arrow_right'}}</md-icon>
-                        </md-button>
-                    </div>
-                </md-subheader>
-                <md-list-item ng-show="s4Checked">
-                    <div class="md-list-item-text" layout="column" flex>
-                        <md-button class="md-button" flex>
-                            <md-icon>insert_drive_file</md-icon>
-                            <span>New file</span>
-                        </md-button>
-                        <md-button class="md-button" flex>
-                            <md-icon>folder</md-icon>
-                            <span>Open existing XML file</span>
-                        </md-button>
-                        <md-button class="md-button" flex>
-                            <md-icon>file_download</md-icon>
-                            <span>Save as XML</span>
-                        </md-button>
-                        <md-button class="md-button" flex>
-                            <md-icon>photo</md-icon>
-                            <span>Save as SVG</span>
-                        </md-button>
-                    </div>
-                </md-list-item>
-            </md-list>
-        </md-content>
-    </md-sidenav>
+    <sidenav-left></sidenav-left>
 
     <md-content flex>
         Test
     </md-content>
 
-</div>
-
-<!-- Sidenav-left closed-->
-<div class="sidenav-left-closed sidenav-left-closed-toogle" md-whiteframe="4" ng-hide="smctrl.sideNavOpened()">
-    <md-toolbar class="md-toolbar-tools">
-        <md-button class="md-icon-button" ng-click="smctrl.toogleSidenav()">
-            <md-icon>menu</md-icon>
-        </md-button>
-    </md-toolbar>
 </div>
