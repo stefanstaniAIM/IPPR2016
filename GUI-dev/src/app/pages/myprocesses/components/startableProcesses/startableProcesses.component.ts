@@ -1,5 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { OnInit } from '@angular/core';
+import { Router, ActivatedRoute, Params } from '@angular/router';
 import { ProcessesService } from '../../Processes.service';
 //import { ModalModule, ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
 
@@ -17,7 +18,7 @@ export class StartableProcesses implements OnInit {
    selectedUserAssignments = {};
    isSelectionValid = false;
 
-  constructor(protected service:ProcessesService) {}
+  constructor(protected service:ProcessesService, protected route: ActivatedRoute, protected router: Router) {}
 
   ngOnInit(): void {
    this.service.getProcessModels()
@@ -36,7 +37,8 @@ export class StartableProcesses implements OnInit {
         data => {
           this.msg = {text: "Process started", type: 'success'};
           //this.modal.hide();
-          //ToDo auf die Prozessanzeigeseite leiten
+          var piId = JSON.parse(data['_body']).piId;
+          this.router.navigate(['../active', piId], { relativeTo: this.route });
         },
         err =>{
           this.msg = {text: err, type: 'error'}

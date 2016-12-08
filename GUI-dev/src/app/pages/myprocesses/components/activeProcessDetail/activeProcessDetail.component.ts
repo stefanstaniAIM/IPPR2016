@@ -12,7 +12,7 @@ export class ActiveProcessDetail implements OnInit {
 
   piId:number;
 
-  constructor(protected service: ProcessesService, private route: ActivatedRoute, private router: Router) {
+  constructor(protected service: ProcessesService, protected route: ActivatedRoute, protected router: Router) {
   }
 
   ngOnInit() {
