@@ -1,6 +1,31 @@
-<div class="widgets">
-
-Active process detail {{piId}} 
-
-
+<div class="alert alert-info alert-dismissible fade in" [class.alert-danger]="msg.type === 'error'" [class.alert-success]="msg.type === 'success'" role="alert" *ngIf="msg">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+    {{msg.text}}
 </div>
+<div class="row">
+   <ba-card class="col-xlg-12 col-xl-12 col-lg-12 col-sm-12 col-xs-12">
+      <h4 *ngIf="!subjectsState">Prozessinstanz kann nicht angezeigt werden.</h4>
+      <h3 *ngIf="subjectsState">Prozessstatus: {{subjectsState.status}}</h3>
+      <table class="table table-striped" *ngIf="subjectsState">
+         <thead>
+            <tr>
+               <th>Subjektname</th>
+               <th>User-Id</th>
+               <th>Status</th>
+               <th>Typ</th>
+               <th>Letzte Änderung</th>
+            </tr>
+         </thead>
+         <tbody>
+            <tr *ngFor="let subject of subjectsState.subjects">
+               <td>{{ subject.subjectName }}</td>
+               <td>{{ subject.userId || "Noch keinem User zugewiesen" }}</td>
+               <td>{{ subject.stateName }}</td>
+               <td>{{ subject.stateFunctionType }}</td>
+               <td>{{ subject.lastChanged | commaDate }}
+            </tr>
+         </tbody>
+      </table>
+   </ba-card>

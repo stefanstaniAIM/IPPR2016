@@ -11,6 +11,20 @@ import { ProcessesService } from '../../Processes.service';
 export class ActiveProcessDetail implements OnInit {
 
   piId:number;
+  msg = undefined;
+  subjectsState:{
+    piId:number,
+    status: string,
+    subjects: [{
+      lastChanged: number[],
+      receiveState: string,
+      ssId: number,
+      stateFunctionType: string,
+      stateName: string,
+      subjectName: string,
+      userId: number
+    }]
+  };
 
   constructor(protected service: ProcessesService, protected route: ActivatedRoute, protected router: Router) {
   }
@@ -20,5 +34,16 @@ export class ActiveProcessDetail implements OnInit {
   //this.route.params
     //.switchMap((params: Params) => service.loadprocess etc. +params['piId'])
     //.subscribe((piId:number) => this.piId = piId)
+    this.service.getProcessSubjectsState(this.piId)
+    .subscribe(
+        data => {
+          this.subjectsState = JSON.parse(data['_body']);
+        },
+        err =>{
+          this.msg = {text: err, type: 'error'}
+          console.log(err);
+        },
+        () => console.log("Request done")
+      );
 }
 }

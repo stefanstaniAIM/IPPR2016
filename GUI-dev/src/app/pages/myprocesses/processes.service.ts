@@ -29,4 +29,8 @@ export class ProcessesService {
    getPossibleUsersForProcessModel(groupName:string){
       return this._authHttp.get('http://localhost:10000/api/processes/possibleUsers/'+groupName);
    }
+
+   getProcessSubjectsState(piId:number){
+       return this._authHttp.get('http://localhost:10000/api/processes/state/'+piId);
+   }
 }
