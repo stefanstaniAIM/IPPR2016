@@ -4,10 +4,16 @@
   </button>
     {{msg.text}}
 </div>
+<div class="row" *ngIf="subjectsState">
+  <ba-card class="col-xlg-12 col-xl-12 col-lg-12 col-sm-12 col-xs-12">
+    <p>Status: {{subjectsState.status}}</p>
+    <p>Start: {{subjectsState.startTime | commaDate | date:'dd.MM.yyyy HH:mm'}} </p>
+    <p *ngIf="subjectsState.endTime">Ende: {{subjectsState.endTime | commaDate | date:'dd.MM.yyyy HH:mm'}}</p>
+  </ba-card>
+</div>
 <div class="row">
    <ba-card class="col-xlg-12 col-xl-12 col-lg-12 col-sm-12 col-xs-12">
       <h4 *ngIf="!subjectsState">Prozessinstanz kann nicht angezeigt werden.</h4>
-      <h3 *ngIf="subjectsState">Prozessstatus: {{subjectsState.status}}</h3>
       <table class="table table-striped" *ngIf="subjectsState">
          <thead>
             <tr>
@@ -24,8 +30,9 @@
                <td>{{ subject.userId || "Noch keinem User zugewiesen" }}</td>
                <td>{{ subject.stateName }}</td>
                <td>{{ subject.stateFunctionType }}</td>
-               <td>{{ subject.lastChanged | commaDate }}
+               <td>{{ subject.lastChanged | commaDate | date:'dd.MM.yyyy HH:mm:ss' }}
             </tr>
          </tbody>
       </table>
    </ba-card>
+</div>
