@@ -14,7 +14,7 @@ export class ProcessesService {
    startProcess(pmId: number){
      return this._authHttp.post('http://localhost:10000/api/processes/startProcess', {
       "pmId": pmId,
-      "userId": this._user.getUid()
+      "startUserId": this._user.getUid()
       });
    }
 
