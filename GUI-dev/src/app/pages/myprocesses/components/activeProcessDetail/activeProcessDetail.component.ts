@@ -38,7 +38,7 @@ export class ActiveProcessDetail implements OnInit {
     //this.route.params
     //.switchMap((params: Params) => service.loadprocess etc. +params['piId'])
     //.subscribe((piId:number) => this.piId = piId)
-    this.service.getProcessSubjectsState(this.piId)
+    this.service.getProcessState(this.piId)
     .subscribe(
         data => {
           this.subjectsState = JSON.parse(data['_body']);

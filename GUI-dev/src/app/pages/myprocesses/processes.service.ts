@@ -22,7 +22,7 @@ export class ProcessesService {
      return this._authHttp.get('http://localhost:10000/api/processes/amountOfActiveProcesses')
    }
 
-   getAmountOfActiveProcessesPerUser(userId:number){
+   getAmountOfActiveProcessesForUser(userId:number){
      return this._authHttp.get('http://localhost:10000/api/processes/amountOfActiveProcessesPerUser/'+userId);
    }
 
@@ -30,7 +30,19 @@ export class ProcessesService {
       return this._authHttp.get('http://localhost:10000/api/processes/possibleUsers/'+groupName);
    }
 
-   getProcessSubjectsState(piId:number){
+   getProcessState(piId:number){
        return this._authHttp.get('http://localhost:10000/api/processes/state/'+piId);
+   }
+
+   getActiveProcesses(){
+      return this._authHttp.get('http://localhost:10000/api/processes/active?page=0');
+   }
+
+   getActiveProcessesForUser(userId:number){
+     return this._authHttp.get('http://localhost:10000/api/processes/active/'+userId+'?page=0');
+   }
+
+   getUserById(userId:number){
+        return this._authHttp.get('http://localhost:10000/api/user/'+userId);
    }
 }
