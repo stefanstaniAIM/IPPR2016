@@ -61,8 +61,9 @@ public class ProcessActor extends UntypedActor {
     final List<SubjectStateDTO> subjectStates = process.getSubjects().stream()
         .map(this::convertToSubjectStateDTO).collect(Collectors.toList());
 
-    getSender().tell(new ProcessStateMessage.Response(new ProcessStateDTO(process.getPiId(),
-        process.getState().name(), process.getStartTime(), process.getEndTime(), subjectStates)),
+    getSender().tell(new ProcessStateMessage.Response(
+        new ProcessStateDTO(process.getPiId(), process.getState().name(), process.getStartTime(),
+            process.getEndTime(), subjectStates, process.getProcessModel().getName())),
         getSelf());;
   }
 

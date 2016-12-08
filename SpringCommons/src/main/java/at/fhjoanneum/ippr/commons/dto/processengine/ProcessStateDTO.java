@@ -16,16 +16,18 @@ public class ProcessStateDTO implements Serializable {
   private LocalDateTime startTime;
   private LocalDateTime endTime;
   private List<SubjectStateDTO> subjects;
+  private String processName;
 
   public ProcessStateDTO() {}
 
   public ProcessStateDTO(final Long piId, final String status, final LocalDateTime startTime,
-      final LocalDateTime endTime, final List<SubjectStateDTO> subjects) {
+      final LocalDateTime endTime, final List<SubjectStateDTO> subjects, final String processName) {
     this.piId = piId;
     this.status = status;
     this.startTime = startTime;
     this.endTime = endTime;
     this.subjects = subjects;
+    this.processName = processName;
   }
 
   public Long getPiId() {
@@ -46,5 +48,9 @@ public class ProcessStateDTO implements Serializable {
 
   public List<SubjectStateDTO> getSubjects() {
     return subjects;
+  }
+
+  public String getProcessName() {
+    return processName;
   }
 }
