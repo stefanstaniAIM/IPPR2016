@@ -7,6 +7,7 @@ import at.fhjoanneum.ippr.commons.dto.processengine.ProcessInfoDTO;
 public class ProcessInfoMessage {
 
   public static class Request {
+    private Long user;
     private final String state;
     private final int page;
     private final int size;
@@ -15,6 +16,11 @@ public class ProcessInfoMessage {
       this.state = state;
       this.page = page;
       this.size = size;
+    }
+
+    public Request(final Long user, final String state, final int page, final int size) {
+      this(state, page, size);
+      this.user = user;
     }
 
     public String getState() {
@@ -27,6 +33,10 @@ public class ProcessInfoMessage {
 
     public int getSize() {
       return size;
+    }
+
+    public Long getUser() {
+      return user;
     }
   }
 

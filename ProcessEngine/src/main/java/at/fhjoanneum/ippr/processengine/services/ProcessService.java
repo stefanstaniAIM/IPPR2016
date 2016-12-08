@@ -19,4 +19,7 @@ public interface ProcessService {
   Future<ProcessStateDTO> getStateOfProcessInstance(Long piId);
 
   Future<List<ProcessInfoDTO>> getProcessesInfoOfState(String state, int page, int size);
+
+  Future<List<ProcessInfoDTO>> getProcessesInfoOfUserAndState(Long user, String state, int page,
+      int size);
 }

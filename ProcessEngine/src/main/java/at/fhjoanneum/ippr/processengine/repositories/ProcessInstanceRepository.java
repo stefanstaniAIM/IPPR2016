@@ -32,4 +32,10 @@ public interface ProcessInstanceRepository
   @Query(value = "SELECT p FROM PROCESS_INSTANCE p WHERE p.state = :state", nativeQuery = false)
   Page<ProcessInstanceImpl> getProcessesInfoOfState(Pageable pageable,
       @Param("state") ProcessInstanceState state);
+
+  @Query(
+      value = "SELECT p FROM PROCESS_INSTANCE p JOIN p.subjects s WHERE s.userId = :user AND p.state = :state",
+      nativeQuery = false)
+  Page<ProcessInstanceImpl> getProcessesInfoOfUserAndState(Pageable pageable,
+      @Param("user") Long user, @Param("state") ProcessInstanceState state);
 }

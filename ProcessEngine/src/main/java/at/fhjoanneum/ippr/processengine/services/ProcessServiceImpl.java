@@ -175,4 +175,24 @@ public class ProcessServiceImpl implements ProcessService {
 
     return future;
   }
+
+  @Async
+  @Override
+  public Future<List<ProcessInfoDTO>> getProcessesInfoOfUserAndState(final Long user,
+      final String state, final int page, final int size) {
+    final CompletableFuture<List<ProcessInfoDTO>> future = new CompletableFuture<>();
+
+    PatternsCS
+        .ask(processSupervisorActor,
+            new ProcessInfoMessage.Request(user, state.toUpperCase(), page, size), Global.TIMEOUT)
+        .toCompletableFuture().whenComplete((msg, exc) -> {
+          if (exc == null) {
+            future.complete(((ProcessInfoMessage.Response) msg).getProcesses());
+          } else {
+            future.completeExceptionally(exc);
+          }
+        });
+
+    return future;
+  }
 }

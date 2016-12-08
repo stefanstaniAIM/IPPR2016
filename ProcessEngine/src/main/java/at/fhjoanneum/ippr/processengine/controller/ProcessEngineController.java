@@ -91,4 +91,16 @@ public class ProcessEngineController {
       return processService.getProcessesInfoOfState(state, page, size).get();
     };
   }
+
+
+  @RequestMapping(value = "processes/{state}/{user}", method = RequestMethod.GET)
+  public @ResponseBody Callable<List<ProcessInfoDTO>> getProcessesInfoOfUserAndState(
+      @PathVariable("user") final Long user, @PathVariable("state") final String state,
+      @RequestParam(value = "page", required = true) final int page,
+      @RequestParam(value = "size", required = false, defaultValue = "10") final int size) {
+
+    return () -> {
+      return processService.getProcessesInfoOfUserAndState(user, state, page, size).get();
+    };
+  }
 }

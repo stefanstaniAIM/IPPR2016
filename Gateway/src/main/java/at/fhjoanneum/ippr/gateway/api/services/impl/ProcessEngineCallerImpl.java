@@ -79,4 +79,13 @@ public class ProcessEngineCallerImpl implements Caller {
 
     return createRequest(uri, HttpMethod.GET, null, ProcessInfoDTO[].class, null);
   }
+
+  public Future<ResponseEntity<ProcessInfoDTO[]>> getProcessesInfoOfUserAndState(final Long user,
+      final String state, final int page, final int size) throws URISyntaxException {
+    final URIBuilder uri = new URIBuilder(gatewayConfig.getProcessEngineAddress())
+        .setPath("processes/" + state + "/" + user).addParameter("page", String.valueOf(page))
+        .addParameter("size", String.valueOf(size));
+
+    return createRequest(uri, HttpMethod.GET, null, ProcessInfoDTO[].class, null);
+  }
 }

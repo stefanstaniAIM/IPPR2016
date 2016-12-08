@@ -195,9 +195,20 @@ public class ProcessSupervisorActor extends UntypedActor {
         new PageRequest(msg.getPage(), msg.getSize(), new Sort(Sort.Direction.DESC, "startTime"));
 
 
-    final List<ProcessInstance> content = Lists.newArrayList(processInstanceRepository
-        .getProcessesInfoOfState(pageRequest, ProcessInstanceState.valueOf(msg.getState()))
-        .getContent());
+    List<ProcessInstance> content = null;
+    if (msg.getUser() == null) {
+      LOG.debug("Received ProcessInfoMessage to show all processes");
+      content = Lists.newArrayList(processInstanceRepository
+          .getProcessesInfoOfState(pageRequest, ProcessInstanceState.valueOf(msg.getState()))
+          .getContent());
+    } else {
+      LOG.debug("Received ProcessInfoMessage to show all processes of involved user [{}]",
+          msg.getUser());
+      content =
+          Lists.newArrayList(processInstanceRepository.getProcessesInfoOfUserAndState(pageRequest,
+              msg.getUser(), ProcessInstanceState.valueOf(msg.getState())).getContent());
+    }
+
     final List<ProcessInfoDTO> processesInfo = content.stream().map(process -> {
       final String processName = process.getProcessModel().getName();
       return new ProcessInfoDTO(process.getPiId(), process.getStartTime(), process.getEndTime(),

@@ -81,4 +81,16 @@ public class ProcessEngineGatewayController {
       return processEngineCaller.getProcessesInfoOfState(state, page, size).get();
     };
   }
+
+  @RequestMapping(value = "api/processes/{state}/{user}", method = RequestMethod.GET)
+  public @ResponseBody Callable<ResponseEntity<ProcessInfoDTO[]>> getProcessesInfoOfState(
+      final HttpServletRequest request, @PathVariable("user") final Long user,
+      @PathVariable("state") final String state,
+      @RequestParam(value = "page", required = true) final int page,
+      @RequestParam(value = "size", required = false, defaultValue = "10") final int size) {
+
+    return () -> {
+      return processEngineCaller.getProcessesInfoOfUserAndState(user, state, page, size).get();
+    };
+  }
 }
