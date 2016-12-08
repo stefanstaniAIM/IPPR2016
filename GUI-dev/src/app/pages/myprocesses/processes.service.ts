@@ -1,19 +1,20 @@
 import { Injectable } from '@angular/core';
 import { AuthHttp } from 'angular2-jwt';
+import { User } from '../../user';
 
 @Injectable()
 export class ProcessesService {
 
-  constructor(private _authHttp:AuthHttp){}
+  constructor(private _authHttp:AuthHttp, private _user:User){}
 
    getProcessModels(){
     return this._authHttp.get('http://localhost:10000/api/processes/toStart?page=0');
    }
 
-   startProcess(pmId: number, assignments = []){
+   startProcess(pmId: number){
      return this._authHttp.post('http://localhost:10000/api/processes/startProcess', {
       "pmId": pmId,
-      "assignments": assignments
+      "userId": this._user.getUid()
       });
    }
 

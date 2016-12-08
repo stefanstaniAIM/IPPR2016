@@ -23,13 +23,13 @@
                <td>{{ processModel.name }}</td>
                <td>{{ processModel.description }}</td>
                <td>{{ processModel.createdAt | commaDate }}</td>
-               <td><button class="btn btn-primary btn-sm" (click)="selectProcessModel(processModel)">Start</button></td>
+               <td><button class="btn btn-primary btn-sm" (click)="startProcess(processModel.pmId)">Start</button></td>
             </tr>
          </tbody>
       </table>
    </ba-card>
 
-   <div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="startProcessModal" id="startProcessModal" aria-hidden="true">
+   <!-- <div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="startProcessModal" id="startProcessModal" aria-hidden="true">
      <div class="modal-dialog modal-lg">
        <div class="modal-content">
          <div class="modal-header">
@@ -43,7 +43,6 @@
             <div class="form-group">
               <div *ngFor="let assignment of possibleUserAssignments">
                 <label>{{assignment.groupName}}</label>
-                <!--Todo set ngModel for selectfields ? -->
                 <select class="form-control" [(ngModel)]="selectedUserAssignments[assignment.groupName]" name="{{assignment.groupName}}-select" required>
                   <option *ngFor="let user of assignment.users" [ngValue]="{smId: assignment.smId, userId: user.uid}">{{user.lastname}} {{user.firstname}}</option>
                 </select>
@@ -57,5 +56,5 @@
          </div>
        </div>
      </div>
-   </div>
+   </div> -->
 </div>
