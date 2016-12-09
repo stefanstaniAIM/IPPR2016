@@ -17,6 +17,7 @@ import akka.actor.UntypedActor;
 import at.fhjoanneum.ippr.persistence.entities.engine.enums.ReceiveSubjectState;
 import at.fhjoanneum.ippr.persistence.entities.engine.state.SubjectStateBuilder;
 import at.fhjoanneum.ippr.persistence.entities.engine.state.SubjectStateImpl;
+import at.fhjoanneum.ippr.persistence.objects.engine.enums.ProcessInstanceState;
 import at.fhjoanneum.ippr.persistence.objects.engine.process.ProcessInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.state.SubjectState;
 import at.fhjoanneum.ippr.persistence.objects.engine.subject.Subject;
@@ -24,6 +25,7 @@ import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
 import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 import at.fhjoanneum.ippr.processengine.akka.config.Global;
 import at.fhjoanneum.ippr.processengine.akka.messages.EmptyMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStopMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.UserActorInitializeMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.UserActorWakeUpMessage;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
@@ -59,6 +61,8 @@ public class UserActor extends UntypedActor {
       handleActorInitializeMessage(obj);
     } else if (obj instanceof UserActorWakeUpMessage.Request) {
       handleUserWakeUpMessage(obj);
+    } else if (obj instanceof ProcessStopMessage.Request) {
+      handleProcessStopMessage(obj);
     } else {
       unhandled(obj);
     }
@@ -106,5 +110,16 @@ public class UserActor extends UntypedActor {
   private void handleUserWakeUpMessage(final Object obj) {
     final UserActorWakeUpMessage.Request msg = (UserActorWakeUpMessage.Request) obj;
     getSender().tell(new UserActorWakeUpMessage.Request(msg.getUserId()), getSelf());
+  }
+
+  private void handleProcessStopMessage(final Object obj) {
+    final Long amountOfActiveProcesses = processInstanceRepository
+        .getAmountOfProcessesPerUser(ProcessInstanceState.ACTIVE.name(), userId);
+
+    if (amountOfActiveProcesses.longValue() == 0) {
+      getContext().stop(getSelf());
+      LOG.info("No active processes anymore for user [{}], therefore shutdown actor",
+          getSelf().path().name());
+    }
   }
 }

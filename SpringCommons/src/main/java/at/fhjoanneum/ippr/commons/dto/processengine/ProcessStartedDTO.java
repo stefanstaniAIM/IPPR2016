@@ -6,6 +6,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class ProcessStartedDTO implements Serializable {
+
+  private static final long serialVersionUID = -1669494957249466855L;
+
   private Long piId;
   private String error;
 

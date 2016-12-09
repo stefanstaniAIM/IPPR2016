@@ -103,6 +103,12 @@ public class ProcessInstanceImpl implements ProcessInstance, Serializable {
   public void setState(final ProcessInstanceState state) {
     checkNotNull(state);
     this.state = state;
+
+    if (state.equals(ProcessInstanceState.CANCELLED_BY_SYSTEM)
+        || state.equals(ProcessInstanceState.CANCELLED_BY_USER)
+        || state.equals(ProcessInstanceState.FINISHED)) {
+      endTime = LocalDateTime.now();
+    }
   }
 
   @Override

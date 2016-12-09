@@ -29,6 +29,7 @@ import at.fhjoanneum.ippr.processengine.akka.messages.process.ActorInitializeMes
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessInfoMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStartMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStateMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStopMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.check.ProcessCheckMessage;
 
 @Service
@@ -188,6 +189,27 @@ public class ProcessServiceImpl implements ProcessService {
         .toCompletableFuture().whenComplete((msg, exc) -> {
           if (exc == null) {
             future.complete(((ProcessInfoMessage.Response) msg).getProcesses());
+          } else {
+            future.completeExceptionally(exc);
+          }
+        });
+
+    return future;
+  }
+
+  @Transactional
+  @Async
+  @Override
+  public Future<ProcessInfoDTO> stopProcess(final Long piId) {
+    final CompletableFuture<ProcessInfoDTO> future = new CompletableFuture<>();
+
+    final ProcessStopMessage.Request request = new ProcessStopMessage.Request(piId);
+
+    PatternsCS.ask(processSupervisorActor, request, Global.TIMEOUT).toCompletableFuture()
+        .whenComplete((msg, exc) -> {
+          if (exc == null) {
+            userSupervisorActor.tell(request, null);
+            future.complete(((ProcessStopMessage.Response) msg).getProcess());
           } else {
             future.completeExceptionally(exc);
           }

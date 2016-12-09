@@ -22,4 +22,6 @@ public interface ProcessService {
 
   Future<List<ProcessInfoDTO>> getProcessesInfoOfUserAndState(Long user, String state, int page,
       int size);
+
+  Future<ProcessInfoDTO> stopProcess(Long piId);
 }

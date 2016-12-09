@@ -16,6 +16,7 @@ public class ProcessInfoDTO implements UserContainer, Serializable {
   private String processName;
   private Long userId;
   private UserDTO user;
+  private String state;
 
   public ProcessInfoDTO() {}
 
@@ -26,6 +27,12 @@ public class ProcessInfoDTO implements UserContainer, Serializable {
     this.endTime = endTime;
     this.processName = processName;
     this.userId = startUserId;
+  }
+
+  public ProcessInfoDTO(final Long piId, final LocalDateTime startTime, final LocalDateTime endTime,
+      final String processName, final Long startUserId, final String state) {
+    this(piId, startTime, endTime, processName, startUserId);
+    this.state = state;
   }
 
   public Long getPiId() {
@@ -57,5 +64,9 @@ public class ProcessInfoDTO implements UserContainer, Serializable {
   @Override
   public Long getUserId() {
     return userId;
+  }
+
+  public String getState() {
+    return state;
   }
 }

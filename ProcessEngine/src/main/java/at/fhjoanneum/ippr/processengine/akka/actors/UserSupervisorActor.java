@@ -28,6 +28,7 @@ import at.fhjoanneum.ippr.processengine.akka.config.Global;
 import at.fhjoanneum.ippr.processengine.akka.config.SpringExtension;
 import at.fhjoanneum.ippr.processengine.akka.messages.EmptyMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ActorInitializeMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStopMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.UserActorInitializeMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.UserActorInitializeMessage.Request;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.UserActorWakeUpMessage;
@@ -55,6 +56,8 @@ public class UserSupervisorActor extends UntypedActor {
       handleActorInitializeMessage(obj);
     } else if (obj instanceof UserActorWakeUpMessage.Request) {
       handleUserWakeUpMessage(obj);
+    } else if (obj instanceof ProcessStopMessage.Request) {
+      handleProcessStopMessage(obj);
     } else {
       unhandled(obj);
     }
@@ -137,5 +140,26 @@ public class UserSupervisorActor extends UntypedActor {
       actor = actorOpt.get();
     }
     actor.forward(msg, getContext());
+  }
+
+  private void handleProcessStopMessage(final Object obj) {
+    final ProcessStopMessage.Request msg = (ProcessStopMessage.Request) obj;
+    final Optional<ProcessInstance> processOpt =
+        Optional.ofNullable(processInstanceRepository.findOne(msg.getPiId()));
+
+    if (processOpt.isPresent()) {
+      final ProcessInstance process = processOpt.get();
+      final List<String> userIds =
+          process.getSubjects().stream().filter(subject -> subject.getUser() != null)
+              .map(subject -> "ProcessUser-" + subject.getUser()).collect(Collectors.toList());
+
+      userIds.forEach(userId -> {
+        final Optional<ActorRef> actorOpt = akkaSelector.findActor(getContext(), userId);
+        if (actorOpt.isPresent()) {
+          actorOpt.get().forward(msg, getContext());
+        }
+      });
+    }
+
   }
 }

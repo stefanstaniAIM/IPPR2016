@@ -36,6 +36,7 @@ import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessInfoMessage
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStartMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStartMessage.UserGroupAssignment;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStateMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStopMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessWakeUpMessage;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessModelRepository;
@@ -75,6 +76,8 @@ public class ProcessSupervisorActor extends UntypedActor {
       handleProcessWakeUpMessage(obj);
     } else if (obj instanceof ProcessInfoMessage.Request) {
       handleProcessInfoMessage(obj);
+    } else if (obj instanceof ProcessStopMessage.Request) {
+      handleProcessStopMessage(obj);
     } else {
       unhandled(obj);
     }
@@ -216,5 +219,17 @@ public class ProcessSupervisorActor extends UntypedActor {
     }).collect(Collectors.toList());
 
     getSender().tell(new ProcessInfoMessage.Response(processesInfo), getSelf());
+  }
+
+  private void handleProcessStopMessage(final Object obj) {
+    final ProcessStopMessage.Request msg = (ProcessStopMessage.Request) obj;
+
+    final String processInstanceId = getProcessActorId(msg.getPiId());
+    final Optional<ActorRef> actorOpt = akkaSelector.findActor(getContext(), processInstanceId);
+
+    if (actorOpt.isPresent()) {
+      LOG.debug("Found process actor and will forward message to stop process");
+      actorOpt.get().forward(msg, getContext());
+    }
   }
 }

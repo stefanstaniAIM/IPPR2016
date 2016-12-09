@@ -147,4 +147,15 @@ public class ProcessEngineCallerImpl implements Caller {
       entry.appendUser(userDTO);
     });
   }
+
+  @Async
+  public Future<ResponseEntity<ProcessInfoDTO>> stopProcess(final HttpHeaderUser headerUser,
+      final Long piId) throws URISyntaxException {
+    final URIBuilder uri =
+        new URIBuilder(gatewayConfig.getProcessEngineAddress()).setPath("/processes/stop/" + piId);
+
+    final HttpHeaders header = headerUser.getHttpHeaders();
+    return createRequest(uri, HttpMethod.POST, null, ProcessInfoDTO.class, header);
+  }
+
 }

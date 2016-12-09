@@ -94,4 +94,15 @@ public class ProcessEngineGatewayController {
       return processEngineCaller.getProcessesInfoOfUserAndState(user, state, page, size).get();
     };
   }
+
+  @RequestMapping(value = "api/processes/stop/{piId}", method = RequestMethod.POST)
+  public Callable<ResponseEntity<ProcessInfoDTO>> stopProcessInstance(
+      final HttpServletRequest request, @PathVariable("piId") final Long piId) {
+    LOG.debug("Received request to stop process PI_ID [{}]", piId);
+
+    return () -> {
+      final HttpHeaderUser user = new HttpHeaderUser(request);
+      return processEngineCaller.stopProcess(user, piId).get();
+    };
+  }
 }

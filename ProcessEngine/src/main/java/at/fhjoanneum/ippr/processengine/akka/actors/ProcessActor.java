@@ -12,16 +12,22 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import akka.actor.UntypedActor;
+import at.fhjoanneum.ippr.commons.dto.processengine.ProcessInfoDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStateDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.SubjectStateDTO;
+import at.fhjoanneum.ippr.persistence.objects.engine.enums.ProcessInstanceState;
 import at.fhjoanneum.ippr.persistence.objects.engine.process.ProcessInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.state.SubjectState;
 import at.fhjoanneum.ippr.persistence.objects.engine.subject.Subject;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStateMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStopMessage;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 
+@Transactional
 @Component("ProcessActor")
 @Scope("prototype")
 public class ProcessActor extends UntypedActor {
@@ -41,12 +47,13 @@ public class ProcessActor extends UntypedActor {
   public void onReceive(final Object obj) throws Throwable {
     if (obj instanceof ProcessStateMessage.Request) {
       handleProcessStateMessage(obj);
+    } else if (obj instanceof ProcessStopMessage.Request) {
+      handleProcessStopMessage(obj);
     } else {
       unhandled(obj);
     }
   }
 
-  @Transactional
   private void handleProcessStateMessage(final Object obj) {
     final ProcessStateMessage.Request msg = (ProcessStateMessage.Request) obj;
 
@@ -82,4 +89,35 @@ public class ProcessActor extends UntypedActor {
     return new SubjectStateDTO(ssId, userId, subjectName, stateName, functionType,
         receiveSubjectState, lastChanged);
   }
+
+  private void handleProcessStopMessage(final Object obj) {
+    final ProcessStopMessage.Request msg = (ProcessStopMessage.Request) obj;
+
+    final Optional<ProcessInstance> processOpt =
+        Optional.ofNullable(processInstanceRepository.findOne(msg.getPiId()));
+    if (!processOpt.isPresent()) {
+      throw new IllegalArgumentException();
+    }
+
+    final ProcessInstance process = processOpt.get();
+    if (!process.getState().equals(ProcessInstanceState.ACTIVE)) {
+      throw new IllegalStateException();
+    }
+
+    process.setState(ProcessInstanceState.CANCELLED_BY_USER);
+
+    TransactionSynchronizationManager
+        .registerSynchronization(new TransactionSynchronizationAdapter() {
+          @Override
+          public void afterCommit() {
+            LOG.info("Process was stopped: {}", process);
+            final ProcessInfoDTO dto = new ProcessInfoDTO(process.getPiId(), process.getStartTime(),
+                process.getEndTime(), process.getProcessModel().getName(), process.getStartUserId(),
+                process.getState().name());
+            getSender().tell(new ProcessStopMessage.Response(dto), getSelf());
+            getContext().stop(getSelf());
+          }
+        });
+  }
+
 }
