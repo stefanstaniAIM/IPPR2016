@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class ProcessInfoDTO implements Serializable {
+public class ProcessInfoDTO implements UserContainer, Serializable {
 
   private static final long serialVersionUID = 4432720548280531738L;
 
@@ -14,7 +14,8 @@ public class ProcessInfoDTO implements Serializable {
   private LocalDateTime startTime;
   private LocalDateTime endTime;
   private String processName;
-  private Long startUserId;
+  private Long userId;
+  private UserDTO user;
 
   public ProcessInfoDTO() {}
 
@@ -24,7 +25,7 @@ public class ProcessInfoDTO implements Serializable {
     this.startTime = startTime;
     this.endTime = endTime;
     this.processName = processName;
-    this.startUserId = startUserId;
+    this.userId = startUserId;
   }
 
   public Long getPiId() {
@@ -43,7 +44,18 @@ public class ProcessInfoDTO implements Serializable {
     return processName;
   }
 
-  public Long getStartUserId() {
-    return startUserId;
+  @Override
+  public void appendUser(final UserDTO user) {
+    this.user = user;
+  }
+
+  @Override
+  public UserDTO getUser() {
+    return user;
+  }
+
+  @Override
+  public Long getUserId() {
+    return userId;
   }
 }

@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class SubjectStateDTO implements Serializable {
+public class SubjectStateDTO implements UserContainer, Serializable {
 
   private static final long serialVersionUID = 2909869639424814690L;
 
@@ -17,6 +17,8 @@ public class SubjectStateDTO implements Serializable {
   private String stateFunctionType;
   private String receiveState;
   private LocalDateTime lastChanged;
+  private UserDTO user;
+
 
   public SubjectStateDTO() {}
 
@@ -36,6 +38,7 @@ public class SubjectStateDTO implements Serializable {
     return ssId;
   }
 
+  @Override
   public Long getUserId() {
     return userId;
   }
@@ -58,5 +61,15 @@ public class SubjectStateDTO implements Serializable {
 
   public LocalDateTime getLastChanged() {
     return lastChanged;
+  }
+
+  @Override
+  public void appendUser(final UserDTO user) {
+    this.user = user;
+  }
+
+  @Override
+  public UserDTO getUser() {
+    return user;
   }
 }

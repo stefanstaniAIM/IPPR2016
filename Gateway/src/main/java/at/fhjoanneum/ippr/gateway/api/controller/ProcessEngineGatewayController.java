@@ -1,5 +1,6 @@
 package at.fhjoanneum.ippr.gateway.api.controller;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import javax.servlet.http.HttpServletRequest;
@@ -63,8 +64,8 @@ public class ProcessEngineGatewayController {
   }
 
   @RequestMapping(value = "api/processes/state/{piId}", method = RequestMethod.GET)
-  public @ResponseBody Callable<ResponseEntity<ProcessStateDTO>> getProcessState(
-      final HttpServletRequest request, @PathVariable("piId") final Long piId) {
+  public @ResponseBody Callable<ProcessStateDTO> getProcessState(final HttpServletRequest request,
+      @PathVariable("piId") final Long piId) {
 
     return () -> {
       return processEngineCaller.getProcessState(piId).get();
@@ -72,7 +73,7 @@ public class ProcessEngineGatewayController {
   }
 
   @RequestMapping(value = "api/processes/{state}", method = RequestMethod.GET)
-  public @ResponseBody Callable<ResponseEntity<ProcessInfoDTO[]>> getProcessesInfoOfState(
+  public @ResponseBody Callable<List<ProcessInfoDTO>> getProcessesInfoOfState(
       final HttpServletRequest request, @PathVariable("state") final String state,
       @RequestParam(value = "page", required = true) final int page,
       @RequestParam(value = "size", required = false, defaultValue = "10") final int size) {
@@ -83,7 +84,7 @@ public class ProcessEngineGatewayController {
   }
 
   @RequestMapping(value = "api/processes/{state}/{user}", method = RequestMethod.GET)
-  public @ResponseBody Callable<ResponseEntity<ProcessInfoDTO[]>> getProcessesInfoOfState(
+  public @ResponseBody Callable<List<ProcessInfoDTO>> getProcessesInfoOfState(
       final HttpServletRequest request, @PathVariable("user") final Long user,
       @PathVariable("state") final String state,
       @RequestParam(value = "page", required = true) final int page,

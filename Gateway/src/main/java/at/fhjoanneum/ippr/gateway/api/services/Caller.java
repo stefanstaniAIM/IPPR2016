@@ -1,21 +1,21 @@
 package at.fhjoanneum.ippr.gateway.api.services;
 
-import java.util.concurrent.Future;
-
 import org.apache.http.client.utils.URIBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.client.AsyncRestTemplate;
+
 
 public interface Caller {
 
   /**
    * Method to create http requests to services
    */
-  public default <I, O> Future<ResponseEntity<O>> createRequest(final URIBuilder uri,
+  public default <I, O> ListenableFuture<ResponseEntity<O>> createRequest(final URIBuilder uri,
       final HttpMethod method, final I body, final Class<O> returnClazz, final HttpHeaders header) {
     final AsyncRestTemplate restTemplate = new AsyncRestTemplate();
     if (header != null) {

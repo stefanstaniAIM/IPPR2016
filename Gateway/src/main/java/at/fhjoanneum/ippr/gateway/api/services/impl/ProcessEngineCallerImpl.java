@@ -1,9 +1,12 @@
 package at.fhjoanneum.ippr.gateway.api.services.impl;
 
 import java.net.URISyntaxException;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 import org.apache.http.client.utils.URIBuilder;
+import org.assertj.core.util.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,15 +17,20 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessInfoDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartedDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStateDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.UserContainer;
+import at.fhjoanneum.ippr.commons.dto.processengine.UserDTO;
 import at.fhjoanneum.ippr.gateway.api.config.GatewayConfig;
 import at.fhjoanneum.ippr.gateway.api.controller.user.HttpHeaderUser;
 import at.fhjoanneum.ippr.gateway.api.services.Caller;
+import at.fhjoanneum.ippr.gateway.security.persistence.objects.User;
+import at.fhjoanneum.ippr.gateway.security.repositories.UserGroupRepository;
 
 @Service
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
@@ -31,6 +39,9 @@ public class ProcessEngineCallerImpl implements Caller {
 
   @Autowired
   private GatewayConfig gatewayConfig;
+
+  @Autowired
+  private UserGroupRepository userGroupRepository;
 
   @Async
   public Future<ResponseEntity<ProcessStartedDTO>> startProcess(
@@ -63,29 +74,77 @@ public class ProcessEngineCallerImpl implements Caller {
   }
 
   @Async
-  public Future<ResponseEntity<ProcessStateDTO>> getProcessState(final Long piId)
-      throws URISyntaxException {
+  public Future<ProcessStateDTO> getProcessState(final Long piId) throws URISyntaxException {
+    final CompletableFuture<ProcessStateDTO> future = new CompletableFuture<>();
+
     final URIBuilder uri =
         new URIBuilder(gatewayConfig.getProcessEngineAddress()).setPath("processes/state/" + piId);
 
-    return createRequest(uri, HttpMethod.GET, null, ProcessStateDTO.class, null);
+    final ListenableFuture<ResponseEntity<ProcessStateDTO>> responseFuture =
+        createRequest(uri, HttpMethod.GET, null, ProcessStateDTO.class, null);
+
+    responseFuture.addCallback(result -> {
+      final List<UserContainer> container = Lists.newArrayList(result.getBody().getSubjects());
+      getUser(container);
+      future.complete(result.getBody());
+    }, null);
+
+    return future;
   }
 
-  public Future<ResponseEntity<ProcessInfoDTO[]>> getProcessesInfoOfState(final String state,
-      final int page, final int size) throws URISyntaxException {
+  @Async
+  public Future<List<ProcessInfoDTO>> getProcessesInfoOfState(final String state, final int page,
+      final int size) throws URISyntaxException {
+    final CompletableFuture<List<ProcessInfoDTO>> future = new CompletableFuture<>();
+
     final URIBuilder uri =
         new URIBuilder(gatewayConfig.getProcessEngineAddress()).setPath("processes/" + state)
             .addParameter("page", String.valueOf(page)).addParameter("size", String.valueOf(size));
 
-    return createRequest(uri, HttpMethod.GET, null, ProcessInfoDTO[].class, null);
+    final ListenableFuture<ResponseEntity<ProcessInfoDTO[]>> responseFuture =
+        createRequest(uri, HttpMethod.GET, null, ProcessInfoDTO[].class, null);
+
+    appendUserInformation(responseFuture, future);
+
+    return future;
   }
 
-  public Future<ResponseEntity<ProcessInfoDTO[]>> getProcessesInfoOfUserAndState(final Long user,
+  @Async
+  public Future<List<ProcessInfoDTO>> getProcessesInfoOfUserAndState(final Long user,
       final String state, final int page, final int size) throws URISyntaxException {
+    final CompletableFuture<List<ProcessInfoDTO>> future = new CompletableFuture<>();
+
     final URIBuilder uri = new URIBuilder(gatewayConfig.getProcessEngineAddress())
         .setPath("processes/" + state + "/" + user).addParameter("page", String.valueOf(page))
         .addParameter("size", String.valueOf(size));
 
-    return createRequest(uri, HttpMethod.GET, null, ProcessInfoDTO[].class, null);
+    final ListenableFuture<ResponseEntity<ProcessInfoDTO[]>> responseFuture =
+        createRequest(uri, HttpMethod.GET, null, ProcessInfoDTO[].class, null);
+
+    appendUserInformation(responseFuture, future);
+
+    return future;
+  }
+
+  @Async
+  private <T extends UserContainer> void appendUserInformation(
+      final ListenableFuture<ResponseEntity<T[]>> responseFuture,
+      final CompletableFuture<List<T>> future) {
+
+    responseFuture.addCallback(result -> {
+      final List<T> entries = Lists.newArrayList(result.getBody());
+      getUser(Lists.newArrayList(result.getBody()));
+      future.complete(entries);
+    }, null);
+  }
+
+  @Async
+  private void getUser(final List<UserContainer> userContainer) {
+    userContainer.stream().filter(entry -> entry.getUserId() != null).forEach(entry -> {
+      final User user = userGroupRepository.getUserByUserId(entry.getUserId()).get();
+      final UserDTO userDTO =
+          new UserDTO(user.getUsername(), user.getFirstname(), user.getLastname());
+      entry.appendUser(userDTO);
+    });
   }
 }
