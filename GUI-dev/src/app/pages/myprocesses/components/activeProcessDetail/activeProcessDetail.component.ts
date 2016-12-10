@@ -56,7 +56,27 @@ export class ActiveProcessDetail implements OnInit {
         name: "Checkbox",
         description: "Checkbox für XY",
         value: true,
-        readonly: true
+        readonly: true,
+        required: true
+      },
+      {
+        type: "radio",
+        name: "Radiofield",
+        description: "Radiofield für XY",
+        value: "radio1",
+        readonly: true,
+        choices: [
+          {
+            name: 'radio1',
+            description: 'Radio1'
+          }, {
+            name: 'radio2',
+            description: 'Radio2'
+          }, {
+            name: 'radio3',
+            description: 'Radio3'
+          }
+        ]
       }
     ]
   }

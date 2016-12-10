@@ -47,7 +47,15 @@
             <label class="control-label" *ngIf="field.type !== 'checkbox'">{{field.description}}</label>
             <input type="text" *ngSwitchCase="'text'" class="form-control" id="{{field.id}}" name="{{field.name}}" [ngModel]="field.value" [attr.maxlength]="field.maxlength" [attr.minlength]="field.minlength" [attr.required]="field.required" [readonly]="field.readonly">
             <input type="number" *ngSwitchCase="'number'" class="form-control" id="{{field.id}}" name="{{field.name}}" [ngModel]="field.value" [attr.max]="field.max" [attr.min]="field.min" [attr.required]="field.required" [readonly]="field.readonly">
-            <ba-checkbox *ngSwitchCase="'checkbox'" name="{{field.readonly ? field.name + '-:_control' : field.name }}" [ngModel]="field.value" [value]="field.value" [label]="field.description" [onChangeCheckboxFn]="onChangeCheckboxFn" [disabled]="field.readonly"></ba-checkbox>
+            <ba-checkbox *ngSwitchCase="'checkbox'" name="{{field.readonly ? field.name + '-:_control' : field.name }}" [ngModel]="field.value" [value]="field.value" [label]="field.description" [onChangeCheckboxFn]="onChangeCheckboxFn" [attr.required]="field.required" [disabled]="field.readonly"></ba-checkbox>
+            <div class="row" *ngSwitchCase="'radio'">
+              <div class="col-sm-1" *ngFor="let choice of field.choices">
+                <label class="radio-inline nowrap">
+                  <input type="radio" [disabled]="true" [name]="field.name" [(ngModel)]="field.value" [value]="choice.name" [checked]="choice.name === field.value"/>
+                  <span>{{choice.description}}</span>
+                </label>
+              </div>
+            </div>
           </div>
           <input type="checkbox" *ngIf="field.type === 'checkbox' && field.readonly" name="{{field.name}}" [ngModel]="field.value" value="{{field.value}}" style="display:none" /> <!-- Dirty Hack for sending checkbox value if checkbox is readonly (angular does not send hidden fields) -->
 
