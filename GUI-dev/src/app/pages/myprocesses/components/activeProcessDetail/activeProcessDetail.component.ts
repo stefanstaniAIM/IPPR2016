@@ -76,12 +76,6 @@ export class ActiveProcessDetail implements OnInit {
     .subscribe(
         data => {
           this.subjectsState = JSON.parse(data['_body']);
-          this.subjectsState.subjects.forEach(s => {
-                 this.service.getUserById(s.userId).subscribe(
-                   data => s.user = JSON.parse(data['_body']),
-                   err => s.user = {username: "Unbekannt"}
-                 );
-          });
           this.spinner.hide();
         },
         err =>{

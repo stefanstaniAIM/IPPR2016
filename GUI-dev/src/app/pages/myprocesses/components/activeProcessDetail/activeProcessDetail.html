@@ -27,7 +27,7 @@
          <tbody>
             <tr *ngFor="let subject of subjectsState.subjects">
                <td>{{ subject.subjectName }}</td>
-               <td>{{ subject.user ? subject.user.username : "Noch keinem User zugewiesen" }}</td>
+               <td>{{ subject.user ? subject.user.firstname + " " + subject.user.lastname : "Noch keinem User zugewiesen" }}</td>
                <td>{{ subject.stateName }}</td>
                <td>{{ subject.stateFunctionType }}</td>
                <td>{{ subject.lastChanged | commaDate | date:'dd.MM.yyyy HH:mm:ss' }}
