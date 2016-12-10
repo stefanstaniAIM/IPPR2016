@@ -17,7 +17,7 @@ export class ActiveProcesses implements OnInit  {
       processName:string,
       startUserId:number
     }
-  ]
+  ];
   msg = undefined;
 
   constructor(protected service: ProcessesService, protected spinner:BaThemeSpinner, protected route: ActivatedRoute, protected router: Router) {

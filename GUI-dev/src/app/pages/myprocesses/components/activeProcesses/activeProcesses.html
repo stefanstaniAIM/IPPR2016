@@ -6,8 +6,8 @@
 </div>
 <div class="row">
    <ba-card class="col-xlg-12 col-xl-12 col-lg-12 col-sm-12 col-xs-12">
-      <h4 *ngIf="!activeProcesses">Es gibt keine Prozesse, die Sie starten können!</h4>
-      <table class="table table-striped" *ngIf="activeProcesses">
+      <h4 *ngIf="!activeProcesses || activeProcesses.length < 1">Es gibt keine Prozesse, die Sie starten können!</h4>
+      <table class="table table-striped" *ngIf="activeProcesses && activeProcesses.length > 0">
          <thead>
             <tr>
                <th>#</th>
