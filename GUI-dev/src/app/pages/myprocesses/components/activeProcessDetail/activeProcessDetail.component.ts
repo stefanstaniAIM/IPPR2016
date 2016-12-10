@@ -56,8 +56,7 @@ export class ActiveProcessDetail implements OnInit {
         name: "Checkbox",
         description: "Checkbox für XY",
         value: true,
-        readonly: false,
-        required: true
+        readonly: false
       },
       {
         type: "radio",
