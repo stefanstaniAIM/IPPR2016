@@ -1,0 +1,35 @@
+<md-dialog aria-label="Change view">
+    <form ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <div>Change view</div>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="cvd.cancel()">
+                    <md-icon>close</md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <div class="md-dialog-content" layout="column">
+                <md-button class="md-button" ng-disabled="cvd.currentView === 'SID' ? true : false"
+                           ng-class="cvd.currentView === 'SID' ? 'md-raised md-primary' : ''" flex="50"
+                ng-click="cvd.changeCurrentView('SID')">
+                    Subject interaction diagram
+                </md-button>
+                <md-button class="md-button" ng-disabled="cvd.currentView === 'SID' ? false : true"
+                           ng-class="cvd.currentView === 'SID' ? '' : 'md-raised md-primary'"
+                           ng-click="cvd.changeCurrentView('SBD')">
+                    Subject behaviour diagram
+                </md-button>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+            <span flex></span>
+            <md-button class="md-button" ng-click="cvd.cancel()">
+                Close
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

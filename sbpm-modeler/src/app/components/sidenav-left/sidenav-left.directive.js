@@ -1,4 +1,4 @@
-(function() {
+(function () {
     'use strict';
 
     angular
@@ -21,7 +21,7 @@
         return directive;
 
         /** @ngInject */
-        function SidenavLeftController($log, $mdSidenav, newFileDialog) {
+        function SidenavLeftController($log, $mdSidenav, newFileDialog, changeViewDialog) {
             var self = this;
 
             self.sideNavOpened = function () {
@@ -37,7 +37,11 @@
             };
 
             self.newFile = function () {
-              newFileDialog.showDialog();
+                newFileDialog.showDialog();
+            };
+
+            self.changeView = function () {
+                changeViewDialog.showDialog();
             };
         }
     }

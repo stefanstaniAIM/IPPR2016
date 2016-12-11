@@ -29,14 +29,19 @@
 
         init();
 
+        service.getCurrentView = function () {
+            return storage.get('modelerSettings').currentView;
+        };
+
+        service.setCurrentView = function (currentView) {
+            var modelerSettings = storage.get('modelerSettings');
+            modelerSettings.currentView = currentView;
+            storage.set('modelerSettings', modelerSettings);
+        };
+
         service.clear = function () {
             $log.debug(TAG + 'clear modelerSettings');
-
-            var deferred = $q.defer();
             storage.clear();
-            deferred.resolve();
-
-            return deferred.promise;
         };
 
         return service;

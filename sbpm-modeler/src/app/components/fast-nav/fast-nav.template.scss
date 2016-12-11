@@ -1,11 +1,21 @@
 .fast-nav {
+    position: fixed;
+    //top: 82%;
+    bottom: 3%;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    z-index: 8999;
+
     .fast-nav-views {
-        position: fixed;
-        top: 90%;
-        left: 50%;
-        transform: translate(-50%, 50%);
-        border-radius: 5px;
-        z-index: 8999;
+        width: 300px;
+        margin-top: 10px;
+    }
+
+    .fast-nav-subjects {
+
+        .fast-nav-subjects-md-autocomplete {
+            width: 300px !important;
+        }
     }
 }
 

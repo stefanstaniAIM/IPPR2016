@@ -8,21 +8,19 @@
     /** @ngInject */
     function newFileDialog($mdDialog, modeler, $window) {
 
-        var TAG = 'new-file.dialog: ';
-
         return {
             showDialog: function () {
                 var confirm = $mdDialog.confirm()
                     .title('Are you sure?')
                     .textContent('Everything will be deleted permanently.')
+                    .clickOutsideToClose(true)
                     .ok('Confirm')
                     .cancel('Cancel');
 
                 $mdDialog.show(confirm)
                     .then(function () {
-                        modeler.clear().then(function () {
-                            $window.location.reload();
-                        });
+                        modeler.clear();
+                        $window.location.reload();
                     })
                     .catch(function () {
 

@@ -1,12 +1,34 @@
-<div class="fast-nav" layout="row">
-    <div class="fast-nav-views" layout="row" md-whiteframe="4">
-        <md-button class="md-button md-raised md-primary">SID</md-button>
-        <md-divider></md-divider>
-        <md-button class="md-button">SBD</md-button>
+<div class="fast-nav" layout="column">
+
+    <div class="fast-nav-subjects" layout="row" ng-show="fn.currentView === 'SID' ? false : true">
+        <form ng-submit="$event.preventDefault()">
+            <md-autocomplete class="fast-nav-subjects-md-autocomplete" ng-disabled="fn.isDisabled"
+                             md-no-cache="fn.noCache"
+                             md-selected-item="fn.selectedItem"
+                             md-search-text-change="fn.searchTextChange(fn.searchText)" md-search-text="fn.searchText"
+                             md-selected-item-change="fn.selectedItemChange(item)"
+                             md-items="item in fn.querySearch(fn.searchText)"
+                             md-item-text="item.display" md-min-length="0" placeholder="Select a subject">
+                <md-item-template>
+                    <span md-highlight-text="fn.searchText" md-highlight-flags="^i">{{item.display}}
+                </md-item-template>
+                <md-not-found>
+                    No subjects matching "{{fn.searchText}}" were found.
+                </md-not-found>
+            </md-autocomplete>
+        </form>
     </div>
 
-    <div class="fast-nav-subjects">
-        
+    <div class="fast-nav-views" layout="row" md-whiteframe="1">
+        <md-button class="md-button" ng-class="fn.currentView === 'SID' ? 'md-raised md-primary' : ''" flex="50"
+                   ng-click="fn.changeCurrentView('SID')" ng-disabled="fn.currentView === 'SID' ? true : false">
+            SID
+        </md-button>
+        <md-divider></md-divider>
+        <md-button class="md-button" flex="50" ng-class="fn.currentView === 'SID' ? '' : 'md-raised md-primary'"
+                   ng-click="fn.changeCurrentView('SBD')" ng-disabled="fn.currentView === 'SID' ? false : true">
+            SBD
+        </md-button>
     </div>
 </div>
 
