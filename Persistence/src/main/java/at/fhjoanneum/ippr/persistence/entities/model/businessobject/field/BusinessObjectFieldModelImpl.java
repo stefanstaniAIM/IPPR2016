@@ -27,80 +27,80 @@ import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldType;
 @Entity(name = "BUSINESS_OBJECT_FIELD_MODEL")
 public class BusinessObjectFieldModelImpl implements BusinessObjectFieldModel, Serializable {
 
-	private static final long serialVersionUID = -8651866037837204065L;
+  private static final long serialVersionUID = -8651866037837204065L;
 
-	BusinessObjectFieldModelImpl() {
-	}
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Long bofmId;
 
-	BusinessObjectFieldModelImpl(final String fieldName, final BusinessObjectModelImpl businessObjectModel,
-			final FieldType fieldType) {
-		this.fieldName = fieldName;
-		this.businessObjectModel = businessObjectModel;
-		this.fieldType = fieldType;
-	}
+  @NotNull
+  @Column
+  @Size(min = 1, max = 100)
+  private String fieldName;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long bofmId;
+  @Column
+  @NotNull
+  @Enumerated(EnumType.STRING)
+  private FieldType fieldType;
 
-	@NotNull
-	@Column
-	@Size(min = 1, max = 100)
-	private String fieldName;
+  @NotNull
+  @ManyToOne
+  @JoinColumn(name = "bom_id")
+  private BusinessObjectModelImpl businessObjectModel;
 
-	@Column
-	@NotNull
-	@Enumerated(EnumType.STRING)
-	private FieldType fieldType;
+  BusinessObjectFieldModelImpl() {}
 
-	@NotNull
-	@ManyToOne
-	@JoinColumn(name = "bom_id")
-	private BusinessObjectModelImpl businessObjectModel;
+  BusinessObjectFieldModelImpl(final String fieldName,
+      final BusinessObjectModelImpl businessObjectModel, final FieldType fieldType) {
+    this.fieldName = fieldName;
+    this.businessObjectModel = businessObjectModel;
+    this.fieldType = fieldType;
+  }
 
-	@Override
-	public Long getBofmId() {
-		return bofmId;
-	}
+  @Override
+  public Long getBofmId() {
+    return bofmId;
+  }
 
-	@Override
-	public String getFieldName() {
-		return fieldName;
-	}
+  @Override
+  public String getFieldName() {
+    return fieldName;
+  }
 
-	@Override
-	public BusinessObjectModel getBusinessObjectModel() {
-		return businessObjectModel;
-	}
+  @Override
+  public BusinessObjectModel getBusinessObjectModel() {
+    return businessObjectModel;
+  }
 
-	@Override
-	public FieldType getFieldType() {
-		return fieldType;
-	}
+  @Override
+  public FieldType getFieldType() {
+    return fieldType;
+  }
 
-	@Override
-	public boolean equals(final Object obj) {
-		if (obj == null) {
-			return false;
-		}
-		if (!BusinessObjectFieldModel.class.isAssignableFrom(obj.getClass())) {
-			return false;
-		}
-		final BusinessObjectFieldModel other = (BusinessObjectFieldModel) obj;
-		if ((this.bofmId == null) ? (other.getBofmId() != null) : !this.bofmId.equals(other.getBofmId())) {
-			return false;
-		}
-		return true;
-	}
+  @Override
+  public boolean equals(final Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (!BusinessObjectFieldModel.class.isAssignableFrom(obj.getClass())) {
+      return false;
+    }
+    final BusinessObjectFieldModel other = (BusinessObjectFieldModel) obj;
+    if ((this.bofmId == null) ? (other.getBofmId() != null)
+        : !this.bofmId.equals(other.getBofmId())) {
+      return false;
+    }
+    return true;
+  }
 
-	@Override
-	public int hashCode() {
-		return Objects.hashCode(bofmId);
-	}
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(bofmId);
+  }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("bofmId", bofmId)
-				.append("fieldName", fieldName).append("fieldType", fieldType).toString();
-	}
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("bofmId", bofmId)
+        .append("fieldName", fieldName).append("fieldType", fieldType).toString();
+  }
 }

@@ -1,5 +1,5 @@
 package at.fhjoanneum.ippr.persistence.objects.model.enums;
 
 public enum FieldType {
-	STRING, NUMBER, DATE, TIMESTAMP, BOOLEAN
+  STRING, NUMBER, DECIMAL, DATE, TIMESTAMP, BOOLEAN
 }
