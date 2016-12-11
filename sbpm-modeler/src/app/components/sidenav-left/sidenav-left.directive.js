@@ -21,7 +21,7 @@
         return directive;
 
         /** @ngInject */
-        function SidenavLeftController($log, $mdSidenav) {
+        function SidenavLeftController($log, $mdSidenav, newFileDialog) {
             var self = this;
 
             self.sideNavOpened = function () {
@@ -34,6 +34,10 @@
                     .then(function () {
                         $log.debug("toggle sidenav-left is done");
                     });
+            };
+
+            self.newFile = function () {
+              newFileDialog.showDialog();
             };
         }
     }

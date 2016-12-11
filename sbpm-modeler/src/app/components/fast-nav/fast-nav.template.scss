@@ -1,0 +1,11 @@
+.fast-nav {
+    .fast-nav-views {
+        position: fixed;
+        top: 90%;
+        left: 50%;
+        transform: translate(-50%, 50%);
+        border-radius: 5px;
+        z-index: 8999;
+    }
+}
+

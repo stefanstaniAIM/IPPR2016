@@ -3,22 +3,24 @@
 
     angular
         .module('sbpm-modeler')
-        .factory('modelerStorage', modelerStorage);
+        .factory('storage', storage);
 
     /** @ngInject */
-    function modelerStorage($log) {
+    function storage() {
 
         var storage = localStorage,
             service = {};
 
-        service.initModelerSettings = function() {
-            storage.setItem('modelerSettings', JSON.stringify({
-                initiated: true
-            }));
+        service.set = function(key, value) {
+            storage.setItem(key, JSON.stringify(value));
         };
 
-        service.getModelerSettings = function() {
-            return JSON.parse(storage.getItem('modelerSettings') || 'null');
+        service.get = function(key) {
+            return JSON.parse(storage.getItem(key) || 'null');
+        };
+
+        service.clear = function () {
+            storage.clear();
         };
 
         return service;
