@@ -6,7 +6,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 import org.apache.http.client.utils.URIBuilder;
-import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +19,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.google.common.collect.Lists;
+
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessInfoDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartedDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStateDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.TaskDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.UserContainer;
 import at.fhjoanneum.ippr.commons.dto.processengine.UserDTO;
 import at.fhjoanneum.ippr.gateway.api.config.GatewayConfig;
@@ -158,4 +160,12 @@ public class ProcessEngineCallerImpl implements Caller {
     return createRequest(uri, HttpMethod.POST, null, ProcessInfoDTO.class, header);
   }
 
+  public Future<ResponseEntity<TaskDTO[]>> getTasksOfUser(final HttpHeaderUser headerUser,
+      final Long userId) throws URISyntaxException {
+    final URIBuilder uri = new URIBuilder(gatewayConfig.getProcessEngineAddress())
+        .setPath("/processes/tasks/" + userId);
+
+    final HttpHeaders header = headerUser.getHttpHeaders();
+    return createRequest(uri, HttpMethod.GET, null, TaskDTO[].class, header);
+  }
 }

@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.processengine.akka.messages.process;
+package at.fhjoanneum.ippr.processengine.akka.messages.process.wakeup;
 
 /**
  * Message to wake up process.

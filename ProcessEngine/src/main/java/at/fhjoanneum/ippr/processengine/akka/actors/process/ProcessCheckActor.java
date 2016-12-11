@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.processengine.akka.actors;
+package at.fhjoanneum.ippr.processengine.akka.actors.process;
 
 import java.util.Optional;
 

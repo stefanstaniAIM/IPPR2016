@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.processengine.akka.actors;
+package at.fhjoanneum.ippr.processengine.akka.actors.process;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,8 +23,8 @@ import at.fhjoanneum.ippr.persistence.objects.engine.enums.ProcessInstanceState;
 import at.fhjoanneum.ippr.persistence.objects.engine.process.ProcessInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.state.SubjectState;
 import at.fhjoanneum.ippr.persistence.objects.engine.subject.Subject;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStateMessage;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStopMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.info.ProcessStateMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.stop.ProcessStopMessage;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 
 @Transactional

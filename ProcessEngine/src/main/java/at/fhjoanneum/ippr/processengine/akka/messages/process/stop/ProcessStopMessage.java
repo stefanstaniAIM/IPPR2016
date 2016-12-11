@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.processengine.akka.messages.process;
+package at.fhjoanneum.ippr.processengine.akka.messages.process.stop;
 
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessInfoDTO;
 

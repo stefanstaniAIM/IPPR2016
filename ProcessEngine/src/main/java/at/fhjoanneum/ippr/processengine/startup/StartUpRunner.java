@@ -22,8 +22,8 @@ import at.fhjoanneum.ippr.persistence.objects.engine.enums.ProcessInstanceState;
 import at.fhjoanneum.ippr.persistence.objects.engine.process.ProcessInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.subject.Subject;
 import at.fhjoanneum.ippr.processengine.akka.config.Global;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessWakeUpMessage;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.UserActorWakeUpMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.wakeup.ProcessWakeUpMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.wakeup.UserActorWakeUpMessage;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 
 @Service

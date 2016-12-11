@@ -7,6 +7,7 @@ import at.fhjoanneum.ippr.commons.dto.processengine.ProcessInfoDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartedDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStateDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.TaskDTO;
 
 public interface ProcessService {
 
@@ -24,4 +25,6 @@ public interface ProcessService {
       int size);
 
   Future<ProcessInfoDTO> stopProcess(Long piId);
+
+  Future<List<TaskDTO>> getTasksOfUser(Long userId);
 }

@@ -23,6 +23,7 @@ import at.fhjoanneum.ippr.commons.dto.processengine.ProcessInfoDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartedDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStateDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.TaskDTO;
 import at.fhjoanneum.ippr.processengine.services.ProcessService;
 
 @RestController
@@ -112,6 +113,16 @@ public class ProcessEngineController {
 
     return () -> {
       return processService.stopProcess(piId).get();
+    };
+  }
+
+  @RequestMapping(value = "processes/tasks/{userId}", method = RequestMethod.GET)
+  public Callable<List<TaskDTO>> getTasksOfUser(final HttpServletRequest request,
+      @PathVariable("userId") final Long userId) {
+    LOG.debug("Received request to return tasks of user [{}]", userId);
+
+    return () -> {
+      return processService.getTasksOfUser(userId).get();
     };
   }
 }

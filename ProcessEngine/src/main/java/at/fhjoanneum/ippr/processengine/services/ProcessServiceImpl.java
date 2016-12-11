@@ -20,17 +20,19 @@ import at.fhjoanneum.ippr.commons.dto.processengine.ProcessInfoDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartedDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStateDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.TaskDTO;
 import at.fhjoanneum.ippr.persistence.objects.engine.enums.ProcessInstanceState;
 import at.fhjoanneum.ippr.processengine.akka.config.Global;
 import at.fhjoanneum.ippr.processengine.akka.config.SpringExtension;
 import at.fhjoanneum.ippr.processengine.akka.messages.analysis.AmountOfActiveProcessesMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.analysis.AmountOfProcessesPerUserMessage;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.ActorInitializeMessage;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessInfoMessage;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStartMessage;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStateMessage;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStopMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.check.ProcessCheckMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.info.ProcessInfoMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.info.ProcessStateMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.info.TasksOfUserMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.initialize.ActorInitializeMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.initialize.ProcessStartMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.stop.ProcessStopMessage;
 
 @Service
 public class ProcessServiceImpl implements ProcessService {
@@ -210,6 +212,25 @@ public class ProcessServiceImpl implements ProcessService {
           if (exc == null) {
             userSupervisorActor.tell(request, null);
             future.complete(((ProcessStopMessage.Response) msg).getProcess());
+          } else {
+            future.completeExceptionally(exc);
+          }
+        });
+
+    return future;
+  }
+
+  @Async
+  @Override
+  public Future<List<TaskDTO>> getTasksOfUser(final Long userId) {
+    final CompletableFuture<List<TaskDTO>> future = new CompletableFuture<>();
+
+    final TasksOfUserMessage.Request request = new TasksOfUserMessage.Request(userId);
+
+    PatternsCS.ask(userSupervisorActor, request, Global.TIMEOUT).toCompletableFuture()
+        .whenComplete((msg, exc) -> {
+          if (exc == null) {
+            future.complete(((TasksOfUserMessage.Response) msg).getTasks());
           } else {
             future.completeExceptionally(exc);
           }

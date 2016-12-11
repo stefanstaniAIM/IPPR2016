@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.processengine.akka.actors;
+package at.fhjoanneum.ippr.processengine.akka.actors.analysis;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;

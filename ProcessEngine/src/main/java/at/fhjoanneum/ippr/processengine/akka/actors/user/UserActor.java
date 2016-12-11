@@ -1,5 +1,6 @@
-package at.fhjoanneum.ippr.processengine.akka.actors;
+package at.fhjoanneum.ippr.processengine.akka.actors.user;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -14,6 +15,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
+import at.fhjoanneum.ippr.commons.dto.processengine.TaskDTO;
 import at.fhjoanneum.ippr.persistence.entities.engine.enums.ReceiveSubjectState;
 import at.fhjoanneum.ippr.persistence.entities.engine.state.SubjectStateBuilder;
 import at.fhjoanneum.ippr.persistence.entities.engine.state.SubjectStateImpl;
@@ -25,9 +27,11 @@ import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
 import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 import at.fhjoanneum.ippr.processengine.akka.config.Global;
 import at.fhjoanneum.ippr.processengine.akka.messages.EmptyMessage;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStopMessage;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.UserActorInitializeMessage;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.UserActorWakeUpMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.info.TasksOfUserMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.initialize.UserActorInitializeMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.stop.ProcessStopMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.wakeup.UserActorWakeUpMessage;
+import at.fhjoanneum.ippr.processengine.repositories.CustomTypesQueriesRepository;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 import at.fhjoanneum.ippr.processengine.repositories.StateRepository;
 import at.fhjoanneum.ippr.processengine.repositories.SubjectRepository;
@@ -48,6 +52,8 @@ public class UserActor extends UntypedActor {
   private StateRepository stateRepository;
   @Autowired
   private SubjectStateRepository subjectStateRepository;
+  @Autowired
+  private CustomTypesQueriesRepository customTypesQueriesRepository;
 
   private final Long userId;
 
@@ -63,6 +69,8 @@ public class UserActor extends UntypedActor {
       handleUserWakeUpMessage(obj);
     } else if (obj instanceof ProcessStopMessage.Request) {
       handleProcessStopMessage(obj);
+    } else if (obj instanceof TasksOfUserMessage.Request) {
+      handleTasksOfUserMessage(obj);
     } else {
       unhandled(obj);
     }
@@ -121,5 +129,12 @@ public class UserActor extends UntypedActor {
       LOG.info("No active processes anymore for user [{}], therefore shutdown actor",
           getSelf().path().name());
     }
+  }
+
+  private void handleTasksOfUserMessage(final Object obj) {
+    final TasksOfUserMessage.Request msg = (TasksOfUserMessage.Request) obj;
+
+    final List<TaskDTO> tasks = customTypesQueriesRepository.getTasksOfUser(msg.getUserId());
+    getSender().tell(new TasksOfUserMessage.Response(tasks), getSelf());
   }
 }

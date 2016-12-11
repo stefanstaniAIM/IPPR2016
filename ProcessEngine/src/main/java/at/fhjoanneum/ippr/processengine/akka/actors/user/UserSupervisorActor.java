@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.processengine.akka.actors;
+package at.fhjoanneum.ippr.processengine.akka.actors.user;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,11 +27,12 @@ import at.fhjoanneum.ippr.processengine.akka.AkkaSelector;
 import at.fhjoanneum.ippr.processengine.akka.config.Global;
 import at.fhjoanneum.ippr.processengine.akka.config.SpringExtension;
 import at.fhjoanneum.ippr.processengine.akka.messages.EmptyMessage;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.ActorInitializeMessage;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStopMessage;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.UserActorInitializeMessage;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.UserActorInitializeMessage.Request;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.UserActorWakeUpMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.info.TasksOfUserMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.initialize.ActorInitializeMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.initialize.UserActorInitializeMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.initialize.UserActorInitializeMessage.Request;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.stop.ProcessStopMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.wakeup.UserActorWakeUpMessage;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 
 @Transactional
@@ -58,6 +59,8 @@ public class UserSupervisorActor extends UntypedActor {
       handleUserWakeUpMessage(obj);
     } else if (obj instanceof ProcessStopMessage.Request) {
       handleProcessStopMessage(obj);
+    } else if (obj instanceof TasksOfUserMessage.Request) {
+      handleTasksOfUserMessage(obj);
     } else {
       unhandled(obj);
     }
@@ -160,6 +163,17 @@ public class UserSupervisorActor extends UntypedActor {
         }
       });
     }
+  }
 
+  private void handleTasksOfUserMessage(final Object obj) {
+    final TasksOfUserMessage.Request msg = (TasksOfUserMessage.Request) obj;
+
+    final String userId = "ProcessUser-" + msg.getUserId();
+    final Optional<ActorRef> actorOpt = akkaSelector.findActor(getContext(), userId);
+    if (!actorOpt.isPresent()) {
+      throw new IllegalArgumentException("Could not find actor for user with ID [" + userId + "]");
+    }
+
+    actorOpt.get().forward(msg, getContext());
   }
 }

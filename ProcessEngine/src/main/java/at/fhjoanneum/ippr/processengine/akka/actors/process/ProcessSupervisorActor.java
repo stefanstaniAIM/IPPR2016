@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.processengine.akka.actors;
+package at.fhjoanneum.ippr.processengine.akka.actors.process;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,12 +32,12 @@ import at.fhjoanneum.ippr.persistence.objects.model.process.ProcessModel;
 import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
 import at.fhjoanneum.ippr.processengine.akka.AkkaSelector;
 import at.fhjoanneum.ippr.processengine.akka.config.SpringExtension;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessInfoMessage;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStartMessage;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStartMessage.UserGroupAssignment;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStateMessage;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessStopMessage;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.ProcessWakeUpMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.info.ProcessInfoMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.info.ProcessStateMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.initialize.ProcessStartMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.initialize.ProcessStartMessage.UserGroupAssignment;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.stop.ProcessStopMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.wakeup.ProcessWakeUpMessage;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessModelRepository;
 import at.fhjoanneum.ippr.processengine.repositories.SubjectModelRepository;
