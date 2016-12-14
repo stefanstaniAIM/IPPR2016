@@ -29,12 +29,12 @@
             var self = this;
 
             self.currentView;
+            self.selectedItem = {"value":"alabama","display":"Alabama"};
 
             self.changeCurrentView = changeCurrentView;
 
             function init() {
                 self.currentView = modeler.getCurrentView();
-                self.selectedItem = {"value":"alabama","display":"Alabama"};
                 $log.debug(TAG + "currentView " + self.currentView);
             }
 

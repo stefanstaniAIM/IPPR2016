@@ -17,7 +17,8 @@
     "angular": "~1.4.0",
     "fontawesome": "~4.3.0",
     "angular-markdown-filter": "~1.2.0",
-    "angular-material": "^1.1.1"
+    "angular-material": "^1.1.1",
+    "fabric.js": "fabric#^1.7.1"
   },
   "devDependencies": {
     "angular-mocks": "~1.4.0"
