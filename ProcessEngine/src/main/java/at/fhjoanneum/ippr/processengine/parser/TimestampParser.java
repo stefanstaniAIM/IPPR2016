@@ -5,7 +5,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.stereotype.Component;
 
+@Component
 public class TimestampParser implements Parser<LocalDateTime> {
 
   @Override
