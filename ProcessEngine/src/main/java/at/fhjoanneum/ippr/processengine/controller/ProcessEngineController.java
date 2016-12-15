@@ -23,6 +23,7 @@ import at.fhjoanneum.ippr.commons.dto.processengine.ProcessInfoDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartedDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStateDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.StateObjectDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.TaskDTO;
 import at.fhjoanneum.ippr.processengine.services.ProcessService;
 
@@ -123,6 +124,14 @@ public class ProcessEngineController {
 
     return () -> {
       return processService.getTasksOfUser(userId).get();
+    };
+  }
+
+  @RequestMapping(value = "processes/task/{piId}/{userId}", method = RequestMethod.GET)
+  public Callable<StateObjectDTO> getStateObjectOfUserInProcess(
+      @PathVariable("piId") final Long piId, @PathVariable("userId") final Long userId) {
+    return () -> {
+      return processService.getStateObjectOfUserInProcess(piId, userId).get();
     };
   }
 }

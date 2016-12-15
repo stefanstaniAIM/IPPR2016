@@ -20,6 +20,7 @@ import at.fhjoanneum.ippr.commons.dto.processengine.ProcessInfoDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartedDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStateDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.StateObjectDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.TaskDTO;
 import at.fhjoanneum.ippr.persistence.objects.engine.enums.ProcessInstanceState;
 import at.fhjoanneum.ippr.processengine.akka.config.Global;
@@ -237,5 +238,12 @@ public class ProcessServiceImpl implements ProcessService {
         });
 
     return future;
+  }
+
+  @Async
+  @Override
+  public Future<StateObjectDTO> getStateObjectOfUserInProcess(final Long piId, final Long userId) {
+    // TODO Auto-generated method stub
+    return null;
   }
 }
