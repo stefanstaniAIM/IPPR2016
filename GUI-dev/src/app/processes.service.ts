@@ -47,6 +47,6 @@ export class ProcessesService {
    }
 
    stopProcess(piId:number){
-      return this._authHttp.post('http://localhost:10000/api/processes/stop/'+piId);
+      return this._authHttp.post('http://localhost:10000/api/processes/stop/'+piId, {});
    }
 }
