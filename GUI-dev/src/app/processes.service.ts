@@ -49,4 +49,8 @@ export class ProcessesService {
    stopProcess(piId:number){
       return this._authHttp.post('http://localhost:10000/api/processes/stop/'+piId, {});
    }
+
+   getProcessTasksForUser(userId:number){
+     return this._authHttp.get('http://localhost:10000/api/processes/tasks/'+userId);
+   }
 }

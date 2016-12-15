@@ -18,7 +18,6 @@ import { CalendarService } from './calendar/calendar.service';
 import { FeedService } from './feed/feed.service';
 import { LineChartService } from './lineChart/lineChart.service';
 import { PieChartService } from './pieChart/pieChart.service';
-import { TodoService } from './todo/todo.service';
 import { TrafficChartService } from './trafficChart/trafficChart.service';
 import { UsersMapService } from './usersMap/usersMap.service';
 import { AuthGuard } from '../../auth.guard';
@@ -46,7 +45,6 @@ import { AuthGuard } from '../../auth.guard';
     FeedService,
     LineChartService,
     PieChartService,
-    TodoService,
     TrafficChartService,
     UsersMapService,
     AuthGuard
