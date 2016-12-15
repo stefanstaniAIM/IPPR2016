@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { OnInit } from '@angular/core';
-import { ProcessModelsService } from './processModels.service';
+import { ProcessesService } from '../../../../Processes.service';
 
 @Component({
   selector: 'models',
@@ -11,7 +11,7 @@ export class ProcessModels implements OnInit {
    processModels = [];
    error = undefined;
 
-  constructor(protected service:ProcessModelsService) {}
+  constructor(protected service:ProcessesService) {}
 
   ngOnInit(): void {
    this.service.getProcessModels()

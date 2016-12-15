@@ -1,7 +1,7 @@
 import 'rxjs/add/operator/switchMap';
 import { Component,  OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
-import { ProcessesService } from '../../Processes.service';
+import { ProcessesService } from '../../../../Processes.service';
 import { BaThemeSpinner } from '../../../../theme/services';
 
 @Component({

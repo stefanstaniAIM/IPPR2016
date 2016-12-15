@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AuthHttp } from 'angular2-jwt';
-import { User } from '../../user';
+import { User } from './user';
 
 @Injectable()
 export class ProcessesService {
@@ -43,6 +43,10 @@ export class ProcessesService {
    }
 
    getUserById(userId:number){
-        return this._authHttp.get('http://localhost:10000/api/user/'+userId);
+      return this._authHttp.get('http://localhost:10000/api/user/'+userId);
+   }
+
+   stopProcess(piId:number){
+      return this._authHttp.get('http://localhost:10000/api/processes/stop/'+piId);
    }
 }

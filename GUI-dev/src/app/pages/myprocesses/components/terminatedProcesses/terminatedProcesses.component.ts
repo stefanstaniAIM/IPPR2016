@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import { ProcessesService } from '../../Processes.service';
+import { ProcessesService } from '../../../../Processes.service';
 
 @Component({
   selector: 'terminatedProcesses',

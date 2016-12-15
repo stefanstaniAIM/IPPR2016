@@ -6,7 +6,7 @@
 </div>
 <div class="row">
    <ba-card class="col-xlg-12 col-xl-12 col-lg-12 col-sm-12 col-xs-12">
-      <h4 *ngIf="!activeProcesses || activeProcesses.length < 1">Es gibt keine Prozesse, die Sie starten können!</h4>
+      <h4 *ngIf="!activeProcesses || activeProcesses.length < 1">Es gibt keine aktiven Prozesse!</h4>
       <table class="table table-striped" *ngIf="activeProcesses && activeProcesses.length > 0">
          <thead>
             <tr>
@@ -21,7 +21,10 @@
                <td>{{ process.piId }}</td>
                <td>{{ process.processName }}</td>
                <td>{{ process.startTime | commaDate | date:'dd.MM.yyyy HH:mm:ss'}}</td>
-               <td><button class="btn btn-primary btn-sm" (click)="showProcess(process.piId)">Anzeigen</button></td>
+               <td>
+                 <button class="btn btn-primary btn-sm" (click)="showProcess(process.piId)">Anzeigen</button>
+                 <button class="btn btn-primary btn-sm" (click)="stopProcess(process.piId)">Stoppen</button>
+               </td>
             </tr>
          </tbody>
       </table>

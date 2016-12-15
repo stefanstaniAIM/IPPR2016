@@ -1,5 +1,5 @@
 import { Component,  OnInit } from '@angular/core';
-import { ProcessesService } from '../../Processes.service';
+import { ProcessesService } from '../../../../Processes.service';
 import { BaThemeSpinner } from '../../../../theme/services';
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -41,5 +41,9 @@ export class ActiveProcesses implements OnInit  {
 
   showProcess(piId:number){
     this.router.navigate(['../active', piId], { relativeTo: this.route });
+  }
+
+  stopProcess(piId:number){
+    this.service.stopProcess(piId);
   }
 }

@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
-import { ProcessesService } from '../../Processes.service';
+import { ProcessesService } from '../../../../Processes.service';
 //import { ModalModule, ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
 
 @Component({
