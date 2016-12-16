@@ -1,0 +1,30 @@
+<md-sidenav class="properties-right md-sidenav-right" md-is-open="true" md-component-id="properties-right"
+            md-whiteframe="4"
+            md-disable-backdrop="false"
+            layout="column"
+            flex>
+    <md-toolbar class="md-theme-indigo md-toolbar-tools">
+        <div flex>Properties</div>
+        <md-button class="md-icon-button" ng-click="pr.toogleSidenav()">
+            <md-icon>close</md-icon>
+        </md-button>
+    </md-toolbar>
+    <md-content class="md-padding" layout="column" flex>
+        <div layout="column" flex>
+            <md-input-container class="md-block">
+                <label>First name</label>
+                <input>
+            </md-input-container>
+            <md-checkbox>
+                Start subject
+            </md-checkbox>
+            <md-checkbox ng-disabled="true">
+                Multisubject
+            </md-checkbox>
+        </div>
+        <div class="properties-right-footer" layout="row">
+            <md-button class="md-button md-raised md-primary" flex>Save</md-button>
+            <md-button class="md-button md-raised" flex>Cancel</md-button>
+        </div>
+    </md-content>
+</md-sidenav>
