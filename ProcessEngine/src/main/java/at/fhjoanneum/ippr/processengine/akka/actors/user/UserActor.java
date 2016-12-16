@@ -31,6 +31,7 @@ import at.fhjoanneum.ippr.processengine.akka.messages.process.info.TasksOfUserMe
 import at.fhjoanneum.ippr.processengine.akka.messages.process.initialize.UserActorInitializeMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.stop.ProcessStopMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.wakeup.UserActorWakeUpMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObjectMessage;
 import at.fhjoanneum.ippr.processengine.repositories.CustomTypesQueriesRepository;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 import at.fhjoanneum.ippr.processengine.repositories.StateRepository;
@@ -71,6 +72,8 @@ public class UserActor extends UntypedActor {
       handleProcessStopMessage(obj);
     } else if (obj instanceof TasksOfUserMessage.Request) {
       handleTasksOfUserMessage(obj);
+    } else if (obj instanceof StateObjectMessage.Request) {
+      handleStateObjectMessage(obj);
     } else {
       unhandled(obj);
     }
@@ -137,4 +140,13 @@ public class UserActor extends UntypedActor {
     final List<TaskDTO> tasks = customTypesQueriesRepository.getTasksOfUser(msg.getUserId());
     getSender().tell(new TasksOfUserMessage.Response(tasks), getSelf());
   }
+
+  private void handleStateObjectMessage(final Object obj) {
+    final StateObjectMessage.Request request = (StateObjectMessage.Request) obj;
+
+    Optional.ofNullable(subjectStateRepository
+        .getSubjectStateOfUserInProcessInstance(request.getPiId(), request.getUserId()));
+
+  }
+
 }

@@ -34,6 +34,7 @@ import at.fhjoanneum.ippr.processengine.akka.messages.process.info.TasksOfUserMe
 import at.fhjoanneum.ippr.processengine.akka.messages.process.initialize.ActorInitializeMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.initialize.ProcessStartMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.stop.ProcessStopMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObjectMessage;
 
 @Service
 public class ProcessServiceImpl implements ProcessService {
@@ -243,7 +244,19 @@ public class ProcessServiceImpl implements ProcessService {
   @Async
   @Override
   public Future<StateObjectDTO> getStateObjectOfUserInProcess(final Long piId, final Long userId) {
-    // TODO Auto-generated method stub
-    return null;
+    final CompletableFuture<StateObjectDTO> future = new CompletableFuture<>();
+
+    final StateObjectMessage.Request request = new StateObjectMessage.Request(piId, userId);
+
+    PatternsCS.ask(userSupervisorActor, request, Global.TIMEOUT).toCompletableFuture()
+        .whenComplete((msg, exc) -> {
+          if (exc == null) {
+            future.complete(((StateObjectMessage.Response) msg).getStateObjectDTO());
+          } else {
+            future.completeExceptionally(exc);
+          }
+        });
+
+    return future;
   }
 }

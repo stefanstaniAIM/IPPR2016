@@ -33,6 +33,7 @@ import at.fhjoanneum.ippr.processengine.akka.messages.process.initialize.UserAct
 import at.fhjoanneum.ippr.processengine.akka.messages.process.initialize.UserActorInitializeMessage.Request;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.stop.ProcessStopMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.wakeup.UserActorWakeUpMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObjectMessage;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 
 @Transactional
@@ -61,6 +62,8 @@ public class UserSupervisorActor extends UntypedActor {
       handleProcessStopMessage(obj);
     } else if (obj instanceof TasksOfUserMessage.Request) {
       handleTasksOfUserMessage(obj);
+    } else if (obj instanceof StateObjectMessage.Request) {
+      handleStateObjectMessage(obj);
     } else {
       unhandled(obj);
     }
@@ -106,7 +109,7 @@ public class UserSupervisorActor extends UntypedActor {
 
     subjects.forEach(subject -> {
       if (subject.getUser() != null) {
-        final String userId = "ProcessUser-" + subject.getUser();
+        final String userId = getUserId(subject.getUser());
         LOG.debug("Try to find or create new actor for: {}", userId);
         final Optional<ActorRef> actorOpt = akkaSelector.findActor(getContext(), userId);
 
@@ -131,9 +134,13 @@ public class UserSupervisorActor extends UntypedActor {
     return actors;
   }
 
+  private String getUserId(final Long piId) {
+    return "ProcessUser-" + piId;
+  }
+
   private void handleUserWakeUpMessage(final Object obj) {
     final UserActorWakeUpMessage.Request msg = (UserActorWakeUpMessage.Request) obj;
-    final String userId = "ProcessUser-" + msg.getUserId();
+    final String userId = getUserId(msg.getUserId());
     final Optional<ActorRef> actorOpt = akkaSelector.findActor(getContext(), userId);
 
     ActorRef actor = null;
@@ -168,12 +175,30 @@ public class UserSupervisorActor extends UntypedActor {
   private void handleTasksOfUserMessage(final Object obj) {
     final TasksOfUserMessage.Request msg = (TasksOfUserMessage.Request) obj;
 
-    final String userId = "ProcessUser-" + msg.getUserId();
+    final String userId = getUserId(msg.getUserId());
     final Optional<ActorRef> actorOpt = akkaSelector.findActor(getContext(), userId);
     if (!actorOpt.isPresent()) {
       throw new IllegalArgumentException("Could not find actor for user with ID [" + userId + "]");
     }
 
     actorOpt.get().forward(msg, getContext());
+  }
+
+  private void handleStateObjectMessage(final Object obj) {
+    final StateObjectMessage.Request request = (StateObjectMessage.Request) obj;
+    LOG.info("Handle state object message of USER_ID [{}] in PI_ID [{}]", request.getUserId(),
+        request.getPiId());
+
+    final String userId = getUserId(request.getUserId());
+    final Optional<ActorRef> actorOpt = akkaSelector.findActor(getContext(), userId);
+
+    if (actorOpt.isPresent()) {
+      LOG.debug("Found user actor and will forward message");
+      actorOpt.get().forward(request, getContext());
+    } else {
+      getSender().tell(new akka.actor.Status.Failure(
+          new IllegalArgumentException("Could not find actor for user: " + userId)), getSelf());
+      return;
+    }
   }
 }

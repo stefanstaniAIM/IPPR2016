@@ -1,6 +1,6 @@
 package at.fhjoanneum.ippr.processengine.akka.messages.process.workflow;
 
-import at.fhjoanneum.ippr.commons.dto.processengine.SubjectStateDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.StateObjectDTO;
 
 public class StateObjectMessage {
 
@@ -23,14 +23,14 @@ public class StateObjectMessage {
   }
 
   public static class Response {
-    private final SubjectStateDTO subjectStateDTO;
+    private final StateObjectDTO stateObjectDTO;
 
-    public Response(final SubjectStateDTO subjectStateDTO) {
-      this.subjectStateDTO = subjectStateDTO;
+    public Response(final StateObjectDTO stateObjectDTO) {
+      this.stateObjectDTO = stateObjectDTO;
     }
 
-    public SubjectStateDTO getSubjectStateDTO() {
-      return subjectStateDTO;
+    public StateObjectDTO getStateObjectDTO() {
+      return stateObjectDTO;
     }
   }
 }

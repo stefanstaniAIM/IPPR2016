@@ -13,20 +13,21 @@ public class BusinessObjectFieldDTO implements Serializable {
   private Long bofiId;
   private String name;
   private String type;
-  private boolean mandatory;
-  private String permission;
-
+  private boolean required;
+  private boolean readonly;
+  private String value;
 
   public BusinessObjectFieldDTO() {}
 
   public BusinessObjectFieldDTO(final Long bofmId, final Long bofiId, final String name,
-      final String type, final boolean mandatory, final String permission) {
+      final String type, final boolean required, final boolean readonly, final String value) {
     this.bofmId = bofmId;
     this.bofiId = bofiId;
     this.name = name;
     this.type = type;
-    this.mandatory = mandatory;
-    this.permission = permission;
+    this.required = required;
+    this.readonly = readonly;
+    this.value = value;
   }
 
 
@@ -38,8 +39,8 @@ public class BusinessObjectFieldDTO implements Serializable {
     return bofiId;
   }
 
-  public String getPermission() {
-    return permission;
+  public boolean isReadonly() {
+    return readonly;
   }
 
   public String getName() {
@@ -50,7 +51,11 @@ public class BusinessObjectFieldDTO implements Serializable {
     return type;
   }
 
-  public boolean isMandatory() {
-    return mandatory;
+  public boolean isRequired() {
+    return required;
+  }
+
+  public String getValue() {
+    return value;
   }
 }
