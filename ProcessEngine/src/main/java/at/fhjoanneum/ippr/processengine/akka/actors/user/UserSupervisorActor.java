@@ -178,7 +178,8 @@ public class UserSupervisorActor extends UntypedActor {
     final String userId = getUserId(msg.getUserId());
     final Optional<ActorRef> actorOpt = akkaSelector.findActor(getContext(), userId);
     if (!actorOpt.isPresent()) {
-      throw new IllegalArgumentException("Could not find actor for user with ID [" + userId + "]");
+      getSender().tell(new TasksOfUserMessage.Response(Lists.newArrayList()), getSelf());
+      return;
     }
 
     actorOpt.get().forward(msg, getContext());
