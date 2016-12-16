@@ -134,7 +134,7 @@ public class VacationRequest extends AbstractExample {
             .state(empState3).mandatory(false).permission(FieldPermission.NONE).build();
 
     final BusinessObjectModel nokForm = new BusinessObjectModelBuilder()
-        .name("Vacation request accept").addToState(bossState3).addToState(empState3).build();
+        .name("Vacation request not accept").addToState(bossState3).addToState(empState3).build();
     final BusinessObjectFieldModel nokFormFieldInformation = new BusinessObjectFieldModelBuilder()
         .businessObjectModel(nokForm).fieldName("Information").fieldType(FieldType.STRING).build();
     final BusinessObjectFieldPermission nokFormFieldInformationPermission1 =

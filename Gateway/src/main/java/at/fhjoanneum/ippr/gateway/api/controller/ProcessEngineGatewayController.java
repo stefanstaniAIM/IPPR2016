@@ -21,6 +21,7 @@ import at.fhjoanneum.ippr.commons.dto.processengine.ProcessInfoDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartedDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStateDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.StateObjectDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.TaskDTO;
 import at.fhjoanneum.ippr.gateway.api.controller.user.HttpHeaderUser;
 import at.fhjoanneum.ippr.gateway.api.services.impl.ProcessEngineCallerImpl;
@@ -115,6 +116,16 @@ public class ProcessEngineGatewayController {
     return () -> {
       final HttpHeaderUser headerUser = new HttpHeaderUser(request);
       return processEngineCaller.getTasksOfUser(headerUser, userId).get();
+    };
+  }
+
+  @RequestMapping(value = "api/processes/task/{piId}/{userId}", method = RequestMethod.GET)
+  public Callable<ResponseEntity<StateObjectDTO>> getStateObjectOfUserInProcess(
+      final HttpServletRequest request, @PathVariable("piId") final Long piId,
+      @PathVariable("userId") final Long userId) {
+    return () -> {
+      final HttpHeaderUser headerUser = new HttpHeaderUser(request);
+      return processEngineCaller.getStateObjectOfUserInProcess(headerUser, piId, userId).get();
     };
   }
 }

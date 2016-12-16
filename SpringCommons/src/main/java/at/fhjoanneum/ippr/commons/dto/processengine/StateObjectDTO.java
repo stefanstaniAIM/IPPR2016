@@ -16,6 +16,13 @@ public class StateObjectDTO implements Serializable {
 
   public StateObjectDTO() {}
 
+  public StateObjectDTO(final Long piId, final Long ssId,
+      final List<BusinessObjectDTO> businessObjects) {
+    this.piId = piId;
+    this.ssId = ssId;
+    this.businessObjects = businessObjects;
+  }
+
   public Long getPiId() {
     return piId;
   }
