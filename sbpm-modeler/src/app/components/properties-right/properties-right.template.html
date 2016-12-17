@@ -9,22 +9,8 @@
             <md-icon>close</md-icon>
         </md-button>
     </md-toolbar>
-    <md-content class="md-padding" layout="column" flex>
-        <div layout="column" flex>
-            <md-input-container class="md-block">
-                <label>First name</label>
-                <input>
-            </md-input-container>
-            <md-checkbox>
-                Start subject
-            </md-checkbox>
-            <md-checkbox ng-disabled="true">
-                Multisubject
-            </md-checkbox>
-        </div>
-        <div class="properties-right-footer" layout="row">
-            <md-button class="md-button md-raised md-primary" flex>Save</md-button>
-            <md-button class="md-button md-raised" flex>Cancel</md-button>
-        </div>
+    <md-content layout="column" flex layout-padding>
+        <subject-properties flex layout="column" ng-show="pr.isCurrentViewSID()"></subject-properties>
+        <state-properties flex layout="column" ng-hide="pr.isCurrentViewSID()"></state-properties>
     </md-content>
 </md-sidenav>

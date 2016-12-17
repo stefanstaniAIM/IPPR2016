@@ -18,20 +18,41 @@
         return directive;
 
         /** @ngInject */
-        function PropertiesRightController($log, $mdSidenav) {
+        function PropertiesRightController($log, $mdSidenav, modeler, $rootScope) {
+            var TAG = 'properties-right.directive: ';
+
             var self = this;
 
-            self.propertiesOpened = function () {
-                return $mdSidenav('properties-right').isOpen();
-            };
+            var currentView;
 
-            self.closeProperties = function () {
-                $mdSidenav('properties-right')
-                    .close()
-                    .then(function () {
-                        $log.debug("close properties-right is done");
-                    });
-            };
+            self.closeProperties = closeProperties;
+            self.isCurrentViewSID = isCurrentViewSID;
+            self.propertiesOpened = propertiesOpened;
+
+            function init() {
+                currentView = modeler.getCurrentView();
+                $log.debug(TAG + "successfully initiated" + currentView);
+            }
+
+            $rootScope.$on('currentView-changed', function () {
+                $log.debug(TAG + "currentView was changed");
+                $log.debug(TAG + "update view");
+                init();
+            });
+
+            function isCurrentViewSID() {
+                return currentView === 'SID' ? true : false;
+            }
+
+            function propertiesOpened() {
+                return $mdSidenav('properties-right').isOpen();
+            }
+
+            function closeProperties() {
+                $mdSidenav('properties-right').close();
+            }
+
+            init();
         }
     }
 

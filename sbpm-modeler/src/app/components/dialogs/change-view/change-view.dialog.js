@@ -51,6 +51,7 @@
             $rootScope.$on('currentView-changed', function () {
                 $log.debug(TAG + "currentView was changed");
                 $log.debug(TAG + "update view");
+                $mdDialog.hide();
                 init();
             });
 

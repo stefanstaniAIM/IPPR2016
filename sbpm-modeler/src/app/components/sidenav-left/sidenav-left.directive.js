@@ -21,28 +21,51 @@
         return directive;
 
         /** @ngInject */
-        function SidenavLeftController($log, $mdSidenav, newFileDialog, changeViewDialog) {
+        function SidenavLeftController($log, $mdSidenav, newFileDialog, changeViewDialog, $rootScope, modeler) {
+            var TAG = 'sidenav-left.directive: ';
+
             var self = this;
 
-            self.sideNavOpened = function () {
-                return $mdSidenav('sidenav-left').isOpen();
-            };
+            var currentView;
 
-            self.toogleSidenav = function () {
-                $mdSidenav('sidenav-left')
-                    .toggle()
-                    .then(function () {
-                        $log.debug("toggle sidenav-left is done");
-                    });
-            };
+            self.changeView = changeView;
+            self.isCurrentViewSID = isCurrentViewSID;
+            self.newFile = newFile;
+            self.sideNavOpened = sideNavOpened;
+            self.toogleSidenav = toogleSidenav;
 
-            self.newFile = function () {
-                newFileDialog.showDialog();
-            };
+            function init() {
+                currentView = modeler.getCurrentView();
+                $log.debug(TAG + "successfully initiated");
+            }
 
-            self.changeView = function () {
+            $rootScope.$on('currentView-changed', function () {
+                $log.debug(TAG + "currentView was changed");
+                $log.debug(TAG + "update view");
+                init();
+            });
+
+            function changeView() {
                 changeViewDialog.showDialog();
-            };
+            }
+
+            function isCurrentViewSID() {
+                return currentView === 'SID' ? true : false;
+            }
+
+            function newFile() {
+                newFileDialog.showDialog();
+            }
+
+            function sideNavOpened() {
+                return $mdSidenav('sidenav-left').isOpen();
+            }
+
+            function toogleSidenav() {
+                $mdSidenav('sidenav-left').toggle();
+            }
+
+            init();
         }
     }
 

@@ -34,17 +34,17 @@
                 $log.debug(TAG + "successfully initiated");
             }
 
-            function changeCurrentView() {
-                modeler.setCurrentView(modeler.getCurrentView() === 'SID' ? 'SBD' : 'SID');
-                $rootScope.$emit('currentView-changed');
-                init();
-            }
-
             $rootScope.$on('currentView-changed', function () {
                 $log.debug(TAG + "currentView was changed");
                 $log.debug(TAG + "update view");
                 init();
             });
+
+            function changeCurrentView() {
+                modeler.setCurrentView(modeler.getCurrentView() === 'SID' ? 'SBD' : 'SID');
+                $rootScope.$emit('currentView-changed');
+                init();
+            }
 
             function isCurrentViewSID() {
                 return currentView === 'SID' ? true : false;
