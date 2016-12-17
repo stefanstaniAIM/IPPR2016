@@ -31,23 +31,36 @@
         function ChangeViewDialogController() {
             var self = this;
 
-            self.currentView;
+            var currentView;
+
+            self.cancel = cancel;
+            self.changeCurrentView = changeCurrentView;
+            self.isCurrentViewSID = isCurrentViewSID;
 
             function init() {
-                self.currentView = modeler.getCurrentView();
-                $log.debug(TAG + "Current view " + self.currentView);
+                currentView = modeler.getCurrentView();
+                $log.debug(TAG + "successfully initiated");
             }
 
-            self.changeCurrentView = function(currentView) {
-                $log.debug(TAG + "Change current view to " + self.currentView);
-                modeler.setCurrentView(currentView);
+            function changeCurrentView() {
+                modeler.setCurrentView(modeler.getCurrentView() === 'SID' ? 'SBD' : 'SID');
                 $rootScope.$emit('currentView-changed');
                 init();
-            };
+            }
 
-            self.cancel = function() {
+            $rootScope.$on('currentView-changed', function () {
+                $log.debug(TAG + "currentView was changed");
+                $log.debug(TAG + "update view");
+                init();
+            });
+
+            function cancel() {
                 $mdDialog.cancel();
-            };
+            }
+
+            function isCurrentViewSID() {
+                return currentView === 'SID' ? true : false;
+            }
 
             init();
         }

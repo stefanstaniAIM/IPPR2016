@@ -1,4 +1,4 @@
-(function() {
+(function () {
     'use strict';
 
     angular
@@ -18,7 +18,32 @@
         return directive;
 
         /** @ngInject */
-        function BasicElementSelectorController() {}
+        function BasicElementSelectorController($log, modeler, $rootScope) {
+            var TAG = "basic-element-selector.directive: ";
+
+            var self = this;
+
+            var currentView;
+
+            self.isCurrentViewSID = isCurrentViewSID;
+
+            function init() {
+                currentView = modeler.getCurrentView();
+                $log.debug(TAG + "successfully initiated");
+            }
+
+            $rootScope.$on('currentView-changed', function () {
+                $log.debug(TAG + "currentView was changed");
+                $log.debug(TAG + "update view");
+                init();
+            });
+
+            function isCurrentViewSID() {
+                return currentView === 'SID' ? true : false;
+            }
+
+            init();
+        }
     }
 
 })();

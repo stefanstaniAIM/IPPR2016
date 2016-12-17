@@ -21,27 +21,33 @@
         function FastNavController($log, modeler, $rootScope) {
             var TAG = 'fast-nav.directive: ';
 
+            var self = this;
+
+            var currentView;
+
+            self.changeCurrentView = changeCurrentView;
+            self.isCurrentViewSID = isCurrentViewSID;
+            self.selectedItem = {"value":"alabama","display":"Alabama"};
+
+            function init() {
+                currentView = modeler.getCurrentView();
+                $log.debug(TAG + "successfully initiated");
+            }
+
+            function changeCurrentView() {
+                modeler.setCurrentView(modeler.getCurrentView() === 'SID' ? 'SBD' : 'SID');
+                $rootScope.$emit('currentView-changed');
+                init();
+            }
+
             $rootScope.$on('currentView-changed', function () {
                 $log.debug(TAG + "currentView was changed");
+                $log.debug(TAG + "update view");
                 init();
             });
 
-            var self = this;
-
-            self.currentView;
-            self.selectedItem = {"value":"alabama","display":"Alabama"};
-
-            self.changeCurrentView = changeCurrentView;
-
-            function init() {
-                self.currentView = modeler.getCurrentView();
-                $log.debug(TAG + "currentView " + self.currentView);
-            }
-
-            function changeCurrentView(currentView) {
-                $log.debug(TAG + "Change currentView to " + self.currentView);
-                modeler.setCurrentView(currentView);
-                init();
+            function isCurrentViewSID() {
+                return currentView === 'SID' ? true : false;
             }
 
             self.simulateQuery = false;

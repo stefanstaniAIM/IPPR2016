@@ -1,3 +1,26 @@
-<div class="sidenav-left-basic-element-selector">
-    Test
+<div class="sidenav-left-basic-element-selector" layout-padding>
+    <div class="sl-bes-sid" ng-show="bes.isCurrentViewSID()">
+        <div class="sl-bes-sid-subject" layout="row" draggable="true">
+            <div class="sl-bes-sid-subject-shape"></div>
+            <span class="sl-bes-sid-subject-text">Subject</span>
+        </div>
+        <div class="sl-bes-sid-message" layout="row" draggable="true">
+            <div class="sl-bes-sid-message-shape"></div>
+            <span class="sl-bes-sid-message-text">Message</span>
+        </div>
+    </div>
+    <div class="sl-bes-sbd" ng-hide="bes.isCurrentViewSID()">
+        <div class="sl-bes-sbd-send" layout="row" draggable="true">
+            <div class="sl-bes-sbd-send-shape"></div>
+            <span class="sl-bes-sbd-send-text">Send</span>
+        </div>
+        <div class="sl-bes-sbd-receive" layout="row" draggable="true">
+            <div class="sl-bes-sbd-receive-shape"></div>
+            <span class="sl-bes-sbd-receive-text">Receive</span>
+        </div>
+        <div class="sl-bes-sbd-function" layout="row" draggable="true">
+            <div class="sl-bes-sbd-function-shape"></div>
+            <span class="sl-bes-sbd-function-text">Function</span>
+        </div>
+    </div>
 </div>
