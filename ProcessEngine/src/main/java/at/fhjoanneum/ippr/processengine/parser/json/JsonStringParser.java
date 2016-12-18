@@ -1,9 +1,9 @@
-package at.fhjoanneum.ippr.processengine.parser;
+package at.fhjoanneum.ippr.processengine.parser.json;
 
 import org.springframework.stereotype.Component;
 
 @Component
-public class StringParser implements Parser<String> {
+public class JsonStringParser implements JsonParser<String> {
 
   @Override
   public String parse(final String value) {

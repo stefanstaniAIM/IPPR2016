@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.processengine.parser;
+package at.fhjoanneum.ippr.processengine.parser.json;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -8,7 +8,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DateParser implements Parser<LocalDate> {
+public class JsonDateParser implements JsonParser<LocalDate> {
 
   @Override
   public LocalDate parse(final String value) {

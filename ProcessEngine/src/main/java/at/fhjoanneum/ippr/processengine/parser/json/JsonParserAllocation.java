@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.processengine.parser;
+package at.fhjoanneum.ippr.processengine.parser.json;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -6,21 +6,21 @@ import org.springframework.context.annotation.Configuration;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldType;
 
 @Configuration
-public class ParserAllocation {
+public class JsonParserAllocation {
 
   @Autowired
-  private DateParser dateParser;
+  private JsonDateParser dateParser;
   @Autowired
-  private DecimalParser decimalParser;
+  private JsonDecimalParser decimalParser;
   @Autowired
-  private NumberParser numberParser;
+  private JsonNumberParser numberParser;
   @Autowired
-  private StringParser stringParser;
+  private JsonStringParser stringParser;
   @Autowired
-  private TimestampParser timestampParser;
+  private JsonTimestampParser timestampParser;
 
 
-  public Parser<?> getParser(final FieldType fieldType) {
+  public JsonParser<?> getParser(final FieldType fieldType) {
     switch (fieldType) {
       case DATE:
         return dateParser;
