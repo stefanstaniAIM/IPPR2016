@@ -1,5 +1,6 @@
 package at.fhjoanneum.ippr.processengine;
 
+import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
+import at.fhjoanneum.ippr.processengine.parser.db.DbTimestampParser;
 import scala.concurrent.duration.Duration;
 
 @Component
@@ -23,6 +25,9 @@ public class TestRunner implements CommandLineRunner {
   @Autowired
   private ActorRef userSupervisorActor;
 
+  @Autowired
+  private DbTimestampParser dbTimestampParser;
+
   @Override
   public void run(final String... args) throws Exception {
     LOG.debug(
@@ -30,6 +35,10 @@ public class TestRunner implements CommandLineRunner {
 
     actorSystem.scheduler().scheduleOnce(Duration.create(50, TimeUnit.MILLISECONDS),
         userSupervisorActor, "foo", actorSystem.dispatcher(), null);
+
+    final LocalDateTime dateTime = LocalDateTime.now();
+    System.out.println(dbTimestampParser.parse(dateTime));
+
   }
 
 }

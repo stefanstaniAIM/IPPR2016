@@ -1,6 +1,6 @@
-package at.fhjoanneum.ippr.processengine.parser;
+package at.fhjoanneum.ippr.processengine.parser.json;
 
-public interface Parser<T> {
+public interface JsonParser<T> {
 
   /**
    * Parses a String to a given type.
