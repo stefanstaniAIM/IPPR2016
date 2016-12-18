@@ -8,6 +8,7 @@
             'ngSanitize',
             'ngResource',
             'ui.router',
-            'ngMaterial'
+            'ngMaterial',
+            'ui.fabric'
         ]);
 })();

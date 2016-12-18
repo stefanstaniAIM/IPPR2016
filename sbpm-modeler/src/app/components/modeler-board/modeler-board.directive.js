@@ -18,24 +18,27 @@
         return directive;
 
         /** @ngInject */
-        function ModelerBoardController() {
-            //var self = this;
+        function ModelerBoardController($scope, $log, fabric, fabricConfig) {
+            var TAG = 'modeler-board.directive: ';
 
-            var canvas = new fabric.Canvas('canvas-container');
+            var self = this;
 
-            //canvas.setWidth(jQuery('#modeler-board').width()).setHeight(jQuery('#modeler-board').height());
-            canvas.setWidth(window.innerWidth).setHeight(window.innerHeight);
-            //canvas.backgroundColor = 'grey';
+            self.canvas = null;
 
-            var rect = new fabric.Rect({
-                left: 500,
-                top: 500,
-                fill: 'red',
-                width: 200,
-                height: 200
-            });
-            canvas.add(rect);
-            canvas.renderAll();
+            self.nodeDefaults = angular.copy(fabricConfig.getRectWithTextDefaults());
+
+            self.init = function () {
+
+                $log.debug(TAG + 'init()');
+
+                self.canvas = fabric.getCanvas();
+
+                self.nodeDefaults.left = 500;
+
+                fabric.addRectWithText('test', self.nodeDefaults);
+            };
+
+            $scope.$on('canvas:created', self.init);
         }
     }
 
