@@ -18,12 +18,6 @@
                     templateUrl: 'app/components/dialogs/change-view/change-view.template.html',
                     parent: angular.element(document.body),
                     clickOutsideToClose: true
-                })
-                .then(function (answer) {
-
-                })
-                .catch(function () {
-
                 });
             }
         };

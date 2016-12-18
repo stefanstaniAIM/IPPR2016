@@ -27,7 +27,7 @@
 
             self.changeCurrentView = changeCurrentView;
             self.isCurrentViewSID = isCurrentViewSID;
-            self.selectedItem = {"value":"alabama","display":"Alabama"};
+            self.selectedItem = {"value": "alabama", "display": "Alabama"};
 
             function init() {
                 currentView = modeler.getCurrentView();
@@ -51,32 +51,26 @@
             }
 
             self.simulateQuery = false;
-            self.isDisabled    = false;
-            self.noCache    = false;
-            self.selectedItem = {"value":"alabama","display":"Alabama"};
+            self.isDisabled = false;
+            self.noCache = false;
+            self.selectedItem = {"value": "alabama", "display": "Alabama"};
 
             // list of `state` value/display objects
-            self.states        = loadAll();
-            self.querySearch   = querySearch;
+            self.states = loadAll();
+            self.querySearch = querySearch;
             self.selectedItemChange = selectedItemChange;
-            self.searchTextChange   = searchTextChange;
+            self.searchTextChange = searchTextChange;
 
             self.newState = newState;
 
             function newState(state) {
-                alert("Sorry! You'll need to create a Constitution for " + state + " first!");
+                //
             }
 
-            function querySearch (query) {
-                var results = query ? self.states.filter( createFilterFor(query) ) : self.states,
-                    deferred;
-                if (self.simulateQuery) {
-                    deferred = $q.defer();
-                    $timeout(function () { deferred.resolve( results ); }, Math.random() * 1000, false);
-                    return deferred.promise;
-                } else {
-                    return results;
-                }
+            function querySearch(query) {
+                var results = query ? self.states.filter(createFilterFor(query)) : self.states;
+                return results;
+
             }
 
             function searchTextChange(text) {
@@ -99,7 +93,7 @@
               South Dakota, Tennessee, Texas, Utah, Vermont, Virginia, Washington, West Virginia,\
               Wisconsin, Wyoming';
 
-                return allStates.split(/, +/g).map( function (state) {
+                return allStates.split(/, +/g).map(function (state) {
                     return {
                         value: state.toLowerCase(),
                         display: state

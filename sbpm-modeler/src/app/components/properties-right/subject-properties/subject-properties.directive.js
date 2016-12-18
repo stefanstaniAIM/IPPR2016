@@ -18,8 +18,7 @@
         return directive;
 
         /** @ngInject */
-        function SubjectPropertiesController($log) {
-            var self = this;
+        function SubjectPropertiesController() {
 
         }
     }

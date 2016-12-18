@@ -18,12 +18,13 @@
         return directive;
 
         /** @ngInject */
-        function ModelerBoardController($log) {
-            var self = this;
+        function ModelerBoardController() {
+            //var self = this;
 
             var canvas = new fabric.Canvas('canvas-container');
 
-            canvas.setWidth(jQuery('.modeler-board').width()).setHeight(jQuery('.modeler-board').height());
+            //canvas.setWidth(jQuery('#modeler-board').width()).setHeight(jQuery('#modeler-board').height());
+            canvas.setWidth(window.innerWidth).setHeight(window.innerHeight);
             //canvas.backgroundColor = 'grey';
 
             var rect = new fabric.Rect({
@@ -34,6 +35,7 @@
                 height: 200
             });
             canvas.add(rect);
+            canvas.renderAll();
         }
     }
 
