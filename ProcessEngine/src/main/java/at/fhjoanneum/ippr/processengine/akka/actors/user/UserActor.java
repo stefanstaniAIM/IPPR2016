@@ -2,6 +2,7 @@ package at.fhjoanneum.ippr.processengine.akka.actors.user;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -19,6 +20,7 @@ import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import at.fhjoanneum.ippr.commons.dto.processengine.BusinessObjectDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.BusinessObjectFieldDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.StateDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.StateObjectDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.TaskDTO;
 import at.fhjoanneum.ippr.persistence.entities.engine.enums.ReceiveSubjectState;
@@ -224,9 +226,12 @@ public class UserActor extends UntypedActor {
           businessObjectModel.getName(), fields));
     }
 
-    getSender().tell(
-        new StateObjectMessage.Response(
-            new StateObjectDTO(request.getPiId(), subjectState.getSsId(), businessObjects)),
+    final List<StateDTO> nextStates = subjectState.getCurrentState().getToStates().stream()
+        .map(state -> new StateDTO(state.getToState().getSId(), state.getToState().getName()))
+        .collect(Collectors.toList());
+
+    getSender().tell(new StateObjectMessage.Response(
+        new StateObjectDTO(request.getPiId(), subjectState.getSsId(), businessObjects, nextStates)),
         getSelf());
   }
 }

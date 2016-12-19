@@ -69,10 +69,10 @@ public class StateImpl implements State, Serializable {
   @NotNull
   private SubjectModelImpl subjectModel;
 
-  @OneToMany(mappedBy = "fromState")
+  @OneToMany(mappedBy = "toState")
   private List<TransitionImpl> fromStates;
 
-  @OneToMany(mappedBy = "toState")
+  @OneToMany(mappedBy = "fromState")
   private List<TransitionImpl> toStates;
 
   @OneToMany(mappedBy = "state")
