@@ -9,6 +9,7 @@
             'ngResource',
             'ui.router',
             'ngMaterial',
+            'ang-drag-drop',
             'ui.fabric'
         ]);
 })();

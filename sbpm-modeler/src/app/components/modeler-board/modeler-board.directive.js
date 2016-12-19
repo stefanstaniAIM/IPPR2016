@@ -25,6 +25,8 @@
 
             self.canvas = null;
 
+            self.onDrop = onDrop;
+
             self.nodeDefaults = angular.copy(fabricConfig.getRectWithTextDefaults());
 
             self.init = function () {
@@ -39,6 +41,15 @@
             };
 
             $scope.$on('canvas:created', self.init);
+
+            function onDrop(target, source, ev) {
+                $log.debug("dropped " + source + " on " + target);
+                $log.debug(ev.originalEvent.x + " " + ev.originalEvent.y);
+                self.nodeDefaults.top = ev.originalEvent.y;
+                self.nodeDefaults.left = ev.originalEvent.x;
+                fabric.addRectWithText('test', self.nodeDefaults);
+            }
+
         }
     }
 
