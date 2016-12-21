@@ -80,7 +80,8 @@ export class ActiveProcessDetail implements OnInit {
     ]
   }
 
-  businessObjectValues = {};
+  businessObjects = [];
+  nextStates = [];
 
   constructor(protected service: ProcessesService, protected spinner:BaThemeSpinner, protected route: ActivatedRoute, protected router: Router) {
   }
@@ -103,6 +104,19 @@ export class ActiveProcessDetail implements OnInit {
           this.spinner.hide();
         }
       );
+
+      this.service.getTasksForProcessForUser(this.piId)
+      .subscribe(
+          data => {
+            var dataJson = JSON.parse(data['_body']);
+            this.businessObjects = dataJson.businessObjects;
+            this.nextStates = dataJson.nextStates;
+          },
+          err =>{
+            this.msg = {text: err, type: 'error'}
+            console.log(err);
+          }
+        );
   }
 
   logForm(value: any) {
