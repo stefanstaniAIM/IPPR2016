@@ -19,10 +19,10 @@ export class BackendRequestClass {
     public load() {
 
         let headers = new Headers({ 'Content-Type': 'application/json' });
-        headers.append('Authorization', 'Bearer '+ localStorage.getItem("token")); 
+        headers.append('Authorization', 'Bearer '+ localStorage.getItem("token"));
         if(tokenNotExpired("token")){
             return new Promise((resolve, reject) => {
-               this.http.get('http://localhost:10000/api/me/', {headers:headers}).map( res => res.json() ).catch((error: any):any => {
+               this.http.get(window.location.protocol + "//" + window.location.hostname + ":10000/api/me/", {headers:headers}).map( res => res.json() ).catch((error: any):any => {
                    reject(false);
                    return Observable.throw(error.json().error || 'Server error');
                }).subscribe( (callResult) => {
