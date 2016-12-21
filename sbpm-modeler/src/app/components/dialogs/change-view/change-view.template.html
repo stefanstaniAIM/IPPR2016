@@ -12,14 +12,14 @@
 
         <md-dialog-content>
             <div class="md-dialog-content" layout="column">
-                <md-button class="md-button" ng-disabled="cvd.currentView === 'SID' ? true : false"
-                           ng-class="cvd.currentView === 'SID' ? 'md-raised md-primary' : ''" flex="50"
-                ng-click="cvd.changeCurrentView('SID')">
+                <md-button class="md-button" ng-disabled="cvd.isCurrentViewSID() ? true : false"
+                           ng-class="cvd.isCurrentViewSID() ? 'md-raised md-primary' : ''" flex="50"
+                ng-click="cvd.changeCurrentView()">
                     Subject interaction diagram
                 </md-button>
-                <md-button class="md-button" ng-disabled="cvd.currentView === 'SID' ? false : true"
-                           ng-class="cvd.currentView === 'SID' ? '' : 'md-raised md-primary'"
-                           ng-click="cvd.changeCurrentView('SBD')">
+                <md-button class="md-button" ng-disabled="cvd.isCurrentViewSID() ? false : true"
+                           ng-class="cvd.isCurrentViewSID() ? '' : 'md-raised md-primary'"
+                           ng-click="cvd.changeCurrentView()">
                     Subject behaviour diagram
                 </md-button>
             </div>

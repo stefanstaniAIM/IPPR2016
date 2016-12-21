@@ -18,22 +18,38 @@
         return directive;
 
         /** @ngInject */
-        function ModelerBoardController($log) {
+        function ModelerBoardController($scope, $log, fabric, fabricConfig) {
+            var TAG = 'modeler-board.directive: ';
+
             var self = this;
 
-            var canvas = new fabric.Canvas('canvas-container');
+            self.canvas = null;
 
-            canvas.setWidth(jQuery('.modeler-board').width()).setHeight(jQuery('.modeler-board').height());
-            //canvas.backgroundColor = 'grey';
+            self.onDrop = onDrop;
 
-            var rect = new fabric.Rect({
-                left: 500,
-                top: 500,
-                fill: 'red',
-                width: 200,
-                height: 200
-            });
-            canvas.add(rect);
+            self.nodeDefaults = angular.copy(fabricConfig.getRectWithTextDefaults());
+
+            self.init = function () {
+
+                $log.debug(TAG + 'init()');
+
+                self.canvas = fabric.getCanvas();
+
+                self.nodeDefaults.left = 500;
+
+                fabric.addRectWithText('test', self.nodeDefaults);
+            };
+
+            $scope.$on('canvas:created', self.init);
+
+            function onDrop(target, source, ev) {
+                $log.debug("dropped " + source + " on " + target);
+                $log.debug(ev.originalEvent.x + " " + ev.originalEvent.y);
+                self.nodeDefaults.top = ev.originalEvent.y;
+                self.nodeDefaults.left = ev.originalEvent.x;
+                fabric.addRectWithText('test', self.nodeDefaults);
+            }
+
         }
     }
 

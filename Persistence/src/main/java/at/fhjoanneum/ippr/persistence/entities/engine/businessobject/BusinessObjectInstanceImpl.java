@@ -3,6 +3,7 @@ package at.fhjoanneum.ippr.persistence.entities.engine.businessobject;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,6 +22,7 @@ import at.fhjoanneum.ippr.persistence.objects.engine.businessobject.BusinessObje
 import at.fhjoanneum.ippr.persistence.objects.engine.businessobject.BusinessObjectInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.process.ProcessInstance;
 import at.fhjoanneum.ippr.persistence.objects.model.businessobject.BusinessObjectModel;
+import at.fhjoanneum.ippr.persistence.objects.model.businessobject.field.BusinessObjectFieldModel;
 
 @Entity(name = "BUSINESS_OBJECT_INSTANCE")
 public class BusinessObjectInstanceImpl implements BusinessObjectInstance, Serializable {
@@ -70,6 +72,21 @@ public class BusinessObjectInstanceImpl implements BusinessObjectInstance, Seria
     return Lists.newArrayList(businessObjectFieldInstances);
   }
 
+
+  @Override
+  public Optional<BusinessObjectFieldInstance> getBusinessObjectFieldInstanceOfFieldModel(
+      final BusinessObjectFieldModel fieldModel) {
+    Optional<BusinessObjectFieldInstance> opt = Optional.empty();
+
+    for (final BusinessObjectFieldInstance fieldInstance : businessObjectFieldInstances) {
+      if (fieldInstance.getBusinessObjectFieldModel().equals(fieldModel)) {
+        opt = Optional.of(fieldInstance);
+        break;
+      }
+    }
+    return opt;
+  }
+
   @Override
   public int hashCode() {
     return Objects.hash(boiId);
@@ -77,18 +94,23 @@ public class BusinessObjectInstanceImpl implements BusinessObjectInstance, Seria
 
   @Override
   public boolean equals(final Object obj) {
-    if (this == obj)
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
+    }
     final BusinessObjectInstanceImpl other = (BusinessObjectInstanceImpl) obj;
     if (boiId == null) {
-      if (other.boiId != null)
+      if (other.boiId != null) {
         return false;
-    } else if (!boiId.equals(other.boiId))
+      }
+    } else if (!boiId.equals(other.boiId)) {
       return false;
+    }
     return true;
   }
 

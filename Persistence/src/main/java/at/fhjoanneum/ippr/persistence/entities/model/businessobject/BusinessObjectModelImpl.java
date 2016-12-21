@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.Size;
@@ -39,7 +41,9 @@ public class BusinessObjectModelImpl implements BusinessObjectModel, Serializabl
   @Size(min = 1, max = 100)
   private String name;
 
-  @ManyToMany(mappedBy = "businessObjectModels")
+  @ManyToMany
+  @JoinTable(name = "state_business_object_model_map", joinColumns = {@JoinColumn(name = "bom_id")},
+      inverseJoinColumns = {@JoinColumn(name = "s_id")})
   private List<StateImpl> states;
 
   @OneToMany(mappedBy = "businessObjectModel")

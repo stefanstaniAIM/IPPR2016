@@ -25,6 +25,7 @@ import at.fhjoanneum.ippr.commons.dto.processengine.ProcessInfoDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartedDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStateDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.StateObjectDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.TaskDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.UserContainer;
 import at.fhjoanneum.ippr.commons.dto.processengine.UserDTO;
@@ -167,5 +168,15 @@ public class ProcessEngineCallerImpl implements Caller {
 
     final HttpHeaders header = headerUser.getHttpHeaders();
     return createRequest(uri, HttpMethod.GET, null, TaskDTO[].class, header);
+  }
+
+  public Future<ResponseEntity<StateObjectDTO>> getStateObjectOfUserInProcess(
+      final HttpHeaderUser headerUser, final Long piId, final Long userId)
+      throws URISyntaxException {
+    final URIBuilder uri = new URIBuilder(gatewayConfig.getProcessEngineAddress())
+        .setPath("/processes/task/" + piId + "/" + userId);
+
+    final HttpHeaders header = headerUser.getHttpHeaders();
+    return createRequest(uri, HttpMethod.GET, null, StateObjectDTO.class, header);
   }
 }

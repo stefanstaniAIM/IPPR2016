@@ -11,7 +11,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -70,18 +69,16 @@ public class StateImpl implements State, Serializable {
   @NotNull
   private SubjectModelImpl subjectModel;
 
-  @OneToMany(mappedBy = "fromState")
+  @OneToMany(mappedBy = "toState")
   private List<TransitionImpl> fromStates;
 
-  @OneToMany(mappedBy = "toState")
+  @OneToMany(mappedBy = "fromState")
   private List<TransitionImpl> toStates;
 
   @OneToMany(mappedBy = "state")
   private List<MessageFlowImpl> messageFlows;
 
-  @ManyToMany
-  @JoinTable(name = "state_business_object_model_map", joinColumns = {@JoinColumn(name = "s_id")},
-      inverseJoinColumns = {@JoinColumn(name = "bom_id")})
+  @ManyToMany(mappedBy = "states")
   private List<BusinessObjectModelImpl> businessObjectModels;
 
   StateImpl() {}

@@ -1,0 +1,16 @@
+<md-sidenav class="properties-right md-sidenav-right" md-is-open="true" md-component-id="properties-right"
+            md-whiteframe="4"
+            md-disable-backdrop="false"
+            layout="column"
+            flex>
+    <md-toolbar class="md-theme-indigo md-toolbar-tools">
+        <div flex>Properties</div>
+        <md-button class="md-icon-button" ng-click="pr.toogleSidenav()">
+            <md-icon>close</md-icon>
+        </md-button>
+    </md-toolbar>
+    <md-content layout="column" flex layout-padding>
+        <subject-properties flex layout="column" ng-show="pr.isCurrentViewSID()"></subject-properties>
+        <state-properties flex layout="column" ng-hide="pr.isCurrentViewSID()"></state-properties>
+    </md-content>
+</md-sidenav>

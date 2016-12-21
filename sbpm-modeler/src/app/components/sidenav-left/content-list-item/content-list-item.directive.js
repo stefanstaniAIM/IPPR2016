@@ -22,7 +22,7 @@
         return directive;
 
         /** @ngInject */
-        function ContentListItemController($log) {
+        function ContentListItemController() {
             var self = this;
 
             self.isOpen = true;

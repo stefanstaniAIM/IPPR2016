@@ -1,6 +1,6 @@
 <!-- Sidenav-left opened-->
 <div class="row">
-    <md-sidenav class="sidenav-left-opened" md-is-open="true" md-component-id="sidenav-left" md-whiteframe="4"
+    <md-sidenav class="sidenav-left-opened md-sidenav-left" md-is-open="true" md-component-id="sidenav-left" md-whiteframe="4"
                 md-disable-backdrop="false">
         <md-toolbar class="md-theme-indigo md-toolbar-tools">
             <div flex>Pallet</div>
@@ -32,7 +32,7 @@
                     <md-button class="md-button sidenav-left-content-list-item-md-button" flex ng-click="sl.changeView()">
                         Change view
                     </md-button>
-                    <md-button class="md-button sidenav-left-content-list-item-md-button" flex>
+                    <md-button class="md-button sidenav-left-content-list-item-md-button" flex ng-disabled="sl.isCurrentViewSID()">
                         Change subject
                     </md-button>
 

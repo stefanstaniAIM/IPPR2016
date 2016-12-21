@@ -13,8 +13,17 @@ public class StateObjectDTO implements Serializable {
   private Long piId;
   private Long ssId;
   private List<BusinessObjectDTO> businessObjects;
+  private List<StateDTO> nextStates;
 
   public StateObjectDTO() {}
+
+  public StateObjectDTO(final Long piId, final Long ssId,
+      final List<BusinessObjectDTO> businessObjects, final List<StateDTO> nextStates) {
+    this.piId = piId;
+    this.ssId = ssId;
+    this.businessObjects = businessObjects;
+    this.nextStates = nextStates;
+  }
 
   public Long getPiId() {
     return piId;
@@ -26,5 +35,9 @@ public class StateObjectDTO implements Serializable {
 
   public List<BusinessObjectDTO> getBusinessObjects() {
     return businessObjects;
+  }
+
+  public List<StateDTO> getNextStates() {
+    return nextStates;
   }
 }
