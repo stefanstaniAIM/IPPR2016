@@ -2,6 +2,8 @@ package at.fhjoanneum.ippr.gateway.security.usermapping.retrieval.memory;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.util.List;
@@ -48,9 +50,8 @@ public class UserGroupSystemRetrievalServiceMemoryImpl implements UserGroupSyste
     CSVReader reader = null;
 
     try {
-      final URL resource = this.getClass().getResource("/memoryusers/groups.csv");
-      in = new FileReader(resource.getPath());
-      reader = new CSVReader(in, '\n', '\'', 1);
+      InputStream is = this.getClass().getResourceAsStream("/memoryusers/groups.csv");
+      reader = new CSVReader(new InputStreamReader(is), '\n', '\'', 1);
       String[] nextLine;
       while ((nextLine = reader.readNext()) != null) {
         final List<String> values =
@@ -81,9 +82,8 @@ public class UserGroupSystemRetrievalServiceMemoryImpl implements UserGroupSyste
     CSVReader reader = null;
 
     try {
-      final URL resource = this.getClass().getResource("/memoryusers/users.csv");
-      in = new FileReader(resource.getPath());
-      reader = new CSVReader(in, '\n', '\'', 1);
+      InputStream is = this.getClass().getResourceAsStream("/memoryusers/users.csv");
+      reader = new CSVReader(new InputStreamReader(is), '\n', '\'', 1);
       String[] nextLine;
       while ((nextLine = reader.readNext()) != null) {
         final List<String> values =
