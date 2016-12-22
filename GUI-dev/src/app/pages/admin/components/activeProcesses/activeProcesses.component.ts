@@ -44,17 +44,14 @@ export class ActiveProcesses implements OnInit  {
   }
 
   stopProcess(piId:number){
-    this.spinner.show();
     this.service.stopProcess(piId)
     .subscribe(
         data => {
-          console.log(data);
-          this.spinner.hide();
+          this.ngOnInit();
         },
         err =>{
           this.msg = {text: err, type: 'error'}
           console.log(err);
-          this.spinner.hide();
         }
       );
   }
