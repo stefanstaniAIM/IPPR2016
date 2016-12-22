@@ -27,17 +27,16 @@
 
             self.onDrop = onDrop;
 
-            self.nodeDefaults = angular.copy(fabricConfig.getRectWithTextDefaults());
+            self.nodeDefaults = angular.copy(fabricConfig.getSubjectElementDefaults());
 
             self.init = function () {
-
                 $log.debug(TAG + 'init()');
-
                 self.canvas = fabric.getCanvas();
 
-                self.nodeDefaults.left = 500;
-
-                fabric.addRectWithText('test', self.nodeDefaults);
+                self.canvas.on('object:scaling', function(){
+                    var obj = self.canvas.getActiveObject();
+                    //$log.debug(obj.getWidth());
+                });
             };
 
             $scope.$on('canvas:created', self.init);
@@ -47,7 +46,7 @@
                 $log.debug(ev.originalEvent.x + " " + ev.originalEvent.y);
                 self.nodeDefaults.top = ev.originalEvent.y;
                 self.nodeDefaults.left = ev.originalEvent.x;
-                fabric.addRectWithText('test', self.nodeDefaults);
+                fabric.addSubjectElement(self.nodeDefaults);
             }
 
         }

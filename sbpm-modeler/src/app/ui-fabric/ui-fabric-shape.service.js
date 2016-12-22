@@ -6,6 +6,7 @@
 
     /** @ngInject */
     function fabricShape($log, fabricConfig, fabricWindow) {
+        const TAG = "ui-fabric-shape.service: ";
 
         var service = this;
 
@@ -20,7 +21,7 @@
             service.rectDefaults = fabricConfig.getRectDefaults();
             service.rectWithTextDefaults = fabricConfig.getRectWithTextDefaults();
             service.triangleDefaults = fabricConfig.getTriangleDefaults();
-
+            service.subjectElementDefaults = fabricConfig.getSubjectElementDefaults();
         };
 
         //
@@ -249,6 +250,118 @@
                 return '#<ui-fabric.connector (' + this.complexity() + '" }>';
 
             }
+
+        });
+
+        /**
+         * @name subjectElement
+         * @desc Creates a new SubjectElement object
+         * @param {Object} [options] A configuration object,, defaults to subjectElementDefaults
+         * @return {Object} Returns the new RectWithText object
+         */
+        service.subjectElement = function(options) {
+
+            $log.debug(TAG + 'subjectElement()');
+
+            options = options || service.subjectElementDefaults;
+
+            return new SubjectElement(options);
+        };
+
+        var SubjectElement = fabricWindow.util.createClass(fabricWindow.Rect, {
+
+            type: 'subjectElement',
+
+
+            text: '',
+
+            // TODO: Tried to move this from main-controller.js - had some issues ???
+
+            // id: '',
+            // connectors: { fromPort: [], fromLine: [], fromArrow: [], toPort: [], toLine: [], toArrow: [], otherObject: [] },
+
+            initialize: function(options) {
+
+                this.callSuper('initialize', options);
+
+                this.set('text', "Subject\n1234");
+
+                this.setControlsVisibility({
+                    'tl': true,
+                    'tr': true,
+                    'br': true,
+                    'bl': true,
+                    'ml': false,
+                    'mt': false,
+                    'mr': false,
+                    'mb': false,
+                    'mtr': false
+                });
+
+                for (var prop in options) {
+                    this.set(prop, options[prop]);
+                }
+            },
+
+            _render: function(ctx) {
+
+                this.callSuper('_render', ctx);
+
+                var x = 0;
+                var y = 0;
+
+                // Text alignment: top, bottom, middle
+                switch (this.textYAlign) {
+
+                    case 'top':
+                        y = -(this.height / 2) + parseInt(this.fontSize, 10);
+                        break;
+
+                    case 'bottom':
+                        y = (this.height / 2) - parseInt(this.fontSize, 10);
+                        break;
+
+                    case 'middle':
+                        y = 0;
+                        break;
+
+                    default:
+                        $log.debug('RectWithText - textYAlign: ' + this.textYAlign);
+                        break;
+                }
+
+                //Text display
+                ctx.fillStyle = this.fillStyle;
+                ctx.font = this.fontWeight + ' ' + this.fontSize + 'px ' + this.fontFamily;  // 'bold 20px Tahoma';
+                ctx.textAlign = this.textXAlign;
+                ctx.textBaseline = this.textBaseline;
+                ctx.fillText(this.text, x, y);
+
+                var newdiv1 = $( "<div id='object1' style='width: 100px; height: 100px; background-color: #00b3ee; z-index: 9999; position: absolute;'>Test</div>" );
+
+                jQuery( "#modeler-board" ).append( newdiv1);
+                jQuery( "#object1" ).css({ top: this.getTop() + 'px' });
+                jQuery( "#object1" ).css({ left: (this.getLeft()+this.getWidth()+20) + 'px' });
+                $log.debug(this.getLeft());
+
+            }
+
+            /*
+             fromObject: function(object) {
+             return new SubjectElement(object);
+             },
+
+             toObject: function() {
+             return fabric.util.object.extend(this.callSuper('toObject'), {
+             text: this.get('text')
+             });
+             },*/
+
+            /*
+            toString: function() {
+                return '#<ui-fabric.rectWithText (' + this.complexity() +
+                    '): { "text": "' + this.text + '" }>';
+            }*/
 
         });
 

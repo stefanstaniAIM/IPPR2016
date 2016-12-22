@@ -9,13 +9,10 @@
 
         var service = this;
 
-        // 'Portrait (8.5 x 11)'
-        // 'Landscape (11 x 8.5)'
-        //TODO
-        const PORTRAIT_WIDTH = 1510;
-        const PORTRAIT_HEIGHT = 1947;
-        const LANDSCAPE_WIDTH = 1510;
-        const LANDSCAPE_HEIGHT = 1947;
+        const PORTRAIT_WIDTH = 1080;
+        const PORTRAIT_HEIGHT = 1920;
+        const LANDSCAPE_WIDTH = 1920;
+        const LANDSCAPE_HEIGHT = 1080;
 
         const CANVAS_WIDTH = LANDSCAPE_WIDTH;
         const CANVAS_HEIGHT = LANDSCAPE_HEIGHT;
@@ -23,12 +20,11 @@
         const GRID_SIZE = 50;
 
         const CORNER_SIZE = 10;
-        const ROTATING_POINT_OFFSET = 40;
 
         const STROKE_WIDTH = 1;
 
-        const RECT_WIDTH = 300;
-        const RECT_HEIGHT = 300;
+        const RECT_WIDTH = 400;
+        const RECT_HEIGHT = 400;
 
         const FONT_SIZE = 12;
         const FONT_WEIGHT = 'normal';
@@ -38,43 +34,39 @@
 
         var canvasDefaults = {
             backgroundColor: '#ffffff',
-            grid: {
-                show: true,
-                size: GRID_SIZE,
-                snapTo: false
-            },
             height: CANVAS_HEIGHT,
+            width: CANVAS_WIDTH,
             originalHeight: CANVAS_HEIGHT,
             originalWidth: CANVAS_WIDTH,
-            selection: true,
-            width: CANVAS_WIDTH
+            selection: true
         };
 
         var objectDefaults = {
-            borderColor: 'rgba(102,153,255,0.75)',
+            borderColor: '#afb9ce',
             centerTransform: true,
-            cornerColor: 'rgba(102,153,255,0.5)',
+            cornerColor: '#afb9ce',
             cornerSize: CORNER_SIZE,
             hasBorders: true,
-            hasRotatingPoint: true,
-            padding: 0,
-            rotatingPointOffset: ROTATING_POINT_OFFSET,
+            hasRotatingPoint: false,
+            padding: 10,
             selectable: true,
-            transparentCorners: true
+            transparentCorners: true,
+            borderScaleFactor: 2,
+            hoverCursor: 'pointer',
+            minScaleLimit: 0.5
         };
+
+        var rectDefaults = angular.extend({
+            fill: '#ffffff',
+            stroke: '#000000',
+            strokeWidth: 1,
+            height: RECT_HEIGHT,
+            width: RECT_WIDTH
+        }, objectDefaults);
 
         var lineDefaults = angular.extend({
             stroke: 'BLACK',
             strokeWidth: STROKE_WIDTH
-        }, objectDefaults);
-
-        var rectDefaults = angular.extend({
-            fill: 'GRAY',
-            height: RECT_HEIGHT,
-            left: GRID_SIZE * 2,
-            opacity: 0.7,
-            top: GRID_SIZE * 2,
-            width: RECT_WIDTH
         }, objectDefaults);
 
         var triangleDefaults = angular.extend({
@@ -165,8 +157,31 @@
             textBaseline: 'middle'  // top, bottom, middle, alphabetic, hanging
         }, rectDefaults);
 
-        rectWithTextDefaults.width = RECT_WITH_TEXT_WIDTH;
-        rectWithTextDefaults.height = RECT_WITH_TEXT_HEIGHT;
+        //
+        // SubjectElement
+        //
+
+        const SUBJECT_ELEMENT_FONT_SIZE = '12';
+        const SUBJECT_ELEMENT_FONT_WEIGHT = 'normal';
+        const SUBJECT_ELEMENT_WIDTH = 100;
+        const SUBJECT_ELEMENT_HEIGHT = 100;
+
+        var subjectElementDefaults = angular.extend({
+            fillStyle: '#000000',
+            fontFamily: FONT_FAMILY,
+            fontSize: SUBJECT_ELEMENT_FONT_SIZE,  // option element can only hold string type as its value
+            fontWeight: SUBJECT_ELEMENT_FONT_WEIGHT,
+            originX: 'left',
+            originY: 'top',
+            scaleX: 1,
+            scaleY: 1,
+            textXAlign: 'center',   // left, right, center, start, end
+            textYAlign: 'middle',   // top, bottom, middle
+            textBaseline: 'middle'  // top, bottom, middle, alphabetic, hanging
+        }, rectDefaults);
+
+        subjectElementDefaults.width = SUBJECT_ELEMENT_WIDTH;
+        subjectElementDefaults.height = SUBJECT_ELEMENT_HEIGHT;
 
         service.getCanvasDefaults = function() {
             return canvasDefaults;
@@ -206,6 +221,10 @@
 
         service.getRectWithTextDefaults = function() {
             return rectWithTextDefaults;
+        };
+
+        service.getSubjectElementDefaults = function() {
+            return subjectElementDefaults;
         };
 
         return service;

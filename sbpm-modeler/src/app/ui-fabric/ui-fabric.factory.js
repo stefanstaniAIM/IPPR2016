@@ -103,6 +103,20 @@
             return addObjectToCanvas(fabricShape.rectWithText(text, options), render);
         };
 
+        /**
+         * @name addSubjectElement
+         * @desc Creates a new SubjectElement and adds it to the canvas
+         * @param {Object} [options] A configuration object, defaults to service.rectDefaults
+         * @param {Boolean} [render] When true, service.canvas.renderAll() is invoked
+         * @return {Object} Returns the new Rect object
+         */
+        service.addSubjectElement = function(options, render) {
+
+            $log.debug(TAG + 'addSubjectElement()');
+
+            return addObjectToCanvas(fabricShape.subjectElement(options), render);
+        };
+
         service.init();
 
         return service;
