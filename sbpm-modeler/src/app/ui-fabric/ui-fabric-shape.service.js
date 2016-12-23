@@ -5,7 +5,7 @@
         .service('fabricShape', fabricShape);
 
     /** @ngInject */
-    function fabricShape($log, fabricConfig, fabricWindow) {
+    function fabricShape($log, fabricConfig, fabricWindow, fabricCustomControl) {
         const TAG = "ui-fabric-shape.service: ";
 
         var service = this;
@@ -272,7 +272,7 @@
 
             type: 'subjectElement',
 
-
+            id: '',
             text: '',
 
             // TODO: Tried to move this from main-controller.js - had some issues ???
@@ -284,7 +284,8 @@
 
                 this.callSuper('initialize', options);
 
-                this.set('text', "Subject\n1234");
+                this.set('id', 'subjectElement' + createId());
+                this.set('text', "Subject 1234");
 
                 this.setControlsVisibility({
                     'tl': true,
@@ -301,6 +302,8 @@
                 for (var prop in options) {
                     this.set(prop, options[prop]);
                 }
+
+                fabricCustomControl.addCustomControl(this.id);
             },
 
             _render: function(ctx) {
@@ -337,13 +340,6 @@
                 ctx.textBaseline = this.textBaseline;
                 ctx.fillText(this.text, x, y);
 
-                var newdiv1 = $( "<div id='object1' style='width: 100px; height: 100px; background-color: #00b3ee; z-index: 9999; position: absolute;'>Test</div>" );
-
-                jQuery( "#modeler-board" ).append( newdiv1);
-                jQuery( "#object1" ).css({ top: this.getTop() + 'px' });
-                jQuery( "#object1" ).css({ left: (this.getLeft()+this.getWidth()+20) + 'px' });
-                $log.debug(this.getLeft());
-
             }
 
             /*
@@ -364,6 +360,10 @@
             }*/
 
         });
+
+        var createId = function () {
+            return '_' + Math.random().toString(36).substr(2, 9)
+        };
 
         service.init();
 

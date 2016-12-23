@@ -19,7 +19,8 @@
                 var modelerSettings = {
                     initiated: true,
                     currentView: 'SID',
-                    subjects: {}
+                    subjects: {},
+                    customControls: []
                 };
                 storage.set('modelerSettings', modelerSettings);
             } else {
@@ -42,6 +43,16 @@
         service.clear = function () {
             $log.debug(TAG + 'clear modelerSettings');
             storage.clear();
+        };
+
+        service.addCustomControl = function (subjectId, customControlId) {
+            $log.debug(TAG + 'addCustomControl()');
+            var modelerSettings = storage.get('modelerSettings');
+            modelerSettings.customControls.push({
+                subjectId: subjectId,
+                customControlId: customControlId
+            });
+            storage.set('modelerSettings', modelerSettings);
         };
 
         return service;
