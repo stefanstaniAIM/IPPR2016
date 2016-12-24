@@ -19,7 +19,8 @@
     "angular-markdown-filter": "~1.2.0",
     "angular-material": "^1.1.1",
     "fabric.js": "fabric#^1.7.1",
-    "angular-native-dragdrop": "^1.2.2"
+    "angular-native-dragdrop": "^1.2.2",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
     "angular-mocks": "~1.4.0"

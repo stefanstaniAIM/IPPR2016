@@ -303,7 +303,7 @@
                     this.set(prop, options[prop]);
                 }
 
-                fabricCustomControl.addCustomControl(this.id);
+                fabricCustomControl.addCustomControl(this);
             },
 
             _render: function(ctx) {
@@ -340,6 +340,23 @@
                 ctx.textBaseline = this.textBaseline;
                 ctx.fillText(this.text, x, y);
 
+                this.on('scaling', function(e) {
+                    fabricCustomControl.positionCustomControl(this);
+                });
+
+                this.on('moving', function(e) {
+                    fabricCustomControl.positionCustomControl(this);
+                });
+
+                this.on('selected', function(e) {
+                    $log.debug("Target: " + this.get('id'));
+                    //fabricCustomControl.setCustomControlVisibility(this);
+                });
+
+                this.canvas.on('selection:cleared', function(e) {
+                    $log.debug("Target: " + e.target.get('id'));
+                    //fabricCustomControl.setCustomControlVisibility(this);
+                });
             }
 
             /*

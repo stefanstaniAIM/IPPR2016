@@ -55,6 +55,15 @@
             storage.set('modelerSettings', modelerSettings);
         };
 
+        service.getCustomControlId = function (subjectId) {
+            $log.debug(TAG + 'getCustomControl()');
+            var modelerSettings = storage.get('modelerSettings');
+            var result = _.find(modelerSettings.customControls, function (r) {
+                return r.subjectId === subjectId;
+            });
+            return result.customControlId;
+        };
+
         return service;
 
     }
