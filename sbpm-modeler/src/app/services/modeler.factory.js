@@ -19,7 +19,9 @@
                 var modelerSettings = {
                     initiated: true,
                     currentView: 'SID',
-                    subjects: {},
+                    activeObject: '',
+                    sidViewObjects: {},
+                    sbdViewObjects: {},
                     customControls: []
                 };
                 storage.set('modelerSettings', modelerSettings);

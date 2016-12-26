@@ -38,7 +38,7 @@
             width: CANVAS_WIDTH,
             originalHeight: CANVAS_HEIGHT,
             originalWidth: CANVAS_WIDTH,
-            selection: true
+            selection: false
         };
 
         var objectDefaults = {

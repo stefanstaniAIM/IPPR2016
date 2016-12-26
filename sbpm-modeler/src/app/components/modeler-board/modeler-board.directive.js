@@ -18,12 +18,13 @@
         return directive;
 
         /** @ngInject */
-        function ModelerBoardController($scope, $log, fabric, fabricConfig) {
+        function ModelerBoardController($scope, $log, fabric, fabricConfig, fabricCustomControl) {
             var TAG = 'modeler-board.directive: ';
 
             var self = this;
 
             self.canvas = null;
+            self.selectedObject = null;
 
             self.onDrop = onDrop;
 
@@ -33,9 +34,37 @@
                 $log.debug(TAG + 'init()');
                 self.canvas = fabric.getCanvas();
 
-                self.canvas.on('object:scaling', function(){
-                    var obj = self.canvas.getActiveObject();
-                    //$log.debug(obj.getWidth());
+                /*
+                 * Listen for Fabric 'object:selected' event
+                 */
+
+                self.canvas.on('object:selected', function(element) {
+
+                    $log.debug(TAG + 'object:selected');
+                    $log.debug(TAG + 'Element: ' + element.target.get('id'));
+                    $log.debug(TAG + 'ActiveObject: ' + self.selectedObject);
+
+                    if (self.selectedObject === null) {
+                        self.selectedObject = element.target;
+                        fabricCustomControl.setCustomControlVisibility(self.selectedObject, false);
+                    } else {
+                        fabricCustomControl.setCustomControlVisibility(self.selectedObject, true);
+
+                        self.selectedObject = element.target;
+                        fabricCustomControl.setCustomControlVisibility(self.selectedObject, false);
+                    }
+
+                });
+
+                /*
+                 * Listen for Fabric 'selection:cleared' event
+                 */
+
+                self.canvas.on('selection:cleared', function(element) {
+
+                    $log.debug(TAG + 'selection:cleared');
+
+                    fabricCustomControl.setCustomControlVisibility(self.selectedObject, true);
                 });
             };
 

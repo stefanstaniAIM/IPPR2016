@@ -347,16 +347,6 @@
                 this.on('moving', function(e) {
                     fabricCustomControl.positionCustomControl(this);
                 });
-
-                this.on('selected', function(e) {
-                    $log.debug("Target: " + this.get('id'));
-                    //fabricCustomControl.setCustomControlVisibility(this);
-                });
-
-                this.canvas.on('selection:cleared', function(e) {
-                    $log.debug("Target: " + e.target.get('id'));
-                    //fabricCustomControl.setCustomControlVisibility(this);
-                });
             }
 
             /*

@@ -40,10 +40,25 @@
             $log.debug(TAG + 'getCanvas()');
 
             service.canvas = fabricCanvas.getCanvas();
+            //service.configCanvasListeners();
 
-            $log.debug(TAG + 'getCanvas() - ' + service.canvas);
+            $log.debug(TAG + 'getCanvas()');
 
             return service.canvas;
+        };
+
+        service.configCanvasListeners = function() {
+
+            $log.debug('configCanvasListeners()');
+
+            service.canvas.on({
+                'selection:cleared': service.selectionClearedListener
+            });
+
+        };
+
+        service.selectionClearedListener = function () {
+            $log.debug(TAG + 'selectionClearedListener()');
         };
 
         //
