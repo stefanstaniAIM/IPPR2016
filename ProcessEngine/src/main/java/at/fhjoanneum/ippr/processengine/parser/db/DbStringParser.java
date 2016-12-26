@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 public class DbStringParser implements DbParser<String> {
 
   @Override
-  public String parse(final String value) {
-    return value;
+  public String parse(final Object value) {
+    return String.valueOf(value);
   }
 
 }

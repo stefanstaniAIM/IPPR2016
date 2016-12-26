@@ -15,6 +15,7 @@ import at.fhjoanneum.ippr.persistence.objects.model.process.ProcessModel;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.check.ProcessCheckMessage;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessModelRepository;
 
+@Transactional
 @Component("ProcessCheckActor")
 @Scope("prototype")
 public class ProcessCheckActor extends UntypedActor {
@@ -24,7 +25,6 @@ public class ProcessCheckActor extends UntypedActor {
   @Autowired
   private ProcessModelRepository processModelRepository;
 
-  @Transactional
   @Override
   public void onReceive(final Object obj) throws Throwable {
     if (obj instanceof ProcessCheckMessage.Request) {

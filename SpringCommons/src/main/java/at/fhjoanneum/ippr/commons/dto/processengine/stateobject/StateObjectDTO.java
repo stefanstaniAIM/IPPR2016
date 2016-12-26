@@ -1,9 +1,11 @@
-package at.fhjoanneum.ippr.commons.dto.processengine;
+package at.fhjoanneum.ippr.commons.dto.processengine.stateobject;
 
 import java.io.Serializable;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
+
+import at.fhjoanneum.ippr.commons.dto.processengine.StateDTO;
 
 @XmlRootElement
 public class StateObjectDTO implements Serializable {

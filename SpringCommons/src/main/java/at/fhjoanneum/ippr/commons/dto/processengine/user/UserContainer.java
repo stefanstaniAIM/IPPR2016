@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.commons.dto.processengine;
+package at.fhjoanneum.ippr.commons.dto.processengine.user;
 
 public interface UserContainer {
 

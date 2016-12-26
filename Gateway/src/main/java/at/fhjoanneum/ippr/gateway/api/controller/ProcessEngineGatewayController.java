@@ -21,8 +21,8 @@ import at.fhjoanneum.ippr.commons.dto.processengine.ProcessInfoDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartedDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStateDTO;
-import at.fhjoanneum.ippr.commons.dto.processengine.StateObjectDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.TaskDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.StateObjectDTO;
 import at.fhjoanneum.ippr.gateway.api.controller.user.HttpHeaderUser;
 import at.fhjoanneum.ippr.gateway.api.services.impl.ProcessEngineCallerImpl;
 

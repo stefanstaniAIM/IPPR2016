@@ -12,8 +12,9 @@ public class DbTimestampParser implements DbParser<LocalDateTime> {
       DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
 
   @Override
-  public String parse(final LocalDateTime value) {
-    return value.format(FORMAT);
+  public String parse(final Object value) {
+    final LocalDateTime parsed = (LocalDateTime) value;
+    return parsed.format(FORMAT);
   }
 
 }

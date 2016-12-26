@@ -1,6 +1,6 @@
 package at.fhjoanneum.ippr.processengine.akka.messages.process.workflow;
 
-import at.fhjoanneum.ippr.commons.dto.processengine.StateObjectDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.StateObjectDTO;
 
 public class StateObjectMessage {
 

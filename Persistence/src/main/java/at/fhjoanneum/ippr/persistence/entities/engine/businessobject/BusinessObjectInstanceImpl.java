@@ -13,6 +13,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import com.google.common.collect.Lists;
 
 import at.fhjoanneum.ippr.persistence.entities.engine.businessobject.field.BusinessObjectFieldInstanceImpl;
@@ -114,5 +117,10 @@ public class BusinessObjectInstanceImpl implements BusinessObjectInstance, Seria
     return true;
   }
 
-
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("boiId", boiId)
+        .append("piId", processInstance.getPiId())
+        .append("business object model", businessObjectModel).toString();
+  }
 }

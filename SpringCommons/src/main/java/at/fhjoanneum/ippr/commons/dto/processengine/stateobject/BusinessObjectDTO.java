@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.commons.dto.processengine;
+package at.fhjoanneum.ippr.commons.dto.processengine.stateobject;
 
 import java.io.Serializable;
 import java.util.List;

@@ -20,8 +20,9 @@ import at.fhjoanneum.ippr.commons.dto.processengine.ProcessInfoDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartedDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStateDTO;
-import at.fhjoanneum.ippr.commons.dto.processengine.StateObjectDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.TaskDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.StateObjectChangeDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.StateObjectDTO;
 import at.fhjoanneum.ippr.persistence.objects.engine.enums.ProcessInstanceState;
 import at.fhjoanneum.ippr.processengine.akka.config.Global;
 import at.fhjoanneum.ippr.processengine.akka.config.SpringExtension;
@@ -34,6 +35,7 @@ import at.fhjoanneum.ippr.processengine.akka.messages.process.info.TasksOfUserMe
 import at.fhjoanneum.ippr.processengine.akka.messages.process.initialize.ActorInitializeMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.initialize.ProcessStartMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.stop.ProcessStopMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObjectChangeMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObjectMessage;
 
 @Service
@@ -254,6 +256,27 @@ public class ProcessServiceImpl implements ProcessService {
             future.complete(((StateObjectMessage.Response) msg).getStateObjectDTO());
           } else {
             future.completeExceptionally(exc);
+          }
+        });
+
+    return future;
+  }
+
+  @Async
+  @Override
+  public Future<Boolean> changeStateOfUserInProcess(final Long piId, final Long userId,
+      final StateObjectChangeDTO stateObjectChangeDTO) {
+    final CompletableFuture<Boolean> future = new CompletableFuture<>();
+
+    final StateObjectChangeMessage.Request request =
+        new StateObjectChangeMessage.Request(piId, userId, stateObjectChangeDTO);
+
+    PatternsCS.ask(userSupervisorActor, request, Global.TIMEOUT).toCompletableFuture()
+        .whenComplete((msg, exc) -> {
+          if (exc == null) {
+            future.complete(Boolean.TRUE);
+          } else {
+            future.complete(Boolean.FALSE);
           }
         });
 

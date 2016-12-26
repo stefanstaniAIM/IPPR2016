@@ -24,4 +24,6 @@ public interface SubjectState {
   void setReceiveSubjectState(ReceiveSubjectState receiveSubjectState);
 
   LocalDateTime getLastChanged();
+
+  boolean isNextState(final State nextState);
 }
