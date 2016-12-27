@@ -6,9 +6,8 @@ import org.springframework.stereotype.Component;
 public class DbNumberParser implements DbParser<Integer> {
 
   @Override
-  public String parse(final Object value) {
-    final Integer parsed = (Integer) value;
-    return String.valueOf(parsed.intValue());
+  public String parse(final Integer value) {
+    return String.valueOf(value.intValue());
   }
 
 }

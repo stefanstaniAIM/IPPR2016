@@ -8,5 +8,5 @@ public interface DbParser<T> {
    * @param jsonParsed the value to parse
    * @return the string represenation of the value
    */
-  String parse(Object jsonParsed);
+  String parse(T jsonParsed);
 }

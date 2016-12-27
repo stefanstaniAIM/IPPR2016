@@ -9,4 +9,6 @@ public interface JsonParser<T> {
    * @return the parsed value
    */
   T parse(String value);
+
+  boolean canParse(String value);
 }

@@ -15,14 +15,14 @@ public class DbParserAllocation {
   @Autowired
   private DbTimestampParser dbTimestampParser;
 
-  public DbParser<?> getParser(final FieldType fieldType) {
+  public <T> DbParser<T> getParser(final FieldType fieldType) {
     switch (fieldType) {
       case NUMBER:
-        return dbNumberParser;
+        return (DbParser<T>) dbNumberParser;
       case STRING:
-        return dbStringParser;
+        return (DbParser<T>) dbStringParser;
       case TIMESTAMP:
-        return dbTimestampParser;
+        return (DbParser<T>) dbTimestampParser;
       default:
         throw new IllegalArgumentException("Could not find parser");
     }

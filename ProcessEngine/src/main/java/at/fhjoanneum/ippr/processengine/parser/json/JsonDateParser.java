@@ -11,6 +11,17 @@ import org.springframework.stereotype.Component;
 public class JsonDateParser implements JsonParser<LocalDate> {
 
   @Override
+  public boolean canParse(final String value) {
+    try {
+      Instant.ofEpochMilli(NumberUtils.createLong(value)).atZone(ZoneId.systemDefault())
+          .toLocalDate();
+      return true;
+    } catch (final Exception e) {
+      return false;
+    }
+  }
+
+  @Override
   public LocalDate parse(final String value) {
     return Instant.ofEpochMilli(NumberUtils.createLong(value)).atZone(ZoneId.systemDefault())
         .toLocalDate();

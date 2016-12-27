@@ -24,7 +24,7 @@ import at.fhjoanneum.ippr.persistence.objects.model.businessobject.permission.Bu
 import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldPermission;
 import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObjectChangeMessage;
-import at.fhjoanneum.ippr.processengine.parser.json.JsonParserAllocation;
+import at.fhjoanneum.ippr.processengine.parser.DbValueParser;
 import at.fhjoanneum.ippr.processengine.repositories.BusinessObjectFieldPermissionRepository;
 import at.fhjoanneum.ippr.processengine.repositories.StateRepository;
 
@@ -40,7 +40,7 @@ public class BusinessObjectCheckActor extends UntypedActor {
   @Autowired
   private BusinessObjectFieldPermissionRepository businessObjectFieldPermissionRepository;
   @Autowired
-  private JsonParserAllocation jsonParserAllocation;
+  private DbValueParser parser;
 
   private final Long currentState;
 
@@ -114,13 +114,11 @@ public class BusinessObjectCheckActor extends UntypedActor {
         return true;
       }
 
-      try {
-        jsonParserAllocation.getParser(fieldModel.getFieldType()).parse(fieldValue);
-        return true;
-      } catch (final Exception e) {
+      final boolean canParse = parser.canParse(fieldValue, fieldModel.getFieldType());
+      if (!canParse) {
         LOG.error("Could not parse value [{}] to type [{}]", fieldValue, fieldModel.getFieldType());
-        return false;
       }
+      return canParse;
     }
     return true;
   }
