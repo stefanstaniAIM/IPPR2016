@@ -49,6 +49,15 @@
             }, 50);
         };
 
+        service.removeCustomControl = function (objectId) {
+
+            $log.debug(TAG + 'removeCustomControl()');
+
+            var customControlId = modeler.getCustomControlId(objectId);
+            modeler.removeCustomControl(objectId);
+            jQuery('#' + customControlId).remove();
+        };
+
         service.positionCustomControl = function (object) {
 
             $log.debug(TAG + 'positionCustomControl()');
@@ -57,16 +66,16 @@
             positionCustomControl(object, customControlId);
         };
 
-        service.setCustomControlVisibility = function (object, hide) {
+        service.setCustomControlVisibility = function (object, show) {
 
             $log.debug(TAG + 'setCustomControlVisibility()');
 
             var customControlId = modeler.getCustomControlId(object.get('id'));
 
-            if (hide) {
-                jQuery('#' + customControlId).hide()
+            if (show) {
+                jQuery('#' + customControlId).show();
             } else {
-                jQuery('#' + customControlId).show()
+                jQuery('#' + customControlId).hide();
             }
         };
 

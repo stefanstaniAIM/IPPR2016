@@ -21,16 +21,20 @@
         return directive;
 
         /** @ngInject */
-        function SubjectCustomControlController($log, fabric) {
-            var TAG = "ui-fabric-custom-control.directive: ";
+        function SubjectCustomControlController($log, fabric, fabricCustomControl, $rootScope) {
+            var TAG = "subject-custom-control.directive: ";
 
             var self = this;
 
-            $log.debug(TAG + self.customControlId);
-
             self.deleteSubjectElement = function () {
+
                 $log.debug(TAG + 'deleteSubjectElement()');
+
+                var activeObjectId = fabric.getActiveObject().get('id');
                 fabric.removeActiveObjectFromCanvas();
+                fabricCustomControl.removeCustomControl(activeObjectId);
+
+                $rootScope.$broadcast('subject:removed');
             }
 
         }

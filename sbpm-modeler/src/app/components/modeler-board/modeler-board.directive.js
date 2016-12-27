@@ -50,12 +50,12 @@
                      */
                     if (self.activeObject === null) {
                         self.activeObject = element.target;
-                        fabricCustomControl.setCustomControlVisibility(self.activeObject, false);
-                    } else {
                         fabricCustomControl.setCustomControlVisibility(self.activeObject, true);
+                    } else {
+                        fabricCustomControl.setCustomControlVisibility(self.activeObject, false);
 
                         self.activeObject = element.target;
-                        fabricCustomControl.setCustomControlVisibility(self.activeObject, false);
+                        fabricCustomControl.setCustomControlVisibility(self.activeObject, true);
                     }
 
                 });
@@ -75,6 +75,10 @@
             };
 
             $scope.$on('canvas:created', self.init);
+
+            $scope.$on('subject:removed', function () {
+                self.activeObject = null;
+            });
 
             self.onDrop = function (target, source, ev) {
 

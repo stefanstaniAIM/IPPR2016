@@ -87,6 +87,14 @@
             return object;
         };
 
+        service.getActiveObject = function() {
+
+            $log.debug(TAG + 'getActiveObject()');
+
+            return service.canvas.getActiveObject();
+
+        };
+
         var removeObjectFromCanvas = function(object, render) {
 
             service.canvas.remove(object);
