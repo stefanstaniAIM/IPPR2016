@@ -18,7 +18,7 @@
         service.connectorDefaults = null;
         service.arrowDefaults = null;
 
-        service.selectedObject = null;
+        service.activeObject = null;
 
         // service.formatShape = { show: false};
 
@@ -77,11 +77,7 @@
             }
 
             service.canvas.add(object);
-            // service.setObjectZoom(object);
-            // service.canvas.setActiveObject(object);
             object.bringToFront();
-
-            // $log.debug('fabric - addObjectToCanvas() - render: ' + render.toLocaleString());
 
             if (render !== false) {
                 $log.debug(TAG + 'addObjectToCanvas() - renderAll');
@@ -115,7 +111,7 @@
 
         service.objectSelectedListener = function (element) {
             $log.debug(TAG + 'objectSelectedListener()');
-            service.selectedObject = element.target;
+            service.activeObject = element.target;
         };
 
         /**

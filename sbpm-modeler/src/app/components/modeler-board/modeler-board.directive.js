@@ -24,60 +24,74 @@
             var self = this;
 
             self.canvas = null;
-            self.selectedObject = null;
+            self.activeObject = null;
 
-            self.onDrop = onDrop;
-
-            self.nodeDefaults = angular.copy(fabricConfig.getSubjectElementDefaults());
+            self.subjectElementDefaults = null;
 
             self.init = function () {
+
                 $log.debug(TAG + 'init()');
+
                 self.canvas = fabric.getCanvas();
+                self.subjectElementDefaults = angular.copy(fabricConfig.getSubjectElementDefaults());
 
                 /*
-                 * Listen for Fabric 'object:selected' event
+                 * Listen for fabric 'object:selected' event
                  */
+                self.canvas.on('object:selected', function (element) {
 
-                self.canvas.on('object:selected', function(element) {
-                    fabric.objectSelectedListener(element);
                     $log.debug(TAG + 'object:selected');
-                    $log.debug(TAG + 'Element: ' + element.target.get('id'));
-                    $log.debug(TAG + 'ActiveObject: ' + self.selectedObject);
 
-                    if (self.selectedObject === null) {
-                        self.selectedObject = element.target;
-                        fabricCustomControl.setCustomControlVisibility(self.selectedObject, false);
+                    fabric.objectSelectedListener(element);
+
+                    /*
+                     * Show custom control of active object
+                     * Hide custom control of previously selected subject
+                     */
+                    if (self.activeObject === null) {
+                        self.activeObject = element.target;
+                        fabricCustomControl.setCustomControlVisibility(self.activeObject, false);
                     } else {
-                        fabricCustomControl.setCustomControlVisibility(self.selectedObject, true);
+                        fabricCustomControl.setCustomControlVisibility(self.activeObject, true);
 
-                        self.selectedObject = element.target;
-                        fabricCustomControl.setCustomControlVisibility(self.selectedObject, false);
+                        self.activeObject = element.target;
+                        fabricCustomControl.setCustomControlVisibility(self.activeObject, false);
                     }
 
                 });
 
                 /*
-                 * Listen for Fabric 'selection:cleared' event
+                 * Listen for fabric 'selection:cleared' event
                  */
-
-                self.canvas.on('selection:cleared', function(element) {
+                self.canvas.on('selection:cleared', function (element) {
 
                     $log.debug(TAG + 'selection:cleared');
 
-                    fabricCustomControl.setCustomControlVisibility(self.selectedObject, true);
+                    /*
+                     * Hide custom control of previously selected subject
+                     */
+                    fabricCustomControl.setCustomControlVisibility(self.activeObject, true);
                 });
             };
 
             $scope.$on('canvas:created', self.init);
 
-            function onDrop(target, source, ev) {
-                $log.debug("dropped " + source + " on " + target);
-                $log.debug(ev.originalEvent.x + " " + ev.originalEvent.y);
-                self.nodeDefaults.top = ev.originalEvent.y;
-                self.nodeDefaults.left = ev.originalEvent.x;
-                fabric.addSubjectElement(self.nodeDefaults);
-            }
+            self.onDrop = function (target, source, ev) {
 
+                $log.debug(TAG + 'onDrop()');
+
+                /*
+                 * Add SubjectElement or StateElement to canvas
+                 */
+                if (source === 'subject-element') {
+                    self.subjectElementDefaults.top = ev.originalEvent.y;
+                    self.subjectElementDefaults.left = ev.originalEvent.x;
+
+                    fabric.addSubjectElement(self.subjectElementDefaults, true);
+                } else { //source === 'state-element'
+                    //TODO: Add SubjectElement to canvas
+                }
+            }
         }
     }
 

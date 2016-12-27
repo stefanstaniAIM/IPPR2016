@@ -8,7 +8,7 @@
     /** @ngInject */
     function modeler($log, $q, storage) {
 
-        var TAG = 'sbpm-modeler.service: ';
+        var TAG = 'modeler.service: ';
 
         var service = {};
 

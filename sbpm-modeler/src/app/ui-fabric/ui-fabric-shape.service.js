@@ -1,4 +1,4 @@
-(function() {
+(function () {
     'use strict';
 
     angular.module('ui.fabric')
@@ -35,7 +35,7 @@
          * @param {Object} [options] A configuration object, defaults to gridLineDefaults
          * @return {Object} Returns the new Line object
          */
-        service.gridLine = function(points, options) {
+        service.gridLine = function (points, options) {
 
             $log.debug('fabricShape - gridLine()');
 
@@ -53,7 +53,7 @@
          * @param {Object} [options] A configuration object, defaults to lineDefaults
          * @return {Object} Returns the new Line object
          */
-        service.line = function(points, options) {
+        service.line = function (points, options) {
 
             $log.debug('fabricShape - line()');
 
@@ -70,7 +70,7 @@
          * @param {Object} [options] A configuration object, defaults to rectDefaults
          * @return {Object} Returns the new Rect object
          */
-        service.rect = function(options) {
+        service.rect = function (options) {
 
             $log.debug('fabricShape - rect()');
 
@@ -88,7 +88,7 @@
          * @param {Object} [options] A configuration object, defaults to triangleDefaults
          * @return {Object} Returns the new Triangle object
          */
-        service.triangle = function(options) {
+        service.triangle = function (options) {
 
             $log.debug('fabricShape - triangle()');
 
@@ -105,7 +105,7 @@
          * @param {String} [text] A configuration object, defaults to rectWithTextDefaults
          * @return {Object} Returns the new RectWithText object
          */
-        service.rectWithText = function(text, options) {
+        service.rectWithText = function (text, options) {
 
             $log.debug('fabricShape - rectWithText()');
 
@@ -137,7 +137,7 @@
             // id: '',
             // connectors: { fromPort: [], fromLine: [], fromArrow: [], toPort: [], toLine: [], toArrow: [], otherObject: [] },
 
-            initialize: function(text, options) {
+            initialize: function (text, options) {
 
                 this.callSuper('initialize', options);
 
@@ -147,17 +147,17 @@
                 }
             },
 
-            fromObject: function(object) {
+            fromObject: function (object) {
                 return new RectWithText(object);
             },
 
-            toObject: function() {
+            toObject: function () {
                 return fabric.util.object.extend(this.callSuper('toObject'), {
                     text: this.get('text')
                 });
             },
 
-            _render: function(ctx) {
+            _render: function (ctx) {
 
                 this.callSuper('_render', ctx);
 
@@ -198,7 +198,7 @@
                 // $log.debug('fabricShape - ctx.font: ' + ctx.font.toLocaleString());
             },
 
-            toString: function() {
+            toString: function () {
                 return '#<ui-fabric.rectWithText (' + this.complexity() +
                     '): { "text": "' + this.text + '" }>';
             }
@@ -212,7 +212,7 @@
          * @param {Object} [options] A configuration object, defaults to lineDefaults
          * @return {Object} Returns the new Connector object
          */
-        service.connector = function(points, options) {
+        service.connector = function (points, options) {
 
             $log.debug('fabricShape - connector()');
 
@@ -225,28 +225,26 @@
 
             type: 'connector',
 
-            initialize: function(points, options) {
+            initialize: function (points, options) {
                 this.callSuper('initialize', points, options);
 
             },
 
-            fromObject: function(object) {
+            fromObject: function (object) {
                 return new Connector(object);
 
             },
 
-            toObject: function() {
-                return fabric.util.object.extend(this.callSuper('toObject'), {
-
-                });
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'), {});
             },
 
-            _render: function(ctx) {
+            _render: function (ctx) {
                 this.callSuper('_render', ctx);
 
             },
 
-            toString: function() {
+            toString: function () {
                 return '#<ui-fabric.connector (' + this.complexity() + '" }>';
 
             }
@@ -259,7 +257,7 @@
          * @param {Object} [options] A configuration object,, defaults to subjectElementDefaults
          * @return {Object} Returns the new RectWithText object
          */
-        service.subjectElement = function(options) {
+        service.subjectElement = function (options) {
 
             $log.debug(TAG + 'subjectElement()');
 
@@ -273,19 +271,23 @@
             type: 'subjectElement',
 
             id: '',
-            text: '',
+            name: '',
+            startSubject: '',
+            multiSubject: '',
 
             // TODO: Tried to move this from main-controller.js - had some issues ???
 
             // id: '',
             // connectors: { fromPort: [], fromLine: [], fromArrow: [], toPort: [], toLine: [], toArrow: [], otherObject: [] },
 
-            initialize: function(options) {
+            initialize: function (options) {
 
                 this.callSuper('initialize', options);
 
                 this.set('id', 'subjectElement' + createId());
-                this.set('text', "Subject 1234");
+                this.set('name', "New subject");
+                this.set('startSubject', false);
+                this.set('multiSubject', false);
 
                 this.setControlsVisibility({
                     'tl': true,
@@ -306,7 +308,7 @@
                 fabricCustomControl.addCustomControl(this);
             },
 
-            _render: function(ctx) {
+            _render: function (ctx) {
 
                 this.callSuper('_render', ctx);
 
@@ -338,33 +340,36 @@
                 ctx.font = this.fontWeight + ' ' + this.fontSize + 'px ' + this.fontFamily;  // 'bold 20px Tahoma';
                 ctx.textAlign = this.textXAlign;
                 ctx.textBaseline = this.textBaseline;
-                ctx.fillText(this.text, x, y);
+                ctx.fillText(this.get('name'), x, y);
 
-                this.on('scaling', function(e) {
+                this.on('scaling', function (e) {
                     fabricCustomControl.positionCustomControl(this);
                 });
 
-                this.on('moving', function(e) {
+                this.on('moving', function (e) {
                     fabricCustomControl.positionCustomControl(this);
                 });
+            },
+
+
+            fromObject: function (object) {
+                return new SubjectElement(object);
+            },
+
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'), {
+                    id: this.get('id'),
+                    name: this.get('name'),
+                    startSubject: this.get('startSubject'),
+                    multiSubject: this.get('multiSubject')
+                });
+            },
+
+            toString: function () {
+                return '#<ui-fabric.subjectElement (' + this.complexity() +
+                    '): { "id": "' + this.get('id') + '", "name": "' + this.get('name') + '", ' +
+                    '"startSubject": "' + this.get('startSubject') + '", "multiSubject": "' + this.get('multiSubject') + '"}>';
             }
-
-            /*
-             fromObject: function(object) {
-             return new SubjectElement(object);
-             },
-
-             toObject: function() {
-             return fabric.util.object.extend(this.callSuper('toObject'), {
-             text: this.get('text')
-             });
-             },*/
-
-            /*
-            toString: function() {
-                return '#<ui-fabric.rectWithText (' + this.complexity() +
-                    '): { "text": "' + this.text + '" }>';
-            }*/
 
         });
 
