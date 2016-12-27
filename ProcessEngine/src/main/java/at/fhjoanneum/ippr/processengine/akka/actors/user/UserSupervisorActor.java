@@ -21,6 +21,7 @@ import com.google.common.collect.Lists;
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import akka.pattern.PatternsCS;
+import at.fhjoanneum.ippr.persistence.objects.engine.enums.ProcessInstanceState;
 import at.fhjoanneum.ippr.persistence.objects.engine.process.ProcessInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.subject.Subject;
 import at.fhjoanneum.ippr.processengine.akka.AkkaSelector;
@@ -162,16 +163,20 @@ public class UserSupervisorActor extends UntypedActor {
 
     if (processOpt.isPresent()) {
       final ProcessInstance process = processOpt.get();
-      final List<String> userIds =
-          process.getSubjects().stream().filter(subject -> subject.getUser() != null)
-              .map(subject -> "ProcessUser-" + subject.getUser()).collect(Collectors.toList());
+      if (process.getState().equals(ProcessInstanceState.FINISHED)
+          || process.getState().equals(ProcessInstanceState.CANCELLED_BY_SYSTEM)
+          || process.getState().equals(ProcessInstanceState.CANCELLED_BY_USER)) {
+        final List<String> userIds =
+            process.getSubjects().stream().filter(subject -> subject.getUser() != null)
+                .map(subject -> "ProcessUser-" + subject.getUser()).collect(Collectors.toList());
 
-      userIds.forEach(userId -> {
-        final Optional<ActorRef> actorOpt = akkaSelector.findActor(getContext(), userId);
-        if (actorOpt.isPresent()) {
-          actorOpt.get().forward(msg, getContext());
-        }
-      });
+        userIds.forEach(userId -> {
+          final Optional<ActorRef> actorOpt = akkaSelector.findActor(getContext(), userId);
+          if (actorOpt.isPresent()) {
+            actorOpt.get().forward(msg, getContext());
+          }
+        });
+      }
     }
   }
 

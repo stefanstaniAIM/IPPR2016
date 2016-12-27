@@ -30,14 +30,20 @@ public class StateObjectChangeMessage {
   }
 
   public static class Response {
-    private final Boolean success;
+    private final Long piId;
+    private final Boolean finished;
 
-    public Response(final Boolean success) {
-      this.success = success;
+    public Response(final Long piId, final Boolean finished) {
+      this.piId = piId;
+      this.finished = finished;
     }
 
-    public Boolean getSuccess() {
-      return success;
+    public Long getPiId() {
+      return piId;
+    }
+
+    public Boolean isFinished() {
+      return finished;
     }
   }
 }

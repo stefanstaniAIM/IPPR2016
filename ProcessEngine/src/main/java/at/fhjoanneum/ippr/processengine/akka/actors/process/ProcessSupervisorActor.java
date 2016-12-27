@@ -38,6 +38,7 @@ import at.fhjoanneum.ippr.processengine.akka.messages.process.initialize.Process
 import at.fhjoanneum.ippr.processengine.akka.messages.process.initialize.ProcessStartMessage.UserGroupAssignment;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.stop.ProcessStopMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.wakeup.ProcessWakeUpMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObjectChangeMessage;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessModelRepository;
 import at.fhjoanneum.ippr.processengine.repositories.SubjectModelRepository;
@@ -78,6 +79,8 @@ public class ProcessSupervisorActor extends UntypedActor {
       handleProcessInfoMessage(obj);
     } else if (obj instanceof ProcessStopMessage.Request) {
       handleProcessStopMessage(obj);
+    } else if (obj instanceof StateObjectChangeMessage.Request) {
+      handleStateObjectChangeMessage(obj);
     } else {
       unhandled(obj);
     }
@@ -223,13 +226,21 @@ public class ProcessSupervisorActor extends UntypedActor {
 
   private void handleProcessStopMessage(final Object obj) {
     final ProcessStopMessage.Request msg = (ProcessStopMessage.Request) obj;
+    forwardToProcessActor(msg.getPiId(), msg);
+  }
 
-    final String processInstanceId = getProcessActorId(msg.getPiId());
+  private <T> void forwardToProcessActor(final Long piId, final T msg) {
+    final String processInstanceId = getProcessActorId(piId);
     final Optional<ActorRef> actorOpt = akkaSelector.findActor(getContext(), processInstanceId);
 
     if (actorOpt.isPresent()) {
       LOG.debug("Found process actor and will forward message to stop process");
       actorOpt.get().forward(msg, getContext());
     }
+  }
+
+  private void handleStateObjectChangeMessage(final Object obj) {
+    final StateObjectChangeMessage.Request request = (StateObjectChangeMessage.Request) obj;
+    forwardToProcessActor(request.getPiId(), request);
   }
 }

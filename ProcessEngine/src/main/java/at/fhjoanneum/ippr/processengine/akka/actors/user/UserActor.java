@@ -295,8 +295,7 @@ public class UserActor extends UntypedActor {
           .registerSynchronization(new TransactionSynchronizationAdapter() {
             @Override
             public void afterCommit() {
-              // notify user supervisor actor
-              sender.tell(new StateObjectChangeMessage.Response(Boolean.TRUE), getSelf());
+              sender.tell(new EmptyMessage(), getSelf());
             }
           });
     }

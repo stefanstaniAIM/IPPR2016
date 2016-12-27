@@ -271,14 +271,20 @@ public class ProcessServiceImpl implements ProcessService {
     final StateObjectChangeMessage.Request request =
         new StateObjectChangeMessage.Request(piId, userId, stateObjectChangeDTO);
 
-    PatternsCS.ask(userSupervisorActor, request, Global.TIMEOUT).toCompletableFuture()
+    PatternsCS.ask(userSupervisorActor, request, Global.TIMEOUT)
+        .toCompletableFuture().thenCompose(result -> PatternsCS
+            .ask(processSupervisorActor, request, Global.TIMEOUT).toCompletableFuture())
         .whenComplete((msg, exc) -> {
-          if (exc == null) {
-            future.complete(Boolean.TRUE);
+          if (exc != null) {
+            future.completeExceptionally(exc.getCause());
           } else {
-            future.complete(Boolean.FALSE);
+            if (((StateObjectChangeMessage.Response) msg).isFinished().booleanValue()) {
+              userSupervisorActor.tell(new ProcessStopMessage.Request(request.getPiId()), null);
+            }
+            future.complete(Boolean.TRUE);
           }
         });
+
 
     return future;
   }
