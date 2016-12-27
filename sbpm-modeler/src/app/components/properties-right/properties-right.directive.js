@@ -18,10 +18,12 @@
         return directive;
 
         /** @ngInject */
-        function PropertiesRightController($log, $mdSidenav, modeler, $rootScope) {
+        function PropertiesRightController($log, $mdSidenav, modeler, $rootScope, fabric) {
             var TAG = 'properties-right.directive: ';
 
             var self = this;
+
+            self.canvas = null;
 
             var currentView;
 
@@ -30,8 +32,30 @@
             self.propertiesOpened = propertiesOpened;
 
             function init() {
+
+                $log.debug(TAG + 'init()');
+
                 currentView = modeler.getCurrentView();
-                $log.debug(TAG + "successfully initiated" + currentView);
+
+                self.canvas = fabric.getCanvas();
+
+                /*
+                 * Listen for fabric 'object:selected' event
+                 */
+                self.canvas.on('object:selected', function (element) {
+                    toogleProperties();
+                });
+
+                /*
+                 * Listen for fabric 'selection:cleared' event
+                 */
+                self.canvas.on('selection:cleared', function (element) {
+                    toogleProperties();
+                });
+            }
+
+            function toogleProperties() {
+                $mdSidenav('properties-right').toggle();
             }
 
             $rootScope.$on('currentView-changed', function () {

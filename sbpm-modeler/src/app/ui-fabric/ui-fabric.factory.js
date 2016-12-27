@@ -122,6 +122,16 @@
             service.activeObject = element.target;
         };
 
+        service.setActiveObject = function(object) {
+
+            $log.debug('fabric - setActiveObject()');
+
+            if (object) {
+                service.canvas.setActiveObject(object);
+                // service.canvas.renderAll();
+            }
+        };
+
         /**
          * @name addRect
          * @desc Creates a new Rect and adds it to the canvas

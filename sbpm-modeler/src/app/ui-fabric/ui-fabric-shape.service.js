@@ -286,7 +286,7 @@
 
                 this.set('id', 'subjectElement' + createId());
                 this.set('name', "New subject");
-                this.set('startSubject', false);
+                this.set('startSubject', true);
                 this.set('multiSubject', false);
 
                 this.setControlsVisibility({

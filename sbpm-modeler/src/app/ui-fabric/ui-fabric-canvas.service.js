@@ -55,7 +55,6 @@
             service.canvasId = 'fabric-canvas-' + createId();
             service.element.attr('id', service.canvasId);
             service.canvas = new fabricWindow.Canvas(service.canvasId, options);
-            //TODO
             $rootScope.$broadcast('canvas:created');
             $log.debug(TAG + 'createCanvas() - ' + service.canvas);
             return service.canvas;
