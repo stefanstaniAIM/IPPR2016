@@ -21,8 +21,9 @@ import at.fhjoanneum.ippr.commons.dto.processengine.ProcessInfoDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartedDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStateDTO;
-import at.fhjoanneum.ippr.commons.dto.processengine.StateObjectDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.TaskDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.StateObjectChangeDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.StateObjectDTO;
 import at.fhjoanneum.ippr.gateway.api.controller.user.HttpHeaderUser;
 import at.fhjoanneum.ippr.gateway.api.services.impl.ProcessEngineCallerImpl;
 
@@ -126,6 +127,18 @@ public class ProcessEngineGatewayController {
     return () -> {
       final HttpHeaderUser headerUser = new HttpHeaderUser(request);
       return processEngineCaller.getStateObjectOfUserInProcess(headerUser, piId, userId).get();
+    };
+  }
+
+  @RequestMapping(value = "api/processes/task/{piId}/{userId}", method = RequestMethod.POST)
+  public Callable<ResponseEntity<Boolean>> changeStateOfUserInProcess(
+      final HttpServletRequest request, @PathVariable("piId") final Long piId,
+      @PathVariable("userId") final Long userId,
+      @RequestBody final StateObjectChangeDTO stateObjectChangeDTO) {
+    return () -> {
+      final HttpHeaderUser headerUser = new HttpHeaderUser(request);
+      return processEngineCaller
+          .changeStateOfUserInProcess(headerUser, piId, userId, stateObjectChangeDTO).get();
     };
   }
 }

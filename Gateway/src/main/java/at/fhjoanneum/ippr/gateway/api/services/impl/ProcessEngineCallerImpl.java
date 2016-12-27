@@ -25,10 +25,11 @@ import at.fhjoanneum.ippr.commons.dto.processengine.ProcessInfoDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartedDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStateDTO;
-import at.fhjoanneum.ippr.commons.dto.processengine.StateObjectDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.TaskDTO;
-import at.fhjoanneum.ippr.commons.dto.processengine.UserContainer;
-import at.fhjoanneum.ippr.commons.dto.processengine.UserDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.StateObjectChangeDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.StateObjectDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.user.UserContainer;
+import at.fhjoanneum.ippr.commons.dto.processengine.user.UserDTO;
 import at.fhjoanneum.ippr.gateway.api.config.GatewayConfig;
 import at.fhjoanneum.ippr.gateway.api.controller.user.HttpHeaderUser;
 import at.fhjoanneum.ippr.gateway.api.services.Caller;
@@ -178,5 +179,15 @@ public class ProcessEngineCallerImpl implements Caller {
 
     final HttpHeaders header = headerUser.getHttpHeaders();
     return createRequest(uri, HttpMethod.GET, null, StateObjectDTO.class, header);
+  }
+
+  public Future<ResponseEntity<Boolean>> changeStateOfUserInProcess(final HttpHeaderUser headerUser,
+      final Long piId, final Long userId, final StateObjectChangeDTO stateObjectChangeDTO)
+      throws URISyntaxException {
+    final URIBuilder uri = new URIBuilder(gatewayConfig.getProcessEngineAddress())
+        .setPath("/processes/task/" + piId + "/" + userId);
+
+    final HttpHeaders header = headerUser.getHttpHeaders();
+    return createRequest(uri, HttpMethod.POST, stateObjectChangeDTO, Boolean.class, header);
   }
 }

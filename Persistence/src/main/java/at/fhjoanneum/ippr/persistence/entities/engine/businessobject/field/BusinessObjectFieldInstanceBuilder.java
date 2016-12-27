@@ -16,7 +16,7 @@ public class BusinessObjectFieldInstanceBuilder implements Builder<BusinessObjec
   private BusinessObjectFieldModelImpl businessObjectFieldModel;
   private String value;
 
-  BusinessObjectFieldInstanceBuilder businessObjectInstance(
+  public BusinessObjectFieldInstanceBuilder businessObjectInstance(
       final BusinessObjectInstance businessObjectInstance) {
     checkNotNull(businessObjectInstance);
     checkArgument(businessObjectInstance instanceof BusinessObjectInstanceImpl);
@@ -24,7 +24,7 @@ public class BusinessObjectFieldInstanceBuilder implements Builder<BusinessObjec
     return this;
   }
 
-  BusinessObjectFieldInstanceBuilder businessObjectFieldModel(
+  public BusinessObjectFieldInstanceBuilder businessObjectFieldModel(
       final BusinessObjectFieldModel businessObjectFieldModel) {
     checkNotNull(businessObjectFieldModel);
     checkArgument(businessObjectFieldModel instanceof BusinessObjectFieldModelImpl);
@@ -32,7 +32,7 @@ public class BusinessObjectFieldInstanceBuilder implements Builder<BusinessObjec
     return this;
   }
 
-  BusinessObjectFieldInstanceBuilder value(final String value) {
+  public BusinessObjectFieldInstanceBuilder value(final String value) {
     checkNotNull(value);
     this.value = value;
     return this;

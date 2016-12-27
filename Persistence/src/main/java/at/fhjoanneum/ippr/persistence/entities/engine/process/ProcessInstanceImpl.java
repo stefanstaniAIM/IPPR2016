@@ -18,6 +18,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -26,11 +27,14 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
+import at.fhjoanneum.ippr.persistence.entities.engine.businessobject.BusinessObjectInstanceImpl;
 import at.fhjoanneum.ippr.persistence.entities.engine.subject.SubjectImpl;
 import at.fhjoanneum.ippr.persistence.entities.model.process.ProcessModelImpl;
+import at.fhjoanneum.ippr.persistence.objects.engine.businessobject.BusinessObjectInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.enums.ProcessInstanceState;
 import at.fhjoanneum.ippr.persistence.objects.engine.process.ProcessInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.subject.Subject;
+import at.fhjoanneum.ippr.persistence.objects.model.businessobject.BusinessObjectModel;
 import at.fhjoanneum.ippr.persistence.objects.model.process.ProcessModel;
 
 @Entity(name = "PROCESS_INSTANCE")
@@ -67,6 +71,9 @@ public class ProcessInstanceImpl implements ProcessInstance, Serializable {
   @JoinTable(name = "process_subject_instance_map", joinColumns = {@JoinColumn(name = "pi_id")},
       inverseJoinColumns = {@JoinColumn(name = "s_id")})
   private List<SubjectImpl> subjects = Lists.newArrayList();
+
+  @OneToMany(mappedBy = "processInstance")
+  private final List<BusinessObjectInstanceImpl> businessObjectInstances = Lists.newArrayList();
 
   ProcessInstanceImpl() {}
 
@@ -129,6 +136,18 @@ public class ProcessInstanceImpl implements ProcessInstance, Serializable {
   @Override
   public List<Subject> getSubjects() {
     return Lists.newArrayList(subjects);
+  }
+
+  @Override
+  public List<BusinessObjectInstance> getBusinessObjectInstances() {
+    return Lists.newArrayList(businessObjectInstances);
+  }
+
+  @Override
+  public boolean isBusinessObjectInstanceOfModelCreated(
+      final BusinessObjectModel businessObjectModel) {
+    return businessObjectInstances.stream()
+        .filter(boi -> businessObjectModel.equals(boi.getBusinessObjectModel())).count() >= 1;
   }
 
   @Override

@@ -21,6 +21,7 @@ import com.google.common.collect.Lists;
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import akka.pattern.PatternsCS;
+import at.fhjoanneum.ippr.persistence.objects.engine.enums.ProcessInstanceState;
 import at.fhjoanneum.ippr.persistence.objects.engine.process.ProcessInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.subject.Subject;
 import at.fhjoanneum.ippr.processengine.akka.AkkaSelector;
@@ -33,6 +34,7 @@ import at.fhjoanneum.ippr.processengine.akka.messages.process.initialize.UserAct
 import at.fhjoanneum.ippr.processengine.akka.messages.process.initialize.UserActorInitializeMessage.Request;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.stop.ProcessStopMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.wakeup.UserActorWakeUpMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObjectChangeMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObjectMessage;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 
@@ -64,6 +66,8 @@ public class UserSupervisorActor extends UntypedActor {
       handleTasksOfUserMessage(obj);
     } else if (obj instanceof StateObjectMessage.Request) {
       handleStateObjectMessage(obj);
+    } else if (obj instanceof StateObjectChangeMessage.Request) {
+      handleStateObjectChangeMessage(obj);
     } else {
       unhandled(obj);
     }
@@ -159,16 +163,20 @@ public class UserSupervisorActor extends UntypedActor {
 
     if (processOpt.isPresent()) {
       final ProcessInstance process = processOpt.get();
-      final List<String> userIds =
-          process.getSubjects().stream().filter(subject -> subject.getUser() != null)
-              .map(subject -> "ProcessUser-" + subject.getUser()).collect(Collectors.toList());
+      if (process.getState().equals(ProcessInstanceState.FINISHED)
+          || process.getState().equals(ProcessInstanceState.CANCELLED_BY_SYSTEM)
+          || process.getState().equals(ProcessInstanceState.CANCELLED_BY_USER)) {
+        final List<String> userIds =
+            process.getSubjects().stream().filter(subject -> subject.getUser() != null)
+                .map(subject -> "ProcessUser-" + subject.getUser()).collect(Collectors.toList());
 
-      userIds.forEach(userId -> {
-        final Optional<ActorRef> actorOpt = akkaSelector.findActor(getContext(), userId);
-        if (actorOpt.isPresent()) {
-          actorOpt.get().forward(msg, getContext());
-        }
-      });
+        userIds.forEach(userId -> {
+          final Optional<ActorRef> actorOpt = akkaSelector.findActor(getContext(), userId);
+          if (actorOpt.isPresent()) {
+            actorOpt.get().forward(msg, getContext());
+          }
+        });
+      }
     }
   }
 
@@ -190,16 +198,27 @@ public class UserSupervisorActor extends UntypedActor {
     LOG.info("Handle state object message of USER_ID [{}] in PI_ID [{}]", request.getUserId(),
         request.getPiId());
 
-    final String userId = getUserId(request.getUserId());
-    final Optional<ActorRef> actorOpt = akkaSelector.findActor(getContext(), userId);
+    forwardToUserActor(request.getUserId(), request);
+  }
+
+  private <T> void forwardToUserActor(final Long userId, final T msg) {
+    final String actorUserId = getUserId(userId);
+    final Optional<ActorRef> actorOpt = akkaSelector.findActor(getContext(), actorUserId);
 
     if (actorOpt.isPresent()) {
       LOG.debug("Found user actor and will forward message");
-      actorOpt.get().forward(request, getContext());
+      actorOpt.get().forward(msg, getContext());
     } else {
-      getSender().tell(new akka.actor.Status.Failure(
-          new IllegalArgumentException("Could not find actor for user: " + userId)), getSelf());
+      getSender().tell(
+          new akka.actor.Status.Failure(
+              new IllegalArgumentException("Could not find actor for user: " + actorUserId)),
+          getSelf());
       return;
     }
+  }
+
+  private void handleStateObjectChangeMessage(final Object obj) {
+    final StateObjectChangeMessage.Request request = (StateObjectChangeMessage.Request) obj;
+    forwardToUserActor(request.getUserId(), request);
   }
 }

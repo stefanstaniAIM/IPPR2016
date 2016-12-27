@@ -81,11 +81,18 @@ public class SubjectStateImpl implements SubjectState, Serializable {
   }
 
   @Override
-  public void setCurrentState(final State currentState) {
-    checkNotNull(currentState);
-    checkArgument(currentState instanceof SubjectStateImpl);
-    this.currentState = (StateImpl) currentState;
+  public void setCurrentState(final State nextState) {
+    checkNotNull(nextState);
+    checkArgument(nextState instanceof StateImpl);
+    checkArgument(isNextState(nextState));
+    this.currentState = (StateImpl) nextState;
     this.lastChanged = LocalDateTime.now();
+  }
+
+  @Override
+  public boolean isNextState(final State nextState) {
+    return currentState.getToStates().stream()
+        .filter(transition -> transition.getToState().equals(nextState)).count() >= 1;
   }
 
   @Override

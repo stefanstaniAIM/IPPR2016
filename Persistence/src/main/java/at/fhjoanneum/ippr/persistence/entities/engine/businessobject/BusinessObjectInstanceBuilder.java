@@ -15,14 +15,15 @@ public class BusinessObjectInstanceBuilder implements Builder<BusinessObjectInst
   private ProcessInstanceImpl processInstance;
   private BusinessObjectModelImpl businessObjectModel;
 
-  BusinessObjectInstanceBuilder processInstance(final ProcessInstance processInstance) {
+  public BusinessObjectInstanceBuilder processInstance(final ProcessInstance processInstance) {
     checkNotNull(processInstance);
     checkArgument(processInstance instanceof ProcessInstanceImpl);
     this.processInstance = (ProcessInstanceImpl) processInstance;
     return this;
   }
 
-  BusinessObjectInstanceBuilder businessObjectModel(final BusinessObjectModel businessObjectModel) {
+  public BusinessObjectInstanceBuilder businessObjectModel(
+      final BusinessObjectModel businessObjectModel) {
     checkNotNull(businessObjectModel);
     checkArgument(businessObjectModel instanceof BusinessObjectModelImpl);
     this.businessObjectModel = (BusinessObjectModelImpl) businessObjectModel;

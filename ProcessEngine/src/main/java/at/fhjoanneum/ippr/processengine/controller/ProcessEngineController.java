@@ -23,8 +23,9 @@ import at.fhjoanneum.ippr.commons.dto.processengine.ProcessInfoDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartedDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStateDTO;
-import at.fhjoanneum.ippr.commons.dto.processengine.StateObjectDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.TaskDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.StateObjectChangeDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.StateObjectDTO;
 import at.fhjoanneum.ippr.processengine.services.ProcessService;
 
 @RestController
@@ -128,10 +129,22 @@ public class ProcessEngineController {
   }
 
   @RequestMapping(value = "processes/task/{piId}/{userId}", method = RequestMethod.GET)
-  public Callable<StateObjectDTO> getStateObjectOfUserInProcess(
+  public Callable<StateObjectDTO> getStateObjectOfUserInProcess(final HttpServletRequest request,
       @PathVariable("piId") final Long piId, @PathVariable("userId") final Long userId) {
     return () -> {
       return processService.getStateObjectOfUserInProcess(piId, userId).get();
+    };
+  }
+
+  @RequestMapping(value = "processes/task/{piId}/{userId}", method = RequestMethod.POST)
+  public Callable<Boolean> changeStateOfUserInProcess(final HttpServletRequest request,
+      @PathVariable("piId") final Long piId, @PathVariable("userId") final Long userId,
+      @RequestBody final StateObjectChangeDTO stateObjectChangeDTO) {
+    return () -> {
+      LOG.debug("Received request to change process P_ID [{}] to state S_ID [{}]", piId,
+          stateObjectChangeDTO.getNextStateId());
+
+      return processService.changeStateOfUserInProcess(piId, userId, stateObjectChangeDTO).get();
     };
   }
 }

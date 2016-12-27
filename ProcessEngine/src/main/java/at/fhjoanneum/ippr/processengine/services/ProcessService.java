@@ -7,8 +7,9 @@ import at.fhjoanneum.ippr.commons.dto.processengine.ProcessInfoDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStartedDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStateDTO;
-import at.fhjoanneum.ippr.commons.dto.processengine.StateObjectDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.TaskDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.StateObjectChangeDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.StateObjectDTO;
 
 public interface ProcessService {
 
@@ -30,4 +31,7 @@ public interface ProcessService {
   Future<List<TaskDTO>> getTasksOfUser(Long userId);
 
   Future<StateObjectDTO> getStateObjectOfUserInProcess(Long piId, Long userId);
+
+  Future<Boolean> changeStateOfUserInProcess(final Long piId, final Long userId,
+      final StateObjectChangeDTO stateObjectChangeDTO);
 }

@@ -5,8 +5,8 @@ public interface DbParser<T> {
   /**
    * Converts the value that is generic to a String, that can be stored in database.
    *
-   * @param value the value to parse
+   * @param jsonParsed the value to parse
    * @return the string represenation of the value
    */
-  String parse(T value);
+  String parse(Object jsonParsed);
 }

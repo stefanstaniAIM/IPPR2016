@@ -5,6 +5,9 @@ import java.time.LocalDateTime;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import at.fhjoanneum.ippr.commons.dto.processengine.user.UserContainer;
+import at.fhjoanneum.ippr.commons.dto.processengine.user.UserDTO;
+
 @XmlRootElement
 public class ProcessInfoDTO implements UserContainer, Serializable {
 
