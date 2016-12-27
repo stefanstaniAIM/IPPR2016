@@ -56,8 +56,7 @@ import at.fhjoanneum.ippr.processengine.akka.messages.process.stop.ProcessStopMe
 import at.fhjoanneum.ippr.processengine.akka.messages.process.wakeup.UserActorWakeUpMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObjectChangeMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObjectMessage;
-import at.fhjoanneum.ippr.processengine.parser.db.DbParserAllocation;
-import at.fhjoanneum.ippr.processengine.parser.json.JsonParserAllocation;
+import at.fhjoanneum.ippr.processengine.parser.DbValueParser;
 import at.fhjoanneum.ippr.processengine.repositories.BusinessObjectFieldInstanceRepository;
 import at.fhjoanneum.ippr.processengine.repositories.BusinessObjectFieldPermissionRepository;
 import at.fhjoanneum.ippr.processengine.repositories.BusinessObjectInstanceRepository;
@@ -97,9 +96,7 @@ public class UserActor extends UntypedActor {
   private BusinessObjectFieldInstanceRepository businessObjectFieldInstanceRepository;
 
   @Autowired
-  private JsonParserAllocation jsonParserAllocation;
-  @Autowired
-  private DbParserAllocation dbParserAllocation;
+  private DbValueParser valueParser;
 
   private final Long userId;
   private final ActorRef sender;
@@ -357,9 +354,8 @@ public class UserActor extends UntypedActor {
                 final BusinessObjectFieldInstance fieldInstance = fieldInstanceOpt.get();
                 final FieldType fieldType =
                     fieldInstance.getBusinessObjectFieldModel().getFieldType();
-                final Object jsonParsed =
-                    jsonParserAllocation.getParser(fieldType).parse(field.getValue());
-                final String value = dbParserAllocation.getParser(fieldType).parse(jsonParsed);
+                final String value = valueParser.parse(field.getValue(), fieldType);
+                LOG.debug("Parsed value is: {}", value);
                 fieldInstance.setValue(value);
                 businessObjectFieldInstanceRepository
                     .save((BusinessObjectFieldInstanceImpl) fieldInstance);

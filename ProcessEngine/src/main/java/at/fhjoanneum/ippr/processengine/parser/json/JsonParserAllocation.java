@@ -20,18 +20,18 @@ public class JsonParserAllocation {
   private JsonTimestampParser timestampParser;
 
 
-  public JsonParser<?> getParser(final FieldType fieldType) {
+  public <T> JsonParser<T> getParser(final FieldType fieldType) {
     switch (fieldType) {
       case DATE:
-        return dateParser;
+        return (JsonParser<T>) dateParser;
       case DECIMAL:
-        return decimalParser;
+        return (JsonParser<T>) decimalParser;
       case NUMBER:
-        return numberParser;
+        return (JsonParser<T>) numberParser;
       case STRING:
-        return stringParser;
+        return (JsonParser<T>) stringParser;
       case TIMESTAMP:
-        return timestampParser;
+        return (JsonParser<T>) timestampParser;
       default:
         throw new IllegalArgumentException("Could not find parser");
     }

@@ -7,6 +7,16 @@ import org.springframework.stereotype.Component;
 public class JsonNumberParser implements JsonParser<Integer> {
 
   @Override
+  public boolean canParse(final String value) {
+    try {
+      NumberUtils.createInteger(value);
+      return true;
+    } catch (final Exception e) {
+      return false;
+    }
+  }
+
+  @Override
   public Integer parse(final String value) {
     return NumberUtils.createInteger(value);
   }

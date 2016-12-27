@@ -7,6 +7,16 @@ import org.springframework.stereotype.Component;
 public class JsonDecimalParser implements JsonParser<Float> {
 
   @Override
+  public boolean canParse(final String value) {
+    try {
+      NumberUtils.createFloat(value);
+      return true;
+    } catch (final Exception e) {
+      return false;
+    }
+  }
+
+  @Override
   public Float parse(final String value) {
     return NumberUtils.createFloat(value);
   }
