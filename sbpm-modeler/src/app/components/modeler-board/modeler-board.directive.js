@@ -39,7 +39,7 @@
                  */
 
                 self.canvas.on('object:selected', function(element) {
-
+                    fabric.objectSelectedListener(element);
                     $log.debug(TAG + 'object:selected');
                     $log.debug(TAG + 'Element: ' + element.target.get('id'));
                     $log.debug(TAG + 'ActiveObject: ' + self.selectedObject);

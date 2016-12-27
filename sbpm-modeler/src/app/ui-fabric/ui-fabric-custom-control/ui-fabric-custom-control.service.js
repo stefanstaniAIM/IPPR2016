@@ -25,20 +25,24 @@
                 "z-index: 9999; position: absolute;'><md-button class='md-icon-button md-primary' aria-label='Delete' ng-click='test()'><md-icon>delete</md-icon></md-button></div>";
         };
 
+        var createCustomControlDiv1 = function (customControlId) {
+            return "<subject-custom-control custom-control-id='" + customControlId + "'></subject-custom-control>";
+        };
+
         var createCustomControl = function (subjectElement) {
             var customControlId = 'customControl' + createId();
             modeler.addCustomControl(subjectElement.get('id'), customControlId);
-
-            var scope = $rootScope.$new();
-            scope.test = function () {
-              $log.debug("Test");
-            };
-            angular.element('#modeler-board').append($compile(createCustomControlDiv(customControlId))(scope));
-            jQuery("#" + customControlId).hide();
-            positionCustomControl(subjectElement, customControlId);
+            jQuery('#modeler-board').append($compile(createCustomControlDiv1(customControlId))($rootScope.$new()));
+            //jQuery("#" + customControlId).hide();
+            setTimeout(function () {
+                jQuery("#" + customControlId).hide();
+                positionCustomControl(subjectElement, customControlId);
+            }, 100);
+            //positionCustomControl(subjectElement, customControlId);
         };
 
         var positionCustomControl = function (subjectElement, customControlId) {
+            $log.debug(TAG + customControlId);
             jQuery("#" + customControlId).css({top: subjectElement.getTop() + 'px'});
             jQuery("#" + customControlId).css({left: (subjectElement.getLeft() + subjectElement.getWidth() + 20) + 'px'});
         };

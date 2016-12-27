@@ -18,6 +18,8 @@
         service.connectorDefaults = null;
         service.arrowDefaults = null;
 
+        service.selectedObject = null;
+
         // service.formatShape = { show: false};
 
         service.init = function () {
@@ -87,6 +89,33 @@
             }
 
             return object;
+        };
+
+        var removeObjectFromCanvas = function(object, render) {
+
+            service.canvas.remove(object);
+
+            $log.debug(TAG + 'removeObjectFromCanvas() - render: ' + render.toLocaleString());
+
+            if (render) {
+                service.canvas.renderAll();
+            }
+        };
+
+        service.removeActiveObjectFromCanvas = function() {
+
+            $log.debug(TAG + 'removeActiveObjectFromCanvas()');
+
+            var object = service.canvas.getActiveObject();
+            if (object) {
+                service.canvas.remove(object);
+                service.canvas.renderAll();
+            }
+        };
+
+        service.objectSelectedListener = function (element) {
+            $log.debug(TAG + 'objectSelectedListener()');
+            service.selectedObject = element.target;
         };
 
         /**
