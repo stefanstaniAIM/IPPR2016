@@ -3,6 +3,7 @@ package at.fhjoanneum.ippr.processengine.parser;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +23,10 @@ public class DbValueParser {
   private DbParserAllocation dbParserAllocation;
 
   public String parse(final String value, final FieldType fieldType) {
+    if (StringUtils.isBlank(value)) {
+      return StringUtils.EMPTY;
+    }
+
     switch (fieldType) {
       case DATE:
         final JsonParser<LocalDate> dateParser = jsonParserAllocation.getParser(fieldType);

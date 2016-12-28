@@ -132,8 +132,8 @@ public class ProcessActor extends UntypedActor {
     if (processOpt.isPresent()) {
       final ProcessInstance process = processOpt.get();
       for (final Subject subject : process.getSubjects()) {
-        if (!subject.getSubjectState().getCurrentState().getEventType()
-            .equals(StateEventType.END)) {
+        if (!StateEventType.END
+            .equals(subject.getSubjectState().getCurrentState().getEventType())) {
           LOG.debug("State [{}] is not in 'END' state, cannot finish process instance",
               subject.getSubjectState().getCurrentState());
           getSender().tell(new StateObjectChangeMessage.Response(piId, Boolean.FALSE), getSelf());

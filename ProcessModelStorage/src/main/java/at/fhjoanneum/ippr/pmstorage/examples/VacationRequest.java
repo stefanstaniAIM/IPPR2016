@@ -69,8 +69,9 @@ public class VacationRequest extends AbstractExample {
     final State bossState1 = new StateBuilder().subjectModel(boss).name("Receive vacation request")
         .eventType(StateEventType.START).functionType(StateFunctionType.RECEIVE).build();
 
-    final BusinessObjectModel vacationRequestForm = new BusinessObjectModelBuilder()
-        .name("Vacation request form").addToState(empState1).addToState(bossState1).build();
+    final BusinessObjectModel vacationRequestForm =
+        new BusinessObjectModelBuilder().name("Vacation request form").addToState(empState1)
+            .addToState(empState2).addToState(bossState1).build();
     final BusinessObjectFieldModel boFrom = new BusinessObjectFieldModelBuilder().fieldName("From")
         .fieldType(FieldType.STRING).businessObjectModel(vacationRequestForm).build();
     final BusinessObjectFieldModel boTo = new BusinessObjectFieldModelBuilder().fieldName("To")
@@ -82,6 +83,13 @@ public class VacationRequest extends AbstractExample {
     final BusinessObjectFieldPermission boFromPermissionEmp2 =
         new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boTo).state(empState1)
             .permission(FieldPermission.READ_WRITE).mandatory(true).build();
+
+    final BusinessObjectFieldPermission boFromPermissionEmp3 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boFrom).state(empState2)
+            .permission(FieldPermission.READ).mandatory(true).build();
+    final BusinessObjectFieldPermission boFromPermissionEmp4 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boTo).state(empState2)
+            .permission(FieldPermission.READ).mandatory(true).build();
 
     final BusinessObjectFieldPermission boFromPermissionBoss1 =
         new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boFrom)
@@ -168,7 +176,7 @@ public class VacationRequest extends AbstractExample {
     saveBusinessObjectFieldPermissions(boFromPermissionEmp1, boFromPermissionEmp2,
         boFromPermissionBoss1, boFromPermissionBoss2, okFormFieldInformationPermission1,
         okFormFieldInformationPermission2, nokFormFieldInformationPermission1,
-        nokFormFieldInformationPermission2);
+        nokFormFieldInformationPermission2, boFromPermissionEmp3, boFromPermissionEmp4);
   }
 
   @Override

@@ -56,6 +56,7 @@ import at.fhjoanneum.ippr.processengine.akka.messages.process.stop.ProcessStopMe
 import at.fhjoanneum.ippr.processengine.akka.messages.process.wakeup.UserActorWakeUpMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObjectChangeMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObjectMessage;
+import at.fhjoanneum.ippr.processengine.composer.DbValueComposer;
 import at.fhjoanneum.ippr.processengine.parser.DbValueParser;
 import at.fhjoanneum.ippr.processengine.repositories.BusinessObjectFieldInstanceRepository;
 import at.fhjoanneum.ippr.processengine.repositories.BusinessObjectFieldPermissionRepository;
@@ -97,13 +98,13 @@ public class UserActor extends UntypedActor {
 
   @Autowired
   private DbValueParser valueParser;
+  @Autowired
+  private DbValueComposer valueComposer;
 
   private final Long userId;
-  private final ActorRef sender;
 
   public UserActor(final Long userId) {
     this.userId = userId;
-    this.sender = getSender();
   }
 
   @Override
@@ -148,6 +149,7 @@ public class UserActor extends UntypedActor {
     subjectStateRepository.save((SubjectStateImpl) subjectState);
     LOG.info("Subject is now in initial state: {}", subjectState);
 
+    final ActorRef sender = getSender();
     TransactionSynchronizationManager
         .registerSynchronization(new TransactionSynchronizationAdapter() {
           @Override
@@ -233,10 +235,11 @@ public class UserActor extends UntypedActor {
                 .get().getBusinessObjectFieldInstanceOfFieldModel(businessObjectFieldModel);
 
             if (fieldInstanceOpt.isPresent()) {
-              bofiId = fieldInstanceOpt.get().getBofiId();
+              final BusinessObjectFieldInstance fieldInstance = fieldInstanceOpt.get();
+              bofiId = fieldInstance.getBofiId();
 
-              // TODO add casting
-              value = fieldInstanceOpt.get().getValue();
+              value = valueComposer.compose(fieldInstance.getValue(),
+                  fieldInstance.getBusinessObjectFieldModel().getFieldType());
             }
           }
           fields.add(
@@ -329,6 +332,8 @@ public class UserActor extends UntypedActor {
 
   private void setValuesOfBusinessObjectFieldInstances(final State currentState,
       final StateObjectChangeMessage.Request request) {
+    final ActorRef sender = getSender();
+
     request.getStateObjectChangeDTO().getBusinessObjects().stream()
         .map(BusinessObjectInstanceDTO::getFields).flatMap(List::stream).forEach(field -> {
           final Optional<BusinessObjectFieldPermission> permissionOpt = Optional.ofNullable(
