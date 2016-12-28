@@ -66,11 +66,13 @@
                 self.canvas.on('selection:cleared', function (element) {
 
                     $log.debug(TAG + 'selection:cleared');
-
+                    $log.debug(element.target);
                     /*
                      * Hide custom control of previously selected subject
                      */
-                    fabricCustomControl.setCustomControlVisibility(self.activeObject, true);
+                    if (self.activeObject !== null) {
+                        fabricCustomControl.setCustomControlVisibility(self.activeObject, false);
+                    }
                 });
             };
 

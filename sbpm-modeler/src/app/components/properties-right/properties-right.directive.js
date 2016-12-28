@@ -43,15 +43,25 @@
                  * Listen for fabric 'object:selected' event
                  */
                 self.canvas.on('object:selected', function (element) {
-                    toogleProperties();
+                    hideProperties();
+                    showProperties();
                 });
 
                 /*
                  * Listen for fabric 'selection:cleared' event
                  */
                 self.canvas.on('selection:cleared', function (element) {
-                    toogleProperties();
+                    hideProperties();
                 });
+            }
+
+
+            function showProperties() {
+                $mdSidenav('properties-right').open();
+            }
+
+            function hideProperties() {
+                $mdSidenav('properties-right').close();
             }
 
             function toogleProperties() {

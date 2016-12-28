@@ -1,4 +1,4 @@
-(function() {
+(function () {
     'use strict';
 
     angular
@@ -6,22 +6,35 @@
         .controller('SbpmModelerController', SbpmModelerController);
 
     /** @ngInject */
-    function SbpmModelerController($log, $scope, fabric) {
-        /*var TAG = 'sbpm-modeler.controller: ';
+    function SbpmModelerController($log, fabric) {
+        var TAG = 'sbpm-modeler.controller: ';
 
         var self = this;
 
-        self.canvas = null;
+        self.testJson = function () {
+            $log.debug(TAG + 'testJson()');
+            var canvas = fabric.getCanvas();
+            // save json
+            var json = JSON.stringify(canvas);
 
-        var init = function () {
+            $log.debug(TAG);
+            $log.debug(json);
 
-            $log.debug(TAG + 'init()');
+            $log.debug(TAG);
+            $log.debug(canvas);
 
-            self.canvas = fabric.getCanvas();
+            // clear canvas
+            canvas.clear();
 
+            // and load everything from the same json
+            canvas.loadFromJSON(json, function () {
 
+                // making sure to render canvas at the end
+                canvas.renderAll();
+                $log.debug(TAG);
+                // and checking if object's "name" is preserved
+                $log.debug(canvas.item(0));
+            });
         };
-
-        $scope.$on('canvas:created', init);*/
     }
 })();

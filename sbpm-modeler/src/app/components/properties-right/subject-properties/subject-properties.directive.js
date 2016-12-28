@@ -36,22 +36,26 @@
                  * Listen for fabric 'object:selected' event
                  */
                 self.canvas.on('object:selected', function (element) {
-                    self.activeObject = element.target;
-                    $log.debug(self.activeObject);
+                    self.activeObject = {
+                        name: element.target.get('name'),
+                        startSubject: element.target.get('startSubject'),
+                        multiSubject: element.target.get('multiSubject')
+                    };
                 });
 
                 /*
                  * Listen for fabric 'selection:cleared' event
                  */
                 self.canvas.on('selection:cleared', function (element) {
-                    self.activeObject = null;
+                    //self.activeObject = null;
                 });
             };
 
             init();
 
             self.saveSubjectProperties = function () {
-                $log.debug(self.activeObject);
+                fabric.getActiveObject().setCustomAttributes(self.activeObject);
+                self.canvas.renderAll();
             };
         }
     }

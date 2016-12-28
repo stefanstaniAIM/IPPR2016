@@ -263,10 +263,17 @@
 
             options = options || service.subjectElementDefaults;
 
-            return new SubjectElement(options);
+            fabricWindow.SubjectElement.fromObject = function (object) {
+                return new fabricWindow.SubjectElement(object);
+                //callback && callback(new fabricWindow.SubjectElement(object));
+            };
+
+            //fabricWindow.SubjectElement.async = true;
+
+            return new fabricWindow.SubjectElement(options);
         };
 
-        var SubjectElement = fabricWindow.util.createClass(fabricWindow.Rect, {
+        fabricWindow.SubjectElement = fabricWindow.util.createClass(fabricWindow.Rect, {
 
             type: 'subjectElement',
 
@@ -286,7 +293,7 @@
 
                 this.set('id', 'subjectElement' + createId());
                 this.set('name', "New subject");
-                this.set('startSubject', true);
+                this.set('startSubject', false);
                 this.set('multiSubject', false);
 
                 this.setControlsVisibility({
@@ -340,7 +347,7 @@
                 ctx.font = this.fontWeight + ' ' + this.fontSize + 'px ' + this.fontFamily;  // 'bold 20px Tahoma';
                 ctx.textAlign = this.textXAlign;
                 ctx.textBaseline = this.textBaseline;
-                ctx.fillText(this.get('name'), x, y);
+                ctx.fillText(this.name, x, y);
 
                 this.on('scaling', function (e) {
                     fabricCustomControl.positionCustomControl(this);
@@ -351,17 +358,34 @@
                 });
             },
 
+            _renderText: function (ctx) {
 
-            fromObject: function (object) {
-                return new SubjectElement(object);
             },
+
+            setCustomAttributes: function (attributes) {
+                this.set({
+                    name: attributes.name,
+                    startSubject: attributes.startSubject,
+                    multiSubject: attributes.multiSubject,
+                    fill: 'white' //TODO: Couldn't figure out how to render object so that new name is visible
+                });
+            },
+
 
             toObject: function () {
                 return fabric.util.object.extend(this.callSuper('toObject'), {
-                    id: this.get('id'),
-                    name: this.get('name'),
-                    startSubject: this.get('startSubject'),
-                    multiSubject: this.get('multiSubject')
+                    id: this.id,
+                    name: this.name,
+                    startSubject: this.startSubject,
+                    multiSubject: this.multiSubject,
+
+                    fillStyle: this.fillStyle,
+                    fontFamily: this.fontFamily,
+                    fontSize: this.fontSize,
+                    fontWeight: this.fontWeight,
+                    textXAlign: this.textXAlign,
+                    textYAlign: this.textYAlign,
+                    textBaseline: this.textBaseline
                 });
             },
 

@@ -53,7 +53,7 @@
             transparentCorners: true,
             borderScaleFactor: 2,
             hoverCursor: 'pointer',
-            minScaleLimit: 0.5
+            minScaleLimit: 1
         };
 
         var rectDefaults = angular.extend({

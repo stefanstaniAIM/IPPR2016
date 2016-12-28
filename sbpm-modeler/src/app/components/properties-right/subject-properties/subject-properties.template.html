@@ -11,13 +11,14 @@
             <span flex>Start subject</span>
             <md-checkbox ng-model="sbp.activeObject.startSubject"></md-checkbox>
         </selection>
-        <selection layout="row">
+        <selection layout="row" >
             <span flex>Multi subject</span>
-            <md-checkbox ng-model="sbp.activeObject.multiSubject"></md-checkbox>
+            <md-checkbox class="md-primary" ng-model="sbp.activeObject.multiSubject" ng-disabled="true"></md-checkbox>
         </selection>
     </div>
     <div class="properties-right-footer" layout="row">
-        <md-button class="md-button md-raised md-primary" flex type="submit" ng-click="sbp.saveSubjectProperties()">Save</md-button>
+        <md-button class="md-button md-raised md-primary" flex type="submit" ng-click="sbp.saveSubjectProperties()"
+        ng-disabled="subjectPropertiesForm.$invalid">Save</md-button>
         <md-button class="md-button md-raised" flex>Cancel</md-button>
     </div>
 </form>

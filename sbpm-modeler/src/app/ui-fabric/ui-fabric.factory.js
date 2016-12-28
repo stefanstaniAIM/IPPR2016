@@ -69,6 +69,8 @@
 
         var addObjectToCanvas = function(object, render) {
 
+            $log.debug(object);
+
             render = render || false;
 
             if (service.canvas === null) {
