@@ -26,19 +26,20 @@
             self.canvas = null;
             self.activeObject = null;
 
-            self.subjectElementDefaults = null;
+            self.subjectElementDefaults = angular.copy(fabricConfig.getSubjectElementDefaults());;
 
             self.init = function () {
 
                 $log.debug(TAG + 'init()');
 
                 self.canvas = fabric.getCanvas();
-                self.subjectElementDefaults = angular.copy(fabricConfig.getSubjectElementDefaults());
 
                 /*
                  * Listen for fabric 'object:selected' event
                  */
                 self.canvas.on('object:selected', function (element) {
+
+                    $log.debug(element.target);
 
                     $log.debug(TAG + 'object:selected');
 

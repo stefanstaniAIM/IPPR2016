@@ -18,7 +18,7 @@
         return directive;
 
         /** @ngInject */
-        function SubjectPropertiesController($log, fabric) {
+        function SubjectPropertiesController($log, fabric, $scope) {
             var TAG = 'sbuject-properties.directive: ';
 
             var self = this;
@@ -51,12 +51,14 @@
                 });
             };
 
-            init();
+            $scope.$on('canvas:created', init);
 
             self.saveSubjectProperties = function () {
                 fabric.getActiveObject().setCustomAttributes(self.activeObject);
                 self.canvas.renderAll();
             };
+
+            //init();
         }
     }
 

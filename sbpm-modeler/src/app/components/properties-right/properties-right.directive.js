@@ -18,7 +18,7 @@
         return directive;
 
         /** @ngInject */
-        function PropertiesRightController($log, $mdSidenav, modeler, $rootScope, fabric) {
+        function PropertiesRightController($log, $mdSidenav, modeler, $rootScope, fabric, $scope) {
             var TAG = 'properties-right.directive: ';
 
             var self = this;
@@ -55,6 +55,7 @@
                 });
             }
 
+            $scope.$on('canvas:created', init);
 
             function showProperties() {
                 $mdSidenav('properties-right').open();
@@ -86,7 +87,7 @@
                 $mdSidenav('properties-right').close();
             }
 
-            init();
+            //init();
         }
     }
 

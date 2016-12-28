@@ -263,13 +263,6 @@
 
             options = options || service.subjectElementDefaults;
 
-            fabricWindow.SubjectElement.fromObject = function (object) {
-                return new fabricWindow.SubjectElement(object);
-                //callback && callback(new fabricWindow.SubjectElement(object));
-            };
-
-            //fabricWindow.SubjectElement.async = true;
-
             return new fabricWindow.SubjectElement(options);
         };
 
@@ -358,34 +351,58 @@
                 });
             },
 
-            _renderText: function (ctx) {
-
-            },
-
             setCustomAttributes: function (attributes) {
                 this.set({
                     name: attributes.name,
                     startSubject: attributes.startSubject,
                     multiSubject: attributes.multiSubject,
-                    fill: 'white' //TODO: Couldn't figure out how to render object so that new name is visible
+                    fill: '#ffffff' //TODO: Couldn't figure out how to render object so that new name is visible
                 });
             },
 
 
             toObject: function () {
                 return fabric.util.object.extend(this.callSuper('toObject'), {
-                    id: this.id,
-                    name: this.name,
-                    startSubject: this.startSubject,
-                    multiSubject: this.multiSubject,
 
+                    //objectDefaults
+                    borderColor: this.borderColor,
+                    centerTransform: this.centerTransform,
+                    cornerColor: this.cornerColor,
+                    cornerSize: this.cornerSize,
+                    hasBorders: this.hasBorders,
+                    hasRotatingPoint: this.hasRotatingPoint,
+                    padding: this.padding,
+                    selectable: this.selectable,
+                    transparentCorners: this.transparentCorners,
+                    borderScaleFactor: this.borderScaleFactor,
+                    hoverCursor: this.hoverCursor,
+                    minScaleLimit: this.minScaleLimit,
+
+                    //rectDefaults
+                    fill: this.fill,
+                    stroke: this.stroke,
+                    strokeWidth: this.strokeWidth,
+                    height: this.height,
+                    width: this.width,
+
+                    //subjectElementDefaults
                     fillStyle: this.fillStyle,
                     fontFamily: this.fontFamily,
                     fontSize: this.fontSize,
                     fontWeight: this.fontWeight,
+                    originX: this.originX,
+                    originY: this.originY,
+                    scaleX: this.scaleX,
+                    scaleY: this.scaleY,
                     textXAlign: this.textXAlign,
                     textYAlign: this.textYAlign,
-                    textBaseline: this.textBaseline
+                    textBaseline: this.textBaseline,
+
+                    //Custom attributs
+                    id: this.id,
+                    name: this.name,
+                    startSubject: this.startSubject,
+                    multiSubject: this.multiSubject
                 });
             },
 

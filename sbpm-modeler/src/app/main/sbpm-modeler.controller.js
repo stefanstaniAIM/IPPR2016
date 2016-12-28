@@ -6,7 +6,7 @@
         .controller('SbpmModelerController', SbpmModelerController);
 
     /** @ngInject */
-    function SbpmModelerController($log, fabric) {
+    function SbpmModelerController($log, fabric,modeler) {
         var TAG = 'sbpm-modeler.controller: ';
 
         var self = this;
@@ -34,6 +34,21 @@
                 $log.debug(TAG);
                 // and checking if object's "name" is preserved
                 $log.debug(canvas.item(0));
+            });
+        };
+
+        self.saveInLocalStorage = function () {
+            var canvas = fabric.getCanvas();
+            var json = canvas.toJSON();
+            modeler.setSidViewObjects(json);
+            $log.debug(modeler.getModelerSettings());
+        };
+
+        self.loadFromJSON = function () {
+            var canvas = fabric.getCanvas();
+            canvas.loadFromJSON(JSON.stringify(modeler.getSidViewObjects()), function () {
+                canvas.renderAll();
+                $log.debug(TAG + 'get all elements');
             });
         };
     }

@@ -31,6 +31,17 @@
             service.rectDefaults = fabricConfig.getRectDefaults();
             service.connectorDefaults = fabricConfig.getConnectorDefaults();
             service.arrowDefaults = fabricConfig.getArrowDefaults();
+
+            service.initCustomShapes();
+        };
+
+        service.initCustomShapes = function () {
+
+            $log.debug(TAG + 'initCustomShapes()');
+
+            fabricWindow.SubjectElement.fromObject = function (object) {
+                return new fabricWindow.SubjectElement(object);
+            };
         };
 
         //
@@ -68,8 +79,6 @@
         //
 
         var addObjectToCanvas = function(object, render) {
-
-            $log.debug(object);
 
             render = render || false;
 

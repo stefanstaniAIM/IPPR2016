@@ -13,7 +13,8 @@
         var service = {};
 
         var modelerSettings = {
-            initiated: true,
+            initialized: true,
+            canvasInitialized: false,
             currentView: 'SID',
             activeObject: '',
             sidViewObjects: {},
@@ -85,6 +86,32 @@
 
         service.getModelerSettings = function () {
             return storage.get('modelerSettings');
+        };
+
+        service.getInitStatus = function () {
+            return storage.get('modelerSettings').initialized;
+        };
+
+        service.setCanvasInitStatus = function (value) {
+            $log.debug(TAG + 'setCanvasInitStatus()');
+            var modelerSettings = storage.get('modelerSettings');
+            modelerSettings.canvasInitialized = value;
+            storage.set('modelerSettings', modelerSettings);
+        };
+
+        service.getCanvasInitStatus = function () {
+            return storage.get('modelerSettings').canvasInitialized;
+        };
+
+        service.setSidViewObjects = function (value) {
+            $log.debug(TAG + 'setSidViewObjects()');
+            var modelerSettings = storage.get('modelerSettings');
+            modelerSettings.sidViewObjects = value;
+            storage.set('modelerSettings', modelerSettings);
+        };
+
+        service.getSidViewObjects = function () {
+            return storage.get('modelerSettings').sidViewObjects;
         };
 
         return service;

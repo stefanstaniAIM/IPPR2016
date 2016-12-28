@@ -1,4 +1,4 @@
-(function() {
+(function () {
     'use strict';
 
     angular.module('ui.fabric')
@@ -18,7 +18,7 @@
      */
 
     /** @ngInject */
-    function fabricCanvas($log, $rootScope, fabricConfig, fabricWindow) {
+    function fabricCanvas($log, $rootScope, fabricConfig, fabricWindow, modeler) {
         var TAG = 'ui-fabric-canvas.service: ';
 
         var service = this;
@@ -37,30 +37,39 @@
             // service.canvasDefaults = angular.copy(fabricConfig.getCanvasDefaults());
         };
 
-        var createId = function() {
+        var createId = function () {
             return Math.floor(Math.random() * 10000);
         };
 
-        service.setElement = function(element) {
+        service.setElement = function (element) {
             service.element = element;
             // $rootScope.$broadcast('canvas:element:selected');
         };
 
-        service.createCanvas = function(options) {
+        service.createCanvas = function (options) {
 
             options = options || service.canvasDefaults;
-
-            // $log.debug('options: ' + JSON.stringify(['e', options], null, '\t'));
 
             service.canvasId = 'fabric-canvas-' + createId();
             service.element.attr('id', service.canvasId);
             service.canvas = new fabricWindow.Canvas(service.canvasId, options);
             $rootScope.$broadcast('canvas:created');
             $log.debug(TAG + 'createCanvas() - ' + service.canvas);
+
+            if (modeler.getModelerSettings() !== null && modeler.getCanvasInitStatus()) {
+                $log.debug(TAG + 'createCanvas() --> load objects from localStorage');
+                service.canvas.loadFromJSON(JSON.stringify(modeler.getSidViewObjects()), function () {
+                    service.canvas.renderAll();
+                    $log.debug(TAG + 'get all elements');
+                });
+            } else {
+                modeler.setCanvasInitStatus(true);
+            }
+
             return service.canvas;
         };
 
-        service.getCanvas = function() {
+        service.getCanvas = function () {
             $log.debug(TAG + 'getCanvas() - ' + service.canvas);
             return service.canvas;
         };
