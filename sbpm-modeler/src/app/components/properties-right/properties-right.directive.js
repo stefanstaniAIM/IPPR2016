@@ -31,7 +31,7 @@
             self.isCurrentViewSID = isCurrentViewSID;
             self.propertiesOpened = propertiesOpened;
 
-            function init() {
+            self.init = function() {
 
                 $log.debug(TAG + 'init()');
 
@@ -53,9 +53,9 @@
                 self.canvas.on('selection:cleared', function (element) {
                     hideProperties();
                 });
-            }
+            };
 
-            $scope.$on('canvas:created', init);
+            //$scope.$on('canvas:created', self.init);
 
             function showProperties() {
                 $mdSidenav('properties-right').open();
@@ -87,7 +87,7 @@
                 $mdSidenav('properties-right').close();
             }
 
-            //init();
+            self.init();
         }
     }
 

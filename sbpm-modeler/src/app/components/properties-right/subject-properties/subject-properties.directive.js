@@ -26,7 +26,7 @@
             self.canvas = null;
             self.activeObject = null;
 
-            var init = function () {
+            self.init = function () {
 
                 $log.debug(TAG + 'init()');
 
@@ -51,14 +51,14 @@
                 });
             };
 
-            $scope.$on('canvas:created', init);
+            //$scope.$on('canvas:created', self.init);
 
             self.saveSubjectProperties = function () {
                 fabric.getActiveObject().setCustomAttributes(self.activeObject);
                 self.canvas.renderAll();
             };
 
-            //init();
+            self.init();
         }
     }
 

@@ -75,6 +75,13 @@
             storage.set('modelerSettings', modelerSettings);
         };
 
+        service.clearCustomControls = function () {
+            $log.debug(TAG + 'clearCustomControls()');
+            var modelerSettings = storage.get('modelerSettings');
+            modelerSettings.customControls = [];
+            storage.set('modelerSettings', modelerSettings);
+        };
+
         service.getCustomControlId = function (objectId) {
             $log.debug(TAG + 'getCustomControl()' + ' - ' + objectId);
             var modelerSettings = storage.get('modelerSettings');
@@ -100,6 +107,7 @@
         };
 
         service.getCanvasInitStatus = function () {
+            $log.debug(TAG + 'getCanvasInitStatus()');
             return storage.get('modelerSettings').canvasInitialized;
         };
 
@@ -111,7 +119,15 @@
         };
 
         service.getSidViewObjects = function () {
+            $log.debug(TAG + 'getSidViewObjects()');
             return storage.get('modelerSettings').sidViewObjects;
+        };
+
+        service.removeSidViewObjects = function () {
+            $log.debug(TAG + 'removeSidViewObjects()');
+            var modelerSettings = storage.get('modelerSettings');
+            modelerSettings.sidViewObjects = {};
+            storage.set('modelerSettings', modelerSettings);
         };
 
         return service;

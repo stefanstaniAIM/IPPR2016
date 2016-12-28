@@ -58,6 +58,7 @@
 
             if (modeler.getModelerSettings() !== null && modeler.getCanvasInitStatus()) {
                 $log.debug(TAG + 'createCanvas() --> load objects from localStorage');
+                modeler.clearCustomControls();
                 service.canvas.loadFromJSON(JSON.stringify(modeler.getSidViewObjects()), function () {
                     service.canvas.renderAll();
                     $log.debug(TAG + 'get all elements');
