@@ -18,15 +18,14 @@
         return directive;
 
         /** @ngInject */
-        function ModelerBoardController($scope, $log, fabric, fabricConfig, fabricCustomControl) {
+        function ModelerBoardController($scope, $log, fabric, fabricConfig, fabricCustomControl, modeler) {
             var TAG = 'modeler-board.directive: ';
 
             var self = this;
 
             self.canvas = null;
-            self.activeObject = null;
 
-            self.subjectElementDefaults = angular.copy(fabricConfig.getSubjectElementDefaults());;
+            self.subjectElementDefaults = angular.copy(fabricConfig.getSubjectElementDefaults());
 
             self.init = function () {
 
@@ -39,8 +38,6 @@
                  */
                 self.canvas.on('object:selected', function (element) {
 
-                    $log.debug(element.target);
-
                     $log.debug(TAG + 'object:selected');
 
                     fabric.objectSelectedListener(element);
@@ -49,14 +46,14 @@
                      * Show custom control of active object
                      * Hide custom control of previously selected subject
                      */
-                    if (self.activeObject === null) {
-                        self.activeObject = element.target;
-                        fabricCustomControl.setCustomControlVisibility(self.activeObject, true);
+                    if (modeler.getActiveObjectId() === '') {
+                        modeler.setActiveObjectId(element.target.id);
+                        fabricCustomControl.setCustomControlVisibility(modeler.getActiveObjectId(), true);
                     } else {
-                        fabricCustomControl.setCustomControlVisibility(self.activeObject, false);
+                        fabricCustomControl.setCustomControlVisibility(modeler.getActiveObjectId(), false);
 
-                        self.activeObject = element.target;
-                        fabricCustomControl.setCustomControlVisibility(self.activeObject, true);
+                        modeler.setActiveObjectId(element.target.id);
+                        fabricCustomControl.setCustomControlVisibility(modeler.getActiveObjectId(), true);
                     }
 
                 });
@@ -67,12 +64,11 @@
                 self.canvas.on('selection:cleared', function (element) {
 
                     $log.debug(TAG + 'selection:cleared');
-                    $log.debug(element.target);
                     /*
                      * Hide custom control of previously selected subject
                      */
-                    if (self.activeObject !== null) {
-                        fabricCustomControl.setCustomControlVisibility(self.activeObject, false);
+                    if (modeler.getActiveObjectId() !== '') {
+                        fabricCustomControl.setCustomControlVisibility(modeler.getActiveObjectId(), false);
                     }
                 });
             };

@@ -21,7 +21,7 @@
         return directive;
 
         /** @ngInject */
-        function SubjectCustomControlController($log, fabric, fabricCustomControl, $rootScope) {
+        function SubjectCustomControlController($log, fabric, fabricCustomControl, $rootScope, modeler) {
             var TAG = "subject-custom-control.directive: ";
 
             var self = this;
@@ -31,7 +31,9 @@
                 $log.debug(TAG + 'deleteSubjectElement()');
 
                 var activeObjectId = fabric.getActiveObject().get('id');
+
                 fabric.removeActiveObjectFromCanvas();
+                modeler.setActiveObjectId('');
                 fabricCustomControl.removeCustomControl(activeObjectId);
 
                 $rootScope.$broadcast('subject:removed');

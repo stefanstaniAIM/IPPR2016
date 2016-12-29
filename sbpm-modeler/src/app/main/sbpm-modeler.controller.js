@@ -6,50 +6,25 @@
         .controller('SbpmModelerController', SbpmModelerController);
 
     /** @ngInject */
-    function SbpmModelerController($log, fabric,modeler) {
+    function SbpmModelerController($log, fabric,modeler, $window, fabricStorage) {
         var TAG = 'sbpm-modeler.controller: ';
 
         var self = this;
 
-        self.testJson = function () {
-            $log.debug(TAG + 'testJson()');
-            var canvas = fabric.getCanvas();
-            // save json
-            var json = JSON.stringify(canvas);
+        $window.onbeforeunload = function () {
+            fabricStorage.beforeUnloadHandler();
+        };
 
-            $log.debug(TAG);
-            $log.debug(json);
-
-            $log.debug(TAG);
-            $log.debug(canvas);
-
-            // clear canvas
-            canvas.clear();
-
-            // and load everything from the same json
-            canvas.loadFromJSON(json, function () {
-
-                // making sure to render canvas at the end
-                canvas.renderAll();
-                $log.debug(TAG);
-                // and checking if object's "name" is preserved
-                $log.debug(canvas.item(0));
-            });
+        $window.onload = function () {
+            fabricStorage.afterUnloadHandler();
         };
 
         self.saveInLocalStorage = function () {
-            var canvas = fabric.getCanvas();
-            var json = canvas.toJSON();
-            modeler.setSidViewObjects(json);
-            $log.debug(modeler.getModelerSettings());
+            fabricStorage.clearSidView();
         };
 
         self.loadFromJSON = function () {
-            var canvas = fabric.getCanvas();
-            canvas.loadFromJSON(JSON.stringify(modeler.getSidViewObjects()), function () {
-                canvas.renderAll();
-                $log.debug(TAG + 'get all elements');
-            });
+            fabricStorage.loadSidView();
         };
     }
 })();

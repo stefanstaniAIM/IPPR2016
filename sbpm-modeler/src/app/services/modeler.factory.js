@@ -16,10 +16,13 @@
             initialized: true,
             canvasInitialized: false,
             currentView: 'SID',
-            activeObject: '',
+            activeObjectId: '',
             sidViewObjects: {},
             sbdViewObjects: {},
-            customControls: []
+            customControls: {
+                sidViewCustomControls: [],
+                sbdViewCustomControls: []
+            }
         };
 
         function init() {
@@ -54,41 +57,88 @@
         };
 
         service.addCustomControl = function (objectId, customControlId) {
+
             $log.debug(TAG + 'addCustomControl()');
+
             var modelerSettings = storage.get('modelerSettings');
-            modelerSettings.customControls.push({
-                objectId: objectId,
-                customControlId: customControlId
-            });
+
+            if (modelerSettings.currentView === 'SID') {
+                modelerSettings.customControls.sidViewCustomControls.push({
+                    objectId: objectId,
+                    customControlId: customControlId
+                });
+            } else {
+                //TODO: SBD view
+            }
+
             storage.set('modelerSettings', modelerSettings);
         };
 
         service.removeCustomControl = function (objectId) {
+
             $log.debug(TAG + 'removeCustomControl()');
+
             var modelerSettings = storage.get('modelerSettings');
-            var customControls = modelerSettings.customControls;
-            $log.debug(customControls);
-            modelerSettings.customControls = _.without(customControls, _.findWhere(customControls, {
-                objectId: objectId
-            }));
-            $log.debug(modelerSettings.customControls);
+
+            if (modelerSettings.currentView === 'SID') {
+                var sidViewCustomControls = modelerSettings.customControls.sidViewCustomControls;
+                modelerSettings.customControls.sidViewCustomControls = _.without(sidViewCustomControls, _.findWhere(sidViewCustomControls, {
+                    objectId: objectId
+                }));
+            } else {
+                //TODO: SBD view
+            }
+
             storage.set('modelerSettings', modelerSettings);
         };
 
-        service.clearCustomControls = function () {
-            $log.debug(TAG + 'clearCustomControls()');
+        service.removeCustomControls = function () {
+
+            $log.debug(TAG + 'removeCustomControl()');
+
             var modelerSettings = storage.get('modelerSettings');
-            modelerSettings.customControls = [];
+
+            if (modelerSettings.currentView === 'SID') {
+                modelerSettings.customControls.sidViewCustomControls = [];
+            } else {
+                //TODO: SBD view
+            }
+
             storage.set('modelerSettings', modelerSettings);
         };
 
         service.getCustomControlId = function (objectId) {
+
             $log.debug(TAG + 'getCustomControl()' + ' - ' + objectId);
+
             var modelerSettings = storage.get('modelerSettings');
-            var result = _.find(modelerSettings.customControls, function (r) {
-                return r.objectId === objectId;
-            });
+
+            if (modelerSettings.currentView === 'SID') {
+                var sidViewCustomControls = modelerSettings.customControls.sidViewCustomControls;
+
+                var result = _.find(sidViewCustomControls, function (r) {
+                    return r.objectId === objectId;
+                });
+            }
+
             return result.customControlId;
+        };
+
+        service.getCustomControlIds = function () {
+            $log.debug(TAG + 'getCustomControlIds()');
+
+            var modelerSettings = storage.get('modelerSettings');
+
+            var result = [];
+
+            if (modelerSettings.currentView === 'SID') {
+                var sidViewCustomControls = modelerSettings.customControls.sidViewCustomControls;
+                var result = sidViewCustomControls.map(function (r) {
+                   return r.customControlId;
+                });
+            }
+
+            return result;
         };
 
         service.getModelerSettings = function () {
@@ -128,6 +178,20 @@
             var modelerSettings = storage.get('modelerSettings');
             modelerSettings.sidViewObjects = {};
             storage.set('modelerSettings', modelerSettings);
+        };
+
+        service.setActiveObjectId = function (activeObjectId) {
+            $log.debug(TAG + 'setActiveObjectId()');
+
+            var modelerSettings = storage.get('modelerSettings');
+            modelerSettings.activeObjectId = activeObjectId;
+            storage.set('modelerSettings', modelerSettings);
+        };
+
+        service.getActiveObjectId = function () {
+            $log.debug(TAG + 'getActiveObjectId()');
+
+            return storage.get('modelerSettings').activeObjectId;
         };
 
         return service;

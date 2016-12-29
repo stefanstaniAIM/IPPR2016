@@ -32,12 +32,12 @@
              * Add object Id and custom control Id to localStorage
              */
             var customControlId = 'customControl' + createId();
-            modeler.addCustomControl(object.get('id'), customControlId);
 
             /*
              * Add custom controls to SubjectElement or StateElement
              */
             if (object.get('type') === 'subjectElement') {
+                modeler.addCustomControl(object.get('id'), customControlId);
                 jQuery('#modeler-board').append($compile(addSubjectCustomControl(customControlId))($rootScope.$new()));
             } else {
                 //TODO: Add custom controls to StateElement
@@ -58,6 +58,25 @@
             jQuery('#' + customControlId).remove();
         };
 
+        service.removeCustomControls = function () {
+
+            $log.debug(TAG + 'removeCustomControls()');
+
+            if (modeler.getCurrentView() === 'SID') {
+
+                var customControlIds = modeler.getCustomControlIds();
+
+                customControlIds.forEach(function (customControlId) {
+                    jQuery('#' + customControlId).remove();
+                });
+
+            } else {
+                //TODO: SBD view
+            }
+
+            modeler.removeCustomControls();
+        };
+
         service.positionCustomControl = function (object) {
 
             $log.debug(TAG + 'positionCustomControl()');
@@ -66,11 +85,11 @@
             positionCustomControl(object, customControlId);
         };
 
-        service.setCustomControlVisibility = function (object, show) {
+        service.setCustomControlVisibility = function (objectId, show) {
 
             $log.debug(TAG + 'setCustomControlVisibility()');
 
-            var customControlId = modeler.getCustomControlId(object.get('id'));
+            var customControlId = modeler.getCustomControlId(objectId);
 
             if (show) {
                 jQuery('#' + customControlId).show();
