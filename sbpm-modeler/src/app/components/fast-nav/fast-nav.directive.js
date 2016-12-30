@@ -34,7 +34,7 @@
                 $log.debug(TAG + "successfully initiated");
             }
 
-            $rootScope.$on('currentView-changed', function () {
+            $rootScope.$on('currentView:changed', function () {
                 $log.debug(TAG + "currentView was changed");
                 $log.debug(TAG + "update view");
                 init();
@@ -42,7 +42,7 @@
 
             function changeCurrentView() {
                 modeler.setCurrentView(modeler.getCurrentView() === 'SID' ? 'SBD' : 'SID');
-                $rootScope.$emit('currentView-changed');
+                $rootScope.$emit('currentView:changed');
                 init();
             }
 

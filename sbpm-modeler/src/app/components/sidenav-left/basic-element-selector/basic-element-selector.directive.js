@@ -18,31 +18,33 @@
         return directive;
 
         /** @ngInject */
-        function BasicElementSelectorController($log, modeler, $rootScope) {
+            function BasicElementSelectorController($log, modeler, $rootScope) {
+
             var TAG = "basic-element-selector.directive: ";
 
             var self = this;
 
-            var currentView;
+            self.currentView = null;
 
-            self.isCurrentViewSID = isCurrentViewSID;
+            self.init = function() {
 
-            function init() {
-                currentView = modeler.getCurrentView();
-                $log.debug(TAG + "successfully initiated");
-            }
+                $log.debug(TAG + "init()");
 
-            $rootScope.$on('currentView-changed', function () {
-                $log.debug(TAG + "currentView was changed");
-                $log.debug(TAG + "update view");
-                init();
+                self.currentView = modeler.getCurrentView();
+            };
+
+            $rootScope.$on('currentView:changed', function () {
+
+                $log.debug(TAG + "currentView:changed");
+
+                self.init();
             });
 
-            function isCurrentViewSID() {
-                return currentView === 'SID' ? true : false;
-            }
+            self.isCurrentViewSID = function() {
+                return self.currentView === 'SID' ? true : false;
+            };
 
-            init();
+            self.init();
         }
     }
 

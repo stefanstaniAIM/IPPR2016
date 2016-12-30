@@ -6,7 +6,7 @@
         .factory('newFileDialog', newFileDialog);
 
     /** @ngInject */
-    function newFileDialog($mdDialog, modeler, $window) {
+    function newFileDialog($mdDialog, modeler, $window, fabric) {
 
         return {
             showDialog: function () {
@@ -19,6 +19,7 @@
 
                 $mdDialog.show(confirm)
                     .then(function () {
+                        fabric.getCanvas().clear();
                         modeler.clear();
                         $window.location.reload();
                     })

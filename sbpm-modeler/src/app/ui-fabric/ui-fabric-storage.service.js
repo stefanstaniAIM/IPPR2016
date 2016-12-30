@@ -23,6 +23,8 @@
 
             $log.debug(TAG + 'saveSidView()');
 
+            service.init();
+
             var canvasJSON = service.canvas.toJSON();
             modeler.setSidViewObjects(canvasJSON);
         };
@@ -30,6 +32,8 @@
         service.clearSidView = function () {
 
             $log.debug(TAG + 'clearSidView()');
+
+            service.init();
 
             service.saveSidView();
             modeler.setActiveObjectId('');
@@ -40,6 +44,8 @@
         service.loadSidView = function () {
 
             $log.debug(TAG + 'loadSidView()');
+
+            service.init();
 
             var canvasJSON = JSON.stringify(modeler.getSidViewObjects());
             service.canvas.loadFromJSON(canvasJSON, function () {
@@ -54,9 +60,6 @@
             service.init();
 
             if (modeler.getModelerSettings() !== null && modeler.getCanvasInitStatus()) {
-
-                $log.debug('----------------------------------------------------');
-                $log.debug(TAG + 'beforeUnloadHandler() - saving objects');
 
                 if (modeler.getCurrentView() === 'SID') {
                     service.clearSidView();
@@ -74,17 +77,12 @@
 
             if (modeler.getModelerSettings() !== null && modeler.getCanvasInitStatus()) {
 
-                $log.debug('----------------------------------------------------');
-                $log.debug(TAG + 'afterUnloadHandler() - loading objects');
-
                 if (modeler.getCurrentView() === 'SID') {
                     service.loadSidView();
                 } else {
                     //TODO: SBD view
                 }
             } else {
-                $log.debug('----------------------------------------------------');
-                $log.debug(TAG + 'afterUnloadHandler() - setting canvasInitialized');
                 modeler.setCanvasInitStatus(true);
             }
         };

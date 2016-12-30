@@ -18,74 +18,64 @@
         return directive;
 
         /** @ngInject */
-        function PropertiesRightController($log, $mdSidenav, modeler, $rootScope, fabric, $scope) {
+        function PropertiesRightController($log, $mdSidenav, modeler, $rootScope, fabric) {
+
             var TAG = 'properties-right.directive: ';
 
             var self = this;
 
             self.canvas = null;
-
-            var currentView;
-
-            self.closeProperties = closeProperties;
-            self.isCurrentViewSID = isCurrentViewSID;
-            self.propertiesOpened = propertiesOpened;
+            self.currentView = null;
 
             self.init = function() {
 
                 $log.debug(TAG + 'init()');
 
-                currentView = modeler.getCurrentView();
-
+                self.currentView = modeler.getCurrentView();
                 self.canvas = fabric.getCanvas();
 
                 /*
                  * Listen for fabric 'object:selected' event
                  */
                 self.canvas.on('object:selected', function (element) {
-                    hideProperties();
-                    showProperties();
+                    self.hideProperties();
+                    self.showProperties();
                 });
 
                 /*
                  * Listen for fabric 'selection:cleared' event
                  */
                 self.canvas.on('selection:cleared', function (element) {
-                    hideProperties();
+                    self.hideProperties();
                 });
             };
 
-            //$scope.$on('canvas:created', self.init);
+            $rootScope.$on('currentView:changed', function () {
 
-            function showProperties() {
-                $mdSidenav('properties-right').open();
-            }
+                $log.debug(TAG + "currentView:changed");
 
-            function hideProperties() {
-                $mdSidenav('properties-right').close();
-            }
-
-            function toogleProperties() {
-                $mdSidenav('properties-right').toggle();
-            }
-
-            $rootScope.$on('currentView-changed', function () {
-                $log.debug(TAG + "currentView was changed");
-                $log.debug(TAG + "update view");
-                init();
+                self.init();
             });
 
-            function isCurrentViewSID() {
-                return currentView === 'SID' ? true : false;
-            }
+            self.showProperties = function() {
+                $mdSidenav('properties-right').open();
+            };
 
-            function propertiesOpened() {
-                return $mdSidenav('properties-right').isOpen();
-            }
-
-            function closeProperties() {
+            self.hideProperties = function() {
                 $mdSidenav('properties-right').close();
-            }
+            };
+
+            self.isCurrentViewSID = function() {
+                return self.currentView === 'SID' ? true : false;
+            };
+
+            self.propertiesOpened = function() {
+                return $mdSidenav('properties-right').isOpen();
+            };
+
+            self.closeProperties = function() {
+                $mdSidenav('properties-right').close();
+            };
 
             self.init();
         }

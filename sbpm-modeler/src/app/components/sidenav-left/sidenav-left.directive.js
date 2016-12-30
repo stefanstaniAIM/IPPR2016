@@ -10,9 +10,6 @@
         var directive = {
             restrict: 'E',
             templateUrl: 'app/components/sidenav-left/sidenav-left.template.html',
-            scope: {
-                currentView: '='
-            },
             controller: SidenavLeftController,
             controllerAs: 'sl',
             bindToController: true
@@ -26,46 +23,43 @@
 
             var self = this;
 
-            var currentView;
+            self.currentView = null;
 
-            self.changeView = changeView;
-            self.isCurrentViewSID = isCurrentViewSID;
-            self.newFile = newFile;
-            self.sideNavOpened = sideNavOpened;
-            self.toogleSidenav = toogleSidenav;
+            self.init = function() {
 
-            function init() {
-                currentView = modeler.getCurrentView();
-                $log.debug(TAG + "successfully initiated");
-            }
+                $log.debug(TAG + "init()");
 
-            $rootScope.$on('currentView-changed', function () {
-                $log.debug(TAG + "currentView was changed");
-                $log.debug(TAG + "update view");
-                init();
+                self.currentView = modeler.getCurrentView();
+            };
+
+            $rootScope.$on('currentView:changed', function () {
+
+                $log.debug(TAG + "currentView:changed");
+
+                self.init();
             });
 
-            function changeView() {
+            self.changeView = function() {
                 changeViewDialog.showDialog();
-            }
+            };
 
-            function isCurrentViewSID() {
-                return currentView === 'SID' ? true : false;
-            }
+            self.isCurrentViewSID = function() {
+                return self.currentView === 'SID' ? true : false;
+            };
 
-            function newFile() {
+            self.newFile = function() {
                 newFileDialog.showDialog();
-            }
+            };
 
-            function sideNavOpened() {
+            self.sideNavOpened = function() {
                 return $mdSidenav('sidenav-left').isOpen();
-            }
+            };
 
-            function toogleSidenav() {
+            self.toogleSidenav = function() {
                 $mdSidenav('sidenav-left').toggle();
-            }
+            };
 
-            init();
+            self.init();
         }
     }
 

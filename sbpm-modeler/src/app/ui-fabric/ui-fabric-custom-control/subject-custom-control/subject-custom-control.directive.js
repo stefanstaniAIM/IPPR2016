@@ -35,10 +35,7 @@
                 fabric.removeActiveObjectFromCanvas();
                 modeler.setActiveObjectId('');
                 fabricCustomControl.removeCustomControl(activeObjectId);
-
-                $rootScope.$broadcast('subject:removed');
             }
-
         }
     }
 })();

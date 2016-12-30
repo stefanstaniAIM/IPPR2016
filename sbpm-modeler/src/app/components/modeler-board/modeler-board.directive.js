@@ -64,6 +64,7 @@
                 self.canvas.on('selection:cleared', function (element) {
 
                     $log.debug(TAG + 'selection:cleared');
+
                     /*
                      * Hide custom control of previously selected subject
                      */
@@ -75,17 +76,13 @@
 
             $scope.$on('canvas:created', self.init);
 
-            $scope.$on('subject:removed', function () {
-                self.activeObject = null;
-            });
-
+            /*
+             * Add SubjectElement or StateElement to canvas
+             */
             self.onDrop = function (target, source, ev) {
 
                 $log.debug(TAG + 'onDrop()');
 
-                /*
-                 * Add SubjectElement or StateElement to canvas
-                 */
                 if (source === 'subject-element') {
                     self.subjectElementDefaults.top = ev.originalEvent.y;
                     self.subjectElementDefaults.left = ev.originalEvent.x;

@@ -8,8 +8,6 @@
     /** @ngInject */
     function changeViewDialog($log, $mdDialog, modeler, $rootScope) {
 
-        var TAG = 'change-view.dialog: ';
-
         return {
             showDialog: function () {
                 $mdDialog.show({
@@ -23,41 +21,49 @@
         };
 
         function ChangeViewDialogController() {
+
+            var TAG = 'change-view.dialog: ';
+
             var self = this;
 
-            var currentView;
+            self.currentView = null;
 
-            self.cancel = cancel;
-            self.changeCurrentView = changeCurrentView;
-            self.isCurrentViewSID = isCurrentViewSID;
+            self.init = function() {
 
-            function init() {
-                currentView = modeler.getCurrentView();
-                $log.debug(TAG + "successfully initiated");
-            }
+                $log.debug(TAG + "init()");
 
-            function changeCurrentView() {
-                modeler.setCurrentView(modeler.getCurrentView() === 'SID' ? 'SBD' : 'SID');
-                $rootScope.$emit('currentView-changed');
-                init();
-            }
+                self.currentView = modeler.getCurrentView();
+            };
 
-            $rootScope.$on('currentView-changed', function () {
-                $log.debug(TAG + "currentView was changed");
-                $log.debug(TAG + "update view");
+            $rootScope.$on('currentView:changed', function () {
+
+                $log.debug(TAG + "currentView:changed");
+
                 $mdDialog.hide();
-                init();
+                self.init();
             });
 
-            function cancel() {
+            self.cancel = function() {
+
+                $log.debug(TAG + "cancel()");
+
                 $mdDialog.cancel();
-            }
+            };
 
-            function isCurrentViewSID() {
-                return currentView === 'SID' ? true : false;
-            }
+            self.changeCurrentView = function() {
 
-            init();
+                $log.debug(TAG + "changeCurrentView()");
+
+                modeler.setCurrentView(modeler.getCurrentView() === 'SID' ? 'SBD' : 'SID');
+                $rootScope.$emit('currentView:changed');
+                self.init();
+            };
+
+            self.isCurrentViewSID = function() {
+                return self.currentView === 'SID' ? true : false;
+            };
+
+            self.init();
         }
 
     }
