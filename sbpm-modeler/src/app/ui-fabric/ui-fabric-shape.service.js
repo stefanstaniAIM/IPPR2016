@@ -16,10 +16,8 @@
 
             $log.debug('fabricShape - init()');
 
-            service.gridLineDefaults = fabricConfig.getGridLineDefaults();
             service.lineDefaults = fabricConfig.getLineDefaults();
             service.rectDefaults = fabricConfig.getRectDefaults();
-            service.rectWithTextDefaults = fabricConfig.getRectWithTextDefaults();
             service.triangleDefaults = fabricConfig.getTriangleDefaults();
             service.subjectElementDefaults = fabricConfig.getSubjectElementDefaults();
         };
@@ -27,24 +25,6 @@
         //
         // Shapes: Circle, Ellipse, Line, Polygon, Polyline, Rect and Triangle.
         //
-
-        /**
-         * @name gridLine
-         * @desc Creates a new Line object
-         * @param {Array} [points] An array of points (where each point is an object with x and y)
-         * @param {Object} [options] A configuration object, defaults to gridLineDefaults
-         * @return {Object} Returns the new Line object
-         */
-        service.gridLine = function (points, options) {
-
-            $log.debug('fabricShape - gridLine()');
-
-            options = options || service.gridLineDefaults;
-
-            // $log.debug('points: ' + JSON.stringify(['e', points], null, '\t'));
-
-            return new fabricWindow.Line(points, options);
-        };
 
         /**
          * @name line
@@ -278,7 +258,7 @@
             // TODO: Tried to move this from main-controller.js - had some issues ???
 
             // id: '',
-            // connectors: { fromPort: [], fromLine: [], fromArrow: [], toPort: [], toLine: [], toArrow: [], otherObject: [] },
+            connectors: '',
 
             initialize: function (options) {
 
@@ -288,6 +268,7 @@
                 this.set('name', "New subject");
                 this.set('startSubject', false);
                 this.set('multiSubject', false);
+                this.set('connectors', { fromPort: [], fromLine: [], fromArrow: [], toPort: [], toLine: [], toArrow: [], otherObject: [] });
 
                 this.setControlsVisibility({
                     'tl': true,
@@ -402,7 +383,8 @@
                     id: this.id,
                     name: this.name,
                     startSubject: this.startSubject,
-                    multiSubject: this.multiSubject
+                    multiSubject: this.multiSubject,
+                    connectors: this.connectors
                 });
             },
 

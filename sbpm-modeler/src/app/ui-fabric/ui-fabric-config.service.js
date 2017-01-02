@@ -94,10 +94,6 @@
             top: GRID_SIZE
         }, objectDefaults);
 
-        var gridLineDefaults = {
-            stroke: 'LIGHTGRAY'
-        };
-
         var controlDefaults = {
             selectable: true,
             stroke: 'LIGHTBLUE',
@@ -132,30 +128,6 @@
 
         arrowDefaults.hasRotatingPoint = false;
         arrowDefaults.selectable = false;
-
-        //
-        // RectWithText (a Node or a Container)
-        //
-
-        // const RECT_WITH_TEXT_FONT_SIZE = 18;
-        const RECT_WITH_TEXT_FONT_SIZE = '18';
-        const RECT_WITH_TEXT_FONT_WEIGHT = 'normal';
-        const RECT_WITH_TEXT_WIDTH = 100;
-        const RECT_WITH_TEXT_HEIGHT = 100;
-
-        var rectWithTextDefaults = angular.extend({
-            fillStyle: 'BLACK',
-            fontFamily: FONT_FAMILY,
-            fontSize: RECT_WITH_TEXT_FONT_SIZE,  // option element can only hold string type as its value
-            fontWeight: RECT_WITH_TEXT_FONT_WEIGHT,
-            originX: 'left',
-            originY: 'top',
-            scaleX: 1,
-            scaleY: 1,
-            textXAlign: 'center',   // left, right, center, start, end
-            textYAlign: 'middle',   // top, bottom, middle
-            textBaseline: 'middle'  // top, bottom, middle, alphabetic, hanging
-        }, rectDefaults);
 
         //
         // SubjectElement
@@ -203,10 +175,6 @@
             return textDefaults;
         };
 
-        service.getGridLineDefaults = function() {
-            return gridLineDefaults;
-        };
-
         service.getControlDefaults = function() {
             return controlDefaults;
         };
@@ -217,10 +185,6 @@
 
         service.getArrowDefaults = function() {
             return arrowDefaults;
-        };
-
-        service.getRectWithTextDefaults = function() {
-            return rectWithTextDefaults;
         };
 
         service.getSubjectElementDefaults = function() {

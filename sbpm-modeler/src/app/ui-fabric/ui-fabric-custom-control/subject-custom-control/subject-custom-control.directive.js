@@ -26,7 +26,7 @@
 
             var self = this;
 
-            self.deleteSubjectElement = function () {
+            self.removeSubjectElement = function () {
 
                 $log.debug(TAG + 'deleteSubjectElement()');
 
@@ -35,7 +35,16 @@
                 fabric.removeActiveObjectFromCanvas();
                 modeler.setActiveObjectId('');
                 fabricCustomControl.removeCustomControl(activeObjectId);
-            }
+            };
+
+            self.addMessageConnector = function () {
+
+                $log.debug(TAG + 'addMessageConnector()');
+
+                //fabric.setConnectorMode(false);
+
+                fabric.drawConnection();
+            };
         }
     }
 })();

@@ -40,6 +40,8 @@
 
                     $log.debug(TAG + 'object:selected');
 
+                    $log.debug(element.target);
+
                     fabric.objectSelectedListener(element);
 
                     /*
@@ -52,7 +54,7 @@
                     } else {
                         fabricCustomControl.setCustomControlVisibility(modeler.getActiveObjectId(), false);
 
-                        modeler.setActiveObjectId(fabric.getActiveObject());
+                        modeler.setActiveObjectId(element.target.id);
                         fabricCustomControl.setCustomControlVisibility(modeler.getActiveObjectId(), true);
                     }
 
@@ -101,7 +103,7 @@
 
                 $log.debug(TAG + 'newSubjectElement()');
 
-                fabric.setConnectorMode(false);
+                fabric.setConnectorMode(true);
 
                 self.subjectElementDefaults.top = ev.originalEvent.y;
                 self.subjectElementDefaults.left = ev.originalEvent.x;

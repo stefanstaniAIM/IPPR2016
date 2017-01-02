@@ -6,9 +6,7 @@
         .controller('SbpmModelerController', SbpmModelerController);
 
     /** @ngInject */
-    function SbpmModelerController($log, fabric,modeler, $window, fabricStorage) {
-        var TAG = 'sbpm-modeler.controller: ';
-
+    function SbpmModelerController($window, fabricStorage) {
         var self = this;
 
         $window.onbeforeunload = function () {

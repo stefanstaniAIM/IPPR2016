@@ -109,7 +109,7 @@
 
         service.getCustomControlId = function (objectId) {
 
-            $log.debug(TAG + 'getCustomControl()' + ' - ' + objectId);
+            $log.debug(TAG + 'getCustomControlId()' + ' - ' + objectId);
 
             var modelerSettings = storage.get('modelerSettings');
 
