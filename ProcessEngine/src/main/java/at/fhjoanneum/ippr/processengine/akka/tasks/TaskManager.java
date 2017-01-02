@@ -15,9 +15,17 @@ public class TaskManager {
   @Autowired
   private SpringExtension springExtension;
 
-  public void executeTask(final TaskAllocation task, final UntypedActorContext context, final Object msg) {
+  public void executeTask(final TaskAllocation task, final UntypedActorContext context,
+      final Object msg) {
     final ActorRef taskActor =
         context.actorOf(springExtension.props(task.getActorName()), getTaskId());
+    taskActor.forward(msg, context);
+  }
+
+  public <T> void executeTask(final TaskAllocation task, final UntypedActorContext context,
+      final Object msg, final TaskCallback<T> callback) {
+    final ActorRef taskActor =
+        context.actorOf(springExtension.props(task.getActorName(), callback), getTaskId());
     taskActor.forward(msg, context);
   }
 

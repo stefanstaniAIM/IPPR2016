@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.processengine.akka.tasks.process;
+package at.fhjoanneum.ippr.processengine.akka.tasks.user;
 
 import java.util.List;
 import java.util.Optional;
@@ -46,7 +46,7 @@ import at.fhjoanneum.ippr.processengine.repositories.SubjectStateRepository;
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 
-@Component("StateObjectChangeTask")
+@Component("User.StateObjectChangeTask")
 @Scope("prototype")
 public class StateObjectChangeTask extends AbstractTask {
 
