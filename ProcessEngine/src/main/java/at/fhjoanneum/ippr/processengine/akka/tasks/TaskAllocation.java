@@ -7,7 +7,9 @@ public enum TaskAllocation {
           "User.UserActorInitializeTask"), PROCESS_STATE_TASK(
               "Process.ProcessStateTask"), PROCESS_STOP_TASK(
                   "Process.ProcessStopTask"), PROCESS_STATE_CHANGE_TASK(
-                      "Process.ProcessStateChangeTask");
+                      "Process.ProcessStateChangeTask"), PROCESS_START_TASK(
+                          "ProcessSupervisor.ProcessStartTask"), PROCESS_INFO_TASK(
+                              "ProcessSupervisor.ProcessInfoTask");
 
   private final String actorName;
 
