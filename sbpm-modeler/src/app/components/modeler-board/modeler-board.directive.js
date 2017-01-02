@@ -42,7 +42,7 @@
 
                     $log.debug(element.target);
 
-                    fabric.objectSelectedListener(element);
+                    fabric.objectSelectedListener(element.target);
 
                     /*
                      * Show custom control of active object
@@ -67,7 +67,7 @@
 
                     $log.debug(TAG + 'selection:cleared');
 
-                    fabric.selectionClearedListener(element);
+                    fabric.selectionClearedListener();
 
                     /*
                      * Hide custom control of previously selected subject

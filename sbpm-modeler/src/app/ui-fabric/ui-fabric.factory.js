@@ -1,4 +1,4 @@
-(function() {
+(function () {
     'use strict';
 
     angular.module('ui.fabric')
@@ -29,7 +29,7 @@
         service.connectorLine = null;
         service.connectorLineFromPort = null;
         service.connectorLineFromArrow = null;
-        service.isMouseDown = false;
+        service.connectionStarted = false;
         service.fromObject = null;
 
         // service.formatShape = { show: false};
@@ -87,7 +87,7 @@
         // Shapes
         //
 
-        var addObjectToCanvas = function(object, render) {
+        var addObjectToCanvas = function (object, render) {
 
             render = render || false;
 
@@ -107,7 +107,7 @@
             return object;
         };
 
-        service.getActiveObject = function() {
+        service.getActiveObject = function () {
 
             $log.debug(TAG + 'getActiveObject()');
 
@@ -115,7 +115,7 @@
 
         };
 
-        var removeObjectFromCanvas = function(object, render) {
+        var removeObjectFromCanvas = function (object, render) {
 
             service.canvas.remove(object);
 
@@ -126,7 +126,7 @@
             }
         };
 
-        service.setActiveObject = function(object) {
+        service.setActiveObject = function (object) {
 
             $log.debug('fabric - setActiveObject()');
 
@@ -136,7 +136,7 @@
             }
         };
 
-        service.removeActiveObjectFromCanvas = function() {
+        service.removeActiveObjectFromCanvas = function () {
 
             $log.debug(TAG + 'removeActiveObjectFromCanvas()');
 
@@ -158,7 +158,7 @@
          * @param {Boolean} [render] When true, service.canvas.renderAll() is invoked
          * @return {Object} Returns the new Rect object
          */
-        service.addSubjectElement = function(options, render) {
+        service.addSubjectElement = function (options, render) {
 
             $log.debug(TAG + 'addSubjectElement()');
 
@@ -177,7 +177,7 @@
          * @param {Boolean} [render] When true, service.canvas.renderAll() is invoked
          * @return {Object} Returns the new Connector object
          */
-        service.addConnector = function(points, options, render) {
+        service.addConnector = function (points, options, render) {
 
             $log.debug('fabric - addConnector()');
 
@@ -190,7 +190,7 @@
         //      http://gamedev.stackexchange.com/questions/14602/what-are-atan-and-atan2-used-for-in-games
         //
 
-        service.createArrow = function(points, options) {
+        service.createArrow = function (points, options) {
 
             // $log.debug('createArrow()');
 
@@ -239,7 +239,7 @@
          * @param {Boolean} [render] When true, service.canvas.renderAll() is invoked
          * @return {Object} Returns the new Triangle object
          */
-        service.addTriangle = function(options, render) {
+        service.addTriangle = function (options, render) {
 
             $log.debug('fabric - addTriangle()');
 
@@ -250,7 +250,7 @@
         // Listeners
         //
 
-        service.moveFromLineArrows = function(object, portCenter, index) {
+        service.moveFromLineArrows = function (object, portCenter, index) {
 
             $log.debug('moveFromLineArrows() - index: ' + index);
 
@@ -275,7 +275,7 @@
 
             arrowOptions.fill = FROM_ARROW_FILL;
 
-            var fromArrow = service.createArrow([ x1, y1, x2, y2 ], arrowOptions);
+            var fromArrow = service.createArrow([x1, y1, x2, y2], arrowOptions);
             fromArrow.index = index;
             fromArrow.object = object;
             fromArrow.otherObject = otherObject;
@@ -288,7 +288,7 @@
 
             $log.debug('moveFromLineArrows() - toArrow <-');
 
-            var toArrow = service.createArrow([ x2, y2, x1, y1 ], arrowOptions);
+            var toArrow = service.createArrow([x2, y2, x1, y1], arrowOptions);
             toArrow.index = fromArrow.index;
             toArrow.object = fromArrow.object;
             toArrow.otherObject = fromArrow.otherObject;
@@ -304,7 +304,7 @@
             otherObject.connectors.toArrow[index] = toArrow;
         };
 
-        service.moveToLineArrows = function(object, portCenter, index) {
+        service.moveToLineArrows = function (object, portCenter, index) {
 
             $log.debug('moveToLineArrows() - index: ' + index);
 
@@ -335,7 +335,7 @@
 
             arrowOptions.fill = FROM_ARROW_FILL;
 
-            var fromArrow = service.createArrow([ x2, y2, x1, y1 ], arrowOptions);
+            var fromArrow = service.createArrow([x2, y2, x1, y1], arrowOptions);
             fromArrow.index = index;
             fromArrow.object = otherObject;
             fromArrow.otherObject = object;
@@ -348,7 +348,7 @@
 
             arrowOptions.fill = TO_ARROW_FILL;
 
-            var toArrow = service.createArrow([ x1, y1, x2, y2  ], arrowOptions);
+            var toArrow = service.createArrow([x1, y1, x2, y2], arrowOptions);
             toArrow.index = fromArrow.index;
             toArrow.object = fromArrow.object;
             toArrow.otherObject = fromArrow.otherObject;
@@ -368,7 +368,7 @@
 
         // Object
 
-        service.objectMovingListener = function(options) {
+        service.objectMovingListener = function (options) {
 
             $log.debug('objectMovingListener()');
 
@@ -391,12 +391,12 @@
                     $log.debug('objectMovingListener() - object.connectors.fromLine.length: ' + object.connectors.fromLine.length);
 
                     i = 0;
-                    object.connectors.fromLine.forEach(function(line) {
+                    object.connectors.fromLine.forEach(function (line) {
 
                         // the center of the 'fromPort' is the line's starting point (x1, y1)
                         // the center of the 'toPort' is the line's end point (x2, y2)
                         portCenter = fabricUtils.getPortCenterPoint(object, object.connectors.fromPort[i]);
-                        line.set({ 'x1': portCenter.x1, 'y1': portCenter.y1 });
+                        line.set({'x1': portCenter.x1, 'y1': portCenter.y1});
 
                         service.moveFromLineArrows(object, portCenter, i);
                         i++;
@@ -410,12 +410,12 @@
                     $log.debug('objectMovingListener() - object.connectors.toLine.length: ' + object.connectors.toLine.length);
 
                     i = 0;
-                    object.connectors.toLine.forEach(function(line) {
+                    object.connectors.toLine.forEach(function (line) {
 
                         // the center of the 'fromPort' is the line's starting point (x1, y1)
                         // the center of the 'toPort' is the line's end point (x2, y2)
                         portCenter = fabricUtils.getPortCenterPoint(object, object.connectors.toPort[i]);
-                        line.set({ 'x2': portCenter.x2, 'y2': portCenter.y2 });
+                        line.set({'x2': portCenter.x2, 'y2': portCenter.y2});
 
                         service.moveToLineArrows(object, portCenter, i);
                         i++;
@@ -426,9 +426,9 @@
             }
         };
 
-        service.mouseUpListener = function(options) {
+        service.mouseDownListener = function (options) {
 
-            $log.debug(TAG + 'mouseUpListener()');
+            $log.debug(TAG + 'mouseDownListener()');
 
             var portCenter = null;
 
@@ -438,17 +438,24 @@
 
             if (service.connectorMode) {
 
-                if (service.isMouseDown !== true) {
-                    $log.debug('mouseUpListener() - service.isMouseDown !== true');
+                if (service.connectionStarted !== true) {
+                    $log.debug('mouseDownListener() - service.connectionStarted !== true');
                     return;
                 }
 
-                service.isMouseDown = false;
+                // No valid target
+                if (options.target === null) {
+                    service.selectedObject = null;
+                }
+
+                service.connectionStarted = false;
 
                 //
                 // If we're over (mouse:over) a Shape that supports connections.
                 //
                 if (service.selectedObject) {
+
+                    $log.debug('--------------------------------');
 
                     // We're over a connection port, and the user has finished (mouse:up) drawing the connector (line).
                     // object(fromPort) <-- toArrow -- connector -- fromArrow --> (toPort)otherObject
@@ -457,16 +464,16 @@
                     var toPort = 'ml';
                     var arrowOptions = service.arrowDefaults;
 
-                    $log.debug('mouseUpListener() - toPort: ' + toPort);
+                    $log.debug('mouseDownListener() - toPort: ' + toPort);
 
                     portCenter = fabricUtils.getPortCenterPoint(service.selectedObject, toPort);
-                    service.connectorLine.set({ 'x2': portCenter.x2, 'y2': portCenter.y2 });
+                    service.connectorLine.set({'x2': portCenter.x2, 'y2': portCenter.y2});
 
                     //
                     // Create the 'from ->' arrow
                     //
 
-                    $log.debug('mouseUpListener() - create fromArrow ->');
+                    $log.debug('mouseDownListener() - create fromArrow ->');
 
                     arrowOptions.fill = FROM_ARROW_FILL;
                     var fromArrow = service.createArrow([service.connectorLine.x1, service.connectorLine.y1,
@@ -482,7 +489,7 @@
                     // Create the 'to <-' arrow
                     //
 
-                    $log.debug('mouseUpListener() - create toArrow <-');
+                    $log.debug('mouseDownListener() - create toArrow <-');
 
                     arrowOptions.fill = TO_ARROW_FILL;
                     var toArrow = service.createArrow([portCenter.x2, portCenter.y2,
@@ -504,7 +511,7 @@
                         index = index - 1;
                     }
 
-                    $log.debug('mouseUpListener() - index: ' + index);
+                    $log.debug('mouseDownListener() - index: ' + index);
 
                     fromArrow.index = index;
                     toArrow.index = index;
@@ -532,7 +539,7 @@
                     service.selectedObject.connectors.toPort.push(toPort);
                     service.selectedObject.connectors.otherObject.push(service.fromObject);
 
-                    $log.info(service.fromObject.text + ' and ' + service.selectedObject.text + ' are connected!');
+                    $log.info(service.fromObject.name + ' and ' + service.selectedObject.name + ' are connected!');
 
                     // $log.debug('service.fromObject.connectors: ' + JSON.stringify(['e', service.fromObject.connectors], null, '\t'));
                     // $log.debug('service.selectedObject.connectors: ' + JSON.stringify(['e', service.selectedObject.connectors], null, '\t'));
@@ -540,7 +547,7 @@
                     arrowOptions.fill = DEFAULT_ARROW_FILL;
 
                     if (service.connectorLineFromArrow) {
-                        $log.debug('mouseUpListener - removeObjectFromCanvas(service.connectorLineFromArrow)');
+                        $log.debug('mouseDownListener - removeObjectFromCanvas(service.connectorLineFromArrow)');
                         removeObjectFromCanvas(service.connectorLineFromArrow, false);
                     }
 
@@ -551,10 +558,10 @@
                 } else {  // if (service.selectedObject)
 
                     if (service.connectorLine) {
-                        $log.debug('mouseUpListener() - removeObjectFromCanvas(service.connectorLine)');
+                        $log.debug('mouseDownListener() - removeObjectFromCanvas(service.connectorLine)');
                         removeObjectFromCanvas(service.connectorLine, false);
                         if (service.connectorLineFromArrow) {
-                            $log.debug('mouseUpListener() - removeObjectFromCanvas(service.connectorLineFromArrow)');
+                            $log.debug('mouseDownListener() - removeObjectFromCanvas(service.connectorLineFromArrow)');
                             removeObjectFromCanvas(service.connectorLineFromArrow, false);
                         }
                     }
@@ -572,53 +579,47 @@
 
         // Mouse
 
-        service.mouseMoveListener = function(options) {
+        service.mouseMoveListener = function (options) {
 
             //$log.debug('mouseMoveListener()');
 
-            if (!service.isMouseDown) return;
+            if (!service.connectionStarted) return;
 
             if (service.connectorMode) {
 
                 var pointer = service.canvas.getPointer(options.e);
 
-                service.connectorLine.set({ 'x2': pointer.x, 'y2': pointer.y });
+                service.connectorLine.set({'x2': pointer.x, 'y2': pointer.y});
                 service.canvas.renderAll();
             }
         };
 
-        service.objectSelectedListener = function(element) {
+        service.objectSelectedListener = function (object) {
 
             $log.debug(TAG + 'objectSelectedListener()');
 
             if (service.connectorMode) {
 
-                if (element.target.type === 'subjectElement') {
+                if (object.type === 'subjectElement') {
 
                     $log.debug('objectSelectedListener() - element.target.type === subjectElement');
 
-                    service.selectedObject = element.target;
+                    service.selectedObject = object;
                     service.activeObject = service.selectedObject;
-                    /*service.selectedObject.set('selectable', true);
-                    service.selectedObject.set('hasRotatingPoint', true);
-                    service.selectedObject.set('hasBorders', service.subjectElementDefaults.hasBorders);
-                    service.selectedObject.set('cornerSize', service.subjectElementDefaults.cornerSize);
-                    service.selectedObject.set('transparentCorners', service.subjectElementDefaults.transparentCorners);
-                    service.selectedObject.setControlsVisibility({ 'tl': true, 'tr': true, 'br': true, 'bl': true });*/
 
                     service.canvas.renderAll();
                 }
             }
         };
 
-        service.selectionClearedListener = function(element) {
+        service.selectionClearedListener = function () {
 
             $log.debug('selectionClearedListener()');
 
             service.activeObject = null;
         };
 
-        service.configCanvasListeners = function() {
+        service.configCanvasListeners = function () {
 
             $log.debug('configCanvasListeners()');
 
@@ -626,14 +627,14 @@
                 'object:moving': service.objectMovingListener,
                 'selection:cleared': service.selectionClearedListener,
                 'mouse:move': service.mouseMoveListener,
-                'mouse:up': service.mouseUpListener
+                'mouse:down': service.mouseDownListener
             });
 
         };
 
         // Connections
 
-        service.drawConnection = function() {
+        service.drawConnection = function () {
 
             $log.debug('drawConnection()');
 
@@ -659,7 +660,7 @@
                         return;
                     }
 
-                    service.isMouseDown = true;
+                    service.connectionStarted = true;
 
                     //points = fabricUtils.findTargetPort(service.fromObject);
                     points = [

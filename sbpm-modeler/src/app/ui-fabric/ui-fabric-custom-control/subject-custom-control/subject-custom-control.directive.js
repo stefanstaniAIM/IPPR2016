@@ -41,7 +41,8 @@
 
                 $log.debug(TAG + 'addMessageConnector()');
 
-                //fabric.setConnectorMode(false);
+                //fabric.setConnectorMode(true);
+                //fabric.callObjectSelectedListener();
 
                 fabric.drawConnection();
             };
