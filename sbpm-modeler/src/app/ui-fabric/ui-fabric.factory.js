@@ -18,7 +18,14 @@
         service.connectorDefaults = null;
         service.arrowDefaults = null;
 
+        service.connectorMode = false;
         service.activeObject = null;
+        service.selectedObject = null;
+        service.connectorLine = null;
+        service.connectorLineFromPort = null;
+        service.connectorLineFromArrow = null;
+        service.isMouseDown = false;
+        service.fromObject = null;
 
         // service.formatShape = { show: false};
 
@@ -44,6 +51,13 @@
             };
         };
 
+        service.setConnectorMode = function (mode) {
+
+            $log.debug(TAG + 'setConnectorMode(): ' + mode);
+
+            service.connectorMode = mode;
+        };
+
         //
         // Canvas
         //
@@ -58,20 +72,6 @@
             $log.debug(TAG + 'getCanvas()');
 
             return service.canvas;
-        };
-
-        service.configCanvasListeners = function() {
-
-            $log.debug('configCanvasListeners()');
-
-            service.canvas.on({
-                'selection:cleared': service.selectionClearedListener
-            });
-
-        };
-
-        service.selectionClearedListener = function () {
-            $log.debug(TAG + 'selectionClearedListener()');
         };
 
         //
@@ -110,10 +110,20 @@
 
             service.canvas.remove(object);
 
-            $log.debug(TAG + 'removeObjectFromCanvas() - render: ' + render.toLocaleString());
+            $log.debug(TAG + 'removeObjectFromCanvas() - render: ' + render);
 
             if (render) {
                 service.canvas.renderAll();
+            }
+        };
+
+        service.setActiveObject = function(object) {
+
+            $log.debug('fabric - setActiveObject()');
+
+            if (object) {
+                service.canvas.setActiveObject(object);
+                // service.canvas.renderAll();
             }
         };
 
@@ -128,49 +138,9 @@
             }
         };
 
-        service.objectSelectedListener = function (element) {
-            $log.debug(TAG + 'objectSelectedListener()');
-            service.activeObject = element.target;
-        };
-
-        service.setActiveObject = function(object) {
-
-            $log.debug('fabric - setActiveObject()');
-
-            if (object) {
-                service.canvas.setActiveObject(object);
-                // service.canvas.renderAll();
-            }
-        };
-
-        /**
-         * @name addRect
-         * @desc Creates a new Rect and adds it to the canvas
-         * @param {Object} [options] A configuration object, defaults to service.rectDefaults
-         * @param {Boolean} [render] When true, service.canvas.renderAll() is invoked
-         * @return {Object} Returns the new Rect object
-         */
-        service.addRect = function(options, render) {
-
-            $log.debug('fabric - addRect()');
-
-            return addObjectToCanvas(fabricShape.rect(options), render);
-        };
-
-        /**
-         * @name addRectWithText
-         * @desc Creates a new Rect and adds it to the canvas
-         * @param {String} [text] A string of text
-         * @param {Object} [options] A configuration object, defaults to service.rectDefaults
-         * @param {Boolean} [render] When true, service.canvas.renderAll() is invoked
-         * @return {Object} Returns the new Rect object
-         */
-        service.addRectWithText = function(text, options, render) {
-
-            $log.debug('fabric - addRectWithText()');
-
-            return addObjectToCanvas(fabricShape.rectWithText(text, options), render);
-        };
+        //
+        // SubjectElement
+        //
 
         /**
          * @name addSubjectElement
@@ -184,6 +154,51 @@
             $log.debug(TAG + 'addSubjectElement()');
 
             return addObjectToCanvas(fabricShape.subjectElement(options), render);
+        };
+
+        //
+        // Listeners
+        //
+
+        service.objectSelectedListener = function(element) {
+
+            $log.debug(TAG + 'objectSelectedListener()');
+
+            if (service.connectorMode) {
+
+                if (element.target.type === 'subjectElement') {
+
+                    $log.debug('objectSelectedListener() - element.target.type === subjectElement');
+
+                    service.selectedObject = element.target;
+                    service.activeObject = service.selectedObject;
+                    /*service.selectedObject.set('selectable', true);
+                    service.selectedObject.set('hasRotatingPoint', true);
+                    service.selectedObject.set('hasBorders', service.rectDefaults.hasBorders);
+                    service.selectedObject.set('cornerSize', service.rectDefaults.cornerSize);
+                    service.selectedObject.set('transparentCorners', service.rectDefaults.transparentCorners);
+                    service.selectedObject.setControlsVisibility({ 'tl': true, 'tr': true, 'br': true, 'bl': true });*/
+
+                    service.canvas.renderAll();
+                }
+            }
+        };
+
+        service.selectionClearedListener = function(element) {
+
+            $log.debug('selectionClearedListener()');
+
+            service.activeObject = null;
+        };
+
+        service.configCanvasListeners = function() {
+
+            $log.debug('configCanvasListeners()');
+
+            service.canvas.on({
+                'selection:cleared': service.selectionClearedListener
+            });
+
         };
 
         service.init();

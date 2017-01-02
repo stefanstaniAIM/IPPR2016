@@ -52,7 +52,7 @@
                     } else {
                         fabricCustomControl.setCustomControlVisibility(modeler.getActiveObjectId(), false);
 
-                        modeler.setActiveObjectId(element.target.id);
+                        modeler.setActiveObjectId(fabric.getActiveObject());
                         fabricCustomControl.setCustomControlVisibility(modeler.getActiveObjectId(), true);
                     }
 
@@ -64,6 +64,8 @@
                 self.canvas.on('selection:cleared', function (element) {
 
                     $log.debug(TAG + 'selection:cleared');
+
+                    fabric.selectionClearedListener(element);
 
                     /*
                      * Hide custom control of previously selected subject
@@ -84,14 +86,30 @@
                 $log.debug(TAG + 'onDrop()');
 
                 if (source === 'subject-element') {
-                    self.subjectElementDefaults.top = ev.originalEvent.y;
-                    self.subjectElementDefaults.left = ev.originalEvent.x;
 
-                    fabric.addSubjectElement(self.subjectElementDefaults, true);
+                    self.newSubjectElement(ev);
+
                 } else { //source === 'state-element'
                     //TODO: Add SubjectElement to canvas
                 }
-            }
+            };
+
+            /*
+             * SubjectElement
+             */
+            self.newSubjectElement = function (ev) {
+
+                $log.debug(TAG + 'newSubjectElement()');
+
+                fabric.setConnectorMode(false);
+
+                self.subjectElementDefaults.top = ev.originalEvent.y;
+                self.subjectElementDefaults.left = ev.originalEvent.x;
+
+                var object = fabric.addSubjectElement(self.subjectElementDefaults, true);
+
+                //fabric.setActiveObject(object);
+            };
         }
     }
 

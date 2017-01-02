@@ -42,9 +42,9 @@
         };
 
         var objectDefaults = {
-            borderColor: '#afb9ce',
+            borderColor: '#919191', //#afb9ce
             centerTransform: true,
-            cornerColor: '#afb9ce',
+            cornerColor: '#919191',
             cornerSize: CORNER_SIZE,
             hasBorders: true,
             hasRotatingPoint: false,

@@ -19,7 +19,7 @@
         };
 
         var positionCustomControl = function (object, customControlId) {
-            jQuery("#" + customControlId).css({top: object.getTop() + 'px'});
+            jQuery("#" + customControlId).css({top: (object.getTop() - 10) + 'px'});
             jQuery("#" + customControlId).css({left: (object.getLeft() + object.getWidth() + 20) + 'px'});
         };
 

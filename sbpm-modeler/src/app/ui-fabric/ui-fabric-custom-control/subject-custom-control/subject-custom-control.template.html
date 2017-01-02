@@ -1,5 +1,10 @@
-<div id="{{cc.customControlId}}" class="subject-custom-control">
-    <md-button class='md-icon-button md-primary' aria-label='Delete' ng-click='cc.deleteSubjectElement()'>
+<div id="{{cc.customControlId}}" class="subject-custom-control" layout="column">
+    <md-button class='md-icon-button md-primary scc-btn scc-btn-msg-arrow' aria-label='Message' ng-click=''
+               title="Connect using Message-Connector">
+        <md-icon>arrow_forward</md-icon>
+    </md-button>
+    <md-button class='md-icon-button md-primary scc-btn' aria-label='Remove' ng-click='cc.deleteSubjectElement()'
+               title="Remove">
         <md-icon>delete</md-icon>
     </md-button>
 </div>
