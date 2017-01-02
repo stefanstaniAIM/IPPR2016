@@ -32,4 +32,6 @@ public interface ProcessInstance {
   List<BusinessObjectInstance> getBusinessObjectInstances();
 
   boolean isBusinessObjectInstanceOfModelCreated(BusinessObjectModel businessObjectModel);
+
+  boolean isStopped();
 }

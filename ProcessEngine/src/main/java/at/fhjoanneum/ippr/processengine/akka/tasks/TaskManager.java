@@ -3,6 +3,7 @@ package at.fhjoanneum.ippr.processengine.akka.tasks;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import akka.actor.ActorRef;
@@ -10,6 +11,7 @@ import akka.actor.UntypedActorContext;
 import at.fhjoanneum.ippr.processengine.akka.config.SpringExtension;
 
 @Component
+@Scope("prototype")
 public class TaskManager {
 
   @Autowired
@@ -29,7 +31,14 @@ public class TaskManager {
     taskActor.forward(msg, context);
   }
 
-  private synchronized String getTaskId() {
+  public void executeTaskInContext(final TaskAllocation task, final UntypedActorContext context,
+      final Object msg) {
+    final ActorRef taskActor =
+        context.actorOf(springExtension.props(task.getActorName(), context), getTaskId());
+    taskActor.forward(msg, context);
+  }
+
+  private String getTaskId() {
     return "Task-" + String.valueOf(UUID.randomUUID());
   }
 }

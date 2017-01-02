@@ -151,6 +151,13 @@ public class ProcessInstanceImpl implements ProcessInstance, Serializable {
   }
 
   @Override
+  public boolean isStopped() {
+    return ProcessInstanceState.FINISHED.equals(state)
+        || ProcessInstanceState.CANCELLED_BY_SYSTEM.equals(state)
+        || ProcessInstanceState.CANCELLED_BY_USER.equals(state);
+  }
+
+  @Override
   public boolean equals(final Object obj) {
     if (obj == null) {
       return false;
