@@ -23,6 +23,7 @@ import at.fhjoanneum.ippr.processengine.akka.messages.process.info.TasksOfUserMe
 import at.fhjoanneum.ippr.processengine.akka.messages.process.initialize.ActorInitializeMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.stop.ProcessStopMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.wakeup.UserActorWakeUpMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.SendMessages;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObjectChangeMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObjectMessage;
 import at.fhjoanneum.ippr.processengine.akka.tasks.TaskAllocation;
@@ -62,6 +63,8 @@ public class UserSupervisorActor extends UntypedActor {
       handleStateObjectMessage(obj);
     } else if (obj instanceof StateObjectChangeMessage.Request) {
       handleStateObjectChangeMessage(obj);
+    } else if (obj instanceof SendMessages.Request) {
+      handleSendMessages(obj);
     } else {
       unhandled(obj);
     }
@@ -71,8 +74,8 @@ public class UserSupervisorActor extends UntypedActor {
     taskManager.executeTaskInContext(TaskAllocation.PROCESS_INITIALIZE_TASK, getContext(), obj);
   }
 
-  private String getUserId(final Long piId) {
-    return "ProcessUser-" + piId;
+  private String getUserId(final Long userId) {
+    return "ProcessUser-" + userId;
   }
 
   private void handleUserWakeUpMessage(final Object obj) {
@@ -151,5 +154,9 @@ public class UserSupervisorActor extends UntypedActor {
   private void handleStateObjectChangeMessage(final Object obj) {
     final StateObjectChangeMessage.Request request = (StateObjectChangeMessage.Request) obj;
     forwardToUserActor(request.getUserId(), request);
+  }
+
+  private void handleSendMessages(final Object obj) {
+    taskManager.executeTaskInContext(TaskAllocation.SEND_MESSAGES_TASK, getContext(), obj);
   }
 }

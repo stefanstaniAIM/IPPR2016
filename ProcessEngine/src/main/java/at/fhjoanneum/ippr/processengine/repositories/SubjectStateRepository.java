@@ -18,4 +18,8 @@ public interface SubjectStateRepository extends CrudRepository<SubjectStateImpl,
       + "WHERE psim.pi_id = :piId AND s.user_id = :userId", nativeQuery = true)
   SubjectStateImpl getSubjectStateOfUserInProcessInstance(@Param("piId") Long piId,
       @Param("userId") Long userId);
+
+  @Query(value = "SELECT * FROM SUBJECT_STATE WHERE pi_id = :piId AND sub_state = 'TO_SEND'",
+      nativeQuery = true)
+  List<SubjectStateImpl> getSubjectStatesofProcessInstanceInToSendState(@Param("piId") Long piId);
 }

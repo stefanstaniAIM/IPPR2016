@@ -11,7 +11,8 @@ public enum TaskAllocation {
   PROCESS_STATE_CHANGE_TASK("Process.ProcessStateChangeTask"),
   PROCESS_START_TASK("ProcessSupervisor.ProcessStartTask"),
   PROCESS_INFO_TASK("ProcessSupervisor.ProcessInfoTask"),
-  PROCESS_INITIALIZE_TASK("UserSupervisor.ProcessInitializeTask");
+  PROCESS_INITIALIZE_TASK("UserSupervisor.ProcessInitializeTask"),
+  SEND_MESSAGES_TASK("UserSupervisor.SendMessagesTask");
   // @formatter:on
 
   private final String actorName;

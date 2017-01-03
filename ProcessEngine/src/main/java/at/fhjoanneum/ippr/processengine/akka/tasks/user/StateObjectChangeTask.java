@@ -16,11 +16,14 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 import akka.actor.ActorRef;
 import akka.pattern.Patterns;
+import akka.pattern.PatternsCS;
 import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.BusinessObjectInstanceDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.UserAssignmentDTO;
 import at.fhjoanneum.ippr.persistence.entities.engine.businessobject.BusinessObjectInstanceBuilder;
 import at.fhjoanneum.ippr.persistence.entities.engine.businessobject.BusinessObjectInstanceImpl;
 import at.fhjoanneum.ippr.persistence.entities.engine.businessobject.field.BusinessObjectFieldInstanceBuilder;
 import at.fhjoanneum.ippr.persistence.entities.engine.businessobject.field.BusinessObjectFieldInstanceImpl;
+import at.fhjoanneum.ippr.persistence.entities.engine.enums.SubjectSubState;
 import at.fhjoanneum.ippr.persistence.entities.engine.state.SubjectStateImpl;
 import at.fhjoanneum.ippr.persistence.objects.engine.businessobject.BusinessObjectFieldInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.businessobject.BusinessObjectInstance;
@@ -30,10 +33,12 @@ import at.fhjoanneum.ippr.persistence.objects.model.businessobject.BusinessObjec
 import at.fhjoanneum.ippr.persistence.objects.model.businessobject.permission.BusinessObjectFieldPermission;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldPermission;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldType;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
 import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 import at.fhjoanneum.ippr.processengine.akka.config.Global;
 import at.fhjoanneum.ippr.processengine.akka.config.SpringExtension;
 import at.fhjoanneum.ippr.processengine.akka.messages.EmptyMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.SendMessages;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObjectChangeMessage;
 import at.fhjoanneum.ippr.processengine.akka.tasks.AbstractTask;
 import at.fhjoanneum.ippr.processengine.parser.DbValueParser;
@@ -107,7 +112,7 @@ public class StateObjectChangeTask extends AbstractTask {
     } else {
       initBusinessObjectInstances(subjectState, request);
       setValuesOfBusinessObjectFieldInstances(subjectState.getCurrentState(), request);
-      changeToNextState(subjectState, request);
+      sendMessages(subjectState, request);
 
       TransactionSynchronizationManager
           .registerSynchronization(new TransactionSynchronizationAdapter() {
@@ -187,6 +192,32 @@ public class StateObjectChangeTask extends AbstractTask {
             }
           }
         });
+  }
+
+  private void sendMessages(final SubjectState subjectState,
+      final StateObjectChangeMessage.Request request) {
+    if (StateFunctionType.SEND.equals(subjectState.getCurrentState().getFunctionType())
+        && SubjectSubState.TO_SEND.equals(subjectState.getSubState())) {
+      final ActorRef userActor = getContext().parent();
+      final List<Long> userIds = request.getStateObjectChangeDTO().getUserAssignments().stream()
+          .map(UserAssignmentDTO::getUserId).collect(Collectors.toList());
+      PatternsCS
+          .ask(userActor, new SendMessages.Request(request.getPiId(), userIds), Global.TIMEOUT)
+          .toCompletableFuture().whenComplete((msg, exc) -> {
+            if (exc == null) {
+              LOG.info("All users [{}] received the message in PI_ID []", userIds,
+                  request.getPiId());
+              changeToNextState(subjectState, request);
+            } else {
+              getSender().tell(
+                  new akka.actor.Status.Failure(new IllegalStateException(
+                      "Could not send message to all users in PI_ID [" + request.getPiId() + "]")),
+                  getSelf());
+            }
+          });
+    } else {
+      changeToNextState(subjectState, request);
+    }
   }
 
   private void changeToNextState(final SubjectState subjectState,

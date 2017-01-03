@@ -37,10 +37,6 @@ public class ProcessInitializeTask extends AbstractTask {
 
   private final static Logger LOG = LoggerFactory.getLogger(ProcessInitializeTask.class);
 
-  public ProcessInitializeTask(final UntypedActorContext parentContext) {
-    super(parentContext);
-  }
-
   @Autowired
   private SpringExtension springExtension;
   @Autowired
@@ -48,6 +44,10 @@ public class ProcessInitializeTask extends AbstractTask {
 
   @Autowired
   private ProcessInstanceRepository processInstanceRepository;
+
+  public ProcessInitializeTask(final UntypedActorContext parentContext) {
+    super(parentContext);
+  }
 
   @Override
   public boolean canHandle(final Object obj) {

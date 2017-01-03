@@ -123,7 +123,6 @@ public class ProcessServiceImpl implements ProcessService {
     return future;
   }
 
-
   @Async
   @Override
   public Future<Long> getAmountOfActiveProcessesPerUser(final Long userId) {
