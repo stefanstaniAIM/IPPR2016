@@ -19,6 +19,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -43,7 +44,7 @@ public class SubjectStateImpl implements SubjectState, Serializable {
   private StateImpl currentState;
 
   @ManyToOne
-  @JoinColumn(name = "piId")
+  @JoinColumn(name = "pi_id")
   private ProcessInstanceImpl processInstance;
 
   @OneToOne // (mappedBy = "subjectState")
@@ -62,16 +63,16 @@ public class SubjectStateImpl implements SubjectState, Serializable {
 
   SubjectStateImpl(final StateImpl currentState, final ProcessInstanceImpl processInstance,
       final SubjectImpl subject) {
-    this.currentState = currentState;
     this.processInstance = processInstance;
     this.subject = subject;
     this.lastChanged = LocalDateTime.now();
+    setCurrentState(currentState, false);
   }
 
   SubjectStateImpl(final StateImpl currentState, final ProcessInstanceImpl processInstance,
-      final SubjectImpl subject, final SubjectSubState receiveSubjectState) {
+      final SubjectImpl subject, final SubjectSubState subState) {
     this(currentState, processInstance, subject);
-    this.subState = receiveSubjectState;
+    this.subState = subState;
   }
 
 
@@ -82,10 +83,28 @@ public class SubjectStateImpl implements SubjectState, Serializable {
 
   @Override
   public void setCurrentState(final State nextState) {
+    setCurrentState(nextState, true);
+  }
+
+  private void setCurrentState(final State nextState, final boolean isChecked) {
     checkNotNull(nextState);
     checkArgument(nextState instanceof StateImpl);
-    checkArgument(isNextState(nextState));
+    if (isChecked) {
+      checkArgument(isNextState(nextState));
+    }
     this.currentState = (StateImpl) nextState;
+
+    switch (currentState.getFunctionType()) {
+      case RECEIVE:
+        subState = SubjectSubState.TO_RECEIVE;
+        break;
+      case SEND:
+        subState = SubjectSubState.TO_SEND;
+        break;
+      default:
+        subState = null;
+        break;
+    }
     this.lastChanged = LocalDateTime.now();
   }
 
@@ -159,6 +178,6 @@ public class SubjectStateImpl implements SubjectState, Serializable {
   public String toString() {
     return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("ssId", ssId)
         .append("subject", subject).append("currentState", currentState.getName())
-        .append("subState", subState.name()).toString();
+        .append("subState", subState != null ? subState.name() : StringUtils.EMPTY).toString();
   }
 }

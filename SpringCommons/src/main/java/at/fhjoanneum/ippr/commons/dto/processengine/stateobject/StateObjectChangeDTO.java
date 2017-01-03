@@ -17,6 +17,8 @@ public class StateObjectChangeDTO implements Serializable {
 
   private List<BusinessObjectInstanceDTO> businessObjects;
 
+  private List<UserAssignmentDTO> userAssignments;
+
   public StateObjectChangeDTO() {}
 
   public Long getNextStateId() {
@@ -27,9 +29,14 @@ public class StateObjectChangeDTO implements Serializable {
     return businessObjects;
   }
 
+  public List<UserAssignmentDTO> getUserAssignments() {
+    return userAssignments;
+  }
+
   @Override
   public String toString() {
     return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-        .append("nextStateId", nextStateId).append("businessObjects", businessObjects).toString();
+        .append("nextStateId", nextStateId).append("businessObjects", businessObjects)
+        .append("userAssignments", userAssignments).toString();
   }
 }

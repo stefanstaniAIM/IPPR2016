@@ -96,7 +96,7 @@ public class StateObjectChangeTask extends AbstractTask {
         springExtension.props("BusinessObjectCheckActor", subjectState.getCurrentState().getSId()),
         UUID.randomUUID().toString());
 
-    // must block thread since transaction get lost when using completable future
+    // must block thread since transaction is lost when using completable future
     final Future<Object> future = Patterns.ask(bussinessObjectCheckActor, request, Global.TIMEOUT);
     final boolean correct =
         ((Boolean) Await.result(future, Global.TIMEOUT.duration())).booleanValue();

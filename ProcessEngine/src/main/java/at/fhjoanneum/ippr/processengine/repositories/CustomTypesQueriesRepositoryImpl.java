@@ -22,17 +22,17 @@ public class CustomTypesQueriesRepositoryImpl implements CustomTypesQueriesRepos
   private static class Queries {
     public static String TASK_QUERY =
         " SELECT pi.pi_id, pm.name process_name, ss.ss_id, state.name state_name, state.function_type, ss.last_changed       "
-            + "   FROM SUBJECT_STATE ss                                                                      "
-            + "   JOIN STATE state ON state.s_id = ss.current_state                                          "
-            + "   JOIN PROCESS_SUBJECT_INSTANCE_MAP psim ON psim.s_id = ss.s_id                              "
-            + "   JOIN PROCESS_INSTANCE pi ON pi.pi_id = psim.pi_id                                          "
-            + "   JOIN SUBJECT s ON s.s_id = ss.s_id                                                         "
-            + "   JOIN PROCESS_MODEL pm ON pm.pm_id = pi.pm_id                                               "
-            + "   WHERE s.user_id = :userId                                                                  "
-            + "   AND pi.state = 'ACTIVE'                                                                    "
-            + "   AND state.function_type IN ('FUNCTION', 'SEND')                                            "
-            + "   OR (state.function_type = 'RECEIVE' AND ss.receive_subject_state = 'RECEIVED')             "
-            + "   ORDER BY ss.last_changed ASC                                                               ";
+            + "   FROM SUBJECT_STATE ss                                                                                      "
+            + "   JOIN STATE state ON state.s_id = ss.current_state                                                          "
+            + "   JOIN PROCESS_SUBJECT_INSTANCE_MAP psim ON psim.s_id = ss.s_id                                              "
+            + "   JOIN PROCESS_INSTANCE pi ON pi.pi_id = psim.pi_id                                                          "
+            + "   JOIN SUBJECT s ON s.s_id = ss.s_id                                                                         "
+            + "   JOIN PROCESS_MODEL pm ON pm.pm_id = pi.pm_id                                                               "
+            + "   WHERE s.user_id = :userId                                                                                  "
+            + "   AND pi.state = 'ACTIVE'                                                                                    "
+            + "   AND state.function_type IN ('FUNCTION', 'SEND')                                                            "
+            + "   OR (state.function_type = 'RECEIVE' AND ss.sub_state = 'RECEIVED')                                         "
+            + "   ORDER BY ss.last_changed ASC                                                                               ";
   }
 
 
