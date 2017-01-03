@@ -4,7 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import at.fhjoanneum.ippr.persistence.builder.Builder;
-import at.fhjoanneum.ippr.persistence.entities.engine.enums.ReceiveSubjectState;
+import at.fhjoanneum.ippr.persistence.entities.engine.enums.SubjectSubState;
 import at.fhjoanneum.ippr.persistence.entities.engine.process.ProcessInstanceImpl;
 import at.fhjoanneum.ippr.persistence.entities.engine.subject.SubjectImpl;
 import at.fhjoanneum.ippr.persistence.entities.model.state.StateImpl;
@@ -18,7 +18,7 @@ public class SubjectStateBuilder implements Builder<SubjectState> {
   private StateImpl state;
   private ProcessInstanceImpl processInstance;
   private SubjectImpl subject;
-  private ReceiveSubjectState receiveSubjectState;
+  private SubjectSubState subState;
 
   public SubjectStateBuilder state(final State state) {
     checkNotNull(state);
@@ -41,8 +41,8 @@ public class SubjectStateBuilder implements Builder<SubjectState> {
     return this;
   }
 
-  public SubjectStateBuilder receiveSubjectState(final ReceiveSubjectState receiveSubjectState) {
-    this.receiveSubjectState = receiveSubjectState;
+  public SubjectStateBuilder subState(final SubjectSubState subState) {
+    this.subState = subState;
     return this;
   }
 
@@ -53,9 +53,9 @@ public class SubjectStateBuilder implements Builder<SubjectState> {
     checkNotNull(processInstance);
     checkNotNull(subject);
 
-    if (receiveSubjectState == null) {
+    if (subState == null) {
       return new SubjectStateImpl(state, processInstance, subject);
     }
-    return new SubjectStateImpl(state, processInstance, subject, receiveSubjectState);
+    return new SubjectStateImpl(state, processInstance, subject, subState);
   }
 }

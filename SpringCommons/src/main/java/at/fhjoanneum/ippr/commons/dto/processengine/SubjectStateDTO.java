@@ -18,7 +18,7 @@ public class SubjectStateDTO implements UserContainer, Serializable {
   private String subjectName;
   private String stateName;
   private String stateFunctionType;
-  private String receiveState;
+  private String subState;
   private LocalDateTime lastChanged;
   private UserDTO user;
 
@@ -26,14 +26,14 @@ public class SubjectStateDTO implements UserContainer, Serializable {
   public SubjectStateDTO() {}
 
   public SubjectStateDTO(final Long ssId, final Long userId, final String subjectName,
-      final String stateName, final String stateFunctionType, final String receiveState,
+      final String stateName, final String stateFunctionType, final String subState,
       final LocalDateTime lastChanged) {
     this.ssId = ssId;
     this.userId = userId;
     this.subjectName = subjectName;
     this.stateName = stateName;
     this.stateFunctionType = stateFunctionType;
-    this.receiveState = receiveState;
+    this.subState = subState;
     this.lastChanged = lastChanged;
   }
 
@@ -58,8 +58,8 @@ public class SubjectStateDTO implements UserContainer, Serializable {
     return stateFunctionType;
   }
 
-  public String getReceiveState() {
-    return receiveState;
+  public String getSubState() {
+    return subState;
   }
 
   public LocalDateTime getLastChanged() {

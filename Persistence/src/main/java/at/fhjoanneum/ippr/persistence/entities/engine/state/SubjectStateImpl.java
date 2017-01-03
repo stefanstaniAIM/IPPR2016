@@ -22,7 +22,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import at.fhjoanneum.ippr.persistence.entities.engine.enums.ReceiveSubjectState;
+import at.fhjoanneum.ippr.persistence.entities.engine.enums.SubjectSubState;
 import at.fhjoanneum.ippr.persistence.entities.engine.process.ProcessInstanceImpl;
 import at.fhjoanneum.ippr.persistence.entities.engine.subject.SubjectImpl;
 import at.fhjoanneum.ippr.persistence.entities.model.state.StateImpl;
@@ -52,7 +52,7 @@ public class SubjectStateImpl implements SubjectState, Serializable {
 
   @Column
   @Enumerated(EnumType.STRING)
-  private ReceiveSubjectState receiveSubjectState;
+  private SubjectSubState subState;
 
   @Column
   @NotNull
@@ -69,9 +69,9 @@ public class SubjectStateImpl implements SubjectState, Serializable {
   }
 
   SubjectStateImpl(final StateImpl currentState, final ProcessInstanceImpl processInstance,
-      final SubjectImpl subject, final ReceiveSubjectState receiveSubjectState) {
+      final SubjectImpl subject, final SubjectSubState receiveSubjectState) {
     this(currentState, processInstance, subject);
-    this.receiveSubjectState = receiveSubjectState;
+    this.subState = receiveSubjectState;
   }
 
 
@@ -111,13 +111,16 @@ public class SubjectStateImpl implements SubjectState, Serializable {
   }
 
   @Override
-  public ReceiveSubjectState getReceiveSubjectState() {
-    return receiveSubjectState;
+  public SubjectSubState getSubState() {
+    return subState;
   }
 
   @Override
-  public void setReceiveSubjectState(final ReceiveSubjectState receiveSubjectState) {
-    this.receiveSubjectState = receiveSubjectState;
+  public void setSubState(final SubjectSubState subState) {
+    this.subState = subState;
+    if (subState != null) {
+      this.lastChanged = LocalDateTime.now();
+    }
   }
 
   @Override
@@ -155,6 +158,7 @@ public class SubjectStateImpl implements SubjectState, Serializable {
   @Override
   public String toString() {
     return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("ssId", ssId)
-        .append("subject", subject).append("currentState", currentState.getName()).toString();
+        .append("subject", subject).append("currentState", currentState.getName())
+        .append("subState", subState.name()).toString();
   }
 }

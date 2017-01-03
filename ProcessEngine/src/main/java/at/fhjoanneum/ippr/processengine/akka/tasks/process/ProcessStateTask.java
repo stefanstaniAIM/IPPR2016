@@ -63,8 +63,8 @@ public class ProcessStateTask extends AbstractTask {
     final Long ssId = subjectState.getSsId();
     final String stateName = subjectState.getCurrentState().getName();
     final String functionType = subjectState.getCurrentState().getFunctionType().name();
-    final String receiveSubjectState = subjectState.getReceiveSubjectState() != null
-        ? subjectState.getReceiveSubjectState().name() : null;
+    final String receiveSubjectState =
+        subjectState.getSubState() != null ? subjectState.getSubState().name() : null;
     final LocalDateTime lastChanged = subjectState.getLastChanged();
 
     return new SubjectStateDTO(ssId, userId, subjectName, stateName, functionType,

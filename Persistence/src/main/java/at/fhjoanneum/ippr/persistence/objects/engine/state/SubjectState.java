@@ -2,7 +2,7 @@ package at.fhjoanneum.ippr.persistence.objects.engine.state;
 
 import java.time.LocalDateTime;
 
-import at.fhjoanneum.ippr.persistence.entities.engine.enums.ReceiveSubjectState;
+import at.fhjoanneum.ippr.persistence.entities.engine.enums.SubjectSubState;
 import at.fhjoanneum.ippr.persistence.objects.engine.process.ProcessInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.subject.Subject;
 import at.fhjoanneum.ippr.persistence.objects.model.state.State;
@@ -19,9 +19,9 @@ public interface SubjectState {
 
   Subject getSubject();
 
-  ReceiveSubjectState getReceiveSubjectState();
+  SubjectSubState getSubState();
 
-  void setReceiveSubjectState(ReceiveSubjectState receiveSubjectState);
+  void setSubState(SubjectSubState substate);
 
   LocalDateTime getLastChanged();
 

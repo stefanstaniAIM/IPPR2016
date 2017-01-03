@@ -11,7 +11,7 @@ import org.springframework.transaction.support.TransactionSynchronizationAdapter
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import akka.actor.ActorRef;
-import at.fhjoanneum.ippr.persistence.entities.engine.enums.ReceiveSubjectState;
+import at.fhjoanneum.ippr.persistence.entities.engine.enums.SubjectSubState;
 import at.fhjoanneum.ippr.persistence.entities.engine.state.SubjectStateBuilder;
 import at.fhjoanneum.ippr.persistence.entities.engine.state.SubjectStateImpl;
 import at.fhjoanneum.ippr.persistence.objects.engine.process.ProcessInstance;
@@ -65,13 +65,15 @@ public class UserActorInitializeTask extends AbstractTask {
         .ofNullable(stateRepository.getStartStateOfSubject(subject.getSubjectModel().getSmId()))
         .get();
 
-    ReceiveSubjectState receiveSubjectState = null;
+    SubjectSubState subState = null;
     if (state.getFunctionType().equals(StateFunctionType.RECEIVE)) {
-      receiveSubjectState = ReceiveSubjectState.TO_RECEIVE;
+      subState = SubjectSubState.TO_RECEIVE;
+    } else if (state.getFunctionType().equals(StateFunctionType.SEND)) {
+      subState = SubjectSubState.TO_SEND;
     }
 
     final SubjectState subjectState = new SubjectStateBuilder().processInstance(processInstance)
-        .subject(subject).state(state).receiveSubjectState(receiveSubjectState).build();
+        .subject(subject).state(state).subState(subState).build();
 
     subjectStateRepository.save((SubjectStateImpl) subjectState);
     LOG.info("Subject is now in initial state: {}", subjectState);
