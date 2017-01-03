@@ -32,6 +32,12 @@
         service.connectionStarted = false;
         service.fromObject = null;
 
+        service.points = null;
+        service.connectorTop = false;
+        service.connectorBottom= false;
+        service.connectorLeft = false;
+        service.connectorRight = false;
+
         // service.formatShape = { show: false};
 
         service.init = function () {
@@ -182,6 +188,13 @@
             $log.debug('fabric - addConnector()');
 
             return addObjectToCanvas(fabricShape.connector(points, options), render);
+        };
+
+        service.createConnector = function () {
+            if (service.connectorLine) {
+                removeObjectFromCanvas(service.connectorLine, true)
+            }
+            service.connectorLine = service.addConnector(service.points, service.connectorDefaults);
         };
 
         //
@@ -455,13 +468,14 @@
                 //
                 if (service.selectedObject) {
 
-                    $log.debug('--------------------------------');
+                    service.restoreDefaultConfig(options.target);
 
                     // We're over a connection port, and the user has finished (mouse:up) drawing the connector (line).
                     // object(fromPort) <-- toArrow -- connector -- fromArrow --> (toPort)otherObject
                     // one arrow faces towards the object <--, the other faces away from --> the object
 
-                    var toPort = 'ml';
+                    //var toPort = service.selectedObject.__corner;
+                    var toPort = 'mt';
                     var arrowOptions = service.arrowDefaults;
 
                     $log.debug('mouseDownListener() - toPort: ' + toPort);
@@ -577,6 +591,83 @@
 
         };
 
+        service.mouseOverListener = function(element) {
+
+            // $log.debug('mouseOverListener()');
+
+            //
+            // Connector Mode
+            //
+
+            //$log.debug(service.selectedObject);
+
+            if (service.connectorMode && service.connectionStarted && element.target !==null) {
+
+                if (element.target.type === 'subjectElement') {
+
+                    service.targetObject = element.target;
+
+                    service.targetObject.set('active', true);
+                    service.targetObject.set('cornerSize', service.subjectElementDefaults.cornerSize * 2);
+                    service.targetObject.set('transparentCorners', false);
+                    service.targetObject.set('padding', 0);
+                    service.targetObject.setControlsVisibility({ 'tl': false, 'tr': false, 'br': false, 'bl': false,
+                        'mt': true, 'mr': true, 'mb': true, 'ml': true });
+
+                    service.canvas.renderAll();
+
+                    // $log.debug('mouseOverListener() - selectedObject: ' + service.selectedObject.text);
+
+                    return;
+                }
+
+                return;
+
+            } // end if (service.connectorMode)
+
+        };
+
+        service.restoreDefaultConfig = function (object) {
+            object.set('cornerSize', service.subjectElementDefaults.cornerSize);
+            object.set('transparentCorners', true);
+            object.set('padding', service.subjectElementDefaults.padding);
+            object.setControlsVisibility({ 'tl': true, 'tr': true, 'br': true, 'bl': true,
+                'mt': false, 'mr': false, 'mb': false, 'ml': false });
+
+            service.canvas.renderAll();
+        };
+
+        service.mouseOutListener = function(element) {
+
+            // $log.debug('mouseOverListener()');
+
+            //
+            // Connector Mode
+            //
+
+            //$log.debug(service.selectedObject);
+
+            if (service.connectorMode && element.target !== service.selectedObject && element.target !==null) {
+
+                if (element.target.type === 'subjectElement') {
+
+                    service.targetObject = element.target;
+                    service.targetObject.set('active', false);
+                    service.restoreDefaultConfig(service.targetObject);
+
+                    service.canvas.renderAll();
+
+                    // $log.debug('mouseOverListener() - selectedObject: ' + service.selectedObject.text);
+
+                    return;
+                }
+
+                return;
+
+            } // end if (service.connectorMode)
+
+        };
+
         // Mouse
 
         service.mouseMoveListener = function (options) {
@@ -590,6 +681,63 @@
                 var pointer = service.canvas.getPointer(options.e);
 
                 service.connectorLine.set({'x2': pointer.x, 'y2': pointer.y});
+
+                if (service.fromObject.top > pointer.y) {
+                    if (!service.connectorTop) {
+                        $log.debug('Connector top update');
+                        service.connectorTop = true;
+                        service.connectorBottom = false;
+                        service.connectorRight = false;
+                        service.connectorLeft = false;
+
+                        service.connectorLineFromPort = 'mt';
+                        service.points = fabricUtils.findTargetPort(service.connectorLineFromPort, service.fromObject);
+
+                        service.createConnector();
+                    }
+                } else if ((service.fromObject.top+service.fromObject.height) < pointer.y) {
+                    if (!service.connectorBottom) {
+                        $log.debug('Connector bottom update');
+                        service.connectorTop = false;
+                        service.connectorBottom = true;
+                        service.connectorRight = false;
+                        service.connectorLeft = false;
+
+                        service.connectorLineFromPort = 'mb';
+                        service.points = fabricUtils.findTargetPort(service.connectorLineFromPort, service.fromObject);
+
+                        service.createConnector();
+                    }
+                } else if ((service.fromObject.top < pointer.y < (service.fromObject.top+service.fromObject.height)) &&
+                    (service.fromObject.left + service.fromObject.width/2) < pointer.x) {
+                    if (!service.connectorRight) {
+                        $log.debug('Connector right update');
+                        service.connectorTop = false;
+                        service.connectorBottom = false;
+                        service.connectorRight = true;
+                        service.connectorLeft = false;
+
+                        service.connectorLineFromPort = 'mr';
+                        service.points = fabricUtils.findTargetPort(service.connectorLineFromPort, service.fromObject);
+
+                        service.createConnector();
+                    }
+                } else if ((service.fromObject.top < pointer.y < (service.fromObject.top+service.fromObject.height)) &&
+                    (service.fromObject.left + service.fromObject.width/2) > pointer.x) {
+                    if (!service.connectorLeft) {
+                        $log.debug('Connector left update');
+                        service.connectorTop = false;
+                        service.connectorBottom = false;
+                        service.connectorRight = false;
+                        service.connectorLeft = true;
+
+                        service.connectorLineFromPort = 'ml';
+                        service.points = fabricUtils.findTargetPort(service.connectorLineFromPort, service.fromObject);
+
+                        service.createConnector();
+                    }
+                }
+
                 service.canvas.renderAll();
             }
         };
@@ -601,6 +749,8 @@
             if (service.connectorMode) {
 
                 if (object.type === 'subjectElement') {
+
+                    $log.debug(object);
 
                     $log.debug('objectSelectedListener() - element.target.type === subjectElement');
 
@@ -627,7 +777,9 @@
                 'object:moving': service.objectMovingListener,
                 'selection:cleared': service.selectionClearedListener,
                 'mouse:move': service.mouseMoveListener,
-                'mouse:down': service.mouseDownListener
+                'mouse:down': service.mouseDownListener,
+                'mouse:over': service.mouseOverListener,
+                'mouse:out': service.mouseOutListener
             });
 
         };
@@ -648,7 +800,7 @@
 
                     service.fromObject = service.selectedObject;
 
-                    var points = null;
+                    //var points = null;
 
                     //
                     // Fabric "remembers" the last port you we're successfully over.
@@ -662,19 +814,14 @@
 
                     service.connectionStarted = true;
 
-                    //points = fabricUtils.findTargetPort(service.fromObject);
-                    points = [
-                        service.fromObject.left + service.fromObject.width, service.fromObject.top + (service.fromObject.height / 2),
-                        service.fromObject.left + service.fromObject.width, service.fromObject.top + (service.fromObject.height / 2)
-                    ];
                     service.connectorLineFromPort = 'mr';
+                    service.points = fabricUtils.findTargetPort(service.connectorLineFromPort, service.fromObject);
 
-                    $log.debug('mouseDownListener() - points: ' + JSON.stringify(['e', points], null, '\t'));
-
-                    var connectorOptions = service.connectorDefaults;
+                    $log.debug('mouseDownListener() - points: ' + JSON.stringify(['e', service.points], null, '\t'));
 
                     // service.connectorLine = service.addLine(points, connectorOptions);
-                    service.connectorLine = service.addConnector(points, connectorOptions);
+                    //service.connectorLine = service.addConnector(service.points, connectorOptions);
+                    service.createConnector();
                 }
 
                 return;

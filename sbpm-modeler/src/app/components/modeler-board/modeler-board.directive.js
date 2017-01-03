@@ -40,8 +40,6 @@
 
                     $log.debug(TAG + 'object:selected');
 
-                    $log.debug(element.target);
-
                     fabric.objectSelectedListener(element.target);
 
                     /*

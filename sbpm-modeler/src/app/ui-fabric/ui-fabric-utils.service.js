@@ -18,12 +18,11 @@
 
     // See: _findTargetCorner()
 
-    service.findTargetPort = function(object) {
+    service.findTargetPort = function(port, object) {
 
       var points = new Array(4);
-      var port = object.__corner;
 
-      $log.debug(TAG + 'findTargetPort() - port: ' + object.__corner);
+      $log.debug(TAG + 'findTargetPort() - port: ' + port);
 
       switch (port) {
 
@@ -53,7 +52,7 @@
           break;
 
         default:
-          $log.error(TAG + 'findTargetPort() - service.fromObject.__corner === undefined');
+          $log.error(TAG + 'findTargetPort() - port === undefined');
           break;
       }
 
