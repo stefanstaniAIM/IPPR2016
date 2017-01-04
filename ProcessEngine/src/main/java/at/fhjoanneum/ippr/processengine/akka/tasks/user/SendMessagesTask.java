@@ -90,8 +90,6 @@ public class SendMessagesTask extends AbstractTask<MessagesSendMessage.Request> 
         });
   }
 
-
-
   private CompletableFuture<Object> convertToFuture(final Long piId, final Long userId) {
     final Optional<ActorRef> userActorOpt =
         akkaSelector.findActor(getParentContext(), getUserId(userId));

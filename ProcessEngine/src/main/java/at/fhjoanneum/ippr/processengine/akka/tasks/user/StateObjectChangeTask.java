@@ -5,6 +5,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,6 +82,9 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
   @Autowired
   private DbValueParser valueParser;
 
+  @PersistenceContext
+  private EntityManager entityManager;
+
   private ActorRef sender;
 
   @Override
@@ -90,7 +96,6 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
   public void execute(final StateObjectChangeMessage.Request request) throws Exception {
     handleStateObjectChangeMessage(request);
   }
-
 
   private void handleStateObjectChangeMessage(final StateObjectChangeMessage.Request request)
       throws Exception {
@@ -229,7 +234,13 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
           new MessagesSendMessage.Request(request.getPiId(), subjectState.getSsId(), userIds),
           Global.TIMEOUT).toCompletableFuture().get();
       LOG.info("All users [{}] received the message in PI_ID [{}]", userIds, request.getPiId());
-      changeToNextState(subjectState, request);
+      entityManager.refresh(subjectState);
+      if (SubjectSubState.SENT.equals(subjectState.getSubState())) {
+        changeToNextState(subjectState, request);
+      } else {
+        sender.tell(new Status.Failure(new IllegalStateException(
+            "Sender state is not in 'SENT' state [" + subjectState + "]")), getSelf());
+      }
     } catch (final Exception e) {
       sender.tell(
           new Status.Failure(new IllegalStateException(

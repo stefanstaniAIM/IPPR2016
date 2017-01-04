@@ -4,12 +4,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import akka.actor.UntypedActor;
 import akka.actor.UntypedActorContext;
 
-@Transactional
+@Transactional(isolation = Isolation.READ_COMMITTED)
 public abstract class AbstractTask<I> extends UntypedActor implements Task<I> {
 
   private final static Logger LOG = LoggerFactory.getLogger(AbstractTask.class);
