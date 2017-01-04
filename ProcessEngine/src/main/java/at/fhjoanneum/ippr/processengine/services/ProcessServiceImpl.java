@@ -223,6 +223,7 @@ public class ProcessServiceImpl implements ProcessService {
     return future;
   }
 
+  @Transactional
   @Async
   @Override
   public Future<List<TaskDTO>> getTasksOfUser(final Long userId) {
@@ -242,6 +243,7 @@ public class ProcessServiceImpl implements ProcessService {
     return future;
   }
 
+  @Transactional
   @Async
   @Override
   public Future<StateObjectDTO> getStateObjectOfUserInProcess(final Long piId, final Long userId) {
@@ -261,6 +263,7 @@ public class ProcessServiceImpl implements ProcessService {
     return future;
   }
 
+  @Transactional
   @Async
   @Override
   public Future<Boolean> changeStateOfUserInProcess(final Long piId, final Long userId,

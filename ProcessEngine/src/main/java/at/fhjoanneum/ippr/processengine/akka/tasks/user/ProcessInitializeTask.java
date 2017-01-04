@@ -33,7 +33,7 @@ import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 
 @Component("UserSupervisor.ProcessInitializeTask")
 @Scope("prototype")
-public class ProcessInitializeTask extends AbstractTask {
+public class ProcessInitializeTask extends AbstractTask<ActorInitializeMessage.Request> {
 
   private final static Logger LOG = LoggerFactory.getLogger(ProcessInitializeTask.class);
 
@@ -55,9 +55,7 @@ public class ProcessInitializeTask extends AbstractTask {
   }
 
   @Override
-  public void execute(final Object obj) throws Exception {
-    final ActorInitializeMessage.Request msg = (ActorInitializeMessage.Request) obj;
-
+  public void execute(final ActorInitializeMessage.Request msg) throws Exception {
     final Optional<ProcessInstance> processInstanceOpt =
         Optional.ofNullable(processInstanceRepository.findOne(msg.getProcessId()));
 

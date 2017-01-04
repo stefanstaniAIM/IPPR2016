@@ -32,7 +32,7 @@ import at.fhjoanneum.ippr.processengine.repositories.SubjectStateRepository;
 
 @Component("User.StateObjectRetrieveTask")
 @Scope("prototype")
-public class StateObjectRetrieveTask extends AbstractTask {
+public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Request> {
 
   private final static Logger LOG = LoggerFactory.getLogger(StateObjectRetrieveTask.class);
 
@@ -51,13 +51,11 @@ public class StateObjectRetrieveTask extends AbstractTask {
   }
 
   @Override
-  public void execute(final Object obj) throws Exception {
-    final StateObjectMessage.Request request = (StateObjectMessage.Request) obj;
-
+  public void execute(final StateObjectMessage.Request request) throws Exception {
     final SubjectState subjectState =
         Optional
             .ofNullable(subjectStateRepository
-                .getSubjectStateOfUserInProcessInstance(request.getPiId(), request.getUserId()))
+                .getSubjectStateOfUser(request.getPiId(), request.getUserId()))
             .get();
 
     final List<BusinessObjectDTO> businessObjects = Lists.newArrayList();

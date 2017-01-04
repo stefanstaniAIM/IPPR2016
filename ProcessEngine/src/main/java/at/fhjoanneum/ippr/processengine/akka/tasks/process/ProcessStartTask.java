@@ -34,7 +34,7 @@ import at.fhjoanneum.ippr.processengine.repositories.SubjectRepository;
 
 @Component("ProcessSupervisor.ProcessStartTask")
 @Scope("prototype")
-public class ProcessStartTask extends AbstractTask {
+public class ProcessStartTask extends AbstractTask<ProcessStartMessage.Request> {
 
   private final static Logger LOG = LoggerFactory.getLogger(ProcessStartTask.class);
 
@@ -57,10 +57,8 @@ public class ProcessStartTask extends AbstractTask {
   }
 
   @Override
-  public void execute(final Object obj) throws Exception {
+  public void execute(final ProcessStartMessage.Request msg) throws Exception {
     try {
-      final ProcessStartMessage.Request msg = (ProcessStartMessage.Request) obj;
-
       LOG.info("Handle ProcessStartMessage and will create new process instance");
       final ProcessInstanceBuilder processBuilder = new ProcessInstanceBuilder();
 

@@ -22,7 +22,7 @@ import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 
 @Component("ProcessSupervisor.ProcessInfoTask")
 @Scope("prototype")
-public class ProcessInfoTask extends AbstractTask {
+public class ProcessInfoTask extends AbstractTask<ProcessInfoMessage.Request> {
 
   private final static Logger LOG = LoggerFactory.getLogger(ProcessInfoTask.class);
 
@@ -35,9 +35,7 @@ public class ProcessInfoTask extends AbstractTask {
   }
 
   @Override
-  public void execute(final Object obj) throws Exception {
-    final ProcessInfoMessage.Request msg = (ProcessInfoMessage.Request) obj;
-
+  public void execute(final ProcessInfoMessage.Request msg) throws Exception {
     final PageRequest pageRequest =
         new PageRequest(msg.getPage(), msg.getSize(), new Sort(Sort.Direction.DESC, "startTime"));
 

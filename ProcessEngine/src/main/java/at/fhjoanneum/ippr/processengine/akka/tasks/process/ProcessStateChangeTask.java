@@ -22,7 +22,7 @@ import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 
 @Component("Process.ProcessStateChangeTask")
 @Scope("prototype")
-public class ProcessStateChangeTask extends AbstractTask {
+public class ProcessStateChangeTask extends AbstractTask<StateObjectChangeMessage.Request> {
 
   private final static Logger LOG = LoggerFactory.getLogger(ProcessStateChangeTask.class);
 
@@ -39,8 +39,7 @@ public class ProcessStateChangeTask extends AbstractTask {
   }
 
   @Override
-  public void execute(final Object obj) throws Exception {
-    final StateObjectChangeMessage.Request request = (StateObjectChangeMessage.Request) obj;
+  public void execute(final StateObjectChangeMessage.Request request) throws Exception {
     final Optional<ProcessInstance> processOpt =
         Optional.ofNullable(processInstanceRepository.findOne(request.getPiId()));
 

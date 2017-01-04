@@ -20,7 +20,7 @@ import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 
 @Component("Process.ProcessStopTask")
 @Scope("prototype")
-public class ProcessStopTask extends AbstractTask {
+public class ProcessStopTask extends AbstractTask<ProcessStopMessage.Request> {
 
   public <T> ProcessStopTask(final TaskCallback<T> callback) {
     super(callback);
@@ -37,9 +37,7 @@ public class ProcessStopTask extends AbstractTask {
   }
 
   @Override
-  public void execute(final Object obj) throws Exception {
-    final ProcessStopMessage.Request msg = (ProcessStopMessage.Request) obj;
-
+  public void execute(final ProcessStopMessage.Request msg) throws Exception {
     final Optional<ProcessInstance> processOpt =
         Optional.ofNullable(processInstanceRepository.findOne(msg.getPiId()));
     if (!processOpt.isPresent()) {

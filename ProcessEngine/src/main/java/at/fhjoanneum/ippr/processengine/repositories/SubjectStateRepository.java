@@ -11,15 +11,18 @@ import at.fhjoanneum.ippr.persistence.entities.engine.state.SubjectStateImpl;
 public interface SubjectStateRepository extends CrudRepository<SubjectStateImpl, Long> {
 
   @Query(value = "SELECT * FROM subject_state WHERE pi_id = :piId", nativeQuery = true)
-  List<SubjectStateImpl> getSubjectStatesOfProcessInstance(@Param("piId") Long piId);
+  List<SubjectStateImpl> getSubjectStates(@Param("piId") Long piId);
 
   @Query(value = "SELECT ss.* FROM SUBJECT_STATE ss JOIN SUBJECT s ON s.s_id = ss.s_id "
       + "JOIN PROCESS_SUBJECT_INSTANCE_MAP psim ON psim.s_id = s.s_id "
       + "WHERE psim.pi_id = :piId AND s.user_id = :userId", nativeQuery = true)
-  SubjectStateImpl getSubjectStateOfUserInProcessInstance(@Param("piId") Long piId,
-      @Param("userId") Long userId);
+  SubjectStateImpl getSubjectStateOfUser(@Param("piId") Long piId, @Param("userId") Long userId);
 
-  @Query(value = "SELECT * FROM SUBJECT_STATE WHERE pi_id = :piId AND sub_state = 'TO_SEND'",
+  @Query(
+      value = "SELECT ss.* FROM SUBJECT_STATE ss " + "JOIN SUBJECT s ON s.s_id = ss.s_id "
+          + "JOIN PROCESS_SUBJECT_INSTANCE_MAP psim ON psim.s_id = s.s_id "
+          + "WHERE psim.pi_id = :piId AND s.user_id = :userId AND ss.sub_state IN ('TO_RECEIVE', 'RECEIVED')",
       nativeQuery = true)
-  List<SubjectStateImpl> getSubjectStatesofProcessInstanceInToSendState(@Param("piId") Long piId);
+  SubjectStateImpl getToReceiveSubjectStateOfUser(@Param("piId") Long piId,
+      @Param("userId") Long userId);
 }

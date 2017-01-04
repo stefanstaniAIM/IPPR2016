@@ -12,7 +12,8 @@ public enum TaskAllocation {
   PROCESS_START_TASK("ProcessSupervisor.ProcessStartTask"),
   PROCESS_INFO_TASK("ProcessSupervisor.ProcessInfoTask"),
   PROCESS_INITIALIZE_TASK("UserSupervisor.ProcessInitializeTask"),
-  SEND_MESSAGES_TASK("UserSupervisor.SendMessagesTask");
+  SEND_MESSAGES_TASK("UserSupervisor.SendMessagesTask"),
+  MESSAGE_RECEIVED_TASK("User.MessageReceivedTask");
   // @formatter:on
 
   private final String actorName;

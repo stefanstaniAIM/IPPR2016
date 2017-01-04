@@ -16,6 +16,8 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import com.google.common.base.Preconditions;
+
 import at.fhjoanneum.ippr.persistence.entities.engine.state.SubjectStateImpl;
 import at.fhjoanneum.ippr.persistence.entities.model.subject.SubjectModelImpl;
 import at.fhjoanneum.ippr.persistence.objects.engine.state.SubjectState;
@@ -60,6 +62,12 @@ public class SubjectImpl implements Subject, Serializable {
   @Override
   public Long getUser() {
     return userId;
+  }
+
+  @Override
+  public void setUser(final Long userId) {
+    Preconditions.checkNotNull(userId);
+    this.userId = userId;
   }
 
   @Override

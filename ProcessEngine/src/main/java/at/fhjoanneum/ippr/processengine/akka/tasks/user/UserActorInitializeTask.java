@@ -28,7 +28,7 @@ import at.fhjoanneum.ippr.processengine.repositories.SubjectStateRepository;
 
 @Component("User.UserActorInitializeTask")
 @Scope("prototype")
-public class UserActorInitializeTask extends AbstractTask {
+public class UserActorInitializeTask extends AbstractTask<UserActorInitializeMessage.Request> {
 
   private final static Logger LOG = LoggerFactory.getLogger(StateObjectRetrieveTask.class);
 
@@ -51,9 +51,7 @@ public class UserActorInitializeTask extends AbstractTask {
   }
 
   @Override
-  public void execute(final Object obj) throws Exception {
-    final UserActorInitializeMessage.Request msg = (UserActorInitializeMessage.Request) obj;
-
+  public void execute(final UserActorInitializeMessage.Request msg) throws Exception {
     final ProcessInstance processInstance =
         Optional.ofNullable(processInstanceRepository.findOne(msg.getPiId())).get();
 

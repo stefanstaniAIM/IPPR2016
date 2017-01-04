@@ -2,16 +2,15 @@ package at.fhjoanneum.ippr.processengine.akka.tasks;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.transaction.Transactional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import akka.actor.UntypedActor;
 import akka.actor.UntypedActorContext;
 
 @Transactional
-public abstract class AbstractTask extends UntypedActor implements Task {
+public abstract class AbstractTask<I> extends UntypedActor implements Task<I> {
 
   private final static Logger LOG = LoggerFactory.getLogger(AbstractTask.class);
 
@@ -40,14 +39,16 @@ public abstract class AbstractTask extends UntypedActor implements Task {
 
   @Override
   public void onReceive(final Object obj) throws Exception {
-    if (canHandle(obj)) {
-      execute(obj);
-    } else {
-      LOG.warn("Cannot handle received message: {}", obj);
-      unhandled(obj);
+    try {
+      if (canHandle(obj)) {
+        execute((I) obj);
+      } else {
+        LOG.warn("Cannot handle received message: {}", obj);
+        unhandled(obj);
+      }
+    } finally {
+      getContext().stop(getSelf());
     }
-
-    getContext().stop(getSelf());
   }
 
   @Override

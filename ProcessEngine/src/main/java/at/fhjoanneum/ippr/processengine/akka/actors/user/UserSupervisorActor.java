@@ -23,7 +23,7 @@ import at.fhjoanneum.ippr.processengine.akka.messages.process.info.TasksOfUserMe
 import at.fhjoanneum.ippr.processengine.akka.messages.process.initialize.ActorInitializeMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.stop.ProcessStopMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.wakeup.UserActorWakeUpMessage;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.SendMessages;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.MessagesSendMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObjectChangeMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObjectMessage;
 import at.fhjoanneum.ippr.processengine.akka.tasks.TaskAllocation;
@@ -63,7 +63,7 @@ public class UserSupervisorActor extends UntypedActor {
       handleStateObjectMessage(obj);
     } else if (obj instanceof StateObjectChangeMessage.Request) {
       handleStateObjectChangeMessage(obj);
-    } else if (obj instanceof SendMessages.Request) {
+    } else if (obj instanceof MessagesSendMessage.Request) {
       handleSendMessages(obj);
     } else {
       unhandled(obj);

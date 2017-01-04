@@ -9,6 +9,8 @@ public interface Subject {
 
   SubjectModel getSubjectModel();
 
+  void setUser(Long userId);
+
   Long getUser();
 
   Long getGroup();
