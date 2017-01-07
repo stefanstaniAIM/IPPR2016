@@ -99,7 +99,6 @@ export class ActiveProcessDetail implements OnInit {
     sid:number
   }];
 
-
   constructor(protected service: ProcessesService, protected spinner:BaThemeSpinner, protected route: ActivatedRoute, protected router: Router) {
   }
 
@@ -137,8 +136,37 @@ export class ActiveProcessDetail implements OnInit {
         );
   }
 
-  logForm(value: any) {
-    console.log(value);
+  submitForm(form) {
+    var that = this;
+    var businessObjectsValues = [];
+    this.businessObjects.forEach(bo => {
+      var fields = []
+      var keys = Object.keys(form.value).forEach(k => {
+        var kSplit = k.split("-:_");
+        var bomId = kSplit[0];
+        var bofmId = kSplit[1];
+        if(bomId === (bo.bomId).toString()) {
+            var value = form.value[k];
+            fields.push({bofmId:bofmId, value:value});
+        }
+      });
+      businessObjectsValues.push({bomId:bo.bomId, fields:fields});
+    });
+    var businessObjectsAndNextState = {
+      nextStateId: form.nextStateId,
+      businessObjects: businessObjectsValues
+    };
+    this.service.submitBusinessObjectsAndNextState(this.piId, businessObjectsAndNextState)
+    .subscribe(
+        data => {
+          console.log(data);
+        },
+        err =>{
+          that.msg = {text: err, type: 'error'}
+          console.log(err);
+        }
+      );;
+    console.log(businessObjectsAndNextState);
   }
 
   //dirty hack so that the value of the checkbox changes (otherwise the form submit value will stay the original value)

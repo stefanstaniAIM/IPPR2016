@@ -59,4 +59,8 @@ export class ProcessesService {
    getTasksForProcessForUser(piId:number){
      return this._authHttp.get(this.restApi+'/processes/task/'+piId+'/'+this._user.getUid());
    }
+
+   submitBusinessObjectsAndNextState(piId:number, objectsAndState){
+     return this._authHttp.post(this.restApi+'/processes/task/'+piId+'/'+this._user.getUid(), objectsAndState);
+   }
 }
