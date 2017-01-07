@@ -96,7 +96,7 @@ export class ActiveProcessDetail implements OnInit {
   }];
   nextStates:[{
     name:string,
-    sid:number
+    nextStateId:number
   }];
 
   constructor(protected service: ProcessesService, protected spinner:BaThemeSpinner, protected route: ActivatedRoute, protected router: Router) {
@@ -165,7 +165,7 @@ export class ActiveProcessDetail implements OnInit {
           that.msg = {text: err, type: 'error'}
           console.log(err);
         }
-      );;
+      );
     console.log(businessObjectsAndNextState);
   }
 

@@ -67,7 +67,7 @@
         </div>
         <h3>Mögliche nächste Schritte</h3>
         <div *ngFor="let state of nextStates">
-          <button class="btn btn-primary btn-lg" type="submit" (click)="businessObjectsForm.nextStateId = state.sid">{{state.name}}</button>
+          <button class="btn btn-primary btn-lg" type="submit" (click)="businessObjectsForm.nextStateId = state.nextStateId">{{state.name}}</button>
         </div>
       </form>
 </div>
