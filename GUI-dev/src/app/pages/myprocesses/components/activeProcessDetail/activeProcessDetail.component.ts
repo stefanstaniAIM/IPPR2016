@@ -3,6 +3,7 @@ import { Component,  OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { ProcessesService } from '../../../../Processes.service';
 import { BaThemeSpinner } from '../../../../theme/services';
+import { User } from '../../../../user';
 
 @Component({
   selector: 'activeProcessDetail',
@@ -19,13 +20,13 @@ export class ActiveProcessDetail implements OnInit {
     startTime: number[],
     endTime: number[],
     subjects: [{
-      lastChanged: number[],
-      receiveState: string,
       ssId: number,
-      stateFunctionType: string,
-      stateName: string,
-      subjectName: string,
       userId: number,
+      subjectName: string,
+      stateName: string,
+      stateFunctionType: string,
+      subState: string,
+      lastChanged: number[],
       user: any
     }]
   };
@@ -99,13 +100,15 @@ export class ActiveProcessDetail implements OnInit {
     nextStateId:number
   }];
 
-  constructor(protected service: ProcessesService, protected spinner:BaThemeSpinner, protected route: ActivatedRoute, protected router: Router) {
+  constructor(protected service: ProcessesService, protected spinner:BaThemeSpinner, protected route: ActivatedRoute, protected router: Router, private _user:User) {
   }
 
   ngOnInit() {
     var that = this;
     this.spinner.show();
     this.piId = +this.route.snapshot.params['piId'];
+    this.businessObjects = undefined;
+    this.nextStates = undefined;
     //this.route.params
     //.switchMap((params: Params) => service.loadprocess etc. +params['piId'])
     //.subscribe((piId:number) => this.piId = piId)
@@ -160,6 +163,7 @@ export class ActiveProcessDetail implements OnInit {
     .subscribe(
         data => {
           console.log(data);
+          that.ngOnInit();
         },
         err =>{
           that.msg = {text: err, type: 'error'}
@@ -173,5 +177,13 @@ export class ActiveProcessDetail implements OnInit {
   onChangeCheckboxFn(that, element){
     var name = element.name.split("-:_")[0];
     that.model._parent.form.controls[name].setValue(element.checked)
+  }
+
+  isFunctionState(){
+    if(this.subjectsState){
+      return this.subjectsState.subjects.filter(s => s.userId === this._user.getUid())[0].stateFunctionType === "FUNCTION";
+    } else {
+      return false;
+    }
   }
 }

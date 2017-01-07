@@ -53,23 +53,25 @@
               <div class="row" *ngSwitchCase="'radio'">
                 <div class="col-sm-1" *ngFor="let choice of field.choices">
                   <label class="radio-inline nowrap">
-                    <input type="radio" [disabled]="field.readonly" [ngModelOptions]="{standalone: true}" [(ngModel)]="field.value" [value]="choice.name" [checked]="choice.name === field.value"/>
-                    <span>{{choice.description}}</span>
-                  </label>
-                </div>
+                  <input type="radio" [disabled]="field.readonly" [ngModelOptions]="{standalone: true}" [(ngModel)]="field.value" [value]="choice.name" [checked]="choice.name === field.value"/>
+                  <span>{{choice.description}}</span>
+                </label>
               </div>
             </div>
-            <input type="checkbox" *ngIf="field.type === 'checkbox' && field.readonly" name="{{businessObject.bomId}}-:_{{field.bofmId}}" [ngModel]="field.value" value="{{field.value}}" style="display:none" /> <!-- Dirty Hack for sending checkbox value if checkbox is readonly (angular does not send hidden fields) -->
+            <input type="checkbox" *ngIf="field.type === 'checkbox' && field.readonly" name="{{field.name}}" [ngModel]="field.value" value="{{field.value}}" style="display:none" /> <!-- Dirty Hack for sending checkbox value if checkbox is readonly (angular does not send hidden fields) -->
             <input type="radio" *ngIf="field.type === 'radio'" name="{{businessObject.bomId}}-:_{{field.bofmId}}" [ngModel]="field.value" value="{{field.value}}" style="display:none" /> <!-- Dirty Hack for sending radiofield value -->
             </div>
           </div>
-          </ba-card>
         </div>
-        <h3>Mögliche nächste Schritte</h3>
-        <div *ngFor="let state of nextStates">
-          <button class="btn btn-primary btn-lg" type="submit" (click)="businessObjectsForm.nextStateId = state.nextStateId">{{state.name}}</button>
-        </div>
-      </form>
+      </ba-card>
+    </div>
+    <div>
+      <h3>{{isFunctionState() ? "Mögliche nächste Schritte" : "Warte auf"}}</h3>
+      <div *ngFor="let state of nextStates">
+        <button class="btn btn-primary btn-lg" type="submit" [disabled]="!isFunctionState()" (click)="businessObjectsForm.nextStateId = state.nextStateId">{{state.name}}</button>
+      </div>
+    </div>
+  </form>
 </div>
 
 <!-- Business Objects Form template START -->
