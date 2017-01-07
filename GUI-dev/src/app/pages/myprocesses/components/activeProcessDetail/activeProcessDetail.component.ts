@@ -29,7 +29,7 @@ export class ActiveProcessDetail implements OnInit {
       user: any
     }]
   };
-  businessObject = {
+  businessObjectTemplate = {
     fields:[
       {
         type: "text",
@@ -80,13 +80,31 @@ export class ActiveProcessDetail implements OnInit {
     ]
   }
 
-  businessObjects = [];
-  nextStates = [];
+  businessObjects:[{
+    bomId:number,
+    boiId:number,
+    name:string,
+    fields:[{
+      bofmId:number,
+      bofiId:number,
+      name:string,
+      type:string,
+      required:boolean,
+      readonly:boolean,
+      value:any
+    }]
+  }];
+  nextStates:[{
+    name:string,
+    sid:number
+  }];
+
 
   constructor(protected service: ProcessesService, protected spinner:BaThemeSpinner, protected route: ActivatedRoute, protected router: Router) {
   }
 
   ngOnInit() {
+    var that = this;
     this.spinner.show();
     this.piId = +this.route.snapshot.params['piId'];
     //this.route.params
@@ -95,13 +113,13 @@ export class ActiveProcessDetail implements OnInit {
     this.service.getProcessState(this.piId)
     .subscribe(
         data => {
-          this.subjectsState = JSON.parse(data['_body']);
-          this.spinner.hide();
+          that.subjectsState = JSON.parse(data['_body']);
+          that.spinner.hide();
         },
         err =>{
-          this.msg = {text: err, type: 'error'}
+          that.msg = {text: err, type: 'error'}
           console.log(err);
-          this.spinner.hide();
+          that.spinner.hide();
         }
       );
 
@@ -109,11 +127,11 @@ export class ActiveProcessDetail implements OnInit {
       .subscribe(
           data => {
             var dataJson = JSON.parse(data['_body']);
-            this.businessObjects = dataJson.businessObjects;
-            this.nextStates = dataJson.nextStates;
+            that.businessObjects = dataJson.businessObjects;
+            that.nextStates = dataJson.nextStates;
           },
           err =>{
-            this.msg = {text: err, type: 'error'}
+            that.msg = {text: err, type: 'error'}
             console.log(err);
           }
         );

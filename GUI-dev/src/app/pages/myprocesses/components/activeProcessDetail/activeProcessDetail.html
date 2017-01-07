@@ -36,7 +36,44 @@
       </table>
    </ba-card>
 </div>
-<!-- Business Objects Form -->
+<div class="row">
+  <div class="col-md-12">
+    <form #form="ngForm" (ngSubmit)="logForm(form.value)">
+      <h3>Business Objects</h3>
+      <div *ngFor="let businessObject of businessObjects">
+        <ba-card title="{{businessObject.name}}" baCardClass="with-scroll">
+        <div *ngFor="let field of businessObject.fields">
+          {{field.name}}
+          <div class="form-group">
+            <div [ngSwitch]="field.type">
+              <label class="control-label" *ngIf="field.type !== 'checkbox'">{{field.description}}</label>
+              <input type="text" *ngSwitchCase="'STRING'" class="form-control" id="{{field.id}}" name="{{field.name}}" [ngModel]="field.value" [attr.maxlength]="field.maxlength" [attr.minlength]="field.minlength" [attr.required]="field.required" [readonly]="field.readonly">
+              <input type="number" *ngSwitchCase="'number'" class="form-control" id="{{field.id}}" name="{{field.name}}" [ngModel]="field.value" [attr.max]="field.max" [attr.min]="field.min" [attr.required]="field.required" [readonly]="field.readonly">
+              <ba-checkbox *ngSwitchCase="'checkbox'" name="{{field.readonly ? field.name + '-:_control' : field.name }}" [ngModel]="field.value" [value]="field.value" [label]="field.description" [onChangeCheckboxFn]="onChangeCheckboxFn" [disabled]="field.readonly"></ba-checkbox>
+              <div class="row" *ngSwitchCase="'radio'">
+                <div class="col-sm-1" *ngFor="let choice of field.choices">
+                  <label class="radio-inline nowrap">
+                    <input type="radio" [disabled]="field.readonly" [ngModelOptions]="{standalone: true}" [(ngModel)]="field.value" [value]="choice.name" [checked]="choice.name === field.value"/>
+                    <span>{{choice.description}}</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <input type="checkbox" *ngIf="field.type === 'checkbox' && field.readonly" name="{{field.name}}" [ngModel]="field.value" value="{{field.value}}" style="display:none" /> <!-- Dirty Hack for sending checkbox value if checkbox is readonly (angular does not send hidden fields) -->
+            <input type="radio" *ngIf="field.type === 'radio'" name="{{field.name}}" [ngModel]="field.value" value="{{field.value}}" style="display:none" /> <!-- Dirty Hack for sending radiofield value -->
+            </div>
+          </div>
+        </ba-card>
+        </div>
+        <h3>Mögliche nächste Schritte</h3>
+        <div *ngFor="let state of nextStates">
+          <button class="btn btn-primary btn-lg" type="submit">{{state.name}}</button>
+        </div>
+    </form>
+</div>
+
+<!-- Business Objects Form template START -->
+<!--
 <div class="row">
   <div class="col-md-12">
   <ba-card title="Business Objects" baCardClass="with-scroll">
@@ -57,13 +94,16 @@
               </div>
             </div>
           </div>
-          <input type="checkbox" *ngIf="field.type === 'checkbox' && field.readonly" name="{{field.name}}" [ngModel]="field.value" value="{{field.value}}" style="display:none" /> <!-- Dirty Hack for sending checkbox value if checkbox is readonly (angular does not send hidden fields) -->
-          <input type="radio" *ngIf="field.type === 'radio'" name="{{field.name}}" [ngModel]="field.value" value="{{field.value}}" style="display:none" /> <!-- Dirty Hack for sending radiofield value -->
+          <input type="checkbox" *ngIf="field.type === 'checkbox' && field.readonly" name="{{field.name}}" [ngModel]="field.value" value="{{field.value}}" style="display:none" /> <!- - Dirty Hack for sending checkbox value if checkbox is readonly (angular does not send hidden fields) - ->
+          <input type="radio" *ngIf="field.type === 'radio'" name="{{field.name}}" [ngModel]="field.value" value="{{field.value}}" style="display:none" /> <!- - Dirty Hack for sending radiofield value - ->
 
         </div>
       </div>
       <button type="submit">Submit</button>
     </form>
+  </ba-card>
+</div>-->
+<!-- Business Objects Form template END -->
     <!-- <div class="form-group has-success">
       <label class="control-label" for="inputSuccess1">Input with success</label>
       <input type="text" class="form-control" id="inputSuccess1">
@@ -104,5 +144,3 @@
       <i class="ion-checkmark-circled form-control-feedback" aria-hidden="true"></i>
       <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
     </div> -->
-  </ba-card>
-</div>
