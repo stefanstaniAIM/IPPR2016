@@ -29,6 +29,7 @@ import at.fhjoanneum.ippr.persistence.entities.engine.businessobject.field.Busin
 import at.fhjoanneum.ippr.persistence.entities.engine.businessobject.field.BusinessObjectFieldInstanceImpl;
 import at.fhjoanneum.ippr.persistence.entities.engine.enums.SubjectSubState;
 import at.fhjoanneum.ippr.persistence.entities.engine.state.SubjectStateImpl;
+import at.fhjoanneum.ippr.persistence.entities.engine.subject.SubjectImpl;
 import at.fhjoanneum.ippr.persistence.objects.engine.businessobject.BusinessObjectFieldInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.businessobject.BusinessObjectInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.process.ProcessInstance;
@@ -219,34 +220,45 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
       final Subject subject = subjectRepository
           .getSubjectForSubjectModelInProcess(request.getPiId(), assignment.getSmId());
       subject.setUser(assignment.getUserId());
+      subjectRepository.save((SubjectImpl) subject);
       LOG.info("New user for subject: {}", subject);
     });
   }
 
   private void triggerSend(final SubjectState subjectState,
       final StateObjectChangeMessage.Request request) {
-    final ActorRef userActor = getContext().parent();
-    final List<Long> userIds = request.getStateObjectChangeDTO().getUserAssignments().stream()
-        .map(UserAssignmentDTO::getUserId).collect(Collectors.toList());
+    // after commit to ensure that user assignment is done
+    TransactionSynchronizationManager
+        .registerSynchronization(new TransactionSynchronizationAdapter() {
+          @Override
+          public void afterCommit() {
+            final ActorRef userActor = getContext().parent();
+            final List<Long> userIds = request.getStateObjectChangeDTO().getUserAssignments()
+                .stream().map(UserAssignmentDTO::getUserId).collect(Collectors.toList());
 
-    try {
-      PatternsCS.ask(userActor,
-          new MessagesSendMessage.Request(request.getPiId(), subjectState.getSsId(), userIds),
-          Global.TIMEOUT).toCompletableFuture().get();
-      LOG.info("All users [{}] received the message in PI_ID [{}]", userIds, request.getPiId());
-      entityManager.refresh(subjectState);
-      if (SubjectSubState.SENT.equals(subjectState.getSubState())) {
-        changeToNextState(subjectState, request);
-      } else {
-        sender.tell(new Status.Failure(new IllegalStateException(
-            "Sender state is not in 'SENT' state [" + subjectState + "]")), getSelf());
-      }
-    } catch (final Exception e) {
-      sender.tell(
-          new Status.Failure(new IllegalStateException(
-              "Could not send message to all users in PI_ID [" + request.getPiId() + "]")),
-          getSelf());
-    }
+            try {
+              PatternsCS.ask(userActor, new MessagesSendMessage.Request(request.getPiId(),
+                  subjectState.getSsId(), userIds), Global.TIMEOUT).toCompletableFuture().get();
+              LOG.info("All users [{}] received the message in PI_ID [{}]", userIds,
+                  request.getPiId());
+              entityManager.refresh(subjectState);
+              if (SubjectSubState.SENT.equals(subjectState.getSubState())) {
+                changeToNextState(subjectState, request);
+              } else {
+                sender
+                    .tell(
+                        new Status.Failure(new IllegalStateException(
+                            "Sender state is not in 'SENT' state [" + subjectState + "]")),
+                        getSelf());
+              }
+            } catch (final Exception e) {
+              sender.tell(
+                  new Status.Failure(new IllegalStateException(
+                      "Could not send message to all users in PI_ID [" + request.getPiId() + "]")),
+                  getSelf());
+            }
+          }
+        });
   }
 
   private void changeToNextState(final SubjectState subjectState,
