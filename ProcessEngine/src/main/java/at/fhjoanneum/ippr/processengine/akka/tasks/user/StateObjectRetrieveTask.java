@@ -16,18 +16,24 @@ import at.fhjoanneum.ippr.commons.dto.processengine.StateDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.BusinessObjectDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.BusinessObjectFieldDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.StateObjectDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.SubjectDTO;
 import at.fhjoanneum.ippr.persistence.objects.engine.businessobject.BusinessObjectFieldInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.businessobject.BusinessObjectInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.state.SubjectState;
+import at.fhjoanneum.ippr.persistence.objects.engine.subject.Subject;
 import at.fhjoanneum.ippr.persistence.objects.model.businessobject.BusinessObjectModel;
 import at.fhjoanneum.ippr.persistence.objects.model.businessobject.field.BusinessObjectFieldModel;
 import at.fhjoanneum.ippr.persistence.objects.model.businessobject.permission.BusinessObjectFieldPermission;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldPermission;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
+import at.fhjoanneum.ippr.persistence.objects.model.messageflow.MessageFlow;
+import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObjectMessage;
 import at.fhjoanneum.ippr.processengine.akka.tasks.AbstractTask;
 import at.fhjoanneum.ippr.processengine.composer.DbValueComposer;
 import at.fhjoanneum.ippr.processengine.repositories.BusinessObjectFieldPermissionRepository;
 import at.fhjoanneum.ippr.processengine.repositories.BusinessObjectInstanceRepository;
+import at.fhjoanneum.ippr.processengine.repositories.SubjectRepository;
 import at.fhjoanneum.ippr.processengine.repositories.SubjectStateRepository;
 
 @Component("User.StateObjectRetrieveTask")
@@ -43,6 +49,8 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
   @Autowired
   private BusinessObjectInstanceRepository businessObjectInstanceRepository;
   @Autowired
+  private SubjectRepository subjectRepository;
+  @Autowired
   private DbValueComposer valueComposer;
 
   @Override
@@ -52,11 +60,10 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
 
   @Override
   public void execute(final StateObjectMessage.Request request) throws Exception {
-    final SubjectState subjectState =
-        Optional
-            .ofNullable(subjectStateRepository
-                .getSubjectStateOfUser(request.getPiId(), request.getUserId()))
-            .get();
+    final SubjectState subjectState = Optional
+        .ofNullable(
+            subjectStateRepository.getSubjectStateOfUser(request.getPiId(), request.getUserId()))
+        .get();
 
     final List<BusinessObjectDTO> businessObjects = Lists.newArrayList();
 
@@ -116,13 +123,31 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
           businessObjectModel.getName(), fields));
     }
 
+    // TODO add receive handling
+
     final List<StateDTO> nextStates = subjectState.getCurrentState().getToStates().stream()
         .map(state -> new StateDTO(state.getToState().getSId(), state.getToState().getName()))
         .collect(Collectors.toList());
 
-    getSender().tell(new StateObjectMessage.Response(
-        new StateObjectDTO(request.getPiId(), subjectState.getSsId(), businessObjects, nextStates)),
-        getSelf());
+    StateObjectDTO stateObjectDTO = null;
+    if (StateFunctionType.SEND.equals(subjectState.getCurrentState().getFunctionType())) {
+      final List<SubjectDTO> subjects = subjectState.getCurrentState().getMessageFlow().stream()
+          .map(messageFlow -> getAssignedUser(messageFlow, request.getPiId()))
+          .collect(Collectors.toList());
+      stateObjectDTO = new StateObjectDTO(request.getPiId(), subjectState.getSsId(),
+          businessObjects, nextStates, subjects);
+    } else {
+      stateObjectDTO = new StateObjectDTO(request.getPiId(), subjectState.getSsId(),
+          businessObjects, nextStates);
+    }
+
+    getSender().tell(new StateObjectMessage.Response(stateObjectDTO), getSelf());
   }
 
+  private SubjectDTO getAssignedUser(final MessageFlow messageFlow, final Long piId) {
+    final SubjectModel subjectModel = messageFlow.getReceiver();
+    final Subject subject =
+        subjectRepository.getSubjectForSubjectModelInProcess(piId, subjectModel.getSmId());
+    return new SubjectDTO(subjectModel.getSmId(), subject.getUser(), subjectModel.getGroup());
+  }
 }
