@@ -226,7 +226,7 @@ export class ActiveProcessDetail implements OnInit {
           console.log(err);
         }
       );
-    console.log(businessObjectsAndNextStateAndAssignedUsers);
+    console.log(businessObjectsAndNextStateAndUserAssignments);
   }
 
   //dirty hack so that the value of the checkbox changes (otherwise the form submit value will stay the original value)
