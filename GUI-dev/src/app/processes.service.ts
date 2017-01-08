@@ -60,7 +60,7 @@ export class ProcessesService {
      return this._authHttp.get(this.restApi+'/processes/task/'+piId+'/'+this._user.getUid());
    }
 
-   submitBusinessObjectsAndNextState(piId:number, objectsAndState){
-     return this._authHttp.post(this.restApi+'/processes/task/'+piId+'/'+this._user.getUid(), objectsAndState);
+   submitBusinessObjectsAndNextStateAndUserAssignments(piId:number, objectsAndStateAndUserAssignments){
+     return this._authHttp.post(this.restApi+'/processes/task/'+piId+'/'+this._user.getUid(), objectsAndStateAndUserAssignments);
    }
 }

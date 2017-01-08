@@ -38,7 +38,7 @@
 </div>
 <div class="row">
   <div class="col-md-12">
-    <form #businessObjectsForm="ngForm" (ngSubmit)="submitForm(businessObjectsForm)">
+    <form #objectsAndAssignmentsForm="ngForm" (ngSubmit)="submitForm(objectsAndAssignmentsForm)">
       <h3>Business Objects</h3>
       <div *ngFor="let businessObject of businessObjects">
         <ba-card title="{{businessObject.name}}" baCardClass="with-scroll">
@@ -65,10 +65,27 @@
         </div>
       </ba-card>
     </div>
-    <div>
-      <h3>{{isFunctionState() ? "Mögliche nächste Schritte" : "Warte auf"}}</h3>
+    <div *ngIf="!isReceiveState() && possibleUserAssignments.length > 0" class="col-md-6">
+      <h3>Zuweisungen</h3>
+      <div class="form-group">
+        <div *ngFor="let assignment of possibleUserAssignments">
+          <label>{{assignment.groupName}}</label>
+          <select class="form-control" [(ngModel)]="selectedUserAssignments[assignment.groupName]" name="User-Assignment_:-{{assignment.smId}}" required>
+            <option *ngFor="let user of assignment.users" [ngValue]="{smId: assignment.smId, userId: user.uid}">{{user.lastname}} {{user.firstname}}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="!isReceiveState()" class="col-md-12">
+      <h3>Mögliche nächste Schritte</h3>
       <div *ngFor="let state of nextStates">
-        <button class="btn btn-primary btn-lg" type="submit" [disabled]="!isFunctionState()" (click)="businessObjectsForm.nextStateId = state.nextStateId">{{state.name}}</button>
+        <button class="btn btn-primary btn-lg" type="submit" (click)="objectsAndAssignmentsForm.nextStateId = state.nextStateId">Gehe zu {{state.name}}</button>
+      </div>
+    </div>
+    <div *ngIf="isReceiveState()" class="col-md-6">
+      <h3>Warte auf</h3>
+      <div *ngFor="let state of nextStates">
+        <button class="btn btn-primary btn-lg" type="submit" disabled>{{state.name}}</button>
       </div>
     </div>
   </form>

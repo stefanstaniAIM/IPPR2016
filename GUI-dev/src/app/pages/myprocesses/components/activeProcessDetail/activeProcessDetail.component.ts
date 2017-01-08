@@ -99,6 +99,13 @@ export class ActiveProcessDetail implements OnInit {
     name:string,
     nextStateId:number
   }];
+  assignedUsers:[{
+    smId:number,
+    userId:number,
+    assignedGroup:string
+  }];
+  possibleUserAssignments = [];
+  selectedUserAssignments = [];
 
   constructor(protected service: ProcessesService, protected spinner:BaThemeSpinner, protected route: ActivatedRoute, protected router: Router, private _user:User) {
   }
@@ -109,6 +116,7 @@ export class ActiveProcessDetail implements OnInit {
     this.piId = +this.route.snapshot.params['piId'];
     this.businessObjects = undefined;
     this.nextStates = undefined;
+    that.assignedUsers = undefined;
     //this.route.params
     //.switchMap((params: Params) => service.loadprocess etc. +params['piId'])
     //.subscribe((piId:number) => this.piId = piId)
@@ -131,6 +139,10 @@ export class ActiveProcessDetail implements OnInit {
             var dataJson = JSON.parse(data['_body']);
             that.businessObjects = dataJson.businessObjects;
             that.nextStates = dataJson.nextStates;
+            that.assignedUsers = dataJson.assignedUsers;
+            if(that.assignedUsers) {
+              that.getPossibleUserAssignments();
+            }
           },
           err =>{
             that.msg = {text: err, type: 'error'}
@@ -139,27 +151,71 @@ export class ActiveProcessDetail implements OnInit {
         );
   }
 
+  getPossibleUserAssignments() {
+    var that = this;
+    this.assignedUsers.forEach(
+      au => {
+        if(!au.userId){
+          that.service.getPossibleUsersForProcessModel(au.assignedGroup).
+          subscribe(
+            data => {
+              let users = JSON.parse(data['_body']);
+              that.possibleUserAssignments.push({groupName: au.assignedGroup, smId: au.smId, users: users});
+              that.selectedUserAssignments[au.assignedGroup] = undefined;
+              console.log(that.possibleUserAssignments);
+            },
+            err =>{
+              this.msg = {text: err, type: 'error'}
+              that.possibleUserAssignments = [];
+            },
+            () => console.log("Request done")
+          );
+        }
+      });
+  }
+
   submitForm(form) {
     var that = this;
     var businessObjectsValues = [];
-    this.businessObjects.forEach(bo => {
-      var fields = []
+    var userAssignments = [];
+    if(this.isSendState()){
       var keys = Object.keys(form.value).forEach(k => {
-        var kSplit = k.split("-:_");
-        var bomId = kSplit[0];
-        var bofmId = kSplit[1];
-        if(bomId === (bo.bomId).toString()) {
-            var value = form.value[k];
-            fields.push({bofmId:bofmId, value:value});
+        var kSplit = k.split("User-Assignment_:-");
+        if(kSplit.length > 1){
+          var value = form.value[k];
+          userAssignments.push({smId:value.smId, userId:value.userId});
         }
       });
-      businessObjectsValues.push({bomId:bo.bomId, fields:fields});
-    });
-    var businessObjectsAndNextState = {
+    } else {
+      this.businessObjects.forEach(bo => {
+        var fields = []
+        var keys = Object.keys(form.value).forEach(k => {
+          var kSplit = k.split("-:_");
+          if(kSplit.length > 1) {
+            var bomId = kSplit[0];
+            var bofmId = kSplit[1];
+            if(bomId === (bo.bomId).toString()) {
+              var value = form.value[k];
+              fields.push({bofmId:bofmId, value:value});
+            }
+          }
+        });
+        businessObjectsValues.push({bomId:bo.bomId, fields:fields});
+      });
+    }
+    var businessObjectsAndNextStateAndUserAssignments = {
       nextStateId: form.nextStateId,
-      businessObjects: businessObjectsValues
+      businessObjects: businessObjectsValues,
+      userAssignments: userAssignments
     };
-    this.service.submitBusinessObjectsAndNextState(this.piId, businessObjectsAndNextState)
+
+    this.submitStateChange(businessObjectsAndNextStateAndUserAssignments);
+
+  }
+
+  private submitStateChange(businessObjectsAndNextStateAndUserAssignments) {
+    var that = this;
+    this.service.submitBusinessObjectsAndNextStateAndUserAssignments(this.piId, businessObjectsAndNextStateAndUserAssignments)
     .subscribe(
         data => {
           console.log(data);
@@ -170,7 +226,7 @@ export class ActiveProcessDetail implements OnInit {
           console.log(err);
         }
       );
-    console.log(businessObjectsAndNextState);
+    console.log(businessObjectsAndNextStateAndAssignedUsers);
   }
 
   //dirty hack so that the value of the checkbox changes (otherwise the form submit value will stay the original value)
@@ -179,9 +235,17 @@ export class ActiveProcessDetail implements OnInit {
     that.model._parent.form.controls[name].setValue(element.checked)
   }
 
-  isFunctionState(){
+  isReceiveState(){
     if(this.subjectsState){
-      return this.subjectsState.subjects.filter(s => s.userId === this._user.getUid())[0].stateFunctionType === "FUNCTION";
+      return this.subjectsState.subjects.filter(s => s.userId === this._user.getUid())[0].stateFunctionType === "RECEIVE";
+    } else {
+      return false;
+    }
+  }
+
+  isSendState(){
+    if(this.subjectsState){
+      return this.subjectsState.subjects.filter(s => s.userId === this._user.getUid())[0].stateFunctionType === "SEND";
     } else {
       return false;
     }
