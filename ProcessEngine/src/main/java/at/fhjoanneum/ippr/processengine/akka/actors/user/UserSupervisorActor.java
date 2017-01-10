@@ -23,6 +23,7 @@ import at.fhjoanneum.ippr.processengine.akka.messages.process.info.TasksOfUserMe
 import at.fhjoanneum.ippr.processengine.akka.messages.process.initialize.ActorInitializeMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.stop.ProcessStopMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.wakeup.UserActorWakeUpMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.AssignUsersMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.MessagesSendMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObjectChangeMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObjectMessage;
@@ -65,6 +66,8 @@ public class UserSupervisorActor extends UntypedActor {
       handleStateObjectChangeMessage(obj);
     } else if (obj instanceof MessagesSendMessage.Request) {
       handleSendMessages(obj);
+    } else if (obj instanceof AssignUsersMessage.Request) {
+      handleAssignUsersMessage(obj);
     } else {
       unhandled(obj);
     }
@@ -158,5 +161,9 @@ public class UserSupervisorActor extends UntypedActor {
 
   private void handleSendMessages(final Object obj) {
     taskManager.executeTaskInContext(TaskAllocation.SEND_MESSAGES_TASK, getContext(), obj);
+  }
+
+  private void handleAssignUsersMessage(final Object obj) {
+    taskManager.executeTask(TaskAllocation.ASSIGN_USERS_TASK, getContext(), obj);
   }
 }

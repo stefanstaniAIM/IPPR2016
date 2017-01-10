@@ -29,12 +29,10 @@ import at.fhjoanneum.ippr.persistence.entities.engine.businessobject.field.Busin
 import at.fhjoanneum.ippr.persistence.entities.engine.businessobject.field.BusinessObjectFieldInstanceImpl;
 import at.fhjoanneum.ippr.persistence.entities.engine.enums.SubjectSubState;
 import at.fhjoanneum.ippr.persistence.entities.engine.state.SubjectStateImpl;
-import at.fhjoanneum.ippr.persistence.entities.engine.subject.SubjectImpl;
 import at.fhjoanneum.ippr.persistence.objects.engine.businessobject.BusinessObjectFieldInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.businessobject.BusinessObjectInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.process.ProcessInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.state.SubjectState;
-import at.fhjoanneum.ippr.persistence.objects.engine.subject.Subject;
 import at.fhjoanneum.ippr.persistence.objects.model.businessobject.BusinessObjectModel;
 import at.fhjoanneum.ippr.persistence.objects.model.businessobject.permission.BusinessObjectFieldPermission;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldPermission;
@@ -44,6 +42,7 @@ import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 import at.fhjoanneum.ippr.processengine.akka.config.Global;
 import at.fhjoanneum.ippr.processengine.akka.config.SpringExtension;
 import at.fhjoanneum.ippr.processengine.akka.messages.EmptyMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.AssignUsersMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.MessagesSendMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObjectChangeMessage;
 import at.fhjoanneum.ippr.processengine.akka.tasks.AbstractTask;
@@ -208,57 +207,56 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
       final StateObjectChangeMessage.Request request) {
     if (StateFunctionType.SEND.equals(subjectState.getCurrentState().getFunctionType())
         && SubjectSubState.TO_SEND.equals(subjectState.getSubState())) {
-      assignUsers(request);
-      triggerSend(subjectState, request);
+      assignUsers(request, subjectState);
     } else {
       changeToNextState(subjectState, request);
     }
   }
 
-  private void assignUsers(final StateObjectChangeMessage.Request request) {
-    request.getStateObjectChangeDTO().getUserAssignments().forEach(assignment -> {
-      final Subject subject = subjectRepository
-          .getSubjectForSubjectModelInProcess(request.getPiId(), assignment.getSmId());
-      subject.setUser(assignment.getUserId());
-      subjectRepository.save((SubjectImpl) subject);
-      LOG.info("New user for subject: {}", subject);
-    });
+  private void assignUsers(final StateObjectChangeMessage.Request request,
+      final SubjectState subjectState) {
+    try {
+      PatternsCS
+          .ask(getContext().parent(),
+              new AssignUsersMessage.Request(request.getPiId(),
+                  request.getStateObjectChangeDTO().getUserAssignments()),
+              Global.TIMEOUT)
+          .toCompletableFuture().get();
+
+      triggerSend(subjectState, request);
+    } catch (final Exception e) {
+      LOG.error("Error when assign users to subject");
+      sender.tell(
+          new Status.Failure(new IllegalStateException(
+              "Error when assign users to subject in PI_ID [" + request.getPiId() + "]")),
+          getSelf());
+    }
   }
 
   private void triggerSend(final SubjectState subjectState,
       final StateObjectChangeMessage.Request request) {
-    // after commit to ensure that user assignment is done
-    TransactionSynchronizationManager
-        .registerSynchronization(new TransactionSynchronizationAdapter() {
-          @Override
-          public void afterCommit() {
-            final ActorRef userActor = getContext().parent();
-            final List<Long> userIds = request.getStateObjectChangeDTO().getUserAssignments()
-                .stream().map(UserAssignmentDTO::getUserId).collect(Collectors.toList());
+    final ActorRef userActor = getContext().parent();
+    final List<Long> userIds = request.getStateObjectChangeDTO().getUserAssignments().stream()
+        .map(UserAssignmentDTO::getUserId).collect(Collectors.toList());
 
-            try {
-              PatternsCS.ask(userActor, new MessagesSendMessage.Request(request.getPiId(),
-                  subjectState.getSsId(), userIds), Global.TIMEOUT).toCompletableFuture().get();
-              LOG.info("All users [{}] received the message in PI_ID [{}]", userIds,
-                  request.getPiId());
-              entityManager.refresh(subjectState);
-              if (SubjectSubState.SENT.equals(subjectState.getSubState())) {
-                changeToNextState(subjectState, request);
-              } else {
-                sender
-                    .tell(
-                        new Status.Failure(new IllegalStateException(
-                            "Sender state is not in 'SENT' state [" + subjectState + "]")),
-                        getSelf());
-              }
-            } catch (final Exception e) {
-              sender.tell(
-                  new Status.Failure(new IllegalStateException(
-                      "Could not send message to all users in PI_ID [" + request.getPiId() + "]")),
-                  getSelf());
-            }
-          }
-        });
+    try {
+      PatternsCS.ask(userActor,
+          new MessagesSendMessage.Request(request.getPiId(), subjectState.getSsId(), userIds),
+          Global.TIMEOUT).toCompletableFuture().get();
+      LOG.info("All users [{}] received the message in PI_ID [{}]", userIds, request.getPiId());
+      entityManager.refresh(subjectState);
+      if (SubjectSubState.SENT.equals(subjectState.getSubState())) {
+        changeToNextState(subjectState, request);
+      } else {
+        sender.tell(new Status.Failure(new IllegalStateException(
+            "Sender state is not in 'SENT' state [" + subjectState + "]")), getSelf());
+      }
+    } catch (final Exception e) {
+      sender.tell(
+          new Status.Failure(new IllegalStateException(
+              "Could not send message to all users in PI_ID [" + request.getPiId() + "]")),
+          getSelf());
+    }
   }
 
   private void changeToNextState(final SubjectState subjectState,
