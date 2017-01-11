@@ -9,6 +9,10 @@ import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldType;
 public class DbComposerAllocation {
 
   @Autowired
+  private DbDateComposer dbDateComposer;
+  @Autowired
+  private DbDecimalComposer dbDecimalComposer;
+  @Autowired
   private DbNumberComposer dbNumberComposer;
   @Autowired
   private DbStringComposer dbStringComposer;
@@ -17,6 +21,10 @@ public class DbComposerAllocation {
 
   public <T> DbComposer<T> getComposer(final FieldType fieldType) {
     switch (fieldType) {
+      case DATE:
+        return (DbComposer<T>) dbDateComposer;
+      case DECIMAL:
+        return (DbComposer<T>) dbDecimalComposer;
       case NUMBER:
         return (DbComposer<T>) dbNumberComposer;
       case STRING:

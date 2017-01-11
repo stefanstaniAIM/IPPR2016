@@ -7,7 +7,10 @@ import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldType;
 
 @Configuration
 public class DbParserAllocation {
-
+  @Autowired
+  private DbDateParser dbDateParser;
+  @Autowired
+  private DbDecimalParser dbDecimalParser;
   @Autowired
   private DbNumberParser dbNumberParser;
   @Autowired
@@ -17,6 +20,10 @@ public class DbParserAllocation {
 
   public <T> DbParser<T> getParser(final FieldType fieldType) {
     switch (fieldType) {
+      case DATE:
+        return (DbParser<T>) dbDateParser;
+      case DECIMAL:
+        return (DbParser<T>) dbDecimalParser;
       case NUMBER:
         return (DbParser<T>) dbNumberParser;
       case STRING:
@@ -24,7 +31,7 @@ public class DbParserAllocation {
       case TIMESTAMP:
         return (DbParser<T>) dbTimestampParser;
       default:
-        throw new IllegalArgumentException("Could not find parser");
+        throw new IllegalArgumentException("Could not find parser for type: " + fieldType);
     }
   }
 }

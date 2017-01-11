@@ -30,10 +30,12 @@ public class DbValueParser {
     switch (fieldType) {
       case DATE:
         final JsonParser<LocalDate> dateParser = jsonParserAllocation.getParser(fieldType);
-        throw new UnsupportedOperationException();
+        final DbParser<LocalDate> dbDateParser = dbParserAllocation.getParser(fieldType);
+        return dbDateParser.parse(dateParser.parse(value));
       case DECIMAL:
         final JsonParser<Float> decimalParser = jsonParserAllocation.getParser(fieldType);
-        throw new UnsupportedOperationException();
+        final DbParser<Float> dbDecimalParser = dbParserAllocation.getParser(fieldType);
+        return dbDecimalParser.parse(decimalParser.parse(value));
       case NUMBER:
         final JsonParser<Integer> numberParser = jsonParserAllocation.getParser(fieldType);
         final DbParser<Integer> dbNumberParser = dbParserAllocation.getParser(fieldType);
@@ -47,7 +49,7 @@ public class DbValueParser {
         final DbParser<LocalDateTime> dbTimestampParser = dbParserAllocation.getParser(fieldType);
         return dbTimestampParser.parse(timestampParser.parse(value));
       default:
-        throw new IllegalArgumentException("Could not find parser");
+        throw new IllegalArgumentException("Could not find parser for type: " + fieldType);
     }
   }
 

@@ -9,6 +9,10 @@ import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldType;
 public class JsonComposerAllocation {
 
   @Autowired
+  private JsonDateComposer jsonDateComposer;
+  @Autowired
+  private JsonDecimalComposer jsonDecimalComposer;
+  @Autowired
   private JsonNumberComposer jsonNumberComposer;
   @Autowired
   private JsonStringComposer jsonStringComposer;
@@ -17,6 +21,10 @@ public class JsonComposerAllocation {
 
   public <T> JsonComposer<T> getComposer(final FieldType fieldType) {
     switch (fieldType) {
+      case DATE:
+        return (JsonComposer<T>) jsonDateComposer;
+      case DECIMAL:
+        return (JsonComposer<T>) jsonDecimalComposer;
       case NUMBER:
         return (JsonComposer<T>) jsonNumberComposer;
       case STRING:

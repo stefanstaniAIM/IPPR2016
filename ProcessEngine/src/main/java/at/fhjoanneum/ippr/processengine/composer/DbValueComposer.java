@@ -1,5 +1,6 @@
 package at.fhjoanneum.ippr.processengine.composer;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.apache.commons.lang3.StringUtils;
@@ -28,9 +29,14 @@ public class DbValueComposer {
 
     switch (fieldType) {
       case DATE:
-        throw new UnsupportedOperationException();
+        final DbComposer<LocalDate> dbDateComposer = dbComposserAllocation.getComposer(fieldType);
+        final JsonComposer<LocalDate> jsonDateComposer =
+            jsonComposerAllocation.getComposer(fieldType);
+        return jsonDateComposer.compose(dbDateComposer.compose(value));
       case DECIMAL:
-        throw new UnsupportedOperationException();
+        final DbComposer<Float> dbFloatComposer = dbComposserAllocation.getComposer(fieldType);
+        final JsonComposer<Float> jsonFloatComposer = jsonComposerAllocation.getComposer(fieldType);
+        return jsonFloatComposer.compose(dbFloatComposer.compose(value));
       case NUMBER:
         final DbComposer<Integer> dbNumberComposer = dbComposserAllocation.getComposer(fieldType);
         final JsonComposer<Integer> jsonNumberComposer =

@@ -1,23 +1,23 @@
 package at.fhjoanneum.ippr.processengine.composer.db;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import org.springframework.stereotype.Component;
 
 import at.fhjoanneum.ippr.processengine.config.FormatConfig;
 
 @Component
-public class DbTimestampComposer implements DbComposer<LocalDateTime> {
+public class DbDateComposer implements DbComposer<LocalDate> {
 
   @Override
-  public LocalDateTime compose(final String value) {
-    return LocalDateTime.parse(value, FormatConfig.TIMESTAMP_FORMAT);
+  public LocalDate compose(final String value) {
+    return LocalDate.parse(value, FormatConfig.DATE_FORMAT);
   }
 
   @Override
   public boolean canCompose(final String value) {
     try {
-      LocalDateTime.parse(value, FormatConfig.TIMESTAMP_FORMAT);
+      LocalDate.parse(value, FormatConfig.DATE_FORMAT);
       return true;
     } catch (final Exception e) {
       return false;
