@@ -1,6 +1,7 @@
 package at.fhjoanneum.ippr.persistence.objects.model.state;
 
 import java.util.List;
+import java.util.Optional;
 
 import at.fhjoanneum.ippr.persistence.objects.model.businessobject.BusinessObjectModel;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.StateEventType;
@@ -11,21 +12,23 @@ import at.fhjoanneum.ippr.persistence.objects.model.transition.Transition;
 
 public interface State {
 
-	Long getSId();
+  Long getSId();
 
-	String getName();
+  String getName();
 
-	SubjectModel getSubjectModel();
+  SubjectModel getSubjectModel();
 
-	StateFunctionType getFunctionType();
+  StateFunctionType getFunctionType();
 
-	StateEventType getEventType();
+  StateEventType getEventType();
 
-	List<Transition> getFromStates();
+  List<Transition> getFromStates();
 
-	List<Transition> getToStates();
+  List<Transition> getToStates();
 
-	List<MessageFlow> getMessageFlow();
+  List<MessageFlow> getMessageFlow();
 
-	List<BusinessObjectModel> getBusinessObjectModels();
+  List<BusinessObjectModel> getBusinessObjectModels();
+
+  Optional<MessageFlow> getMessageFlowForReceiver(final SubjectModel receiver);
 }

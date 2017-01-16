@@ -26,8 +26,11 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import at.fhjoanneum.ippr.persistence.entities.engine.enums.SubjectSubState;
 import at.fhjoanneum.ippr.persistence.entities.engine.process.ProcessInstanceImpl;
 import at.fhjoanneum.ippr.persistence.entities.engine.subject.SubjectImpl;
+import at.fhjoanneum.ippr.persistence.entities.model.messageflow.MessageFlowImpl;
 import at.fhjoanneum.ippr.persistence.entities.model.state.StateImpl;
 import at.fhjoanneum.ippr.persistence.objects.engine.state.SubjectState;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
+import at.fhjoanneum.ippr.persistence.objects.model.messageflow.MessageFlow;
 import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 
 @Entity(name = "SUBJECT_STATE")
@@ -55,6 +58,10 @@ public class SubjectStateImpl implements SubjectState, Serializable {
   @Enumerated(EnumType.STRING)
   private SubjectSubState subState;
 
+  @ManyToOne
+  @JoinColumn(name = "mf_id")
+  private MessageFlowImpl messageFlow;
+
   @Column
   @NotNull
   private LocalDateTime lastChanged;
@@ -75,7 +82,6 @@ public class SubjectStateImpl implements SubjectState, Serializable {
     this.subState = subState;
   }
 
-
   @Override
   public State getCurrentState() {
     return currentState;
@@ -92,7 +98,8 @@ public class SubjectStateImpl implements SubjectState, Serializable {
     if (isChecked) {
       checkArgument(isNextState(nextState));
     }
-    this.currentState = (StateImpl) nextState;
+    currentState = (StateImpl) nextState;
+    messageFlow = null;
 
     switch (currentState.getFunctionType()) {
       case RECEIVE:
@@ -105,13 +112,44 @@ public class SubjectStateImpl implements SubjectState, Serializable {
         subState = null;
         break;
     }
-    this.lastChanged = LocalDateTime.now();
+    lastChanged = LocalDateTime.now();
+  }
+
+  @Override
+  public void setToSent() {
+    if (!StateFunctionType.SEND.equals(currentState.getFunctionType())) {
+      throw new IllegalStateException();
+    }
+
+    if (SubjectSubState.TO_SEND.equals(subState)) {
+      subState = SubjectSubState.SENT;
+      lastChanged = LocalDateTime.now();
+    }
+  }
+
+  @Override
+  public void setToReceived(final MessageFlow messageFlow) {
+    if (!StateFunctionType.RECEIVE.equals(currentState.getFunctionType())) {
+      throw new IllegalStateException();
+    }
+    checkNotNull(messageFlow);
+
+    if (SubjectSubState.TO_RECEIVE.equals(subState)) {
+      subState = SubjectSubState.RECEIVED;
+      this.messageFlow = (MessageFlowImpl) messageFlow;
+      lastChanged = LocalDateTime.now();
+    }
   }
 
   @Override
   public boolean isNextState(final State nextState) {
     return currentState.getToStates().stream()
         .filter(transition -> transition.getToState().equals(nextState)).count() >= 1;
+  }
+
+  @Override
+  public MessageFlow getCurrentMessageFlow() {
+    return messageFlow;
   }
 
   @Override
@@ -132,14 +170,6 @@ public class SubjectStateImpl implements SubjectState, Serializable {
   @Override
   public SubjectSubState getSubState() {
     return subState;
-  }
-
-  @Override
-  public void setSubState(final SubjectSubState subState) {
-    this.subState = subState;
-    if (subState != null) {
-      this.lastChanged = LocalDateTime.now();
-    }
   }
 
   @Override

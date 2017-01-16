@@ -62,12 +62,12 @@ public class VacationRequest extends AbstractExample {
         .functionType(StateFunctionType.SEND).build();
     final Transition empT1 =
         new TransitionBuilder().fromState(empState1).toState(empState2).build();
-    final MessageFlow mf1 =
-        new MessageFlowBuilder().sender(employee).receiver(boss).state(empState2).build();
 
     // receive vacation request
     final State bossState1 = new StateBuilder().subjectModel(boss).name("Receive vacation request")
         .eventType(StateEventType.START).functionType(StateFunctionType.RECEIVE).build();
+
+
 
     final BusinessObjectModel vacationRequestForm =
         new BusinessObjectModelBuilder().name("Vacation request form").addToState(empState1)
@@ -77,6 +77,12 @@ public class VacationRequest extends AbstractExample {
     final BusinessObjectFieldModel boTo = new BusinessObjectFieldModelBuilder().fieldName("To")
         .fieldType(FieldType.STRING).businessObjectModel(vacationRequestForm).build();
 
+    final BusinessObjectModel vacationRequestSubForm = new BusinessObjectModelBuilder()
+        .name("vacation request sub form").parent(vacationRequestForm).build();
+    final BusinessObjectFieldModel boTarget =
+        new BusinessObjectFieldModelBuilder().fieldName("target")
+            .businessObjectModel(vacationRequestSubForm).fieldType(FieldType.STRING).build();
+
     final BusinessObjectFieldPermission boFromPermissionEmp1 =
         new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boFrom).state(empState1)
             .permission(FieldPermission.READ_WRITE).mandatory(true).build();
@@ -84,12 +90,20 @@ public class VacationRequest extends AbstractExample {
         new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boTo).state(empState1)
             .permission(FieldPermission.READ_WRITE).mandatory(true).build();
 
+    final BusinessObjectFieldPermission boFromPermissionEmp5 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boTarget)
+            .state(empState1).permission(FieldPermission.READ_WRITE).mandatory(true).build();
+
     final BusinessObjectFieldPermission boFromPermissionEmp3 =
         new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boFrom).state(empState2)
             .permission(FieldPermission.READ).mandatory(true).build();
     final BusinessObjectFieldPermission boFromPermissionEmp4 =
         new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boTo).state(empState2)
             .permission(FieldPermission.READ).mandatory(true).build();
+
+    final BusinessObjectFieldPermission boFromPermissionEmp6 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boTarget)
+            .state(empState2).permission(FieldPermission.READ).mandatory(true).build();
 
     final BusinessObjectFieldPermission boFromPermissionBoss1 =
         new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boFrom)
@@ -111,10 +125,6 @@ public class VacationRequest extends AbstractExample {
         .functionType(StateFunctionType.SEND).build();
     final Transition bossT3 =
         new TransitionBuilder().fromState(bossState2).toState(bossState4).build();
-    final MessageFlow mf2 =
-        new MessageFlowBuilder().sender(boss).receiver(employee).state(bossState3).build();
-    final MessageFlow mf3 =
-        new MessageFlowBuilder().sender(boss).receiver(employee).state(bossState4).build();
 
     // finish the boss
     final State bossState5 = new StateBuilder().subjectModel(boss).name("END")
@@ -163,20 +173,29 @@ public class VacationRequest extends AbstractExample {
             .state(ProcessModelState.ACTIVE).subjectModels(Lists.newArrayList(boss, employee))
             .starterSubject(employee).version(1.1F).build();
 
+    final MessageFlow mf1 = new MessageFlowBuilder().sender(employee).receiver(boss)
+        .state(empState2).assignBusinessObjectModel(vacationRequestForm).build();
+    final MessageFlow mf2 = new MessageFlowBuilder().sender(boss).receiver(employee)
+        .state(bossState3).assignBusinessObjectModel(okForm).build();
+    final MessageFlow mf3 = new MessageFlowBuilder().sender(boss).receiver(employee)
+        .state(bossState4).assignBusinessObjectModel(nokForm).build();
+
     saveSubjectModels(boss, employee);
     saveProcessModel(pm);
 
     saveStates(empState1, empState2, empState3, empState4, bossState1, bossState2, bossState3,
         bossState4, bossState5);
-    saveMessageFlows(mf1, mf2, mf3);
     saveTransitions(empT1, empT2, empT3, bossT1, bossT2, bossT3, bossT4, bossT5);
 
-    saveBusinessObjectModels(vacationRequestForm, okForm, nokForm);
-    saveBusinessObjectFieldModels(boFrom, boTo, nokFormFieldInformation, okFormFieldInformation);
+    saveBusinessObjectModels(vacationRequestForm, okForm, nokForm, vacationRequestSubForm);
+    saveBusinessObjectFieldModels(boFrom, boTo, nokFormFieldInformation, okFormFieldInformation,
+        boTarget);
     saveBusinessObjectFieldPermissions(boFromPermissionEmp1, boFromPermissionEmp2,
         boFromPermissionBoss1, boFromPermissionBoss2, okFormFieldInformationPermission1,
         okFormFieldInformationPermission2, nokFormFieldInformationPermission1,
-        nokFormFieldInformationPermission2, boFromPermissionEmp3, boFromPermissionEmp4);
+        nokFormFieldInformationPermission2, boFromPermissionEmp3, boFromPermissionEmp4,
+        boFromPermissionEmp5, boFromPermissionEmp6);
+    saveMessageFlows(mf1, mf2, mf3);
   }
 
   @Override

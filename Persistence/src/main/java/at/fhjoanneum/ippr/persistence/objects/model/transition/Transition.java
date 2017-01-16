@@ -1,5 +1,6 @@
 package at.fhjoanneum.ippr.persistence.objects.model.transition;
 
+import at.fhjoanneum.ippr.persistence.objects.model.enums.TransitionType;
 import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 
 public interface Transition {
@@ -9,5 +10,5 @@ public interface Transition {
 
   State getToState();
 
-  Long getTimeout();
+  TransitionType getTransitionType();
 }

@@ -7,11 +7,17 @@ import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 
 public interface BusinessObjectModel {
 
-	Long getBomId();
+  Long getBomId();
 
-	String getName();
+  String getName();
 
-	List<BusinessObjectFieldModel> getBusinessObjectFieldModels();
+  List<BusinessObjectFieldModel> getBusinessObjectFieldModels();
 
-	List<State> getStates();
+  List<State> getStates();
+
+  BusinessObjectModel getParent();
+
+  boolean hasParent();
+
+  List<BusinessObjectModel> getChildren();
 }

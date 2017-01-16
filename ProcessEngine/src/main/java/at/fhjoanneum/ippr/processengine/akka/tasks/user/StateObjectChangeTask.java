@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,9 @@ import at.fhjoanneum.ippr.persistence.objects.model.businessobject.permission.Bu
 import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldPermission;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldType;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
+import at.fhjoanneum.ippr.persistence.objects.model.messageflow.MessageFlow;
 import at.fhjoanneum.ippr.persistence.objects.model.state.State;
+import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
 import at.fhjoanneum.ippr.processengine.akka.config.Global;
 import at.fhjoanneum.ippr.processengine.akka.config.SpringExtension;
 import at.fhjoanneum.ippr.processengine.akka.messages.EmptyMessage;
@@ -52,7 +55,7 @@ import at.fhjoanneum.ippr.processengine.repositories.BusinessObjectFieldPermissi
 import at.fhjoanneum.ippr.processengine.repositories.BusinessObjectInstanceRepository;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 import at.fhjoanneum.ippr.processengine.repositories.StateRepository;
-import at.fhjoanneum.ippr.processengine.repositories.SubjectRepository;
+import at.fhjoanneum.ippr.processengine.repositories.SubjectModelRepository;
 import at.fhjoanneum.ippr.processengine.repositories.SubjectStateRepository;
 import scala.concurrent.Await;
 import scala.concurrent.Future;
@@ -68,8 +71,6 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
   @Autowired
   private ProcessInstanceRepository processInstanceRepository;
   @Autowired
-  private SubjectRepository subjectRepository;
-  @Autowired
   private SubjectStateRepository subjectStateRepository;
   @Autowired
   private BusinessObjectInstanceRepository businessObjectInstanceRepository;
@@ -79,6 +80,8 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
   private BusinessObjectFieldPermissionRepository businessObjectFieldPermissionRepository;
   @Autowired
   private StateRepository stateRepository;
+  @Autowired
+  private SubjectModelRepository subjectModelRepository;
   @Autowired
   private DbValueParser valueParser;
 
@@ -236,14 +239,16 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
   private void triggerSend(final SubjectState subjectState,
       final StateObjectChangeMessage.Request request) {
     final ActorRef userActor = getContext().parent();
-    final List<Long> userIds = request.getStateObjectChangeDTO().getUserAssignments().stream()
-        .map(UserAssignmentDTO::getUserId).collect(Collectors.toList());
+    final List<Pair<Long, Long>> userMessageFlowIds =
+        request.getStateObjectChangeDTO().getUserAssignments().stream()
+            .map(assignment -> getUserMessageFlowIds(subjectState, assignment))
+            .collect(Collectors.toList());
 
     try {
-      PatternsCS.ask(userActor,
-          new MessagesSendMessage.Request(request.getPiId(), subjectState.getSsId(), userIds),
-          Global.TIMEOUT).toCompletableFuture().get();
-      LOG.info("All users [{}] received the message in PI_ID [{}]", userIds, request.getPiId());
+      PatternsCS.ask(userActor, new MessagesSendMessage.Request(request.getPiId(),
+          subjectState.getSsId(), userMessageFlowIds), Global.TIMEOUT).toCompletableFuture().get();
+      LOG.info("All users [{}] received the message in PI_ID [{}]", userMessageFlowIds,
+          request.getPiId());
       entityManager.refresh(subjectState);
       if (SubjectSubState.SENT.equals(subjectState.getSubState())) {
         changeToNextState(subjectState, request);
@@ -257,6 +262,15 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
               "Could not send message to all users in PI_ID [" + request.getPiId() + "]")),
           getSelf());
     }
+  }
+
+  private Pair<Long, Long> getUserMessageFlowIds(final SubjectState senderState,
+      final UserAssignmentDTO userAssignment) {
+    final SubjectModel receiveSubjectModel =
+        subjectModelRepository.findOne(userAssignment.getSmId());
+    final MessageFlow messageFlow = senderState.getCurrentState()
+        .getMessageFlowForReceiver(receiveSubjectModel).get();
+    return Pair.of(userAssignment.getUserId(), messageFlow.getMfId());
   }
 
   private void changeToNextState(final SubjectState subjectState,

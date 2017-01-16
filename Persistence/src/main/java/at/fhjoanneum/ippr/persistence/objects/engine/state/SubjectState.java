@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import at.fhjoanneum.ippr.persistence.entities.engine.enums.SubjectSubState;
 import at.fhjoanneum.ippr.persistence.objects.engine.process.ProcessInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.subject.Subject;
+import at.fhjoanneum.ippr.persistence.objects.model.messageflow.MessageFlow;
 import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 
 public interface SubjectState {
@@ -21,7 +22,11 @@ public interface SubjectState {
 
   SubjectSubState getSubState();
 
-  void setSubState(SubjectSubState substate);
+  void setToSent();
+
+  void setToReceived(MessageFlow messageFlow);
+
+  MessageFlow getCurrentMessageFlow();
 
   LocalDateTime getLastChanged();
 

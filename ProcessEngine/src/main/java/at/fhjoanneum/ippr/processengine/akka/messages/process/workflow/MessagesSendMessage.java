@@ -2,18 +2,21 @@ package at.fhjoanneum.ippr.processengine.akka.messages.process.workflow;
 
 import java.util.List;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 public class MessagesSendMessage {
 
   public static class Request {
 
     private final Long piId;
-    private final List<Long> userIds;
+    private final List<Pair<Long, Long>> userMessageFlowIds;
     private final Long sendSubjectState;
 
-    public Request(final Long piId, final Long sendSubjectState, final List<Long> userIds) {
+    public Request(final Long piId, final Long sendSubjectState,
+        final List<Pair<Long, Long>> userMessageFlowIds) {
       this.piId = piId;
       this.sendSubjectState = sendSubjectState;
-      this.userIds = userIds;
+      this.userMessageFlowIds = userMessageFlowIds;
     }
 
     public Long getPiId() {
@@ -24,8 +27,8 @@ public class MessagesSendMessage {
       return sendSubjectState;
     }
 
-    public List<Long> getUserIds() {
-      return userIds;
+    public List<Pair<Long, Long>> getUserMessageFlowIds() {
+      return userMessageFlowIds;
     }
   }
 

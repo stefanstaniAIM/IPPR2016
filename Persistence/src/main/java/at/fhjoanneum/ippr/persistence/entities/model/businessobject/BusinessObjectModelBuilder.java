@@ -15,28 +15,38 @@ import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 
 public class BusinessObjectModelBuilder implements Builder<BusinessObjectModel> {
 
-	private String name;
-	private final List<StateImpl> states = Lists.newArrayList();
+  private String name;
+  private final List<StateImpl> states = Lists.newArrayList();
+  private BusinessObjectModelImpl parent;
 
-	public BusinessObjectModelBuilder name(final String name) {
-		isNotBlank(name);
-		this.name = name;
-		return this;
-	}
+  public BusinessObjectModelBuilder name(final String name) {
+    isNotBlank(name);
+    this.name = name;
+    return this;
+  }
 
-	public BusinessObjectModelBuilder addToState(final State state) {
-		checkNotNull(state);
-		checkArgument(state instanceof StateImpl);
-		states.add((StateImpl) state);
-		return this;
-	}
+  public BusinessObjectModelBuilder addToState(final State state) {
+    checkNotNull(state);
+    checkArgument(state instanceof StateImpl);
+    states.add((StateImpl) state);
+    return this;
+  }
 
-	@Override
-	public BusinessObjectModel build() {
-		isNotBlank(name);
-		checkNotNull(states);
-		checkArgument(!states.isEmpty());
+  public BusinessObjectModelBuilder parent(final BusinessObjectModel parent) {
+    checkNotNull(parent);
+    checkArgument(parent instanceof BusinessObjectModelImpl);
+    this.parent = (BusinessObjectModelImpl) parent;
+    return this;
+  }
 
-		return new BusinessObjectModelImpl(name, states);
-	}
+  @Override
+  public BusinessObjectModel build() {
+    isNotBlank(name);
+
+    if (parent == null) {
+      return new BusinessObjectModelImpl(name, states);
+    } else {
+      return new BusinessObjectModelImpl(name, states, parent);
+    }
+  }
 }
