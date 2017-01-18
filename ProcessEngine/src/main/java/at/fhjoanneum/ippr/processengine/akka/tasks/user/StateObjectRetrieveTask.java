@@ -65,63 +65,7 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
             subjectStateRepository.getSubjectStateOfUser(request.getPiId(), request.getUserId()))
         .get();
 
-    final List<BusinessObjectDTO> businessObjects = Lists.newArrayList();
-
-    for (final BusinessObjectModel businessObjectModel : subjectState.getCurrentState()
-        .getBusinessObjectModels()) {
-
-      LOG.debug("Found business object model: {}", businessObjectModel);
-
-      final List<BusinessObjectFieldDTO> fields = Lists.newArrayList();
-      final Optional<BusinessObjectInstance> businessObjectInstanceOpt = Optional
-          .ofNullable(businessObjectInstanceRepository.getBusinessObjectInstanceOfModelInProcess(
-              request.getPiId(), businessObjectModel.getBomId()));
-
-      if (!businessObjectInstanceOpt.isPresent()) {
-        LOG.debug("No business object instance is present for BOM_ID [{}] in process PI_ID [{}]",
-            businessObjectModel.getBomId(), request.getPiId());
-      }
-
-      for (final BusinessObjectFieldModel businessObjectFieldModel : businessObjectModel
-          .getBusinessObjectFieldModels()) {
-        final BusinessObjectFieldPermission businessObjectFieldPermission =
-            businessObjectFieldPermissionRepository.getBusinessObjectFieldPermissionInState(
-                businessObjectFieldModel.getBofmId(), subjectState.getCurrentState().getSId());
-
-        if (!businessObjectFieldPermission.getPermission().equals(FieldPermission.NONE)) {
-          final Long bofmId = businessObjectFieldModel.getBofmId();
-          final String name = businessObjectFieldModel.getFieldName();
-          final String type = businessObjectFieldModel.getFieldType().name();
-          final boolean required = businessObjectFieldPermission.isMandatory();
-          final boolean readOnly =
-              businessObjectFieldPermission.getPermission().equals(FieldPermission.READ) ? true
-                  : false;
-
-          String value = null;
-          Long bofiId = null;
-          if (businessObjectInstanceOpt.isPresent()) {
-            final Optional<BusinessObjectFieldInstance> fieldInstanceOpt = businessObjectInstanceOpt
-                .get().getBusinessObjectFieldInstanceOfFieldModel(businessObjectFieldModel);
-
-            if (fieldInstanceOpt.isPresent()) {
-              final BusinessObjectFieldInstance fieldInstance = fieldInstanceOpt.get();
-              bofiId = fieldInstance.getBofiId();
-
-              value = valueComposer.compose(fieldInstance.getValue(),
-                  fieldInstance.getBusinessObjectFieldModel().getFieldType());
-            }
-          }
-          fields.add(
-              new BusinessObjectFieldDTO(bofmId, bofiId, name, type, required, readOnly, value));
-        } else {
-          LOG.debug("Not necessary to add field [{}] since permission is 'NONE'");
-          continue;
-        }
-      }
-      businessObjects.add(new BusinessObjectDTO(businessObjectModel.getBomId(),
-          businessObjectInstanceOpt.isPresent() ? businessObjectInstanceOpt.get().getBoiId() : null,
-          businessObjectModel.getName(), fields));
-    }
+    final List<BusinessObjectDTO> businessObjects = getBusinessObjects(request, subjectState);
 
     // TODO add receive handling
 
@@ -142,6 +86,88 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
     }
 
     getSender().tell(new StateObjectMessage.Response(stateObjectDTO), getSelf());
+  }
+
+  private List<BusinessObjectDTO> getBusinessObjects(final StateObjectMessage.Request request,
+      final SubjectState subjectState) {
+    final List<BusinessObjectDTO> businessObjects = Lists.newArrayList();
+
+    for (final BusinessObjectModel businessObjectModel : subjectState.getCurrentState()
+        .getBusinessObjectModels()) {
+      businessObjects.add(getBusinessObjectDTO(request, businessObjectModel, subjectState));
+    }
+    return businessObjects;
+  }
+
+  private BusinessObjectDTO getBusinessObjectDTO(final StateObjectMessage.Request request,
+      final BusinessObjectModel businessObjectModel, final SubjectState subjectState) {
+    LOG.debug("Found business object model: {}", businessObjectModel);
+
+    final Optional<BusinessObjectInstance> businessObjectInstanceOpt = Optional
+        .ofNullable(businessObjectInstanceRepository.getBusinessObjectInstanceOfModelInProcess(
+            request.getPiId(), businessObjectModel.getBomId()));
+
+    if (!businessObjectInstanceOpt.isPresent()) {
+      LOG.debug("No business object instance is present for BOM_ID [{}] in process PI_ID [{}]",
+          businessObjectModel.getBomId(), request.getPiId());
+    }
+
+    final List<BusinessObjectFieldDTO> fields =
+        getBusinessObjectFieldDTO(businessObjectModel, subjectState, businessObjectInstanceOpt);
+
+    // get children
+    final List<BusinessObjectDTO> children = businessObjectModel.getChildren().stream()
+        .map(child -> getBusinessObjectDTO(request, child, subjectState))
+        .collect(Collectors.toList());
+
+    return new BusinessObjectDTO(businessObjectModel.getBomId(),
+        businessObjectInstanceOpt.isPresent() ? businessObjectInstanceOpt.get().getBoiId() : null,
+        businessObjectModel.getName(), fields, children);
+  }
+
+  private List<BusinessObjectFieldDTO> getBusinessObjectFieldDTO(
+      final BusinessObjectModel businessObjectModel, final SubjectState subjectState,
+      final Optional<BusinessObjectInstance> businessObjectInstanceOpt) {
+
+    final List<BusinessObjectFieldDTO> fields = Lists.newArrayList();
+
+    for (final BusinessObjectFieldModel businessObjectFieldModel : businessObjectModel
+        .getBusinessObjectFieldModels()) {
+      final BusinessObjectFieldPermission businessObjectFieldPermission =
+          businessObjectFieldPermissionRepository.getBusinessObjectFieldPermissionInState(
+              businessObjectFieldModel.getBofmId(), subjectState.getCurrentState().getSId());
+
+      if (!businessObjectFieldPermission.getPermission().equals(FieldPermission.NONE)) {
+        final Long bofmId = businessObjectFieldModel.getBofmId();
+        final String name = businessObjectFieldModel.getFieldName();
+        final String type = businessObjectFieldModel.getFieldType().name();
+        final boolean required = businessObjectFieldPermission.isMandatory();
+        final boolean readOnly =
+            businessObjectFieldPermission.getPermission().equals(FieldPermission.READ) ? true
+                : false;
+
+        String value = null;
+        Long bofiId = null;
+        if (businessObjectInstanceOpt.isPresent()) {
+          final Optional<BusinessObjectFieldInstance> fieldInstanceOpt = businessObjectInstanceOpt
+              .get().getBusinessObjectFieldInstanceOfFieldModel(businessObjectFieldModel);
+
+          if (fieldInstanceOpt.isPresent()) {
+            final BusinessObjectFieldInstance fieldInstance = fieldInstanceOpt.get();
+            bofiId = fieldInstance.getBofiId();
+
+            value = valueComposer.compose(fieldInstance.getValue(),
+                fieldInstance.getBusinessObjectFieldModel().getFieldType());
+          }
+        }
+        fields
+            .add(new BusinessObjectFieldDTO(bofmId, bofiId, name, type, required, readOnly, value));
+      } else {
+        LOG.debug("Not necessary to add field [{}] since permission is 'NONE'");
+        continue;
+      }
+    }
+    return fields;
   }
 
   private SubjectDTO getAssignedUser(final MessageFlow messageFlow, final Long piId) {
