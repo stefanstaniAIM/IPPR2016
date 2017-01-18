@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -141,7 +142,8 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
     final ProcessInstance processInstance = processInstanceRepository.findOne(request.getPiId());
 
     final List<BusinessObjectModel> toCreate = state.getCurrentState().getBusinessObjectModels()
-        .stream().filter(model -> !processInstance.isBusinessObjectInstanceOfModelCreated(model))
+        .stream().map(BusinessObjectModel::flattened).flatMap(List::stream)
+        .filter(model -> !processInstance.isBusinessObjectInstanceOfModelCreated(model))
         .collect(Collectors.toList());
 
     LOG.debug("Must create instances for business object models: {}", toCreate);
@@ -169,8 +171,12 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
       final StateObjectChangeMessage.Request request) {
     final ActorRef sender = getSender();
 
-    request.getStateObjectChangeDTO().getBusinessObjects().stream()
-        .map(BusinessObjectInstanceDTO::getFields).flatMap(List::stream).forEach(field -> {
+    final Stream<BusinessObjectInstanceDTO> businessObjects =
+        request.getStateObjectChangeDTO().getBusinessObjects().stream()
+            .map(BusinessObjectInstanceDTO::flattened).flatMap(List::stream);
+
+    businessObjects.map(BusinessObjectInstanceDTO::getFields).flatMap(List::stream)
+        .forEach(field -> {
           final Optional<BusinessObjectFieldPermission> permissionOpt = Optional.ofNullable(
               businessObjectFieldPermissionRepository.getBusinessObjectFieldPermissionInState(
                   field.getBofmId(), currentState.getSId()));
@@ -268,8 +274,8 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
       final UserAssignmentDTO userAssignment) {
     final SubjectModel receiveSubjectModel =
         subjectModelRepository.findOne(userAssignment.getSmId());
-    final MessageFlow messageFlow = senderState.getCurrentState()
-        .getMessageFlowForReceiver(receiveSubjectModel).get();
+    final MessageFlow messageFlow =
+        senderState.getCurrentState().getMessageFlowForReceiver(receiveSubjectModel).get();
     return Pair.of(userAssignment.getUserId(), messageFlow.getMfId());
   }
 
