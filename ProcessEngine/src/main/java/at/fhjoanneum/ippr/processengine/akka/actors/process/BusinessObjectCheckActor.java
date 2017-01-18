@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.transaction.Transactional;
 
@@ -79,9 +80,14 @@ public class BusinessObjectCheckActor extends UntypedActor {
         return;
       }
 
-      final List<BusinessObjectFieldModel> fieldModels = state.getBusinessObjectModels().stream()
-          .map(BusinessObjectModel::getBusinessObjectFieldModels).flatMap(List::stream)
-          .collect(Collectors.toList());
+      // retrieve all business object models - also childs
+      final List<BusinessObjectModel> businessObjectModels =
+          state.getBusinessObjectModels().stream().map(BusinessObjectModel::flattened)
+              .flatMap(List::stream).collect(Collectors.toList());
+
+      final List<BusinessObjectFieldModel> fieldModels =
+          businessObjectModels.stream().map(BusinessObjectModel::getBusinessObjectFieldModels)
+              .flatMap(List::stream).collect(Collectors.toList());
 
       final Map<Long, String> fieldInstances =
           convertToMap(request.getStateObjectChangeDTO().getBusinessObjects());
@@ -164,7 +170,10 @@ public class BusinessObjectCheckActor extends UntypedActor {
       return Maps.newHashMap();
     }
 
-    return businessObjects.stream().map(BusinessObjectInstanceDTO::getFields).flatMap(List::stream)
+    final Stream<BusinessObjectInstanceDTO> allBusinessObjects =
+        businessObjects.stream().map(BusinessObjectInstanceDTO::flattened).flatMap(List::stream);
+
+    return allBusinessObjects.map(BusinessObjectInstanceDTO::getFields).flatMap(List::stream)
         .collect(Collectors.toMap(BusinessObjectFieldInstanceDTO::getBofmId,
             BusinessObjectFieldInstanceDTO::getValue));
   }

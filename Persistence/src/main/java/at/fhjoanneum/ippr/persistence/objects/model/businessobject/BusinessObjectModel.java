@@ -20,4 +20,6 @@ public interface BusinessObjectModel {
   boolean hasParent();
 
   List<BusinessObjectModel> getChildren();
+
+  List<BusinessObjectModel> flattened();
 }

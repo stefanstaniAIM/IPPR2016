@@ -2,6 +2,8 @@ package at.fhjoanneum.ippr.persistence.entities.model.businessobject;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -105,6 +107,16 @@ public class BusinessObjectModelImpl implements BusinessObjectModel, Serializabl
   @Override
   public List<BusinessObjectModel> getChildren() {
     return ImmutableList.copyOf(children);
+  }
+
+  @Override
+  public List<BusinessObjectModel> flattened() {
+    return ImmutableList.copyOf(getAll().collect(Collectors.toList()));
+  }
+
+  private Stream<BusinessObjectModel> getAll() {
+    return Stream.concat(Stream.of(this),
+        children.stream().flatMap(BusinessObjectModelImpl::getAll));
   }
 
   @Override
