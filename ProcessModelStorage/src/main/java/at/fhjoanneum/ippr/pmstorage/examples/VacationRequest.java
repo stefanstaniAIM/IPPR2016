@@ -26,6 +26,7 @@ import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldType;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.ProcessModelState;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.StateEventType;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.TransitionType;
 import at.fhjoanneum.ippr.persistence.objects.model.messageflow.MessageFlow;
 import at.fhjoanneum.ippr.persistence.objects.model.process.ProcessModel;
 import at.fhjoanneum.ippr.persistence.objects.model.state.State;
@@ -111,6 +112,9 @@ public class VacationRequest extends AbstractExample {
     final BusinessObjectFieldPermission boFromPermissionBoss2 =
         new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boTo).state(bossState1)
             .permission(FieldPermission.READ).mandatory(true).build();
+    final BusinessObjectFieldPermission boFromPermissionBoss3 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boTarget)
+            .state(bossState1).permission(FieldPermission.READ).mandatory(true).build();
 
     // accept or do not accept vacation request
     final State bossState2 = new StateBuilder().subjectModel(boss)
@@ -149,7 +153,7 @@ public class VacationRequest extends AbstractExample {
             .state(bossState2).mandatory(false).permission(FieldPermission.READ_WRITE).build();
     final BusinessObjectFieldPermission okFormFieldInformationPermission2 =
         new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(okFormFieldInformation)
-            .state(empState3).mandatory(false).permission(FieldPermission.NONE).build();
+            .state(empState3).mandatory(false).permission(FieldPermission.READ).build();
 
     final BusinessObjectModel nokForm = new BusinessObjectModelBuilder()
         .name("Vacation request not accept").addToState(bossState3).addToState(empState3).build();
@@ -162,11 +166,23 @@ public class VacationRequest extends AbstractExample {
         new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(nokFormFieldInformation)
             .state(empState3).mandatory(false).permission(FieldPermission.READ).build();
 
+    final State empState4 = new StateBuilder().subjectModel(employee).name("Received OK")
+        .functionType(StateFunctionType.FUNCTION).build();
+    final State empState5 = new StateBuilder().subjectModel(employee).name("Received NOK")
+        .functionType(StateFunctionType.FUNCTION).build();
+
+    final Transition if1 = new TransitionBuilder().fromState(empState3).toState(empState4)
+        .transitionType(TransitionType.IF_CONDITION).build();
+    final Transition if2 = new TransitionBuilder().fromState(empState3).toState(empState5)
+        .transitionType(TransitionType.IF_CONDITION).build();
+
     // finish the employee
-    final State empState4 = new StateBuilder().subjectModel(employee).name("END")
+    final State empState6 = new StateBuilder().subjectModel(employee).name("END")
         .functionType(StateFunctionType.FUNCTION).build();
     final Transition empT3 =
-        new TransitionBuilder().fromState(empState3).toState(empState4).build();
+        new TransitionBuilder().fromState(empState4).toState(empState6).build();
+    final Transition empT4 =
+        new TransitionBuilder().fromState(empState5).toState(empState6).build();
 
     final ProcessModel pm =
         new ProcessModelBuilder().name("Vacation request").description("Request for vacation")
@@ -183,9 +199,9 @@ public class VacationRequest extends AbstractExample {
     saveSubjectModels(boss, employee);
     saveProcessModel(pm);
 
-    saveStates(empState1, empState2, empState3, empState4, bossState1, bossState2, bossState3,
-        bossState4, bossState5);
-    saveTransitions(empT1, empT2, empT3, bossT1, bossT2, bossT3, bossT4, bossT5);
+    saveStates(empState1, empState2, empState3, empState4, empState5, empState6, bossState1,
+        bossState2, bossState3, bossState4, bossState5);
+    saveTransitions(empT1, empT2, empT3, empT4, bossT1, bossT2, bossT3, bossT4, bossT5, if1, if2);
 
     saveBusinessObjectModels(vacationRequestForm, okForm, nokForm, vacationRequestSubForm);
     saveBusinessObjectFieldModels(boFrom, boTo, nokFormFieldInformation, okFormFieldInformation,
@@ -194,7 +210,7 @@ public class VacationRequest extends AbstractExample {
         boFromPermissionBoss1, boFromPermissionBoss2, okFormFieldInformationPermission1,
         okFormFieldInformationPermission2, nokFormFieldInformationPermission1,
         nokFormFieldInformationPermission2, boFromPermissionEmp3, boFromPermissionEmp4,
-        boFromPermissionEmp5, boFromPermissionEmp6);
+        boFromPermissionEmp5, boFromPermissionEmp6, boFromPermissionBoss3);
     saveMessageFlows(mf1, mf2, mf3);
   }
 

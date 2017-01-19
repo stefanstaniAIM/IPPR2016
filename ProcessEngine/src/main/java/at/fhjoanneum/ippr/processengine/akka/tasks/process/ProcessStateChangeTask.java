@@ -11,6 +11,7 @@ import org.springframework.transaction.support.TransactionSynchronizationAdapter
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import akka.actor.ActorRef;
+import at.fhjoanneum.ippr.persistence.entities.engine.process.ProcessInstanceImpl;
 import at.fhjoanneum.ippr.persistence.objects.engine.enums.ProcessInstanceState;
 import at.fhjoanneum.ippr.persistence.objects.engine.process.ProcessInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.subject.Subject;
@@ -46,10 +47,10 @@ public class ProcessStateChangeTask extends AbstractTask<StateObjectChangeMessag
     if (processOpt.isPresent()) {
       final ProcessInstance process = processOpt.get();
       for (final Subject subject : process.getSubjects()) {
-        if (!StateEventType.END
-            .equals(subject.getSubjectState().getCurrentState().getEventType())) {
-          LOG.debug("State [{}] is not in 'END' state, cannot finish process instance",
-              subject.getSubjectState().getCurrentState());
+        final StateEventType eventType = subject.getSubjectState().getCurrentState().getEventType();
+        if (StateEventType.END.equals(eventType)
+            || StateEventType.START.equals(eventType) && subject.getUser() == null) {
+        } else {
           getSender().tell(new StateObjectChangeMessage.Response(request.getPiId(), Boolean.FALSE),
               getSelf());
           callback(Boolean.FALSE);
@@ -58,6 +59,7 @@ public class ProcessStateChangeTask extends AbstractTask<StateObjectChangeMessag
       }
 
       process.setState(ProcessInstanceState.FINISHED);
+      processInstanceRepository.save((ProcessInstanceImpl) process);
 
       final ActorRef sender = getSender();
       TransactionSynchronizationManager
@@ -70,8 +72,6 @@ public class ProcessStateChangeTask extends AbstractTask<StateObjectChangeMessag
               callback(Boolean.TRUE);
             }
           });
-
-
     }
   }
 }
