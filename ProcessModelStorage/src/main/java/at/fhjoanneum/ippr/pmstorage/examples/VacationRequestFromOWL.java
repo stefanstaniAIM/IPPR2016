@@ -2,11 +2,15 @@ package at.fhjoanneum.ippr.pmstorage.examples;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.InputStream;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -29,14 +33,12 @@ public class VacationRequestFromOWL extends AbstractExample {
 
   @Override
   protected void createData() {
-	  String filename = "univ.owl";
 	  try {
-	  	File file = new File(filename);
-	  	FileReader reader = new FileReader(file);
-	  	OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM);
-	  	
-	  	model.read(reader,null);
-	  	model.write(System.out,"RDF/XML-ABBREV");
+		InputStream is = this.getClass().getResourceAsStream("/ontologies/VacationRequest.owl");
+		OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM);
+		
+		model.read(is,null);
+		model.write(System.out,"RDF/XML-ABBREV");
 	  } catch (Exception e) {
 	  	e.printStackTrace();
 	  }
