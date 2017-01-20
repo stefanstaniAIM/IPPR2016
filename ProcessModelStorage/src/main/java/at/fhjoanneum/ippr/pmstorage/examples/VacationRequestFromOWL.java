@@ -8,12 +8,16 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
+import org.apache.jena.ontology.OntClass;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.util.iterator.ExtendedIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import javassist.bytecode.Descriptor.Iterator;
 
 
 
@@ -39,6 +43,9 @@ public class VacationRequestFromOWL extends AbstractExample {
 		
 		model.read(is,null);
 		model.write(System.out,"RDF/XML-ABBREV");
+		for(OntClass klass : model.listClasses().toList()) {
+			System.out.println(klass.getURI());
+		};
 	  } catch (Exception e) {
 	  	e.printStackTrace();
 	  }
