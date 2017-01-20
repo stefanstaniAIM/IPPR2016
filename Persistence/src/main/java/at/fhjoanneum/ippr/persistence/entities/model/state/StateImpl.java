@@ -2,6 +2,7 @@ package at.fhjoanneum.ippr.persistence.entities.model.state;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,6 +24,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import at.fhjoanneum.ippr.persistence.entities.model.businessobject.BusinessObjectModelImpl;
 import at.fhjoanneum.ippr.persistence.entities.model.messageflow.MessageFlowImpl;
@@ -70,16 +72,16 @@ public class StateImpl implements State, Serializable {
   private SubjectModelImpl subjectModel;
 
   @OneToMany(mappedBy = "toState")
-  private List<TransitionImpl> fromStates;
+  private final List<TransitionImpl> fromStates = Lists.newArrayList();
 
   @OneToMany(mappedBy = "fromState")
-  private List<TransitionImpl> toStates;
+  private final List<TransitionImpl> toStates = Lists.newArrayList();
 
   @OneToMany(mappedBy = "state")
-  private List<MessageFlowImpl> messageFlows;
+  private final List<MessageFlowImpl> messageFlows = Lists.newArrayList();
 
   @ManyToMany(mappedBy = "states")
-  private List<BusinessObjectModelImpl> businessObjectModels;
+  private final List<BusinessObjectModelImpl> businessObjectModels = Lists.newArrayList();
 
   StateImpl() {}
 
@@ -124,6 +126,18 @@ public class StateImpl implements State, Serializable {
   @Override
   public List<MessageFlow> getMessageFlow() {
     return ImmutableList.copyOf(messageFlows);
+  }
+
+  @Override
+  public Optional<MessageFlow> getMessageFlowForReceiver(final SubjectModel receiver) {
+    Optional<MessageFlow> messageFlowOpt = Optional.empty();
+    for (final MessageFlow messageFlow : messageFlows) {
+      if (messageFlow.getReceiver().equals(receiver)) {
+        messageFlowOpt = Optional.of(messageFlow);
+        break;
+      }
+    }
+    return messageFlowOpt;
   }
 
   @Override

@@ -4,11 +4,14 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -16,6 +19,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.google.common.base.Objects;
 
 import at.fhjoanneum.ippr.persistence.entities.model.state.StateImpl;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.TransitionType;
 import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 import at.fhjoanneum.ippr.persistence.objects.model.transition.Transition;
 
@@ -37,18 +41,21 @@ public class TransitionImpl implements Transition, Serializable {
   private StateImpl toState;
 
   @Column
-  private Long timeout;
+  @NotNull
+  @Enumerated(EnumType.STRING)
+  private TransitionType transitionType;
 
   TransitionImpl() {}
 
-  TransitionImpl(final StateImpl fromState, final StateImpl toState) {
+  TransitionImpl(final StateImpl fromState, final StateImpl toState,
+      final TransitionType transitionType) {
     this.fromState = fromState;
     this.toState = toState;
-  }
-
-  TransitionImpl(final StateImpl fromState, final StateImpl toState, final Long timeout) {
-    this(fromState, toState);
-    this.timeout = timeout;
+    if (transitionType == null) {
+      this.transitionType = TransitionType.NORMAL;
+    } else {
+      this.transitionType = transitionType;
+    }
   }
 
   @Override
@@ -67,8 +74,8 @@ public class TransitionImpl implements Transition, Serializable {
   }
 
   @Override
-  public Long getTimeout() {
-    return timeout;
+  public TransitionType getTransitionType() {
+    return transitionType;
   }
 
   @Override
@@ -94,6 +101,7 @@ public class TransitionImpl implements Transition, Serializable {
   @Override
   public String toString() {
     return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("sId", tId)
-        .append("fromState", fromState.getSId()).append("toState", toState.getSId()).toString();
+        .append("type", transitionType).append("fromState", fromState.getSId())
+        .append("toState", toState.getSId()).toString();
   }
 }

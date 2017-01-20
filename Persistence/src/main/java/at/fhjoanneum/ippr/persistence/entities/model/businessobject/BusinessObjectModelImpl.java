@@ -2,6 +2,8 @@ package at.fhjoanneum.ippr.persistence.entities.model.businessobject;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,15 +13,18 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.validator.constraints.NotBlank;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import at.fhjoanneum.ippr.persistence.entities.model.businessobject.field.BusinessObjectFieldModelImpl;
 import at.fhjoanneum.ippr.persistence.entities.model.state.StateImpl;
@@ -44,16 +49,29 @@ public class BusinessObjectModelImpl implements BusinessObjectModel, Serializabl
   @ManyToMany
   @JoinTable(name = "state_business_object_model_map", joinColumns = {@JoinColumn(name = "bom_id")},
       inverseJoinColumns = {@JoinColumn(name = "s_id")})
-  private List<StateImpl> states;
+  private List<StateImpl> states = Lists.newArrayList();
 
   @OneToMany(mappedBy = "businessObjectModel")
-  private List<BusinessObjectFieldModelImpl> businessObjectFields;
+  private final List<BusinessObjectFieldModelImpl> businessObjectFields = Lists.newArrayList();
+
+  @ManyToOne
+  @JoinColumn(name = "parent_bom_id")
+  private BusinessObjectModelImpl parent;
+
+  @OneToMany(mappedBy = "parent")
+  private final List<BusinessObjectModelImpl> children = Lists.newArrayList();
 
   BusinessObjectModelImpl() {}
 
   BusinessObjectModelImpl(final String name, final List<StateImpl> states) {
     this.name = name;
     this.states = states;
+  }
+
+  BusinessObjectModelImpl(final String name, final List<StateImpl> states,
+      final BusinessObjectModelImpl parent) {
+    this(name, states);
+    this.parent = parent;
   }
 
   @Override
@@ -74,6 +92,31 @@ public class BusinessObjectModelImpl implements BusinessObjectModel, Serializabl
   @Override
   public List<State> getStates() {
     return ImmutableList.copyOf(states);
+  }
+
+  @Override
+  public BusinessObjectModel getParent() {
+    return parent;
+  }
+
+  @Override
+  public boolean hasParent() {
+    return parent != null;
+  }
+
+  @Override
+  public List<BusinessObjectModel> getChildren() {
+    return ImmutableList.copyOf(children);
+  }
+
+  @Override
+  public List<BusinessObjectModel> flattened() {
+    return ImmutableList.copyOf(getAll().collect(Collectors.toList()));
+  }
+
+  private Stream<BusinessObjectModel> getAll() {
+    return Stream.concat(Stream.of(this),
+        children.stream().flatMap(BusinessObjectModelImpl::getAll));
   }
 
   @Override
@@ -99,6 +142,7 @@ public class BusinessObjectModelImpl implements BusinessObjectModel, Serializabl
   @Override
   public String toString() {
     return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("bomId", bomId)
-        .append("name", name).toString();
+        .append("name", name)
+        .append("parent_bom_id", parent != null ? parent.getBomId() : StringUtils.EMPTY).toString();
   }
 }

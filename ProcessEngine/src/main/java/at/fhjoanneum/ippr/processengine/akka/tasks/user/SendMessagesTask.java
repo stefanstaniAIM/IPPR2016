@@ -22,7 +22,6 @@ import akka.actor.ActorRef;
 import akka.actor.Status;
 import akka.actor.UntypedActorContext;
 import akka.pattern.PatternsCS;
-import at.fhjoanneum.ippr.persistence.entities.engine.enums.SubjectSubState;
 import at.fhjoanneum.ippr.persistence.entities.engine.state.SubjectStateImpl;
 import at.fhjoanneum.ippr.persistence.objects.engine.state.SubjectState;
 import at.fhjoanneum.ippr.processengine.akka.AkkaSelector;
@@ -61,8 +60,11 @@ public class SendMessagesTask extends AbstractTask<MessagesSendMessage.Request> 
 
   @Override
   public void execute(final MessagesSendMessage.Request request) throws Exception {
-    final List<CompletableFuture<Object>> futures = request.getUserIds().stream()
-        .map(userId -> convertToFuture(request.getPiId(), userId)).collect(Collectors.toList());
+    final List<CompletableFuture<Object>> futures =
+        request.getUserMessageFlowIds()
+            .stream().map(userMessageFlow -> convertToFuture(request.getPiId(),
+                userMessageFlow.getLeft(), userMessageFlow.getRight()))
+            .collect(Collectors.toList());
 
     final ActorRef sender = getSender();
 
@@ -70,7 +72,7 @@ public class SendMessagesTask extends AbstractTask<MessagesSendMessage.Request> 
       CompletableFuture.allOf(Iterables.toArray(futures, CompletableFuture.class)).get();
       LOG.info("All users received the message in PI_ID [{}]", request.getPiId());
       final SubjectState sendState = subjectStateRepository.findOne(request.getSendSubjectState());
-      sendState.setSubState(SubjectSubState.SENT);
+      sendState.setToSent();
       subjectStateRepository.save((SubjectStateImpl) sendState);
       LOG.debug("{} is set to 'SENT'", sendState);
     } catch (final Exception e) {
@@ -90,7 +92,8 @@ public class SendMessagesTask extends AbstractTask<MessagesSendMessage.Request> 
         });
   }
 
-  private CompletableFuture<Object> convertToFuture(final Long piId, final Long userId) {
+  private CompletableFuture<Object> convertToFuture(final Long piId, final Long userId,
+      final Long mfId) {
     final Optional<ActorRef> userActorOpt =
         akkaSelector.findActor(getParentContext(), getUserId(userId));
     ActorRef userActor = null;
@@ -101,7 +104,7 @@ public class SendMessagesTask extends AbstractTask<MessagesSendMessage.Request> 
           getParentContext().actorOf(springExtension.props("UserActor", userId), getUserId(userId));
     }
     return PatternsCS
-        .ask(userActor, new MessageReceiveMessage.Request(piId, userId), Global.TIMEOUT)
+        .ask(userActor, new MessageReceiveMessage.Request(piId, userId, mfId), Global.TIMEOUT)
         .toCompletableFuture();
   }
 

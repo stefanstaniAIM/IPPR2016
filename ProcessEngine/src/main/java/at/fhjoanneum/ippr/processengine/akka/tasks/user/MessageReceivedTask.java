@@ -17,6 +17,7 @@ import at.fhjoanneum.ippr.persistence.entities.engine.state.SubjectStateImpl;
 import at.fhjoanneum.ippr.persistence.objects.engine.state.SubjectState;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.MessageReceiveMessage;
 import at.fhjoanneum.ippr.processengine.akka.tasks.AbstractTask;
+import at.fhjoanneum.ippr.processengine.repositories.MessageFlowRepository;
 import at.fhjoanneum.ippr.processengine.repositories.SubjectStateRepository;
 
 @Component("User.MessageReceivedTask")
@@ -27,6 +28,8 @@ public class MessageReceivedTask extends AbstractTask<MessageReceiveMessage.Requ
 
   @Autowired
   private SubjectStateRepository subjectStateRepository;
+  @Autowired
+  private MessageFlowRepository messageFlowRepository;
 
   @Override
   public boolean canHandle(final Object obj) {
@@ -54,9 +57,9 @@ public class MessageReceivedTask extends AbstractTask<MessageReceiveMessage.Requ
     if (SubjectSubState.RECEIVED.equals(subjectState.getSubState())) {
       LOG.debug("Message already received: {}", subjectState);
     } else {
-      subjectState.setSubState(SubjectSubState.RECEIVED);
+      subjectState.setToReceived(messageFlowRepository.findOne(request.getMfId()));
       subjectStateRepository.save((SubjectStateImpl) subjectState);
-      LOG.info("New subject substate: {}", subjectState);
+      LOG.info("New received sub state: {}", subjectState);
     }
 
     TransactionSynchronizationManager

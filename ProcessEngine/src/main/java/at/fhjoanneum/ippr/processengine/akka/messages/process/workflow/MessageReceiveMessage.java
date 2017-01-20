@@ -5,10 +5,12 @@ public class MessageReceiveMessage {
   public static class Request {
     private final Long piId;
     private final Long userId;
+    private final Long mfId;
 
-    public Request(final Long piId, final Long userId) {
+    public Request(final Long piId, final Long userId, final Long mfId) {
       this.piId = piId;
       this.userId = userId;
+      this.mfId = mfId;
     }
 
     public Long getPiId() {
@@ -17,6 +19,10 @@ public class MessageReceiveMessage {
 
     public Long getUserId() {
       return userId;
+    }
+
+    public Long getMfId() {
+      return mfId;
     }
   }
 

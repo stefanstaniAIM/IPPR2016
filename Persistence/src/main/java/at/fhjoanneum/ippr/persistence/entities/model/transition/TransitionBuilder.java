@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import at.fhjoanneum.ippr.persistence.builder.Builder;
 import at.fhjoanneum.ippr.persistence.entities.model.state.StateImpl;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.TransitionType;
 import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 import at.fhjoanneum.ippr.persistence.objects.model.transition.Transition;
 
@@ -12,7 +13,7 @@ public class TransitionBuilder implements Builder<Transition> {
 
   private StateImpl fromState;
   private StateImpl toState;
-  private Long timeout;
+  private TransitionType transitionType;
 
   public TransitionBuilder fromState(final State fromState) {
     checkNotNull(fromState);
@@ -28,8 +29,9 @@ public class TransitionBuilder implements Builder<Transition> {
     return this;
   }
 
-  public TransitionBuilder timeout(final Long timeout) {
-    this.timeout = timeout;
+  public TransitionBuilder transitionType(final TransitionType transitionType) {
+    checkNotNull(transitionType);
+    this.transitionType = transitionType;
     return this;
   }
 
@@ -38,10 +40,7 @@ public class TransitionBuilder implements Builder<Transition> {
     checkNotNull(fromState);
     checkNotNull(toState);
 
-    if (timeout != null) {
-      return new TransitionImpl(fromState, toState, timeout);
-    }
-    return new TransitionImpl(fromState, toState);
+    return new TransitionImpl(fromState, toState, transitionType);
   }
 
 }

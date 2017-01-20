@@ -14,6 +14,7 @@ public class BusinessObjectDTO implements Serializable {
   private Long boiId;
   private String name;
   private List<BusinessObjectFieldDTO> fields;
+  private List<BusinessObjectDTO> children;
 
   public BusinessObjectDTO() {}
 
@@ -24,6 +25,13 @@ public class BusinessObjectDTO implements Serializable {
     this.boiId = boiId;
     this.name = name;
     this.fields = businessObjectFields;
+  }
+
+  public BusinessObjectDTO(final Long bomId, final Long boiId, final String name,
+      final List<BusinessObjectFieldDTO> businessObjectFields,
+      final List<BusinessObjectDTO> children) {
+    this(bomId, boiId, name, businessObjectFields);
+    this.children = children;
   }
 
   public Long getBomId() {
@@ -40,5 +48,9 @@ public class BusinessObjectDTO implements Serializable {
 
   public List<BusinessObjectFieldDTO> getFields() {
     return fields;
+  }
+
+  public List<BusinessObjectDTO> getChildren() {
+    return children;
   }
 }
