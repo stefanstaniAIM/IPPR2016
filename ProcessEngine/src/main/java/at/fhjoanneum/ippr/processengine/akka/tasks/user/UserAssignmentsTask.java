@@ -48,6 +48,6 @@ public class UserAssignmentsTask extends AbstractTask<AssignUsersMessage.Request
             sender.tell(new AssignUsersMessage.Response(), getSelf());
           }
         });
-  }
 
+  }
 }

@@ -2,13 +2,13 @@ package at.fhjoanneum.ippr.processengine.akka.actors.process;
 
 import java.util.Optional;
 
-import javax.transaction.Transactional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
@@ -23,7 +23,7 @@ import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObje
 import at.fhjoanneum.ippr.processengine.akka.tasks.TaskAllocation;
 import at.fhjoanneum.ippr.processengine.akka.tasks.TaskManager;
 
-@Transactional
+@Transactional(isolation = Isolation.READ_COMMITTED)
 @Component("ProcessSupervisorActor")
 @Scope("prototype")
 public class ProcessSupervisorActor extends UntypedActor {
@@ -119,7 +119,6 @@ public class ProcessSupervisorActor extends UntypedActor {
     final Optional<ActorRef> actorOpt = akkaSelector.findActor(getContext(), processInstanceId);
 
     if (actorOpt.isPresent()) {
-      LOG.debug("Found process actor and will forward message to stop process");
       actorOpt.get().forward(msg, getContext());
     }
   }

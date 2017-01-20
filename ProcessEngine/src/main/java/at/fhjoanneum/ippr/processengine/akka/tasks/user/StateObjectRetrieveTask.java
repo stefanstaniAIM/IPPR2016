@@ -2,6 +2,7 @@ package at.fhjoanneum.ippr.processengine.akka.tasks.user;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import at.fhjoanneum.ippr.commons.dto.processengine.StateDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.BusinessObjectDTO;
@@ -26,8 +28,11 @@ import at.fhjoanneum.ippr.persistence.objects.model.businessobject.field.Busines
 import at.fhjoanneum.ippr.persistence.objects.model.businessobject.permission.BusinessObjectFieldPermission;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldPermission;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.TransitionType;
 import at.fhjoanneum.ippr.persistence.objects.model.messageflow.MessageFlow;
+import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
+import at.fhjoanneum.ippr.persistence.objects.model.transition.Transition;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObjectMessage;
 import at.fhjoanneum.ippr.processengine.akka.tasks.AbstractTask;
 import at.fhjoanneum.ippr.processengine.composer.DbValueComposer;
@@ -67,11 +72,7 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
 
     final List<BusinessObjectDTO> businessObjects = getBusinessObjects(request, subjectState);
 
-    // TODO add receive handling
-
-    final List<StateDTO> nextStates = subjectState.getCurrentState().getToStates().stream()
-        .map(state -> new StateDTO(state.getToState().getSId(), state.getToState().getName()))
-        .collect(Collectors.toList());
+    final List<StateDTO> nextStates = getNextStates(subjectState);
 
     StateObjectDTO stateObjectDTO = null;
     if (StateFunctionType.SEND.equals(subjectState.getCurrentState().getFunctionType())) {
@@ -137,7 +138,13 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
           businessObjectFieldPermissionRepository.getBusinessObjectFieldPermissionInState(
               businessObjectFieldModel.getBofmId(), subjectState.getCurrentState().getSId());
 
-      if (!businessObjectFieldPermission.getPermission().equals(FieldPermission.NONE)) {
+      if (businessObjectFieldPermission == null) {
+        throw new IllegalStateException(
+            "Could not find permission for business object field model ["
+                + businessObjectFieldModel.getBofmId() + "]");
+      }
+
+      if (!FieldPermission.NONE.equals(businessObjectFieldPermission.getPermission())) {
         final Long bofmId = businessObjectFieldModel.getBofmId();
         final String name = businessObjectFieldModel.getFieldName();
         final String type = businessObjectFieldModel.getFieldType().name();
@@ -175,5 +182,52 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
     final Subject subject =
         subjectRepository.getSubjectForSubjectModelInProcess(piId, subjectModel.getSmId());
     return new SubjectDTO(subjectModel.getSmId(), subject.getUser(), subjectModel.getGroup());
+  }
+
+  private List<StateDTO> getNextStates(final SubjectState subjectState) {
+    List<StateDTO> nextStates = Lists.newArrayList();
+    final State currentState = subjectState.getCurrentState();
+
+    if (filteringNeeded(currentState.getToStates())) {
+      LOG.debug("Special check is necessary to return next states for [{}] ", currentState);
+      final Set<BusinessObjectModel> retrievedBusinessObjectModels =
+          Sets.newHashSet(subjectState.getCurrentMessageFlow().getBusinessObjectModels());
+      nextStates = currentState.getToStates().stream()
+          .filter(
+              transition -> checkIfIncludedForNextStates(retrievedBusinessObjectModels, transition))
+          .map(state -> new StateDTO(state.getToState().getSId(), state.getToState().getName()))
+          .collect(Collectors.toList());
+    } else {
+      LOG.debug("No special check is necessary, so return all states for [{}]", currentState);
+      nextStates = currentState.getToStates().stream()
+          .map(state -> new StateDTO(state.getToState().getSId(), state.getToState().getName()))
+          .collect(Collectors.toList());
+    }
+
+    LOG.info("Possible next states are {} for [{}]", nextStates, subjectState);
+    return nextStates;
+  }
+
+  private boolean filteringNeeded(final List<Transition> toStates) {
+    if (toStates.stream()
+        .filter(transition -> TransitionType.IF_CONDITION.equals(transition.getTransitionType()))
+        .count() >= 2) {
+      return true;
+    }
+    return false;
+  }
+
+  private boolean checkIfIncludedForNextStates(
+      final Set<BusinessObjectModel> retrievedBusinessObjectModels, final Transition transition) {
+    final Set<BusinessObjectModel> stateBusinessObjectModels =
+        Sets.newHashSet(transition.getToState().getBusinessObjectModels());
+    if (Sets.difference(retrievedBusinessObjectModels, stateBusinessObjectModels).isEmpty()) {
+      LOG.debug("Retrieved BOMs {} are part of {}, therefore, [{}] is part of next state",
+          retrievedBusinessObjectModels, stateBusinessObjectModels, transition.getToState());
+      return true;
+    }
+    LOG.debug("Retrieved BOMs {} are NOT part of {}, therefore, [{}] is NOT part of next state",
+        retrievedBusinessObjectModels, stateBusinessObjectModels, transition.getToState());
+    return false;
   }
 }

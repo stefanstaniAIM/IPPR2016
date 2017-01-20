@@ -2,6 +2,9 @@ package at.fhjoanneum.ippr.processengine.akka.tasks.process;
 
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +33,9 @@ public class ProcessStateChangeTask extends AbstractTask<StateObjectChangeMessag
   @Autowired
   private ProcessInstanceRepository processInstanceRepository;
 
+  @PersistenceContext
+  private EntityManager entityManager;
+
   public <T> ProcessStateChangeTask(final TaskCallback<T> callback) {
     super(callback);
   }
@@ -47,6 +53,7 @@ public class ProcessStateChangeTask extends AbstractTask<StateObjectChangeMessag
     if (processOpt.isPresent()) {
       final ProcessInstance process = processOpt.get();
       for (final Subject subject : process.getSubjects()) {
+        entityManager.refresh(subject);
         final StateEventType eventType = subject.getSubjectState().getCurrentState().getEventType();
         if (StateEventType.END.equals(eventType)
             || StateEventType.START.equals(eventType) && subject.getUser() == null) {
@@ -60,13 +67,13 @@ public class ProcessStateChangeTask extends AbstractTask<StateObjectChangeMessag
 
       process.setState(ProcessInstanceState.FINISHED);
       processInstanceRepository.save((ProcessInstanceImpl) process);
+      LOG.info("All subject states are in 'END' state, set process instance to 'FINISHED'");
 
       final ActorRef sender = getSender();
       TransactionSynchronizationManager
           .registerSynchronization(new TransactionSynchronizationAdapter() {
             @Override
             public void afterCommit() {
-              LOG.info("All subject states are in 'END' state, set process instance to 'FINISHED'");
               sender.tell(new StateObjectChangeMessage.Response(request.getPiId(), Boolean.TRUE),
                   getSelf());
               callback(Boolean.TRUE);

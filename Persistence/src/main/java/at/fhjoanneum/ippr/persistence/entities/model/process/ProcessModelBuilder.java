@@ -5,7 +5,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
+import com.google.common.collect.Lists;
 
 import at.fhjoanneum.ippr.persistence.builder.Builder;
 import at.fhjoanneum.ippr.persistence.entities.model.subject.SubjectModelImpl;
@@ -18,7 +19,7 @@ public class ProcessModelBuilder implements Builder<ProcessModel> {
   private String name;
   private String description;
   private ProcessModelState state;
-  private List<SubjectModelImpl> subjectModels;
+  private final List<SubjectModelImpl> subjectModels = Lists.newArrayList();
   private SubjectModelImpl starterSubject;
   private float version;
 
@@ -40,13 +41,10 @@ public class ProcessModelBuilder implements Builder<ProcessModel> {
     return this;
   }
 
-  public ProcessModelBuilder subjectModels(final List<SubjectModel> subjectModels) {
-    checkNotNull(subjectModels);
-    this.subjectModels =
-        subjectModels.stream().filter(subject -> subject instanceof SubjectModelImpl)
-            .map(subject -> (SubjectModelImpl) subject).collect(Collectors.toList());
-    checkNotNull(this.subjectModels);
-    checkArgument(!subjectModels.isEmpty());
+  public ProcessModelBuilder addSubjectModel(final SubjectModel subjectModel) {
+    checkNotNull(subjectModel);
+    checkArgument(subjectModel instanceof SubjectModelImpl);
+    subjectModels.add((SubjectModelImpl) subjectModel);
     return this;
   }
 

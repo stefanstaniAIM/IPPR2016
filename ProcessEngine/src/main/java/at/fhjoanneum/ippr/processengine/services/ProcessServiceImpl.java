@@ -286,8 +286,6 @@ public class ProcessServiceImpl implements ProcessService {
             future.complete(Boolean.TRUE);
           }
         });
-
-
     return future;
   }
 }

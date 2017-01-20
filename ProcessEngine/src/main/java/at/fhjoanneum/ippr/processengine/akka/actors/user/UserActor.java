@@ -2,13 +2,13 @@ package at.fhjoanneum.ippr.processengine.akka.actors.user;
 
 import java.util.List;
 
-import javax.transaction.Transactional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import akka.actor.UntypedActor;
 import at.fhjoanneum.ippr.commons.dto.processengine.TaskDTO;
@@ -28,7 +28,7 @@ import at.fhjoanneum.ippr.processengine.akka.tasks.TaskManager;
 import at.fhjoanneum.ippr.processengine.repositories.CustomTypesQueriesRepository;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 
-@Transactional
+@Transactional(isolation = Isolation.READ_COMMITTED)
 @Component("UserActor")
 @Scope("prototype")
 public class UserActor extends UntypedActor {

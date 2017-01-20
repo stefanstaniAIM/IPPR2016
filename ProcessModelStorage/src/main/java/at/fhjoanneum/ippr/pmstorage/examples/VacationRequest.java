@@ -8,8 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.Lists;
-
 import at.fhjoanneum.ippr.persistence.entities.model.businessobject.BusinessObjectModelBuilder;
 import at.fhjoanneum.ippr.persistence.entities.model.businessobject.field.BusinessObjectFieldModelBuilder;
 import at.fhjoanneum.ippr.persistence.entities.model.businessobject.permission.BusinessObjectFieldPermissionBuilder;
@@ -67,8 +65,6 @@ public class VacationRequest extends AbstractExample {
     // receive vacation request
     final State bossState1 = new StateBuilder().subjectModel(boss).name("Receive vacation request")
         .eventType(StateEventType.START).functionType(StateFunctionType.RECEIVE).build();
-
-
 
     final BusinessObjectModel vacationRequestForm =
         new BusinessObjectModelBuilder().name("Vacation request form").addToState(empState1)
@@ -144,28 +140,6 @@ public class VacationRequest extends AbstractExample {
     final Transition empT2 =
         new TransitionBuilder().fromState(empState2).toState(empState3).build();
 
-    final BusinessObjectModel okForm = new BusinessObjectModelBuilder()
-        .name("Vacation request accept").addToState(bossState2).addToState(empState3).build();
-    final BusinessObjectFieldModel okFormFieldInformation = new BusinessObjectFieldModelBuilder()
-        .businessObjectModel(okForm).fieldName("Information").fieldType(FieldType.STRING).build();
-    final BusinessObjectFieldPermission okFormFieldInformationPermission1 =
-        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(okFormFieldInformation)
-            .state(bossState2).mandatory(false).permission(FieldPermission.READ_WRITE).build();
-    final BusinessObjectFieldPermission okFormFieldInformationPermission2 =
-        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(okFormFieldInformation)
-            .state(empState3).mandatory(false).permission(FieldPermission.READ).build();
-
-    final BusinessObjectModel nokForm = new BusinessObjectModelBuilder()
-        .name("Vacation request not accept").addToState(bossState3).addToState(empState3).build();
-    final BusinessObjectFieldModel nokFormFieldInformation = new BusinessObjectFieldModelBuilder()
-        .businessObjectModel(nokForm).fieldName("Information").fieldType(FieldType.STRING).build();
-    final BusinessObjectFieldPermission nokFormFieldInformationPermission1 =
-        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(nokFormFieldInformation)
-            .state(bossState2).mandatory(true).permission(FieldPermission.READ_WRITE).build();
-    final BusinessObjectFieldPermission nokFormFieldInformationPermission2 =
-        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(nokFormFieldInformation)
-            .state(empState3).mandatory(false).permission(FieldPermission.READ).build();
-
     final State empState4 = new StateBuilder().subjectModel(employee).name("Received OK")
         .functionType(StateFunctionType.FUNCTION).build();
     final State empState5 = new StateBuilder().subjectModel(employee).name("Received NOK")
@@ -178,16 +152,45 @@ public class VacationRequest extends AbstractExample {
 
     // finish the employee
     final State empState6 = new StateBuilder().subjectModel(employee).name("END")
-        .functionType(StateFunctionType.FUNCTION).build();
+        .eventType(StateEventType.END).functionType(StateFunctionType.FUNCTION).build();
     final Transition empT3 =
         new TransitionBuilder().fromState(empState4).toState(empState6).build();
     final Transition empT4 =
         new TransitionBuilder().fromState(empState5).toState(empState6).build();
 
-    final ProcessModel pm =
-        new ProcessModelBuilder().name("Vacation request").description("Request for vacation")
-            .state(ProcessModelState.ACTIVE).subjectModels(Lists.newArrayList(boss, employee))
-            .starterSubject(employee).version(1.1F).build();
+    final BusinessObjectModel okForm =
+        new BusinessObjectModelBuilder().name("Vacation request accept").addToState(bossState3)
+            .addToState(empState3).addToState(empState4).build();
+    final BusinessObjectFieldModel okFormFieldInformation = new BusinessObjectFieldModelBuilder()
+        .businessObjectModel(okForm).fieldName("Information").fieldType(FieldType.STRING).build();
+    final BusinessObjectFieldPermission okFormFieldInformationPermission1 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(okFormFieldInformation)
+            .state(bossState3).mandatory(false).permission(FieldPermission.READ_WRITE).build();
+    final BusinessObjectFieldPermission okFormFieldInformationPermission2 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(okFormFieldInformation)
+            .state(empState3).mandatory(false).permission(FieldPermission.READ).build();
+    final BusinessObjectFieldPermission okFormFieldInformationPermission3 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(okFormFieldInformation)
+            .state(empState4).mandatory(false).permission(FieldPermission.READ).build();
+
+    final BusinessObjectModel nokForm =
+        new BusinessObjectModelBuilder().name("Vacation request not accept").addToState(bossState4)
+            .addToState(empState3).addToState(empState5).build();
+    final BusinessObjectFieldModel nokFormFieldInformation = new BusinessObjectFieldModelBuilder()
+        .businessObjectModel(nokForm).fieldName("Information").fieldType(FieldType.STRING).build();
+    final BusinessObjectFieldPermission nokFormFieldInformationPermission1 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(nokFormFieldInformation)
+            .state(bossState4).mandatory(true).permission(FieldPermission.READ_WRITE).build();
+    final BusinessObjectFieldPermission nokFormFieldInformationPermission2 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(nokFormFieldInformation)
+            .state(empState3).mandatory(false).permission(FieldPermission.READ).build();
+    final BusinessObjectFieldPermission nokFormFieldInformationPermission3 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(nokFormFieldInformation)
+            .state(empState5).mandatory(false).permission(FieldPermission.READ).build();
+
+    final ProcessModel pm = new ProcessModelBuilder().name("Vacation request")
+        .description("Request for vacation").state(ProcessModelState.ACTIVE).addSubjectModel(boss)
+        .addSubjectModel(employee).starterSubject(employee).version(1.1F).build();
 
     final MessageFlow mf1 = new MessageFlowBuilder().sender(employee).receiver(boss)
         .state(empState2).assignBusinessObjectModel(vacationRequestForm).build();
@@ -210,7 +213,8 @@ public class VacationRequest extends AbstractExample {
         boFromPermissionBoss1, boFromPermissionBoss2, okFormFieldInformationPermission1,
         okFormFieldInformationPermission2, nokFormFieldInformationPermission1,
         nokFormFieldInformationPermission2, boFromPermissionEmp3, boFromPermissionEmp4,
-        boFromPermissionEmp5, boFromPermissionEmp6, boFromPermissionBoss3);
+        boFromPermissionEmp5, boFromPermissionEmp6, boFromPermissionBoss3,
+        okFormFieldInformationPermission3, nokFormFieldInformationPermission3);
     saveMessageFlows(mf1, mf2, mf3);
   }
 
