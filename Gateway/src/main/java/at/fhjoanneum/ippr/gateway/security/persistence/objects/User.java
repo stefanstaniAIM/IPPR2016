@@ -18,7 +18,9 @@ public interface User {
 
   String getUsername();
 
-  List<Group> getGroups();
+  List<Role> getRoles();
 
-  void setGroups(List<Group> groups);
+  List<Rule> getRules();
+
+  void setRoles(List<Role> groups);
 }

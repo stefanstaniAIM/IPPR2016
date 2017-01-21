@@ -2,6 +2,7 @@ package at.fhjoanneum.ippr.gateway.security.controller;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -23,9 +24,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import at.fhjoanneum.ippr.commons.dto.user.UserDTO;
 import at.fhjoanneum.ippr.gateway.security.authentication.AuthenticationService;
-import at.fhjoanneum.ippr.gateway.security.persistence.objects.Group;
+import at.fhjoanneum.ippr.gateway.security.persistence.objects.Role;
+import at.fhjoanneum.ippr.gateway.security.persistence.objects.Rule;
 import at.fhjoanneum.ippr.gateway.security.persistence.objects.User;
-import at.fhjoanneum.ippr.gateway.security.services.UserGroupService;
+import at.fhjoanneum.ippr.gateway.security.services.RBACService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -38,7 +40,7 @@ public class UserController {
   private AuthenticationService authenticationService;
 
   @Autowired
-  private UserGroupService userGroupService;
+  private RBACService rbacService;
 
   @RequestMapping(value = "user/login", method = RequestMethod.POST)
   public ResponseEntity<LoginResponse> login(@RequestBody final UserLogin login) {
@@ -52,13 +54,17 @@ public class UserController {
 
     final User user = userOpt.get();
 
-    final List<String> groups =
-        user.getGroups().stream().map(Group::getName).collect(Collectors.toList());
+    final List<String> roles =
+        user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
 
-    final LoginResponse loginResponse = new LoginResponse(Jwts.builder()
-        .setSubject(user.getUsername()).claim("userId", user.getUId()).claim("groups", groups)
-        .setIssuedAt(new Date()).setExpiration(java.sql.Date.valueOf(LocalDate.now().plusWeeks(1)))
-        .signWith(SignatureAlgorithm.HS256, "secretkey").compact());
+    final List<String> rules = user.getRoles().stream().map(Role::getRules).flatMap(List::stream)
+        .map(Rule::getName).collect(Collectors.toList());
+
+    final LoginResponse loginResponse = new LoginResponse(
+        Jwts.builder().setSubject(user.getUsername()).claim("userId", user.getUId())
+            .claim("roles", roles).claim("rules", rules).setIssuedAt(new Date())
+            .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusWeeks(1)))
+            .signWith(SignatureAlgorithm.HS256, "secretkey").compact());
 
     return new ResponseEntity<UserController.LoginResponse>(loginResponse, HttpStatus.OK);
   }
@@ -68,21 +74,31 @@ public class UserController {
     final Claims claims = (Claims) request.getAttribute("claims");
     final Integer userId = (Integer) claims.get("userId");
 
-    return userGroupService.getUserByUserId(userId.longValue());
+    return rbacService.getUserByUserId(userId.longValue());
   }
 
   @RequestMapping(value = "api/user/{userId}", method = RequestMethod.GET)
   public User getUser(final HttpServletRequest request,
       @PathVariable(name = "userId", required = true) final Long userId) {
-    return userGroupService.getUserByUserId(userId);
+    return rbacService.getUserByUserId(userId);
   }
 
+  // TODO can stay, but must be changed to rules
   @RequestMapping(value = "api/processes/possibleUsers/{group}", method = RequestMethod.GET)
   public @ResponseBody Callable<List<UserDTO>> getPossibleUsers(
       @PathVariable("group") final String group) {
 
     return () -> {
-      return userGroupService.getPossibleUsersOfGroup(group).get();
+      return rbacService.getPossibleUsersOfGroup(group).get();
+    };
+  }
+
+  @RequestMapping(value = "processes/users/rule/{rules}", method = RequestMethod.GET)
+  public @ResponseBody Callable<List<UserDTO>> getPossibleUsers(
+      @PathVariable("rules") final String[] rules) {
+
+    return () -> {
+      return rbacService.getUsersOfRule(Arrays.asList(rules)).get();
     };
   }
 

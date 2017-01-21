@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.common.collect.Lists;
 
 import at.fhjoanneum.ippr.gateway.security.persistence.Builder;
-import at.fhjoanneum.ippr.gateway.security.persistence.objects.Group;
+import at.fhjoanneum.ippr.gateway.security.persistence.objects.Role;
 import at.fhjoanneum.ippr.gateway.security.persistence.objects.User;
 
 public class UserBuilder implements Builder<User> {
@@ -18,7 +18,7 @@ public class UserBuilder implements Builder<User> {
   private String firstname;
   private String lastname;
   private String username;
-  private final List<GroupImpl> groups = Lists.newArrayList();
+  private final List<RoleImpl> roles = Lists.newArrayList();
 
   public UserBuilder systemId(final String systemId) {
     checkArgument(StringUtils.isNotBlank(systemId));
@@ -44,9 +44,9 @@ public class UserBuilder implements Builder<User> {
     return this;
   }
 
-  public UserBuilder addGroup(final Group group) {
-    checkArgument(group instanceof GroupImpl);
-    groups.add((GroupImpl) group);
+  public UserBuilder addRole(final Role role) {
+    checkArgument(role instanceof RoleImpl);
+    roles.add((RoleImpl) role);
     return this;
   }
 
@@ -55,9 +55,9 @@ public class UserBuilder implements Builder<User> {
     checkArgument(StringUtils.isNotBlank(firstname));
     checkArgument(StringUtils.isNotBlank(lastname));
     checkArgument(StringUtils.isNotBlank(username));
-    checkArgument(!groups.isEmpty());
+    checkArgument(!roles.isEmpty());
 
-    return new UserImpl(firstname, lastname, username, groups, systemId);
+    return new UserImpl(firstname, lastname, username, roles, systemId);
   }
 
 }

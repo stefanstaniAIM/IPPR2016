@@ -11,18 +11,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import at.fhjoanneum.ippr.gateway.security.authentication.AuthenticationService;
 import at.fhjoanneum.ippr.gateway.security.persistence.entities.cache.CacheUser;
 import at.fhjoanneum.ippr.gateway.security.persistence.objects.User;
-import at.fhjoanneum.ippr.gateway.security.repositories.UserGroupRepository;
-import at.fhjoanneum.ippr.gateway.security.usermapping.retrieval.UserGroupSystemRetrievalService;
+import at.fhjoanneum.ippr.gateway.security.rbacmapping.retrieval.RBACRetrievalService;
+import at.fhjoanneum.ippr.gateway.security.repositories.RBACRepository;
 
 public class AuthenticationServiceMemoryImpl implements AuthenticationService {
 
   private static final Logger LOG = LoggerFactory.getLogger(AuthenticationServiceMemoryImpl.class);
 
   @Autowired
-  private UserGroupSystemRetrievalService retrievalService;
+  private RBACRetrievalService retrievalService;
 
   @Autowired
-  private UserGroupRepository userGroupRepository;
+  private RBACRepository rbacRepository;
 
   @Override
   public Optional<User> authenticateUser(final String username, final String password) {
@@ -42,7 +42,7 @@ public class AuthenticationServiceMemoryImpl implements AuthenticationService {
       return Optional.empty();
     }
 
-    return userGroupRepository.getUserByUsername(username);
+    return rbacRepository.getUserByUsername(username);
   }
 
 }

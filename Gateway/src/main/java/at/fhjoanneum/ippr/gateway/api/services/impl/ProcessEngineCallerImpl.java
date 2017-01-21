@@ -34,7 +34,7 @@ import at.fhjoanneum.ippr.gateway.api.config.GatewayConfig;
 import at.fhjoanneum.ippr.gateway.api.controller.user.HttpHeaderUser;
 import at.fhjoanneum.ippr.gateway.api.services.Caller;
 import at.fhjoanneum.ippr.gateway.security.persistence.objects.User;
-import at.fhjoanneum.ippr.gateway.security.repositories.UserGroupRepository;
+import at.fhjoanneum.ippr.gateway.security.repositories.RBACRepository;
 
 @Service
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
@@ -45,7 +45,7 @@ public class ProcessEngineCallerImpl implements Caller {
   private GatewayConfig gatewayConfig;
 
   @Autowired
-  private UserGroupRepository userGroupRepository;
+  private RBACRepository userGroupRepository;
 
   @Async
   public Future<ResponseEntity<ProcessStartedDTO>> startProcess(

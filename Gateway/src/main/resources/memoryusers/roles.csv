@@ -1,0 +1,4 @@
+name;systemId;rules
+Employee;EMPLOYEE;EMPLOYEE_RULE
+Boss;BOSS;BOSS_RULE
+Admin;ADMIN;EMPLOYEE_RULE
