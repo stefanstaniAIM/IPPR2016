@@ -32,6 +32,7 @@ public abstract class AbstractExample implements CommandLineRunner {
 
   protected abstract String getName();
 
+  @Async
   @Override
   public void run(final String... args) throws Exception {
     if (exampleConfiguration.isInsertExamplesEnabled()) {

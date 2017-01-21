@@ -63,7 +63,7 @@ public class ProcessModelServiceImpl implements ProcessModelService {
       process.getSubjectModels().forEach(subject -> {
         subjectModels
             .add(new SubjectModelDTO(subject.getSmId(), subject.getName(), subject.getGroup()));
-      });;
+      });
 
       final ProcessModelDTO dto = new ProcessModelDTO(process.getPmId(), process.getName(),
           process.getDescription(), process.createdAt(), subjectModels);
