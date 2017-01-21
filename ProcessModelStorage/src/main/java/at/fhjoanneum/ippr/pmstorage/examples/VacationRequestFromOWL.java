@@ -31,6 +31,7 @@ import at.fhjoanneum.ippr.persistence.objects.model.transition.Transition;
 import org.apache.jena.ontology.*;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.slf4j.Logger;
@@ -62,6 +63,12 @@ public class VacationRequestFromOWL extends AbstractExample {
       String URI_NAME = URI_STANDARD+"hasModelComponentLable";
       String URI_ACTOR = URI_STANDARD+"SingleActor";
       String URI_BEHAVIOR = URI_STANDARD+"hasBehavior";
+      String URI_STATE = URI_STANDARD+"hasState";
+      String URI_FUNCTION_STATE = URI_STANDARD+"FunctionState";
+      String URI_SEND_STATE = URI_STANDARD+"SendState";
+      String URI_RECEIVE_STATE = URI_STANDARD+"ReceiveState";
+      String URI_START_STATE = URI_STANDARD+"StartState";
+      String URI_END_STATE = URI_STANDARD+"EndState";
 
 	  try {
 		InputStream is = this.getClass().getResourceAsStream("/ontologies/VacationRequest.owl");
@@ -74,17 +81,33 @@ public class VacationRequestFromOWL extends AbstractExample {
 		for(OntResource processModel : processModels) {
             Property labelProperty = model.getProperty(URI_NAME);
             Property behaviorProperty = model.getProperty(URI_BEHAVIOR);
+            Property stateProperty = model.getProperty(URI_STATE);
+            Property functionStateProperty = model.getProperty(URI_FUNCTION_STATE);
+            Property sendStateProperty = model.getProperty(URI_SEND_STATE);
+            Property receiveStateProperty = model.getProperty(URI_RECEIVE_STATE);
+            Property startStateProperty = model.getProperty(URI_START_STATE);
+            Property endStateProperty = model.getProperty(URI_END_STATE);
+
             String processName = processModel.getProperty(labelProperty).getString();
+            System.out.println("Process Name "+processName);
             List<? extends OntResource> actors = model.getOntClass(URI_ACTOR).listInstances().toList();
             List actorNames = new ArrayList();
             for(OntResource actor : actors) {
                 String actorName = actor.getProperty(labelProperty).getString();
                 actorNames.add(actorName);
-                Resource behavior = actor.getPropertyResourceValue(behaviorProperty);
-                //model.getOntResource(behavior)
+                System.out.println("Found Actor: "+actorName);
+                Resource behaviorUri = actor.getPropertyResourceValue(behaviorProperty);
+                OntResource behavior =  model.getOntResource(behaviorUri);
+                List<org.apache.jena.rdf.model.RDFNode> states = behavior.listPropertyValues(stateProperty).toList();
+                for(RDFNode state : states) {
+                    Resource stateResource = state.asResource();
+                    //model.getOntResource(stateResource);
+                    String stateLabel = stateResource.getProperty(labelProperty).getString();
+                    System.out.println("-With State: "+stateLabel);
+                    // wie überprüfen ob function, receive, send, end, start ??
+                    stateResource.hasProperty(receiveStateProperty);
+                }
             }
-            System.out.println("Process Name "+processName);
-            System.out.println("Actors "+actorNames.toString());
 		}
       } catch (Exception e) {
 	  	e.printStackTrace();
@@ -120,7 +143,7 @@ public class VacationRequestFromOWL extends AbstractExample {
 
   private Transition createTransition(State fromState, State toState){
       TransitionBuilder builder = new TransitionBuilder();
-      builder.fromState(empState1).toState(empState2);
+      builder.fromState(fromState).toState(toState);
       return builder.build();
   }
 
