@@ -6,11 +6,13 @@ import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 
 public interface SubjectModel {
 
-	Long getSmId();
+  Long getSmId();
 
-	String getName();
+  String getName();
 
-	String getGroup();
+  String getGroup();
 
-	List<State> getStates();
+  List<State> getStates();
+
+  List<String> getAssignedRules();
 }

@@ -3,11 +3,14 @@ package at.fhjoanneum.ippr.persistence.entities.model.subject;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -47,11 +50,18 @@ public class SubjectModelImpl implements SubjectModel, Serializable {
   @NotNull
   private final List<StateImpl> states = Lists.newArrayList();
 
+  @ElementCollection
+  @CollectionTable(name = "SUBJECT_MODEL_RULE", joinColumns = @JoinColumn(name = "sm_id"))
+  @Column(name = "name")
+  private List<String> assignedRules = Lists.newArrayList();
+
   SubjectModelImpl() {}
 
-  SubjectModelImpl(final String name, final String assignedGroup) {
+  SubjectModelImpl(final String name, final String assignedGroup,
+      final List<String> assignedRules) {
     this.name = name;
     this.assignedGroup = assignedGroup;
+    this.assignedRules = assignedRules;
   }
 
   @Override
@@ -72,6 +82,11 @@ public class SubjectModelImpl implements SubjectModel, Serializable {
   @Override
   public List<State> getStates() {
     return ImmutableList.copyOf(states);
+  }
+
+  @Override
+  public List<String> getAssignedRules() {
+    return ImmutableList.copyOf(assignedRules);
   }
 
   @Override
