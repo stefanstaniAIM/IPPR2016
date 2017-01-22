@@ -3,12 +3,18 @@ package at.fhjoanneum.ippr.gateway.security.persistence.entities;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.StringUtils;
@@ -17,18 +23,21 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.validator.constraints.NotBlank;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
-import at.fhjoanneum.ippr.gateway.security.persistence.objects.Group;
+import at.fhjoanneum.ippr.gateway.security.persistence.objects.Role;
+import at.fhjoanneum.ippr.gateway.security.persistence.objects.Rule;
 
-@Entity(name = "USER_GROUP")
+@Entity(name = "ROLE")
 @XmlRootElement
-public class GroupImpl implements Group, Serializable {
+public class RoleImpl implements Role, Serializable {
 
   private static final long serialVersionUID = -3752242631499306265L;
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  private Long gId;
+  private Long roleId;
 
   @Column
   @NotBlank
@@ -38,16 +47,22 @@ public class GroupImpl implements Group, Serializable {
   @NotBlank
   private String systemId;
 
-  GroupImpl() {}
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(name = "role_rule_map", joinColumns = {@JoinColumn(name = "role_id")},
+      inverseJoinColumns = {@JoinColumn(name = "rule_id")})
+  private List<RuleImpl> rules = Lists.newArrayList();
 
-  GroupImpl(final String systemId, final String name) {
+  RoleImpl() {}
+
+  RoleImpl(final String systemId, final String name, final List<RuleImpl> rules) {
     this.systemId = systemId;
     this.name = name;
+    this.rules = rules;
   }
 
   @Override
-  public Long getGId() {
-    return gId;
+  public Long getRoleId() {
+    return roleId;
   }
 
   @Override
@@ -61,6 +76,16 @@ public class GroupImpl implements Group, Serializable {
   }
 
   @Override
+  public List<Rule> getRules() {
+    return ImmutableList.copyOf(rules);
+  }
+
+  @Override
+  public void setRules(final List<Rule> rules) {
+    this.rules = rules.stream().map(rule -> (RuleImpl) rule).collect(Collectors.toList());
+  }
+
+  @Override
   public void setName(final String name) {
     checkArgument(StringUtils.isNotBlank(name));
     this.name = name;
@@ -71,11 +96,12 @@ public class GroupImpl implements Group, Serializable {
     if (obj == null) {
       return false;
     }
-    if (!Group.class.isAssignableFrom(obj.getClass())) {
+    if (!Role.class.isAssignableFrom(obj.getClass())) {
       return false;
     }
-    final Group other = (Group) obj;
-    if ((this.gId == null) ? (other.getGId() != null) : !this.gId.equals(other.getGId())) {
+    final Role other = (Role) obj;
+    if ((this.roleId == null) ? (other.getRoleId() != null)
+        : !this.roleId.equals(other.getRoleId())) {
       return false;
     }
     return true;
@@ -83,12 +109,12 @@ public class GroupImpl implements Group, Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(gId);
+    return Objects.hashCode(roleId);
   }
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("gId", gId)
+    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("roleId", roleId)
         .append("name", name).toString();
   }
 }

@@ -16,11 +16,13 @@ public class BusinessObjectFieldDTO implements Serializable {
   private boolean required;
   private boolean readonly;
   private String value;
+  private int indent;
 
   public BusinessObjectFieldDTO() {}
 
   public BusinessObjectFieldDTO(final Long bofmId, final Long bofiId, final String name,
-      final String type, final boolean required, final boolean readonly, final String value) {
+      final String type, final boolean required, final boolean readonly, final String value,
+      final int indent) {
     this.bofmId = bofmId;
     this.bofiId = bofiId;
     this.name = name;
@@ -28,6 +30,7 @@ public class BusinessObjectFieldDTO implements Serializable {
     this.required = required;
     this.readonly = readonly;
     this.value = value;
+    this.indent = indent;
   }
 
 
@@ -57,5 +60,9 @@ public class BusinessObjectFieldDTO implements Serializable {
 
   public String getValue() {
     return value;
+  }
+
+  public int getIndent() {
+    return indent;
   }
 }

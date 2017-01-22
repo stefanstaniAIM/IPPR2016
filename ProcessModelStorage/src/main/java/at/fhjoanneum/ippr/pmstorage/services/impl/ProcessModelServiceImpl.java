@@ -1,8 +1,10 @@
 package at.fhjoanneum.ippr.pmstorage.services.impl;
 
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -17,9 +19,11 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Lists;
 
+import at.fhjoanneum.ippr.commons.dto.pmstorage.FieldTypeDTO;
 import at.fhjoanneum.ippr.commons.dto.pmstorage.ProcessModelDTO;
 import at.fhjoanneum.ippr.commons.dto.pmstorage.SubjectModelDTO;
 import at.fhjoanneum.ippr.persistence.entities.model.process.ProcessModelImpl;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldType;
 import at.fhjoanneum.ippr.pmstorage.repositories.ProcessModelRepository;
 import at.fhjoanneum.ippr.pmstorage.services.ProcessModelService;
 
@@ -61,8 +65,8 @@ public class ProcessModelServiceImpl implements ProcessModelService {
 
     results.forEach(process -> {
       process.getSubjectModels().forEach(subject -> {
-        subjectModels
-            .add(new SubjectModelDTO(subject.getSmId(), subject.getName(), subject.getGroup()));
+        subjectModels.add(new SubjectModelDTO(subject.getSmId(), subject.getName(),
+            subject.getGroup(), subject.getAssignedRules()));
       });
 
       final ProcessModelDTO dto = new ProcessModelDTO(process.getPmId(), process.getName(),
@@ -71,5 +75,13 @@ public class ProcessModelServiceImpl implements ProcessModelService {
     });
 
     return processModels;
+  }
+
+  @Async
+  @Override
+  public Future<List<FieldTypeDTO>> getFieldTypes() {
+    final List<FieldTypeDTO> fieldTypes = Arrays.stream(FieldType.values())
+        .map(fieldtype -> new FieldTypeDTO(fieldtype.name())).collect(Collectors.toList());
+    return new AsyncResult<List<FieldTypeDTO>>(fieldTypes);
   }
 }

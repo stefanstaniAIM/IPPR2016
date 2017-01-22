@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import at.fhjoanneum.ippr.commons.dto.pmstorage.FieldTypeDTO;
 import at.fhjoanneum.ippr.commons.dto.pmstorage.ProcessModelDTO;
 import at.fhjoanneum.ippr.gateway.api.controller.user.HttpHeaderUser;
 import at.fhjoanneum.ippr.gateway.api.services.impl.ProcessModelStorageCallerImpl;
@@ -47,6 +48,14 @@ public class ProcessModelStorageGatewayController {
     return () -> {
       final HttpHeaderUser user = new HttpHeaderUser(request);
       return processModelStorageCaller.findActiveProcessesToStart(user, page, size).get();
+    };
+  }
+
+  @RequestMapping(value = "api/fieldtypes", method = RequestMethod.GET)
+  public @ResponseBody Callable<ResponseEntity<FieldTypeDTO[]>> findActiveProcessesToStart(
+      final HttpServletRequest request) {
+    return () -> {
+      return processModelStorageCaller.getFieldTypes().get();
     };
   }
 }

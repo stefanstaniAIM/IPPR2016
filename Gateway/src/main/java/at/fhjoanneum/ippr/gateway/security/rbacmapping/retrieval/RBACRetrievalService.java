@@ -1,10 +1,10 @@
-package at.fhjoanneum.ippr.gateway.security.usermapping.retrieval;
+package at.fhjoanneum.ippr.gateway.security.rbacmapping.retrieval;
 
 import java.util.Map;
 
 import at.fhjoanneum.ippr.gateway.security.persistence.entities.cache.CacheUser;
 
-public interface UserGroupSystemRetrievalService {
+public interface RBACRetrievalService {
 
   Map<String, CacheUser> getSystemUsers();
 }

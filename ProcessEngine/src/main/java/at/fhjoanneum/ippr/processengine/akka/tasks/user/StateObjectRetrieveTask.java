@@ -152,6 +152,7 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
         final boolean readOnly =
             businessObjectFieldPermission.getPermission().equals(FieldPermission.READ) ? true
                 : false;
+        final int indent = businessObjectFieldModel.getIndent();
 
         String value = null;
         Long bofiId = null;
@@ -167,8 +168,8 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
                 fieldInstance.getBusinessObjectFieldModel().getFieldType());
           }
         }
-        fields
-            .add(new BusinessObjectFieldDTO(bofmId, bofiId, name, type, required, readOnly, value));
+        fields.add(new BusinessObjectFieldDTO(bofmId, bofiId, name, type, required, readOnly, value,
+            indent));
       } else {
         LOG.debug("Not necessary to add field [{}] since permission is 'NONE'");
         continue;
@@ -181,7 +182,8 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
     final SubjectModel subjectModel = messageFlow.getReceiver();
     final Subject subject =
         subjectRepository.getSubjectForSubjectModelInProcess(piId, subjectModel.getSmId());
-    return new SubjectDTO(subjectModel.getSmId(), subject.getUser(), subjectModel.getGroup());
+    return new SubjectDTO(subjectModel.getSmId(), subject.getUser(), subjectModel.getGroup(),
+        subjectModel.getAssignedRules());
   }
 
   private List<StateDTO> getNextStates(final SubjectState subjectState) {

@@ -1,11 +1,11 @@
-package at.fhjoanneum.ippr.gateway.security.usermapping.retrieval.memory;
+package at.fhjoanneum.ippr.gateway.security.rbacmapping.retrieval.memory;
 
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
-import at.fhjoanneum.ippr.gateway.security.usermapping.retrieval.UserGroupServiceCondition;
+import at.fhjoanneum.ippr.gateway.security.rbacmapping.retrieval.RBACServiceCondition;
 
-public class UserGroupMemoryCondition implements UserGroupServiceCondition {
+public class RBACMemoryCondition implements RBACServiceCondition {
 
   private static String CONFIG_VALUE = "memory";
 

@@ -13,27 +13,27 @@ public class CacheUser {
   private final String firstname;
   private final String lastname;
   private final String username;
-  private final List<CacheGroup> groups;
+  private final List<CacheRole> roles;
   private final String password;
 
   public CacheUser(final String systemId, final String firstname, final String lastname,
-      final String username, final List<CacheGroup> groups) {
+      final String username, final List<CacheRole> groups) {
     this(systemId, firstname, lastname, username, groups, StringUtils.EMPTY);
   }
 
   public CacheUser(final String systemId, final String firstname, final String lastname,
-      final String username, final List<CacheGroup> groups, final String password) {
+      final String username, final List<CacheRole> roles, final String password) {
     checkArgument(StringUtils.isNotBlank(systemId));
     checkArgument(StringUtils.isNotBlank(firstname));
     checkArgument(StringUtils.isNotBlank(lastname));
     checkArgument(StringUtils.isNotBlank(username));
-    checkNotNull(groups);
+    checkNotNull(roles);
 
     this.systemId = systemId;
     this.firstname = firstname;
     this.lastname = lastname;
     this.username = username;
-    this.groups = groups;
+    this.roles = roles;
     this.password = password;
   }
 
@@ -54,8 +54,8 @@ public class CacheUser {
     return username;
   }
 
-  public List<CacheGroup> getGroups() {
-    return groups;
+  public List<CacheRole> getRoles() {
+    return roles;
   }
 
   public String getPassword() {

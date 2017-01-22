@@ -47,9 +47,10 @@ public class VacationRequest extends AbstractExample {
 
   @Override
   protected void createData() {
-    final SubjectModel employee =
-        new SubjectModelBuilder().name("Employee").assignedGroup("Employee").build();
-    final SubjectModel boss = new SubjectModelBuilder().name("Boss").assignedGroup("Boss").build();
+    final SubjectModel employee = new SubjectModelBuilder().name("Employee")
+        .assignedGroup("Employee").addAssignedRule("DUMMY").build();
+    final SubjectModel boss = new SubjectModelBuilder().name("Boss").assignedGroup("Boss")
+        .addAssignedRule("DUMMY-A").addAssignedRule("DUMMY-B").build();
 
     // create vacation request
     final State empState1 =
@@ -70,15 +71,15 @@ public class VacationRequest extends AbstractExample {
         new BusinessObjectModelBuilder().name("Vacation request form").addToState(empState1)
             .addToState(empState2).addToState(bossState1).build();
     final BusinessObjectFieldModel boFrom = new BusinessObjectFieldModelBuilder().fieldName("From")
-        .fieldType(FieldType.STRING).businessObjectModel(vacationRequestForm).build();
+        .fieldType(FieldType.STRING).businessObjectModel(vacationRequestForm).position(1).build();
     final BusinessObjectFieldModel boTo = new BusinessObjectFieldModelBuilder().fieldName("To")
-        .fieldType(FieldType.STRING).businessObjectModel(vacationRequestForm).build();
+        .fieldType(FieldType.STRING).businessObjectModel(vacationRequestForm).position(0).build();
 
     final BusinessObjectModel vacationRequestSubForm = new BusinessObjectModelBuilder()
         .name("vacation request sub form").parent(vacationRequestForm).build();
-    final BusinessObjectFieldModel boTarget =
-        new BusinessObjectFieldModelBuilder().fieldName("target")
-            .businessObjectModel(vacationRequestSubForm).fieldType(FieldType.STRING).build();
+    final BusinessObjectFieldModel boTarget = new BusinessObjectFieldModelBuilder()
+        .fieldName("target").businessObjectModel(vacationRequestSubForm).fieldType(FieldType.STRING)
+        .position(0).build();
 
     final BusinessObjectFieldPermission boFromPermissionEmp1 =
         new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boFrom).state(empState1)
@@ -161,8 +162,9 @@ public class VacationRequest extends AbstractExample {
     final BusinessObjectModel okForm =
         new BusinessObjectModelBuilder().name("Vacation request accept").addToState(bossState3)
             .addToState(empState3).addToState(empState4).build();
-    final BusinessObjectFieldModel okFormFieldInformation = new BusinessObjectFieldModelBuilder()
-        .businessObjectModel(okForm).fieldName("Information").fieldType(FieldType.STRING).build();
+    final BusinessObjectFieldModel okFormFieldInformation =
+        new BusinessObjectFieldModelBuilder().businessObjectModel(okForm).fieldName("Information")
+            .fieldType(FieldType.STRING).position(0).build();
     final BusinessObjectFieldPermission okFormFieldInformationPermission1 =
         new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(okFormFieldInformation)
             .state(bossState3).mandatory(false).permission(FieldPermission.READ_WRITE).build();
@@ -176,8 +178,9 @@ public class VacationRequest extends AbstractExample {
     final BusinessObjectModel nokForm =
         new BusinessObjectModelBuilder().name("Vacation request not accept").addToState(bossState4)
             .addToState(empState3).addToState(empState5).build();
-    final BusinessObjectFieldModel nokFormFieldInformation = new BusinessObjectFieldModelBuilder()
-        .businessObjectModel(nokForm).fieldName("Information").fieldType(FieldType.STRING).build();
+    final BusinessObjectFieldModel nokFormFieldInformation =
+        new BusinessObjectFieldModelBuilder().businessObjectModel(nokForm).fieldName("Information")
+            .fieldType(FieldType.STRING).position(0).build();
     final BusinessObjectFieldPermission nokFormFieldInformationPermission1 =
         new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(nokFormFieldInformation)
             .state(bossState4).mandatory(true).permission(FieldPermission.READ_WRITE).build();

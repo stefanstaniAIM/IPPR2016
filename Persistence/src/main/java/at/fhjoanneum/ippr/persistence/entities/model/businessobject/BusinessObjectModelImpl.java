@@ -15,6 +15,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
@@ -52,6 +53,7 @@ public class BusinessObjectModelImpl implements BusinessObjectModel, Serializabl
   private List<StateImpl> states = Lists.newArrayList();
 
   @OneToMany(mappedBy = "businessObjectModel")
+  @OrderBy("position ASC, fieldName ASC")
   private final List<BusinessObjectFieldModelImpl> businessObjectFields = Lists.newArrayList();
 
   @ManyToOne

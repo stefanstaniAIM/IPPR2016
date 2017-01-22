@@ -18,36 +18,45 @@ public class HttpHeaderUser {
 
   private static final String CLAIM_ID = "claims";
   private static final String USER_ID = "userId";
-  private static final String GROUP_ID = "groups";
-
+  private static final String ROLES_ID = "roles";
+  private static final String RULES_ID = "rules";
 
   private final String userId;
-  private final String groups;
+  private final String roles;
+  private final String rules;
 
   public HttpHeaderUser(final HttpServletRequest request) {
     final Claims claims = (Claims) request.getAttribute(CLAIM_ID);
     Preconditions.checkNotNull(claims);
     Preconditions.checkNotNull(claims.get(USER_ID));
-    Preconditions.checkNotNull(claims.get(GROUP_ID));
+    Preconditions.checkNotNull(claims.get(ROLES_ID));
+    Preconditions.checkNotNull(claims.get(RULES_ID));
 
     final String userId = String.valueOf(claims.get(USER_ID));
-    final String groups = StringUtils.join((List<String>) claims.get(GROUP_ID), ",");
+    final String roles = StringUtils.join((List<String>) claims.get(ROLES_ID), ",");
+    final String rules = StringUtils.join((List<String>) claims.get(RULES_ID), ",");
     this.userId = userId;
-    this.groups = groups;
+    this.roles = roles;
+    this.rules = rules;
   }
 
   public String getUserId() {
     return userId;
   }
 
-  public String getGroups() {
-    return groups;
+  public String getRoles() {
+    return roles;
+  }
+
+  public String getRules() {
+    return rules;
   }
 
   public HttpHeaders getHttpHeaders() {
     final HttpHeaders headers = new HttpHeaders();
     headers.add(USER_ID, userId);
-    headers.add(GROUP_ID, groups);
+    headers.add(ROLES_ID, roles);
+    headers.add(RULES_ID, rules);
     return headers;
   }
 }
