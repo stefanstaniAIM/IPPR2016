@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import at.fhjoanneum.ippr.commons.dto.pmstorage.FieldTypeDTO;
 import at.fhjoanneum.ippr.commons.dto.pmstorage.ProcessModelDTO;
 import at.fhjoanneum.ippr.pmstorage.services.ProcessModelService;
 
@@ -52,6 +53,13 @@ public class ProcessModelStorageController {
           new PageRequest(page, size, new Sort(Sort.Direction.ASC, "name"));
       return processModelService.findActiveProcessModelsToStart(gatewayUser.getRoles(), pageRequest)
           .get();
+    };
+  }
+
+  @RequestMapping(value = "fieldtypes", method = RequestMethod.GET)
+  public @ResponseBody Callable<List<FieldTypeDTO>> getFieldTypes() {
+    return () -> {
+      return processModelService.getFieldTypes().get();
     };
   }
 }

@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.Column;
@@ -24,7 +25,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.validator.constraints.NotBlank;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
 import at.fhjoanneum.ippr.gateway.security.persistence.objects.Role;
@@ -109,8 +110,8 @@ public class UserImpl implements User, Serializable {
   }
 
   @Override
-  public List<Role> getRoles() {
-    return ImmutableList.copyOf(roles);
+  public Set<Role> getRoles() {
+    return ImmutableSet.copyOf(roles);
   }
 
   @Override
@@ -122,9 +123,9 @@ public class UserImpl implements User, Serializable {
   }
 
   @Override
-  public List<Rule> getRules() {
-    return ImmutableList.copyOf(roles.stream().map(Role::getRules).flatMap(List::stream)
-        .map(rule -> rule).collect(Collectors.toList()));
+  public Set<Rule> getRules() {
+    return ImmutableSet.copyOf(roles.stream().map(Role::getRules).flatMap(List::stream)
+        .map(rule -> rule).collect(Collectors.toSet()));
   }
 
   @Override

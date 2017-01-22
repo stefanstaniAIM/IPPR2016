@@ -5,11 +5,15 @@ import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldType;
 
 public interface BusinessObjectFieldModel {
 
-	Long getBofmId();
+  Long getBofmId();
 
-	String getFieldName();
+  String getFieldName();
 
-	BusinessObjectModel getBusinessObjectModel();
+  BusinessObjectModel getBusinessObjectModel();
 
-	FieldType getFieldType();
+  FieldType getFieldType();
+
+  int getPosition();
+
+  int getIndent();
 }

@@ -1,6 +1,7 @@
 package at.fhjoanneum.ippr.gateway.security.persistence.objects;
 
 import java.util.List;
+import java.util.Set;
 
 public interface User {
 
@@ -18,9 +19,9 @@ public interface User {
 
   String getUsername();
 
-  List<Role> getRoles();
+  Set<Role> getRoles();
 
-  List<Rule> getRules();
+  Set<Rule> getRules();
 
   void setRoles(List<Role> groups);
 }

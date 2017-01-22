@@ -16,6 +16,7 @@ import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.hibernate.annotations.ColumnDefault;
 
 import com.google.common.base.Objects;
 
@@ -48,13 +49,29 @@ public class BusinessObjectFieldModelImpl implements BusinessObjectFieldModel, S
   @JoinColumn(name = "bom_id")
   private BusinessObjectModelImpl businessObjectModel;
 
+  @Column
+  @ColumnDefault("0")
+  private int indent;
+
+  @Column
+  private int position;
+
   BusinessObjectFieldModelImpl() {}
 
   BusinessObjectFieldModelImpl(final String fieldName,
-      final BusinessObjectModelImpl businessObjectModel, final FieldType fieldType) {
+      final BusinessObjectModelImpl businessObjectModel, final FieldType fieldType,
+      final int position) {
     this.fieldName = fieldName;
     this.businessObjectModel = businessObjectModel;
     this.fieldType = fieldType;
+    this.position = position;
+  }
+
+  BusinessObjectFieldModelImpl(final String fieldName,
+      final BusinessObjectModelImpl businessObjectModel, final FieldType fieldType,
+      final int position, final int indent) {
+    this(fieldName, businessObjectModel, fieldType, position);
+    this.indent = indent;
   }
 
   @Override
@@ -75,6 +92,16 @@ public class BusinessObjectFieldModelImpl implements BusinessObjectFieldModel, S
   @Override
   public FieldType getFieldType() {
     return fieldType;
+  }
+
+  @Override
+  public int getPosition() {
+    return position;
+  }
+
+  @Override
+  public int getIndent() {
+    return indent;
   }
 
   @Override

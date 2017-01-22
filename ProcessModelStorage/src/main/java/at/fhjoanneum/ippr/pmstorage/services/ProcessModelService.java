@@ -5,6 +5,7 @@ import java.util.concurrent.Future;
 
 import org.springframework.data.domain.Pageable;
 
+import at.fhjoanneum.ippr.commons.dto.pmstorage.FieldTypeDTO;
 import at.fhjoanneum.ippr.commons.dto.pmstorage.ProcessModelDTO;
 
 public interface ProcessModelService {
@@ -13,4 +14,6 @@ public interface ProcessModelService {
 
   Future<List<ProcessModelDTO>> findActiveProcessModelsToStart(List<String> groups,
       final Pageable pageable);
+
+  Future<List<FieldTypeDTO>> getFieldTypes();
 }

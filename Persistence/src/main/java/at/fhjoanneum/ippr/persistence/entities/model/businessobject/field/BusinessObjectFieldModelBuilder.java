@@ -12,36 +12,56 @@ import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldType;
 
 public class BusinessObjectFieldModelBuilder implements Builder<BusinessObjectFieldModel> {
 
-	private String name;
-	private BusinessObjectModelImpl businessObjectModel;
-	private FieldType fieldType;
+  private String name;
+  private BusinessObjectModelImpl businessObjectModel;
+  private FieldType fieldType;
+  private int position = -1;
+  private int indent = -1;
 
-	public BusinessObjectFieldModelBuilder fieldName(final String name) {
-		isNotBlank(name);
-		this.name = name;
-		return this;
-	}
+  public BusinessObjectFieldModelBuilder fieldName(final String name) {
+    isNotBlank(name);
+    this.name = name;
+    return this;
+  }
 
-	public BusinessObjectFieldModelBuilder businessObjectModel(final BusinessObjectModel businessObjectModel) {
-		checkNotNull(businessObjectModel);
-		checkArgument(businessObjectModel instanceof BusinessObjectModelImpl);
-		this.businessObjectModel = (BusinessObjectModelImpl) businessObjectModel;
-		return this;
-	}
+  public BusinessObjectFieldModelBuilder businessObjectModel(
+      final BusinessObjectModel businessObjectModel) {
+    checkNotNull(businessObjectModel);
+    checkArgument(businessObjectModel instanceof BusinessObjectModelImpl);
+    this.businessObjectModel = (BusinessObjectModelImpl) businessObjectModel;
+    return this;
+  }
 
-	public BusinessObjectFieldModelBuilder fieldType(final FieldType fieldType) {
-		checkNotNull(fieldType);
-		this.fieldType = fieldType;
-		return this;
-	}
+  public BusinessObjectFieldModelBuilder fieldType(final FieldType fieldType) {
+    checkNotNull(fieldType);
+    this.fieldType = fieldType;
+    return this;
+  }
 
-	@Override
-	public BusinessObjectFieldModel build() {
-		isNotBlank(name);
-		checkNotNull(businessObjectModel);
-		checkNotNull(fieldType);
+  public BusinessObjectFieldModelBuilder position(final int position) {
+    checkArgument(position >= 0);
+    this.position = position;
+    return this;
+  }
 
-		return new BusinessObjectFieldModelImpl(name, businessObjectModel, fieldType);
-	}
+  public BusinessObjectFieldModelBuilder indent(final int indent) {
+    checkArgument(indent >= 0);
+    this.indent = indent;
+    return this;
+  }
+
+  @Override
+  public BusinessObjectFieldModel build() {
+    isNotBlank(name);
+    checkNotNull(businessObjectModel);
+    checkNotNull(fieldType);
+    checkArgument(position >= 0);
+
+    if (indent >= 0) {
+      return new BusinessObjectFieldModelImpl(name, businessObjectModel, fieldType, position,
+          indent);
+    }
+    return new BusinessObjectFieldModelImpl(name, businessObjectModel, fieldType, position);
+  }
 
 }
