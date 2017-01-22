@@ -29,10 +29,7 @@ import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
 import at.fhjoanneum.ippr.persistence.objects.model.transition.Transition;
 import org.apache.jena.ontology.*;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Property;
-import org.apache.jena.rdf.model.RDFNode;
-import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.*;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +64,7 @@ public class VacationRequestFromOWL extends AbstractExample {
       String URI_FUNCTION_STATE = URI_STANDARD+"FunctionState";
       String URI_SEND_STATE = URI_STANDARD+"SendState";
       String URI_RECEIVE_STATE = URI_STANDARD+"ReceiveState";
-      String URI_START_STATE = URI_STANDARD+"StartState";
+      String URI_INITIAL_STATE = URI_STANDARD+"InitialState";
       String URI_END_STATE = URI_STANDARD+"EndState";
 
 	  try {
@@ -77,6 +74,7 @@ public class VacationRequestFromOWL extends AbstractExample {
         OntDocumentManager dm  = model.getDocumentManager();
 		model.read(is, "OWL/XML");
 		model.write(System.out);
+		//Find Process Model
 		List<? extends OntResource> processModels = model.getOntClass(URI_PROCESS_MODEL).listInstances().toList();
 		for(OntResource processModel : processModels) {
             Property labelProperty = model.getProperty(URI_NAME);
@@ -85,28 +83,72 @@ public class VacationRequestFromOWL extends AbstractExample {
             Property functionStateProperty = model.getProperty(URI_FUNCTION_STATE);
             Property sendStateProperty = model.getProperty(URI_SEND_STATE);
             Property receiveStateProperty = model.getProperty(URI_RECEIVE_STATE);
-            Property startStateProperty = model.getProperty(URI_START_STATE);
+            Property initialStateProperty = model.getProperty(URI_INITIAL_STATE);
             Property endStateProperty = model.getProperty(URI_END_STATE);
+            Property type = model.getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
 
+            //Get ProcessModelName
             String processName = processModel.getProperty(labelProperty).getString();
             System.out.println("Process Name "+processName);
+
+            //Find Actors in ProcessModel
             List<? extends OntResource> actors = model.getOntClass(URI_ACTOR).listInstances().toList();
             List actorNames = new ArrayList();
             for(OntResource actor : actors) {
+                //Get ActorName
                 String actorName = actor.getProperty(labelProperty).getString();
                 actorNames.add(actorName);
                 System.out.println("Found Actor: "+actorName);
-                Resource behaviorUri = actor.getPropertyResourceValue(behaviorProperty);
-                OntResource behavior =  model.getOntResource(behaviorUri);
-                List<org.apache.jena.rdf.model.RDFNode> states = behavior.listPropertyValues(stateProperty).toList();
-                for(RDFNode state : states) {
-                    Resource stateResource = state.asResource();
-                    //model.getOntResource(stateResource);
+
+                //Find behaviour
+                Resource behavior = actor.getProperty(behaviorProperty).getResource();
+
+                //Find states
+                List<org.apache.jena.rdf.model.Statement> states = behavior.listProperties(stateProperty).toList();
+                for(Statement state : states) {
+                    Resource stateResource = state.getResource();
                     String stateLabel = stateResource.getProperty(labelProperty).getString();
                     System.out.println("-With State: "+stateLabel);
-                    // wie überprüfen ob function, receive, send, end, start ??
-                    stateResource.hasProperty(receiveStateProperty);
+
+                    // Which type of state?
+                    if(stateResource.hasProperty(type,endStateProperty)){
+                        System.out.println("--is EndState");
+                    } else if (stateResource.hasProperty(type,initialStateProperty)){
+                        System.out.println("--is InitialState");
+                    }
+                    if(stateResource.hasProperty(type,functionStateProperty)){
+                        System.out.println("--is FunctionState");
+                    } else if(stateResource.hasProperty(type,sendStateProperty)){
+                        System.out.println("--is SendState");
+                    } else if(stateResource.hasProperty(type,receiveStateProperty)){
+                        System.out.println("--is ReceiveState");
+                    }
                 }
+
+                //Find Transitions (edges)
+                /*for(transition:transitions){
+                    resource = transition.getResource()
+                    resource.getProperty(labelProperty).getString();
+                    if resource.hasProperty(type,standardTransitionProperty)
+                    else if resource.hasProperty(type,receiveTransitionProperty)
+                    else if resource.hasProperty(type,sendTransitionProperty)
+
+                    sourceState = resource.getProperty(hasSourceStateProperty)
+                    targetState = resource.getProperty(hasTargetStateProperty)
+                    refersTo = resource.getProperty(refersToProperty)
+                    if(refersTo)
+                        messageFlow = refersTo.getResource();
+                        messageFlow.getProperty(labelProperty).getString();
+                        sender = messageFlow.getProperty(hasSender);
+                        receiver = messageFlow.getProperty(hasReceiver); //-> ist nur die Resource. Alle Objekte sollten irgendwie mit Ids behandelt werden.
+                        messageType = messageFlow.getProperty(hasMessageType); //-> ist nur die Resource. Alle Objekte sollten irgendwie mit Ids behandelt werden.
+                        message = messageType.getResource();
+                        messageLabel = message.getProperty(labelProperty).getString();
+
+
+                }
+                 */
+
             }
 		}
       } catch (Exception e) {
