@@ -93,7 +93,8 @@ export class ActiveProcessDetail implements OnInit {
       required:boolean,
       readonly:boolean,
       value:any
-    }]
+    }],
+    children:[any];
   }];
   nextStates:[{
     name:string,
