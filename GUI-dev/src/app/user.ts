@@ -5,17 +5,19 @@ export class User {
    private firstname: string;
    private lastname: string;
    private username: string;
-   private groups: any[];
+   private rules: any[];
+   private roles: any[];
    private uid: number;
 
    constructor() {
    }
 
-   public set(firstname:string, lastname:string, username:string, groups:string[], uid:number) {
+   public set(firstname:string, lastname:string, username:string, rules:string[], roles:string[], uid:number) {
       this.firstname = firstname;
       this.lastname = lastname;
       this.username = username;
-      this.groups = groups;
+      this.rules = rules;
+      this.roles = roles;
       this.uid = uid;
    }
 
@@ -26,7 +28,7 @@ export class User {
    public isAdmin() {
 
       //return true;
-      return this.groups.filter(function(group){return group.name.toLowerCase() === "admin"}).length ? true : false;
+      return this.rules.filter(function(rule){return rule.name.toLowerCase() === "admin_rule"}).length ? true : false;
    }
 
 }
