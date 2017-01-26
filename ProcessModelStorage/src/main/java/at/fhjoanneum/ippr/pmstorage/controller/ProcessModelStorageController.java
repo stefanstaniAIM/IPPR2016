@@ -51,7 +51,7 @@ public class ProcessModelStorageController {
       final GatewayUser gatewayUser = new GatewayUser(request);
       final PageRequest pageRequest =
           new PageRequest(page, size, new Sort(Sort.Direction.ASC, "name"));
-      return processModelService.findActiveProcessModelsToStart(gatewayUser.getRoles(), pageRequest)
+      return processModelService.findActiveProcessModelsToStart(gatewayUser.getRules(), pageRequest)
           .get();
     };
   }

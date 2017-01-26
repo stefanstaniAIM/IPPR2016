@@ -11,7 +11,6 @@ import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
@@ -40,7 +39,7 @@ public class ProcessModelServiceImpl implements ProcessModelService {
   @Async
   @Transactional
   public Future<List<ProcessModelDTO>> findActiveProcessModels(final Pageable pageable) {
-    final Page<ProcessModelImpl> results = processModelRepository.findActiveProcesses(pageable);
+    final List<ProcessModelImpl> results = processModelRepository.findActiveProcesses();
 
     final List<ProcessModelDTO> processModels = createProcessModelDTO(results);
 
@@ -50,16 +49,15 @@ public class ProcessModelServiceImpl implements ProcessModelService {
   @Override
   @Async
   @Transactional
-  public Future<List<ProcessModelDTO>> findActiveProcessModelsToStart(final List<String> groups,
+  public Future<List<ProcessModelDTO>> findActiveProcessModelsToStart(final List<String> rules,
       final Pageable pageable) {
-    final Page<ProcessModelImpl> results =
-        processModelRepository.findActiveProcessesToStart(pageable, groups);
+    final List<ProcessModelImpl> results = processModelRepository.findActiveProcessesToStart(rules);
 
     final List<ProcessModelDTO> processModels = createProcessModelDTO(results);
     return new AsyncResult<List<ProcessModelDTO>>(processModels);
   }
 
-  private static List<ProcessModelDTO> createProcessModelDTO(final Page<ProcessModelImpl> results) {
+  private static List<ProcessModelDTO> createProcessModelDTO(final List<ProcessModelImpl> results) {
     final List<ProcessModelDTO> processModels = Lists.newArrayList();
     final List<SubjectModelDTO> subjectModels = Lists.newArrayList();
 
