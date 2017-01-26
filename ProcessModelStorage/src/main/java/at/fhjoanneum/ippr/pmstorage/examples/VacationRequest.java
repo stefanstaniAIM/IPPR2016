@@ -48,9 +48,9 @@ public class VacationRequest extends AbstractExample {
   @Override
   protected void createData() {
     final SubjectModel employee = new SubjectModelBuilder().name("Employee")
-        .assignedGroup("Employee").addAssignedRule("DUMMY").build();
+        .assignedGroup("Employee").addAssignedRule("EMPLOYEE_RULE").build();
     final SubjectModel boss = new SubjectModelBuilder().name("Boss").assignedGroup("Boss")
-        .addAssignedRule("DUMMY-A").addAssignedRule("DUMMY-B").build();
+        .addAssignedRule("BOSS_RULE").build();
 
     // create vacation request
     final State empState1 =

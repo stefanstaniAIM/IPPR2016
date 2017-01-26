@@ -26,6 +26,7 @@ import com.google.common.collect.Lists;
 
 import at.fhjoanneum.ippr.persistence.entities.model.process.ProcessModelImpl;
 import at.fhjoanneum.ippr.persistence.entities.model.state.StateImpl;
+import at.fhjoanneum.ippr.persistence.objects.model.process.ProcessModel;
 import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
 
@@ -93,6 +94,11 @@ public class SubjectModelImpl implements SubjectModel, Serializable {
   @Override
   public List<String> getAssignedRules() {
     return ImmutableList.copyOf(assignedRules);
+  }
+
+  @Override
+  public ProcessModel getProcessModel() {
+    return processModel;
   }
 
   @Override

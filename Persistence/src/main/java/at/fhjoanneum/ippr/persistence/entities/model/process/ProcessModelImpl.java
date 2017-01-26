@@ -58,10 +58,6 @@ public class ProcessModelImpl implements ProcessModel, Serializable {
   @Enumerated(EnumType.STRING)
   private ProcessModelState state;
 
-  // @ManyToMany
-  // @Size(min = 1)
-  // @JoinTable(name = "process_subject_model_map", joinColumns = {@JoinColumn(name = "pm_id")},
-  // inverseJoinColumns = {@JoinColumn(name = "sm_id")})
   @OneToMany
   @JoinColumn(name = "pm_id")
   private List<SubjectModelImpl> subjectModels = Lists.newArrayList();
