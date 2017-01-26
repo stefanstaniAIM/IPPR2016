@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -23,6 +24,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+import at.fhjoanneum.ippr.persistence.entities.model.process.ProcessModelImpl;
 import at.fhjoanneum.ippr.persistence.entities.model.state.StateImpl;
 import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
@@ -40,6 +42,10 @@ public class SubjectModelImpl implements SubjectModel, Serializable {
   @NotBlank
   @Size(min = 1, max = 100)
   private String name;
+
+  @ManyToOne
+  @JoinColumn(name = "pm_id")
+  private ProcessModelImpl processModel;
 
   @Column
   @NotBlank

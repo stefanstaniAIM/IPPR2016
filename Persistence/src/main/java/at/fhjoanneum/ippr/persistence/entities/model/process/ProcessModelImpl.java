@@ -12,10 +12,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -25,6 +24,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import at.fhjoanneum.ippr.persistence.entities.model.subject.SubjectModelImpl;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.ProcessModelState;
@@ -58,12 +58,13 @@ public class ProcessModelImpl implements ProcessModel, Serializable {
   @Enumerated(EnumType.STRING)
   private ProcessModelState state;
 
-  @NotNull
-  @ManyToMany
-  @Size(min = 1)
-  @JoinTable(name = "process_subject_model_map", joinColumns = {@JoinColumn(name = "pm_id")},
-      inverseJoinColumns = {@JoinColumn(name = "sm_id")})
-  private List<SubjectModelImpl> subjectModels;
+  // @ManyToMany
+  // @Size(min = 1)
+  // @JoinTable(name = "process_subject_model_map", joinColumns = {@JoinColumn(name = "pm_id")},
+  // inverseJoinColumns = {@JoinColumn(name = "sm_id")})
+  @OneToMany
+  @JoinColumn(name = "pm_id")
+  private List<SubjectModelImpl> subjectModels = Lists.newArrayList();
 
   @NotNull
   @ManyToOne
