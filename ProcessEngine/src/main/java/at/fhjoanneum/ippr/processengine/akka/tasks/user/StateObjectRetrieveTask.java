@@ -19,6 +19,7 @@ import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.BusinessObjectDT
 import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.BusinessObjectFieldDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.StateObjectDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.SubjectDTO;
+import at.fhjoanneum.ippr.persistence.entities.engine.enums.SubjectSubState;
 import at.fhjoanneum.ippr.persistence.objects.engine.businessobject.BusinessObjectFieldInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.businessobject.BusinessObjectInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.state.SubjectState;
@@ -69,6 +70,13 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
         .ofNullable(
             subjectStateRepository.getSubjectStateOfUser(request.getPiId(), request.getUserId()))
         .get();
+
+    if (StateFunctionType.RECEIVE.equals(subjectState.getCurrentState().getFunctionType())
+        && SubjectSubState.TO_RECEIVE.equals(subjectState.getSubState())) {
+      LOG.info("Nothing to do here for [{}]", subjectState);
+      getSender().tell(new StateObjectMessage.Response(null), getSelf());
+      return;
+    }
 
     final List<BusinessObjectDTO> businessObjects = getBusinessObjects(request, subjectState);
 
