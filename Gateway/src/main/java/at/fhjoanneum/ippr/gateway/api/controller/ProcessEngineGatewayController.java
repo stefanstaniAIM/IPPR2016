@@ -66,6 +66,27 @@ public class ProcessEngineGatewayController {
     };
   }
 
+  @RequestMapping(value = "api/processes/count/started/{hoursbefore}", method = RequestMethod.GET)
+  public @ResponseBody Callable<ResponseEntity<Long>> getAmountOfStartedProcessInRange(
+      final HttpServletRequest request, @PathVariable("hoursbefore") final Long hoursbefore) {
+
+    return () -> {
+      return processEngineCaller.getAmountOfStartedProcessesInRange(hoursbefore).get();
+    };
+  }
+
+  @RequestMapping(value = "api/processes/count/started/{hoursbefore}/{userId}",
+      method = RequestMethod.GET)
+  public @ResponseBody Callable<ResponseEntity<Long>> getAmountOfStartedProcessInRangeForUser(
+      final HttpServletRequest request, @PathVariable("hoursbefore") final Long hoursbefore,
+      @PathVariable("userId") final Long userId) {
+
+    return () -> {
+      return processEngineCaller.getAmountOfStartedProcessesForUserInRange(hoursbefore, userId)
+          .get();
+    };
+  }
+
   @RequestMapping(value = "api/processes/state/{piId}", method = RequestMethod.GET)
   public @ResponseBody Callable<ProcessStateDTO> getProcessState(final HttpServletRequest request,
       @PathVariable("piId") final Long piId) {

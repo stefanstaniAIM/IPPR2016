@@ -1,5 +1,6 @@
 package at.fhjoanneum.ippr.processengine.services;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -25,8 +26,10 @@ import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.StateObjectChang
 import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.StateObjectDTO;
 import at.fhjoanneum.ippr.processengine.akka.config.Global;
 import at.fhjoanneum.ippr.processengine.akka.config.SpringExtension;
-import at.fhjoanneum.ippr.processengine.akka.messages.analysis.AmountOfProcessesInStateMessage;
-import at.fhjoanneum.ippr.processengine.akka.messages.analysis.AmountOfProcessesInStatePerUserMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.analysis.ProcessesInStateMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.analysis.ProcessesInStatePerUserMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.analysis.StartedProcessesInRangeForUserMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.analysis.StartedProcessesInRangeMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.check.ProcessCheckMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.info.ProcessInfoMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.info.ProcessStateMessage;
@@ -115,9 +118,8 @@ public class ProcessServiceImpl implements ProcessService {
 
     final ActorRef analysisActor = getAnalysisActor();
 
-    PatternsCS
-        .ask(analysisActor, new AmountOfProcessesInStateMessage.Request(state), Global.TIMEOUT)
-        .toCompletableFuture().thenApply(obj -> (AmountOfProcessesInStateMessage.Response) obj)
+    PatternsCS.ask(analysisActor, new ProcessesInStateMessage.Request(state), Global.TIMEOUT)
+        .toCompletableFuture().thenApply(obj -> (ProcessesInStateMessage.Response) obj)
         .whenComplete((msg, exc) -> future.complete(msg.getAmount()));
 
     return future;
@@ -131,10 +133,9 @@ public class ProcessServiceImpl implements ProcessService {
     final ActorRef analysisActor = getAnalysisActor();
 
     PatternsCS
-        .ask(analysisActor, new AmountOfProcessesInStatePerUserMessage.Request(userId, state),
+        .ask(analysisActor, new ProcessesInStatePerUserMessage.Request(userId, state),
             Global.TIMEOUT)
-        .toCompletableFuture()
-        .thenApply(obj -> (AmountOfProcessesInStatePerUserMessage.Response) obj)
+        .toCompletableFuture().thenApply(obj -> (ProcessesInStatePerUserMessage.Response) obj)
         .whenComplete((msg, exc) -> future.complete(msg.getAmount()));
 
     return future;
@@ -286,6 +287,40 @@ public class ProcessServiceImpl implements ProcessService {
             future.complete(Boolean.TRUE);
           }
         });
+    return future;
+  }
+
+  @Async
+  @Override
+  public Future<Long> getAmountOfStartedProcessesBetween(final LocalDateTime start,
+      final LocalDateTime end) {
+
+    final CompletableFuture<Long> future = new CompletableFuture<>();
+
+    final ActorRef analysisActor = getAnalysisActor();
+
+    PatternsCS
+        .ask(analysisActor, new StartedProcessesInRangeMessage.Request(start, end), Global.TIMEOUT)
+        .toCompletableFuture().thenApply(obj -> (StartedProcessesInRangeMessage.Response) obj)
+        .whenComplete((msg, exc) -> future.complete(msg.getAmount()));
+
+    return future;
+  }
+
+  @Override
+  public Future<Long> getAmountOfStartedProcessesBetweenForUser(final LocalDateTime start,
+      final LocalDateTime end, final Long userId) {
+    final CompletableFuture<Long> future = new CompletableFuture<>();
+
+    final ActorRef analysisActor = getAnalysisActor();
+
+    PatternsCS
+        .ask(analysisActor, new StartedProcessesInRangeForUserMessage.Request(start, end, userId),
+            Global.TIMEOUT)
+        .toCompletableFuture()
+        .thenApply(obj -> (StartedProcessesInRangeForUserMessage.Response) obj)
+        .whenComplete((msg, exc) -> future.complete(msg.getAmount()));
+
     return future;
   }
 }

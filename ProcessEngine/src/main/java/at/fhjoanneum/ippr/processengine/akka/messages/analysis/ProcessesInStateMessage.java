@@ -1,18 +1,12 @@
 package at.fhjoanneum.ippr.processengine.akka.messages.analysis;
 
-public class AmountOfProcessesInStatePerUserMessage {
+public class ProcessesInStateMessage {
 
   public static class Request {
-    private final Long userId;
     private final String state;
 
-    public Request(final Long userId, final String state) {
-      this.userId = userId;
+    public Request(final String state) {
       this.state = state;
-    }
-
-    public Long getUserId() {
-      return userId;
     }
 
     public String getState() {

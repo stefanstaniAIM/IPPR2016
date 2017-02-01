@@ -1,5 +1,6 @@
 package at.fhjoanneum.ippr.processengine.repositories;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -39,4 +40,16 @@ public interface ProcessInstanceRepository
       nativeQuery = false)
   Page<ProcessInstanceImpl> getProcessesInfoOfUserAndState(Pageable pageable,
       @Param("user") Long user, @Param("state") ProcessInstanceState state);
+
+  @Query(
+      value = "select count(p) from PROCESS_INSTANCE p where p.startTime between :start and :end and p.state = 'ACTIVE'",
+      nativeQuery = false)
+  Long getAmountOfStartedProcessesBetweenRange(@Param("start") LocalDateTime start,
+      @Param("end") LocalDateTime end);
+
+  @Query(
+      value = "select count(p) from PROCESS_INSTANCE p JOIN p.subjects s where p.startTime between :start and :end and p.state = 'ACTIVE' and s.userId = :user",
+      nativeQuery = false)
+  Long getAmountOfStartedProcessesBetweenRangeForUser(@Param("start") LocalDateTime start,
+      @Param("end") LocalDateTime end, @Param("user") Long userId);
 }

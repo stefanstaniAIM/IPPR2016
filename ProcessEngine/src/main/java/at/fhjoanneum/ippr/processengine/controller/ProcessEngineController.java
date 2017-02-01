@@ -1,5 +1,6 @@
 package at.fhjoanneum.ippr.processengine.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -50,7 +51,6 @@ public class ProcessEngineController {
       } else {
         return new ResponseEntity<>(processStartedDTO, HttpStatus.BAD_REQUEST);
       }
-
     };
   }
 
@@ -69,6 +69,32 @@ public class ProcessEngineController {
 
     return () -> {
       return processService.getAmountOfProcessesInStatePerUser(state, userId).get();
+    };
+  }
+
+  @RequestMapping(value = "processes/count/started/{hoursbefore}", method = RequestMethod.GET)
+  public @ResponseBody Callable<Long> getAmountOfActiveProcessesPerUser(
+      final HttpServletRequest request, @PathVariable("hoursbefore") final Long hoursbefore) {
+
+    return () -> {
+      final LocalDateTime end = LocalDateTime.now();
+      final LocalDateTime start = end.minusHours(hoursbefore);
+
+      return processService.getAmountOfStartedProcessesBetween(start, end).get();
+    };
+  }
+
+  @RequestMapping(value = "processes/count/started/{hoursbefore}/{userId}",
+      method = RequestMethod.GET)
+  public @ResponseBody Callable<Long> getAmountOfActiveProcessesPerUser(
+      final HttpServletRequest request, @PathVariable("hoursbefore") final Long hoursbefore,
+      @PathVariable("userId") final Long userId) {
+
+    return () -> {
+      final LocalDateTime end = LocalDateTime.now();
+      final LocalDateTime start = end.minusHours(hoursbefore);
+
+      return processService.getAmountOfStartedProcessesBetweenForUser(start, end, userId).get();
     };
   }
 

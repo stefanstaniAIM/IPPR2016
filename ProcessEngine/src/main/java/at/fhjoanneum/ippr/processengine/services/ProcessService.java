@@ -1,5 +1,6 @@
 package at.fhjoanneum.ippr.processengine.services;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -18,6 +19,11 @@ public interface ProcessService {
   Future<Long> getAmountOfProcessesInState(String state);
 
   Future<Long> getAmountOfProcessesInStatePerUser(String state, Long userId);
+
+  Future<Long> getAmountOfStartedProcessesBetween(LocalDateTime start, LocalDateTime end);
+
+  Future<Long> getAmountOfStartedProcessesBetweenForUser(LocalDateTime start, LocalDateTime end,
+      Long userId);
 
   Future<ProcessStateDTO> getStateOfProcessInstance(Long piId);
 
