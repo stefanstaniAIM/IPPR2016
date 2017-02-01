@@ -83,22 +83,19 @@ public class UserController {
     return rbacService.getUserByUserId(userId);
   }
 
-  // TODO can stay, but must be changed to rules
-  @RequestMapping(value = "api/processes/possibleUsers/{group}", method = RequestMethod.GET)
-  public @ResponseBody Callable<List<UserDTO>> getPossibleUsers(
-      @PathVariable("group") final String group) {
-
-    return () -> {
-      return rbacService.getPossibleUsersOfGroup(group).get();
-    };
-  }
-
   @RequestMapping(value = "api/processes/users/rule/{rules}", method = RequestMethod.GET)
   public @ResponseBody Callable<List<UserDTO>> getPossibleUsers(
       @PathVariable("rules") final String[] rules) {
 
     return () -> {
       return rbacService.getUsersOfRule(Arrays.asList(rules)).get();
+    };
+  }
+
+  @RequestMapping(value = "api/rules", method = RequestMethod.GET)
+  public @ResponseBody Callable<List<Rule>> getRules() {
+    return () -> {
+      return rbacService.getRules().get();
     };
   }
 

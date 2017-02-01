@@ -30,4 +30,6 @@ public interface RBACRepository {
   List<User> getUsersByRoleName(final String roleName);
 
   List<User> getUsersByRuleNames(final List<String> ruleNames);
+
+  List<Rule> getRules();
 }

@@ -11,6 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -26,6 +28,7 @@ import at.fhjoanneum.ippr.persistence.objects.model.businessobject.field.Busines
 import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldType;
 
 @Entity(name = "BUSINESS_OBJECT_FIELD_MODEL")
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"bom_id", "fieldName"}))
 public class BusinessObjectFieldModelImpl implements BusinessObjectFieldModel, Serializable {
 
   private static final long serialVersionUID = -8651866037837204065L;
@@ -56,21 +59,25 @@ public class BusinessObjectFieldModelImpl implements BusinessObjectFieldModel, S
   @Column
   private int position;
 
+  @Column
+  private String defaultValue;
+
   BusinessObjectFieldModelImpl() {}
 
   BusinessObjectFieldModelImpl(final String fieldName,
       final BusinessObjectModelImpl businessObjectModel, final FieldType fieldType,
-      final int position) {
+      final String defaultValue, final int position) {
     this.fieldName = fieldName;
     this.businessObjectModel = businessObjectModel;
     this.fieldType = fieldType;
     this.position = position;
+    this.defaultValue = defaultValue;
   }
 
   BusinessObjectFieldModelImpl(final String fieldName,
       final BusinessObjectModelImpl businessObjectModel, final FieldType fieldType,
-      final int position, final int indent) {
-    this(fieldName, businessObjectModel, fieldType, position);
+      final String defaultValue, final int position, final int indent) {
+    this(fieldName, businessObjectModel, fieldType, defaultValue, position);
     this.indent = indent;
   }
 
@@ -92,6 +99,11 @@ public class BusinessObjectFieldModelImpl implements BusinessObjectFieldModel, S
   @Override
   public FieldType getFieldType() {
     return fieldType;
+  }
+
+  @Override
+  public String getDefaultValue() {
+    return defaultValue;
   }
 
   @Override

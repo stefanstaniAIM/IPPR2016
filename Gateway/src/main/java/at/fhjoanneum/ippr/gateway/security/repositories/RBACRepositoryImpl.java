@@ -86,6 +86,11 @@ public class RBACRepositoryImpl implements RBACRepository {
     return Lists.newArrayList(userRepository.findByRuleNames(ruleNames));
   }
 
+  @Override
+  public List<Rule> getRules() {
+    return Lists.newArrayList(ruleRepository.findAll());
+  }
+
   interface UserRepository extends PagingAndSortingRepository<UserImpl, Long> {
 
     @Query(value = "SELECT * FROM USER WHERE SYSTEM_ID = :systemId", nativeQuery = true)

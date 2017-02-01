@@ -8,12 +8,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import at.fhjoanneum.ippr.commons.dto.pmstorage.FieldPermissionDTO;
 import at.fhjoanneum.ippr.commons.dto.pmstorage.FieldTypeDTO;
 import at.fhjoanneum.ippr.commons.dto.pmstorage.ProcessModelDTO;
 import at.fhjoanneum.ippr.gateway.api.controller.user.HttpHeaderUser;
@@ -51,11 +53,20 @@ public class ProcessModelStorageGatewayController {
     };
   }
 
+  @Async
   @RequestMapping(value = "api/fieldtypes", method = RequestMethod.GET)
-  public @ResponseBody Callable<ResponseEntity<FieldTypeDTO[]>> findActiveProcessesToStart(
+  public @ResponseBody Callable<ResponseEntity<FieldTypeDTO[]>> getFieldTypes(
       final HttpServletRequest request) {
     return () -> {
       return processModelStorageCaller.getFieldTypes().get();
+    };
+  }
+
+  @RequestMapping(value = "permissions", method = RequestMethod.GET)
+  public @ResponseBody Callable<ResponseEntity<FieldPermissionDTO[]>> getFieldPermissions(
+      final HttpServletRequest request) {
+    return () -> {
+      return processModelStorageCaller.getPermissions().get();
     };
   }
 }

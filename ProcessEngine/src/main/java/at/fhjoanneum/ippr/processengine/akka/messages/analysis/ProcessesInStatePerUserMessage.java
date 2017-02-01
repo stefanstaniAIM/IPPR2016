@@ -1,14 +1,12 @@
 package at.fhjoanneum.ippr.processengine.akka.messages.analysis;
 
-import at.fhjoanneum.ippr.persistence.objects.engine.enums.ProcessInstanceState;
-
-public class AmountOfProcessesPerUserMessage {
+public class ProcessesInStatePerUserMessage {
 
   public static class Request {
     private final Long userId;
-    private final ProcessInstanceState state;
+    private final String state;
 
-    public Request(final Long userId, final ProcessInstanceState state) {
+    public Request(final Long userId, final String state) {
       this.userId = userId;
       this.state = state;
     }
@@ -17,7 +15,7 @@ public class AmountOfProcessesPerUserMessage {
       return userId;
     }
 
-    public ProcessInstanceState getState() {
+    public String getState() {
       return state;
     }
   }

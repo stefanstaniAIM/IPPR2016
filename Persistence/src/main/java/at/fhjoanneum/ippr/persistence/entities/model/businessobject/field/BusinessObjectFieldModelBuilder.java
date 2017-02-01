@@ -15,6 +15,7 @@ public class BusinessObjectFieldModelBuilder implements Builder<BusinessObjectFi
   private String name;
   private BusinessObjectModelImpl businessObjectModel;
   private FieldType fieldType;
+  private String defaultValue;
   private int position = -1;
   private int indent = -1;
 
@@ -38,6 +39,13 @@ public class BusinessObjectFieldModelBuilder implements Builder<BusinessObjectFi
     return this;
   }
 
+  public BusinessObjectFieldModelBuilder defaultValue(final String defaultValue) {
+    isNotBlank(defaultValue);
+    this.defaultValue = defaultValue;
+    return this;
+  }
+
+
   public BusinessObjectFieldModelBuilder position(final int position) {
     checkArgument(position >= 0);
     this.position = position;
@@ -58,10 +66,11 @@ public class BusinessObjectFieldModelBuilder implements Builder<BusinessObjectFi
     checkArgument(position >= 0);
 
     if (indent >= 0) {
-      return new BusinessObjectFieldModelImpl(name, businessObjectModel, fieldType, position,
-          indent);
+      return new BusinessObjectFieldModelImpl(name, businessObjectModel, fieldType, defaultValue,
+          position, indent);
     }
-    return new BusinessObjectFieldModelImpl(name, businessObjectModel, fieldType, position);
+    return new BusinessObjectFieldModelImpl(name, businessObjectModel, fieldType, defaultValue,
+        position);
   }
 
 }

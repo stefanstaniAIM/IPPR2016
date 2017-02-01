@@ -5,6 +5,7 @@ import java.util.concurrent.Future;
 
 import org.springframework.data.domain.Pageable;
 
+import at.fhjoanneum.ippr.commons.dto.pmstorage.FieldPermissionDTO;
 import at.fhjoanneum.ippr.commons.dto.pmstorage.FieldTypeDTO;
 import at.fhjoanneum.ippr.commons.dto.pmstorage.ProcessModelDTO;
 
@@ -16,4 +17,6 @@ public interface ProcessModelService {
       final Pageable pageable);
 
   Future<List<FieldTypeDTO>> getFieldTypes();
+
+  Future<List<FieldPermissionDTO>> getPermissions();
 }

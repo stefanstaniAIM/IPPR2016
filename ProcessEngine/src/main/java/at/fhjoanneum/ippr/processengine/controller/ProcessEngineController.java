@@ -1,5 +1,6 @@
 package at.fhjoanneum.ippr.processengine.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -50,27 +51,50 @@ public class ProcessEngineController {
       } else {
         return new ResponseEntity<>(processStartedDTO, HttpStatus.BAD_REQUEST);
       }
-
     };
   }
 
-  @RequestMapping(value = "processes/amountOfActiveProcesses", method = RequestMethod.GET)
-  public @ResponseBody Callable<Long> getAmountOfActiveProcesses(final HttpServletRequest request) {
-    LOG.info("Received request to return the amount of processes");
+  @RequestMapping(value = "processes/count/{state}", method = RequestMethod.GET)
+  public @ResponseBody Callable<Long> getAmountOfActiveProcesses(final HttpServletRequest request,
+      @PathVariable("state") final String state) {
+    return () -> {
+      return processService.getAmountOfProcessesInState(state).get();
+    };
+  }
+
+  @RequestMapping(value = "processes/count/{state}/{userId}", method = RequestMethod.GET)
+  public @ResponseBody Callable<Long> getAmountOfActiveProcessesPerUser(
+      final HttpServletRequest request, @PathVariable("state") final String state,
+      @PathVariable("userId") final Long userId) {
 
     return () -> {
-      return processService.getAmountOfActiveProcesses().get();
+      return processService.getAmountOfProcessesInStatePerUser(state, userId).get();
     };
   }
 
-  @RequestMapping(value = "processes/amountOfActiveProcessesPerUser/{userId}",
+  @RequestMapping(value = "processes/count/started/{hoursbefore}", method = RequestMethod.GET)
+  public @ResponseBody Callable<Long> getAmountOfActiveProcessesPerUser(
+      final HttpServletRequest request, @PathVariable("hoursbefore") final Long hoursbefore) {
+
+    return () -> {
+      final LocalDateTime end = LocalDateTime.now();
+      final LocalDateTime start = end.minusHours(hoursbefore);
+
+      return processService.getAmountOfStartedProcessesBetween(start, end).get();
+    };
+  }
+
+  @RequestMapping(value = "processes/count/started/{hoursbefore}/{userId}",
       method = RequestMethod.GET)
   public @ResponseBody Callable<Long> getAmountOfActiveProcessesPerUser(
-      final HttpServletRequest request, @PathVariable("userId") final Long userId) {
-    LOG.info("Received request to return the amount of processes per user for userId: {}", userId);
+      final HttpServletRequest request, @PathVariable("hoursbefore") final Long hoursbefore,
+      @PathVariable("userId") final Long userId) {
 
     return () -> {
-      return processService.getAmountOfActiveProcessesPerUser(userId).get();
+      final LocalDateTime end = LocalDateTime.now();
+      final LocalDateTime start = end.minusHours(hoursbefore);
+
+      return processService.getAmountOfStartedProcessesBetweenForUser(start, end, userId).get();
     };
   }
 

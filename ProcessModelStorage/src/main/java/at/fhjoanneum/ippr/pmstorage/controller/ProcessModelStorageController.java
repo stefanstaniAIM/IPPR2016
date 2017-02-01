@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import at.fhjoanneum.ippr.commons.dto.pmstorage.FieldPermissionDTO;
 import at.fhjoanneum.ippr.commons.dto.pmstorage.FieldTypeDTO;
 import at.fhjoanneum.ippr.commons.dto.pmstorage.ProcessModelDTO;
 import at.fhjoanneum.ippr.pmstorage.services.ProcessModelService;
@@ -60,6 +61,13 @@ public class ProcessModelStorageController {
   public @ResponseBody Callable<List<FieldTypeDTO>> getFieldTypes() {
     return () -> {
       return processModelService.getFieldTypes().get();
+    };
+  }
+
+  @RequestMapping(value = "permissions", method = RequestMethod.GET)
+  public @ResponseBody Callable<List<FieldPermissionDTO>> getPermissions() {
+    return () -> {
+      return processModelService.getPermissions().get();
     };
   }
 }

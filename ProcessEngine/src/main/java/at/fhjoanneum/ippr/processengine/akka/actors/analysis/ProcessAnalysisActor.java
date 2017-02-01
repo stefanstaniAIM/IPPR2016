@@ -5,9 +5,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import akka.actor.UntypedActor;
-import at.fhjoanneum.ippr.persistence.objects.engine.enums.ProcessInstanceState;
-import at.fhjoanneum.ippr.processengine.akka.messages.analysis.AmountOfActiveProcessesMessage;
-import at.fhjoanneum.ippr.processengine.akka.messages.analysis.AmountOfProcessesPerUserMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.analysis.ProcessesInStateMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.analysis.ProcessesInStateMessage.Response;
+import at.fhjoanneum.ippr.processengine.akka.messages.analysis.ProcessesInStatePerUserMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.analysis.StartedProcessesInRangeForUserMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.analysis.StartedProcessesInRangeMessage;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 
 @Component("ProcessAnalysisActor")
@@ -19,22 +21,55 @@ public class ProcessAnalysisActor extends UntypedActor {
 
   @Override
   public void onReceive(final Object obj) throws Throwable {
-    if (obj instanceof AmountOfActiveProcessesMessage.Request) {
-
-      getSender().tell(
-          new AmountOfActiveProcessesMessage.Response(
-              processInstanceRepository.getAmountOfProcesses(ProcessInstanceState.ACTIVE.name())),
-          getSelf());
+    try {
+      if (obj instanceof ProcessesInStateMessage.Request) {
+        handleProcessesInStateMessage(obj);
+      } else if (obj instanceof ProcessesInStatePerUserMessage.Request) {
+        handleProcessesInStatePerUserMessage(obj);
+      } else if (obj instanceof StartedProcessesInRangeMessage.Request) {
+        handleStartedProcessesInRangeMessage(obj);
+      } else if (obj instanceof StartedProcessesInRangeForUserMessage.Request) {
+        handleStartedProcessesInRangeForUserMessage(obj);
+      } else {
+        unhandled(obj);
+      }
+    } finally {
       getContext().stop(getSelf());
-    } else if (obj instanceof AmountOfProcessesPerUserMessage.Request) {
-      final AmountOfProcessesPerUserMessage.Request msg =
-          (AmountOfProcessesPerUserMessage.Request) obj;
-
-      getSender().tell(new AmountOfProcessesPerUserMessage.Response(processInstanceRepository
-          .getAmountOfProcessesPerUser(msg.getState().name(), msg.getUserId())), getSelf());
-      getContext().stop(getSelf());
-    } else {
-      unhandled(obj);
     }
+  }
+
+  private void handleProcessesInStateMessage(final Object obj) {
+    final ProcessesInStateMessage.Request msg =
+        (ProcessesInStateMessage.Request) obj;
+    final Response response = new ProcessesInStateMessage.Response(
+        processInstanceRepository.getAmountOfProcessesInState(msg.getState()));
+    getSender().tell(response, getSelf());
+  }
+
+  private void handleProcessesInStatePerUserMessage(final Object obj) {
+    final ProcessesInStatePerUserMessage.Request msg =
+        (ProcessesInStatePerUserMessage.Request) obj;
+
+    getSender().tell(new ProcessesInStatePerUserMessage.Response(processInstanceRepository
+        .getAmountOfProcessesInStatePerUser(msg.getState(), msg.getUserId())), getSelf());
+  }
+
+  private void handleStartedProcessesInRangeMessage(final Object obj) {
+    final StartedProcessesInRangeMessage.Request msg =
+        (StartedProcessesInRangeMessage.Request) obj;
+    final StartedProcessesInRangeMessage.Response response =
+        new StartedProcessesInRangeMessage.Response(processInstanceRepository
+            .getAmountOfStartedProcessesBetweenRange(msg.getStart(), msg.getEnd()));
+    getSender().tell(response, getSelf());
+  }
+
+  private void handleStartedProcessesInRangeForUserMessage(final Object obj) {
+    final StartedProcessesInRangeForUserMessage.Request msg =
+        (StartedProcessesInRangeForUserMessage.Request) obj;
+    final StartedProcessesInRangeForUserMessage.Response response =
+        new StartedProcessesInRangeForUserMessage.Response(
+            processInstanceRepository.getAmountOfStartedProcessesBetweenRangeForUser(msg.getStart(),
+                msg.getEnd(), msg.getUser()));
+    getSender().tell(response, getSelf());
   }
 }

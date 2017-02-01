@@ -16,4 +16,6 @@ public interface BusinessObjectFieldModel {
   int getPosition();
 
   int getIndent();
+
+  String getDefaultValue();
 }

@@ -61,18 +61,37 @@ public class ProcessEngineCallerImpl implements Caller {
   }
 
   @Async
-  public Future<ResponseEntity<Long>> getAmountOfActiveProcesses() throws URISyntaxException {
+  public Future<ResponseEntity<Long>> getAmountOfProcessesInState(final String state)
+      throws URISyntaxException {
     final URIBuilder uri = new URIBuilder(gatewayConfig.getProcessEngineAddress())
-        .setPath("/processes/amountOfActiveProcesses");
+        .setPath("/processes/count/" + state);
 
     return createRequest(uri, HttpMethod.GET, null, Long.class, null);
   }
 
   @Async
-  public Future<ResponseEntity<Long>> getAmountOfActiveProcessesPerUser(final Long userId)
+  public Future<ResponseEntity<Long>> getAmountOfProcessesInStatePerUser(final String state,
+      final Long userId) throws URISyntaxException {
+    final URIBuilder uri = new URIBuilder(gatewayConfig.getProcessEngineAddress())
+        .setPath("/processes/count/" + state + "/" + userId);
+
+    return createRequest(uri, HttpMethod.GET, null, Long.class, null);
+  }
+
+  @Async
+  public Future<ResponseEntity<Long>> getAmountOfStartedProcessesInRange(final Long hoursbefore)
       throws URISyntaxException {
     final URIBuilder uri = new URIBuilder(gatewayConfig.getProcessEngineAddress())
-        .setPath("/processes/amountOfActiveProcessesPerUser/" + userId);
+        .setPath("processes/count/started/" + hoursbefore);
+
+    return createRequest(uri, HttpMethod.GET, null, Long.class, null);
+  }
+
+  @Async
+  public Future<ResponseEntity<Long>> getAmountOfStartedProcessesForUserInRange(
+      final Long hoursbefore, final Long userId) throws URISyntaxException {
+    final URIBuilder uri = new URIBuilder(gatewayConfig.getProcessEngineAddress())
+        .setPath("processes/count/started/" + hoursbefore + "/" + userId);
 
     return createRequest(uri, HttpMethod.GET, null, Long.class, null);
   }
@@ -162,6 +181,7 @@ public class ProcessEngineCallerImpl implements Caller {
     return createRequest(uri, HttpMethod.POST, null, ProcessInfoDTO.class, header);
   }
 
+  @Async
   public Future<ResponseEntity<TaskDTO[]>> getTasksOfUser(final HttpHeaderUser headerUser,
       final Long userId) throws URISyntaxException {
     final URIBuilder uri = new URIBuilder(gatewayConfig.getProcessEngineAddress())
@@ -171,6 +191,7 @@ public class ProcessEngineCallerImpl implements Caller {
     return createRequest(uri, HttpMethod.GET, null, TaskDTO[].class, header);
   }
 
+  @Async
   public Future<ResponseEntity<StateObjectDTO>> getStateObjectOfUserInProcess(
       final HttpHeaderUser headerUser, final Long piId, final Long userId)
       throws URISyntaxException {
@@ -181,6 +202,7 @@ public class ProcessEngineCallerImpl implements Caller {
     return createRequest(uri, HttpMethod.GET, null, StateObjectDTO.class, header);
   }
 
+  @Async
   public Future<ResponseEntity<Boolean>> changeStateOfUserInProcess(final HttpHeaderUser headerUser,
       final Long piId, final Long userId, final StateObjectChangeDTO stateObjectChangeDTO)
       throws URISyntaxException {

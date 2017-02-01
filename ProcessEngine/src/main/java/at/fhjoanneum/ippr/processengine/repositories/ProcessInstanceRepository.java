@@ -1,5 +1,6 @@
 package at.fhjoanneum.ippr.processengine.repositories;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -21,13 +22,14 @@ public interface ProcessInstanceRepository
 
   @Query(value = "SELECT COUNT(p.pi_id) FROM PROCESS_INSTANCE p WHERE p.state = :state",
       nativeQuery = true)
-  Long getAmountOfProcesses(@Param("state") String state);
+  Long getAmountOfProcessesInState(@Param("state") String state);
 
   @Query(
       value = "SELECT count(p.pi_id) FROM PROCESS_INSTANCE p JOIN PROCESS_SUBJECT_INSTANCE_MAP psm on psm.pi_id = p.pi_id "
           + "JOIN SUBJECT s on s.s_id = psm.s_id WHERE p.state = :state and s.user_id = :userId",
       nativeQuery = true)
-  Long getAmountOfProcessesPerUser(@Param("state") String state, @Param("userId") Long userId);
+  Long getAmountOfProcessesInStatePerUser(@Param("state") String state,
+      @Param("userId") Long userId);
 
   @Query(value = "SELECT p FROM PROCESS_INSTANCE p WHERE p.state = :state", nativeQuery = false)
   Page<ProcessInstanceImpl> getProcessesInfoOfState(Pageable pageable,
@@ -38,4 +40,16 @@ public interface ProcessInstanceRepository
       nativeQuery = false)
   Page<ProcessInstanceImpl> getProcessesInfoOfUserAndState(Pageable pageable,
       @Param("user") Long user, @Param("state") ProcessInstanceState state);
+
+  @Query(
+      value = "select count(p) from PROCESS_INSTANCE p where p.startTime between :start and :end and p.state = 'ACTIVE'",
+      nativeQuery = false)
+  Long getAmountOfStartedProcessesBetweenRange(@Param("start") LocalDateTime start,
+      @Param("end") LocalDateTime end);
+
+  @Query(
+      value = "select count(p) from PROCESS_INSTANCE p JOIN p.subjects s where p.startTime between :start and :end and p.state = 'ACTIVE' and s.userId = :user",
+      nativeQuery = false)
+  Long getAmountOfStartedProcessesBetweenRangeForUser(@Param("start") LocalDateTime start,
+      @Param("end") LocalDateTime end, @Param("user") Long userId);
 }

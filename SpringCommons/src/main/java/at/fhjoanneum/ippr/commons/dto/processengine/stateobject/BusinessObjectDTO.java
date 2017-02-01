@@ -2,8 +2,11 @@ package at.fhjoanneum.ippr.commons.dto.processengine.stateobject;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.xml.bind.annotation.XmlRootElement;
+
+import com.google.common.collect.Lists;
 
 @XmlRootElement
 public class BusinessObjectDTO implements Serializable {
@@ -13,8 +16,8 @@ public class BusinessObjectDTO implements Serializable {
   private Long bomId;
   private Long boiId;
   private String name;
-  private List<BusinessObjectFieldDTO> fields;
-  private List<BusinessObjectDTO> children;
+  private List<BusinessObjectFieldDTO> fields = Lists.newArrayList();
+  private List<BusinessObjectDTO> children = Lists.newArrayList();
 
   public BusinessObjectDTO() {}
 
@@ -52,5 +55,15 @@ public class BusinessObjectDTO implements Serializable {
 
   public List<BusinessObjectDTO> getChildren() {
     return children;
+  }
+
+  public boolean hasNonEmptyFields() {
+    return getAll().filter(bo -> {
+      return bo.getFields() != null && !bo.getFields().isEmpty();
+    }).count() >= 1;
+  }
+
+  private Stream<BusinessObjectDTO> getAll() {
+    return Stream.concat(Stream.of(this), children.stream().flatMap(BusinessObjectDTO::getAll));
   }
 }
