@@ -104,7 +104,8 @@ export class ActiveProcessDetail implements OnInit {
   assignedUsers:[{
     smId:number,
     userId:number,
-    rules:string[]
+    assignedGroup:string,
+    assignedRules:string[]
   }];
   possibleUserAssignments = [];
   selectedUserAssignments = [];
@@ -137,20 +138,25 @@ export class ActiveProcessDetail implements OnInit {
 
       this.service.getTasksForProcessForUser(this.piId)
       .subscribe(
-          data => {
-            var dataJson = JSON.parse(data['_body']);
-            that.businessObjects = dataJson.businessObjects;
-            that.nextStates = dataJson.nextStates;
-            that.assignedUsers = dataJson.assignedUsers;
-            if(that.assignedUsers) {
-              that.getPossibleUserAssignments();
-            }
-          },
-          err =>{
-            that.msg = {text: err, type: 'error'}
-            console.log(err);
+        data => {
+          var dataJson;
+          try {
+            dataJson = JSON.parse(data['_body']);
+          } catch(e) {
+            return false;
           }
-        );
+          that.businessObjects = dataJson.businessObjects;
+          that.nextStates = dataJson.nextStates;
+          that.assignedUsers = dataJson.assignedUsers;
+          if(that.assignedUsers) {
+            that.getPossibleUserAssignments();
+          }
+        },
+        err =>{
+          that.msg = {text: err, type: 'error'}
+          console.log(err);
+        }
+      );
   }
 
   getPossibleUserAssignments() {
@@ -158,11 +164,11 @@ export class ActiveProcessDetail implements OnInit {
     this.assignedUsers.forEach(
       au => {
         if(!au.userId){
-          that.service.getPossibleUsersForProcessModel(au.rules).
+          that.service.getPossibleUsersForProcessModel(au.assignedRules).
           subscribe(
             data => {
               let users = JSON.parse(data['_body']);
-              au.rules.forEach(rule => {
+              au.assignedRules.forEach(rule => {
                 that.possibleUserAssignments.push({rule: rule, smId: au.smId, users: users});
                 that.selectedUserAssignments[rule] = undefined;
               });
@@ -250,6 +256,22 @@ export class ActiveProcessDetail implements OnInit {
   isReceiveState(){
     if(this.subjectsState){
       return this.subjectsState.subjects.filter(s => s.userId === this._user.getUid())[0].stateFunctionType === "RECEIVE";
+    } else {
+      return false;
+    }
+  }
+
+  isToReceiveState(){
+    if(this.subjectsState){
+      return this.subjectsState.subjects.filter(s => s.userId === this._user.getUid())[0].subState === "TO_RECEIVE";
+    } else {
+      return false;
+    }
+  }
+
+  isReceivedState(){
+    if(this.subjectsState){
+      return this.subjectsState.subjects.filter(s => s.userId === this._user.getUid())[0].subState === "RECEIVED";
     } else {
       return false;
     }
