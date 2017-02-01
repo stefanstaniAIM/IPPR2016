@@ -93,7 +93,7 @@ public class UserController {
     };
   }
 
-  @RequestMapping(value = "processes/users/rule/{rules}", method = RequestMethod.GET)
+  @RequestMapping(value = "api/processes/users/rule/{rules}", method = RequestMethod.GET)
   public @ResponseBody Callable<List<UserDTO>> getPossibleUsers(
       @PathVariable("rules") final String[] rules) {
 
