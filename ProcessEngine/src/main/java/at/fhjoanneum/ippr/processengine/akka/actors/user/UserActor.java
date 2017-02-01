@@ -80,8 +80,6 @@ public class UserActor extends UntypedActor {
             getContext().stop(getSelf());
           }
         });
-
-
   }
 
   private void handleUserWakeUpMessage(final Object obj) {

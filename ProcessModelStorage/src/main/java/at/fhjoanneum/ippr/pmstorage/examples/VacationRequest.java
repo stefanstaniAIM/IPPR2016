@@ -6,7 +6,6 @@ import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import at.fhjoanneum.ippr.persistence.entities.model.businessobject.BusinessObjectModelBuilder;
 import at.fhjoanneum.ippr.persistence.entities.model.businessobject.field.BusinessObjectFieldModelBuilder;
@@ -31,7 +30,7 @@ import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
 import at.fhjoanneum.ippr.persistence.objects.model.transition.Transition;
 
-@Component
+// @Component
 @Transactional
 public class VacationRequest extends AbstractExample {
 
@@ -151,13 +150,36 @@ public class VacationRequest extends AbstractExample {
     final Transition if2 = new TransitionBuilder().fromState(empState3).toState(empState5)
         .transitionType(TransitionType.IF_CONDITION).build();
 
+
+
+    // new refinement
+    final State empState6 = new StateBuilder().subjectModel(employee).name("Execute Refinement")
+        .functionType(StateFunctionType.REFINEMENT).refinementClass("test").build();
+    final BusinessObjectModel boRef =
+        new BusinessObjectModelBuilder().name("refinement bo").addToState(empState6).build();
+    final BusinessObjectFieldModel boRefF1 =
+        new BusinessObjectFieldModelBuilder().businessObjectModel(boRef).fieldName("write field")
+            .fieldType(FieldType.STRING).position(0).build();
+    final BusinessObjectFieldModel boRefF2 =
+        new BusinessObjectFieldModelBuilder().businessObjectModel(boRef).fieldName("read field")
+            .fieldType(FieldType.STRING).position(1).build();
+    final BusinessObjectFieldPermission perRef1 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boRefF1)
+            .permission(FieldPermission.READ_WRITE).state(empState6).build();
+    final BusinessObjectFieldPermission perRef2 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boRefF2)
+            .permission(FieldPermission.READ).state(empState6).build();
+
     // finish the employee
-    final State empState6 = new StateBuilder().subjectModel(employee).name("END")
+    final State empState7 = new StateBuilder().subjectModel(employee).name("END")
         .eventType(StateEventType.END).functionType(StateFunctionType.FUNCTION).build();
+    final Transition empT5 =
+        new TransitionBuilder().fromState(empState6).toState(empState7).build();
+
     final Transition empT3 =
         new TransitionBuilder().fromState(empState4).toState(empState6).build();
     final Transition empT4 =
-        new TransitionBuilder().fromState(empState5).toState(empState6).build();
+        new TransitionBuilder().fromState(empState5).toState(empState7).build();
 
     final BusinessObjectModel okForm =
         new BusinessObjectModelBuilder().name("Vacation request accept").addToState(bossState3)
@@ -205,19 +227,20 @@ public class VacationRequest extends AbstractExample {
     saveSubjectModels(boss, employee);
     saveProcessModel(pm);
 
-    saveStates(empState1, empState2, empState3, empState4, empState5, empState6, bossState1,
-        bossState2, bossState3, bossState4, bossState5);
-    saveTransitions(empT1, empT2, empT3, empT4, bossT1, bossT2, bossT3, bossT4, bossT5, if1, if2);
+    saveStates(empState1, empState2, empState3, empState4, empState5, empState6, empState7,
+        bossState1, bossState2, bossState3, bossState4, bossState5);
+    saveTransitions(empT1, empT2, empT3, empT4, empT5, bossT1, bossT2, bossT3, bossT4, bossT5, if1,
+        if2);
 
-    saveBusinessObjectModels(vacationRequestForm, okForm, nokForm, vacationRequestSubForm);
+    saveBusinessObjectModels(vacationRequestForm, okForm, nokForm, vacationRequestSubForm, boRef);
     saveBusinessObjectFieldModels(boFrom, boTo, nokFormFieldInformation, okFormFieldInformation,
-        boTarget);
+        boTarget, boRefF1, boRefF2);
     saveBusinessObjectFieldPermissions(boFromPermissionEmp1, boFromPermissionEmp2,
         boFromPermissionBoss1, boFromPermissionBoss2, okFormFieldInformationPermission1,
         okFormFieldInformationPermission2, nokFormFieldInformationPermission1,
         nokFormFieldInformationPermission2, boFromPermissionEmp3, boFromPermissionEmp4,
         boFromPermissionEmp5, boFromPermissionEmp6, boFromPermissionBoss3,
-        okFormFieldInformationPermission3, nokFormFieldInformationPermission3);
+        okFormFieldInformationPermission3, nokFormFieldInformationPermission3, perRef1, perRef2);
     saveMessageFlows(mf1, mf2, mf3);
   }
 

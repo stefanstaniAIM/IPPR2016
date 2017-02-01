@@ -28,6 +28,7 @@ import at.fhjoanneum.ippr.persistence.objects.model.businessobject.BusinessObjec
 import at.fhjoanneum.ippr.persistence.objects.model.businessobject.field.BusinessObjectFieldModel;
 import at.fhjoanneum.ippr.persistence.objects.model.businessobject.permission.BusinessObjectFieldPermission;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldPermission;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.StateEventType;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.TransitionType;
 import at.fhjoanneum.ippr.persistence.objects.model.messageflow.MessageFlow;
@@ -205,12 +206,14 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
       nextStates = currentState.getToStates().stream()
           .filter(
               transition -> checkIfIncludedForNextStates(retrievedBusinessObjectModels, transition))
-          .map(state -> new StateDTO(state.getToState().getSId(), state.getToState().getName()))
+          .map(state -> new StateDTO(state.getToState().getSId(), state.getToState().getName(),
+              StateEventType.END.equals(state.getToState().getEventType())))
           .collect(Collectors.toList());
     } else {
       LOG.debug("No special check is necessary, so return all states for [{}]", currentState);
       nextStates = currentState.getToStates().stream()
-          .map(state -> new StateDTO(state.getToState().getSId(), state.getToState().getName()))
+          .map(state -> new StateDTO(state.getToState().getSId(), state.getToState().getName(),
+              StateEventType.END.equals(state.getToState().getEventType())))
           .collect(Collectors.toList());
     }
 

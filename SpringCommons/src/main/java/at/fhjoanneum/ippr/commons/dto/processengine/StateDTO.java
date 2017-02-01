@@ -14,12 +14,14 @@ public class StateDTO implements Serializable {
 
   private Long nextStateId;
   private String name;
+  private boolean isEndState;
 
   public StateDTO() {}
 
-  public StateDTO(final Long sId, final String name) {
+  public StateDTO(final Long sId, final String name, final boolean isEndState) {
     this.nextStateId = sId;
     this.name = name;
+    this.isEndState = isEndState;
   }
 
   public String getName() {
@@ -28,6 +30,10 @@ public class StateDTO implements Serializable {
 
   public Long getNextStateId() {
     return nextStateId;
+  }
+
+  public boolean isEndState() {
+    return isEndState;
   }
 
   @Override

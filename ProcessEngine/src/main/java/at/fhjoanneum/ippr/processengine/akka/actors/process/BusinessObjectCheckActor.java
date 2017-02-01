@@ -166,8 +166,10 @@ public class BusinessObjectCheckActor extends UntypedActor {
   }
 
   private Map<Long, String> convertToMap(final List<BusinessObjectInstanceDTO> businessObjects) {
+    final Map<Long, String> map = Maps.newHashMap();
+
     if (businessObjects == null || businessObjects.isEmpty()) {
-      return Maps.newHashMap();
+      return map;
     }
 
     final Stream<BusinessObjectInstanceDTO> allBusinessObjects =
