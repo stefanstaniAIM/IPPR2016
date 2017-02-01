@@ -13,6 +13,7 @@ public class CustomAsyncExceptionHandler implements AsyncUncaughtExceptionHandle
   @Override
   public void handleUncaughtException(final Throwable throwable, final Method method,
       final Object... params) {
+    throwable.printStackTrace();
     if (throwable.getCause() != null) {
       LOG.error("Exception message - " + throwable.getCause().getMessage());
     } else {

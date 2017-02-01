@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -18,6 +19,7 @@ import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.validator.constraints.NotBlank;
@@ -34,6 +36,7 @@ import at.fhjoanneum.ippr.persistence.objects.model.businessobject.BusinessObjec
 import at.fhjoanneum.ippr.persistence.objects.model.enums.StateEventType;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
 import at.fhjoanneum.ippr.persistence.objects.model.messageflow.MessageFlow;
+import at.fhjoanneum.ippr.persistence.objects.model.state.RefinementState;
 import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
 import at.fhjoanneum.ippr.persistence.objects.model.transition.Transition;
@@ -83,6 +86,9 @@ public class StateImpl implements State, Serializable {
   @ManyToMany(mappedBy = "states")
   private final List<BusinessObjectModelImpl> businessObjectModels = Lists.newArrayList();
 
+  @Embedded
+  private RefinementStateImpl refinementState;
+
   StateImpl() {}
 
   StateImpl(final String name, final SubjectModelImpl subjectModel,
@@ -91,6 +97,15 @@ public class StateImpl implements State, Serializable {
     this.subjectModel = subjectModel;
     this.functionType = functionType;
     this.eventType = eventType;
+  }
+
+  StateImpl(final String name, final SubjectModelImpl subjectModel,
+      final StateFunctionType functionType, final StateEventType eventType,
+      final String refinementClass) {
+    this(name, subjectModel, functionType, eventType);
+    if (StringUtils.isNotBlank(refinementClass)) {
+      refinementState = new RefinementStateImpl(refinementClass);
+    }
   }
 
   @Override
@@ -143,6 +158,11 @@ public class StateImpl implements State, Serializable {
   @Override
   public List<BusinessObjectModel> getBusinessObjectModels() {
     return ImmutableList.copyOf(businessObjectModels);
+  }
+
+  @Override
+  public RefinementState getRefinementState() {
+    return refinementState;
   }
 
   @Override

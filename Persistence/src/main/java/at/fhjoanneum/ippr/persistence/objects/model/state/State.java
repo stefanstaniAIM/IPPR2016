@@ -31,4 +31,6 @@ public interface State {
   List<BusinessObjectModel> getBusinessObjectModels();
 
   Optional<MessageFlow> getMessageFlowForReceiver(final SubjectModel receiver);
+
+  RefinementState getRefinementState();
 }

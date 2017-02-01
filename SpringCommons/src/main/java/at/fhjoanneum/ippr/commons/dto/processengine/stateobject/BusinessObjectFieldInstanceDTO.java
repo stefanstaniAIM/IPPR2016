@@ -2,6 +2,7 @@ package at.fhjoanneum.ippr.commons.dto.processengine.stateobject;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -10,7 +11,7 @@ public class BusinessObjectFieldInstanceDTO implements Serializable {
   private static final long serialVersionUID = 1716611847318482348L;
 
   private Long bofmId;
-  private String value;
+  private final String value = StringUtils.EMPTY;
 
   public BusinessObjectFieldInstanceDTO() {}
 
