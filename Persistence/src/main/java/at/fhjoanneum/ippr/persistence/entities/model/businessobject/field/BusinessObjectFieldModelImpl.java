@@ -11,6 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -26,6 +28,7 @@ import at.fhjoanneum.ippr.persistence.objects.model.businessobject.field.Busines
 import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldType;
 
 @Entity(name = "BUSINESS_OBJECT_FIELD_MODEL")
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"bom_id", "fieldName"}))
 public class BusinessObjectFieldModelImpl implements BusinessObjectFieldModel, Serializable {
 
   private static final long serialVersionUID = -8651866037837204065L;
