@@ -104,7 +104,11 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
 
     for (final BusinessObjectModel businessObjectModel : subjectState.getCurrentState()
         .getBusinessObjectModels()) {
-      businessObjects.add(getBusinessObjectDTO(request, businessObjectModel, subjectState));
+      final BusinessObjectDTO businessObjectDTO =
+          getBusinessObjectDTO(request, businessObjectModel, subjectState);
+      if (businessObjectDTO.hasNonEmptyFields()) {
+        businessObjects.add(businessObjectDTO);
+      }
     }
     return businessObjects;
   }
@@ -153,7 +157,9 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
                 + businessObjectFieldModel.getBofmId() + "]");
       }
 
-      if (!FieldPermission.NONE.equals(businessObjectFieldPermission.getPermission())) {
+      final FieldPermission permission = businessObjectFieldPermission.getPermission();
+
+      if (!FieldPermission.NONE.equals(permission)) {
         final Long bofmId = businessObjectFieldModel.getBofmId();
         final String name = businessObjectFieldModel.getFieldName();
         final String type = businessObjectFieldModel.getFieldType().name();
@@ -162,12 +168,13 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
             businessObjectFieldPermission.getPermission().equals(FieldPermission.READ) ? true
                 : false;
         final int indent = businessObjectFieldModel.getIndent();
+        Optional<BusinessObjectFieldInstance> fieldInstanceOpt = Optional.empty();
 
         String value = null;
         Long bofiId = null;
         if (businessObjectInstanceOpt.isPresent()) {
-          final Optional<BusinessObjectFieldInstance> fieldInstanceOpt = businessObjectInstanceOpt
-              .get().getBusinessObjectFieldInstanceOfFieldModel(businessObjectFieldModel);
+          fieldInstanceOpt = businessObjectInstanceOpt.get()
+              .getBusinessObjectFieldInstanceOfFieldModel(businessObjectFieldModel);
 
           if (fieldInstanceOpt.isPresent()) {
             final BusinessObjectFieldInstance fieldInstance = fieldInstanceOpt.get();
@@ -177,8 +184,12 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
                 fieldInstance.getBusinessObjectFieldModel().getFieldType());
           }
         }
-        fields.add(new BusinessObjectFieldDTO(bofmId, bofiId, name, type, required, readOnly, value,
-            indent));
+
+        if (FieldPermission.READ_WRITE.equals(permission)
+            || (FieldPermission.READ.equals(permission) && fieldInstanceOpt.isPresent())) {
+          fields.add(new BusinessObjectFieldDTO(bofmId, bofiId, name, type, required, readOnly,
+              value, indent));
+        }
       } else {
         LOG.debug("Not necessary to add field [{}] since permission is 'NONE'");
         continue;
