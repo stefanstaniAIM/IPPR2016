@@ -11,7 +11,7 @@ public class BusinessObjectFieldInstanceDTO implements Serializable {
   private static final long serialVersionUID = 1716611847318482348L;
 
   private Long bofmId;
-  private final String value = StringUtils.EMPTY;
+  private String value;
 
   public BusinessObjectFieldInstanceDTO() {}
 
@@ -20,7 +20,7 @@ public class BusinessObjectFieldInstanceDTO implements Serializable {
   }
 
   public String getValue() {
-    return value;
+    return StringUtils.isNotBlank(value) ? value : StringUtils.EMPTY;
   }
 
   @Override

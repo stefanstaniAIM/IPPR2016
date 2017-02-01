@@ -3,7 +3,6 @@ package at.fhjoanneum.ippr.pmstorage.services;
 import java.util.List;
 import java.util.concurrent.Future;
 
-import at.fhjoanneum.ippr.commons.dto.owlimport.OWLProcessModelDTO;
 import org.springframework.data.domain.Pageable;
 
 import at.fhjoanneum.ippr.commons.dto.pmstorage.FieldTypeDTO;
@@ -17,6 +16,4 @@ public interface ProcessModelService {
       final Pageable pageable);
 
   Future<List<FieldTypeDTO>> getFieldTypes();
-
-  Future<OWLProcessModelDTO> getOWLProcessModel();
 }

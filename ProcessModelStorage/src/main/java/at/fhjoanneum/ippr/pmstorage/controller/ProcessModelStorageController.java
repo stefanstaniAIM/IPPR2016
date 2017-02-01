@@ -5,7 +5,6 @@ import java.util.concurrent.Callable;
 
 import javax.servlet.http.HttpServletRequest;
 
-import at.fhjoanneum.ippr.commons.dto.owlimport.OWLProcessModelDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,13 +60,6 @@ public class ProcessModelStorageController {
   public @ResponseBody Callable<List<FieldTypeDTO>> getFieldTypes() {
     return () -> {
       return processModelService.getFieldTypes().get();
-    };
-  }
-
-  @RequestMapping(value = "owlprocessmodel", method = RequestMethod.GET)
-  public @ResponseBody Callable<OWLProcessModelDTO> getOWLProcessModel() {
-    return () -> {
-      return processModelService.getOWLProcessModel().get();
     };
   }
 }
