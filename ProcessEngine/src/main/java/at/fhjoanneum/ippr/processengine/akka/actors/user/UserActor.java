@@ -89,7 +89,7 @@ public class UserActor extends UntypedActor {
 
   private void handleProcessStopMessage(final Object obj) {
     final Long amountOfActiveProcesses = processInstanceRepository
-        .getAmountOfProcessesPerUser(ProcessInstanceState.ACTIVE.name(), userId);
+        .getAmountOfProcessesInStatePerUser(ProcessInstanceState.ACTIVE.name(), userId);
 
     if (amountOfActiveProcesses.longValue() == 0) {
       getContext().stop(getSelf());

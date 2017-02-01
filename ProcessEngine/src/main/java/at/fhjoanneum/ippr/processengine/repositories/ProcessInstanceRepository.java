@@ -21,13 +21,14 @@ public interface ProcessInstanceRepository
 
   @Query(value = "SELECT COUNT(p.pi_id) FROM PROCESS_INSTANCE p WHERE p.state = :state",
       nativeQuery = true)
-  Long getAmountOfProcesses(@Param("state") String state);
+  Long getAmountOfProcessesInState(@Param("state") String state);
 
   @Query(
       value = "SELECT count(p.pi_id) FROM PROCESS_INSTANCE p JOIN PROCESS_SUBJECT_INSTANCE_MAP psm on psm.pi_id = p.pi_id "
           + "JOIN SUBJECT s on s.s_id = psm.s_id WHERE p.state = :state and s.user_id = :userId",
       nativeQuery = true)
-  Long getAmountOfProcessesPerUser(@Param("state") String state, @Param("userId") Long userId);
+  Long getAmountOfProcessesInStatePerUser(@Param("state") String state,
+      @Param("userId") Long userId);
 
   @Query(value = "SELECT p FROM PROCESS_INSTANCE p WHERE p.state = :state", nativeQuery = false)
   Page<ProcessInstanceImpl> getProcessesInfoOfState(Pageable pageable,

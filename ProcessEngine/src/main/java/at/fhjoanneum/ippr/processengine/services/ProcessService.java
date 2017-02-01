@@ -15,9 +15,9 @@ public interface ProcessService {
 
   Future<ProcessStartedDTO> startProcess(final ProcessStartDTO processStartDTO);
 
-  Future<Long> getAmountOfActiveProcesses();
+  Future<Long> getAmountOfProcessesInState(String state);
 
-  Future<Long> getAmountOfActiveProcessesPerUser(Long userId);
+  Future<Long> getAmountOfProcessesInStatePerUser(String state, Long userId);
 
   Future<ProcessStateDTO> getStateOfProcessInstance(Long piId);
 

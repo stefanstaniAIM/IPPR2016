@@ -54,23 +54,21 @@ public class ProcessEngineController {
     };
   }
 
-  @RequestMapping(value = "processes/amountOfActiveProcesses", method = RequestMethod.GET)
-  public @ResponseBody Callable<Long> getAmountOfActiveProcesses(final HttpServletRequest request) {
-    LOG.info("Received request to return the amount of processes");
-
+  @RequestMapping(value = "processes/count/{state}", method = RequestMethod.GET)
+  public @ResponseBody Callable<Long> getAmountOfActiveProcesses(final HttpServletRequest request,
+      @PathVariable("state") final String state) {
     return () -> {
-      return processService.getAmountOfActiveProcesses().get();
+      return processService.getAmountOfProcessesInState(state).get();
     };
   }
 
-  @RequestMapping(value = "processes/amountOfActiveProcessesPerUser/{userId}",
-      method = RequestMethod.GET)
+  @RequestMapping(value = "processes/count/{state}/{userId}", method = RequestMethod.GET)
   public @ResponseBody Callable<Long> getAmountOfActiveProcessesPerUser(
-      final HttpServletRequest request, @PathVariable("userId") final Long userId) {
-    LOG.info("Received request to return the amount of processes per user for userId: {}", userId);
+      final HttpServletRequest request, @PathVariable("state") final String state,
+      @PathVariable("userId") final Long userId) {
 
     return () -> {
-      return processService.getAmountOfActiveProcessesPerUser(userId).get();
+      return processService.getAmountOfProcessesInStatePerUser(state, userId).get();
     };
   }
 

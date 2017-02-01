@@ -47,22 +47,22 @@ public class ProcessEngineGatewayController {
     };
   }
 
-  @RequestMapping(value = "api/processes/amountOfActiveProcesses", method = RequestMethod.GET)
+  @RequestMapping(value = "api/processes/count/{state}", method = RequestMethod.GET)
   public @ResponseBody Callable<ResponseEntity<Long>> getAmountOfActiveProcesses(
-      final HttpServletRequest request) {
+      final HttpServletRequest request, @PathVariable("state") final String state) {
 
     return () -> {
-      return processEngineCaller.getAmountOfActiveProcesses().get();
+      return processEngineCaller.getAmountOfProcessesInState(state).get();
     };
   }
 
-  @RequestMapping(value = "api/processes/amountOfActiveProcessesPerUser/{userId}",
-      method = RequestMethod.GET)
+  @RequestMapping(value = "api/processes/count/{state}/{userId}", method = RequestMethod.GET)
   public @ResponseBody Callable<ResponseEntity<Long>> getAmountOfActiveProcesses(
-      final HttpServletRequest request, @PathVariable("userId") final Long userId) {
+      final HttpServletRequest request, @PathVariable("state") final String state,
+      @PathVariable("userId") final Long userId) {
 
     return () -> {
-      return processEngineCaller.getAmountOfActiveProcessesPerUser(userId).get();
+      return processEngineCaller.getAmountOfProcessesInStatePerUser(state, userId).get();
     };
   }
 

@@ -61,18 +61,19 @@ public class ProcessEngineCallerImpl implements Caller {
   }
 
   @Async
-  public Future<ResponseEntity<Long>> getAmountOfActiveProcesses() throws URISyntaxException {
+  public Future<ResponseEntity<Long>> getAmountOfProcessesInState(final String state)
+      throws URISyntaxException {
     final URIBuilder uri = new URIBuilder(gatewayConfig.getProcessEngineAddress())
-        .setPath("/processes/amountOfActiveProcesses");
+        .setPath("/processes/count/" + state);
 
     return createRequest(uri, HttpMethod.GET, null, Long.class, null);
   }
 
   @Async
-  public Future<ResponseEntity<Long>> getAmountOfActiveProcessesPerUser(final Long userId)
-      throws URISyntaxException {
+  public Future<ResponseEntity<Long>> getAmountOfProcessesInStatePerUser(final String state,
+      final Long userId) throws URISyntaxException {
     final URIBuilder uri = new URIBuilder(gatewayConfig.getProcessEngineAddress())
-        .setPath("/processes/amountOfActiveProcessesPerUser/" + userId);
+        .setPath("/processes/count/" + state + "/" + userId);
 
     return createRequest(uri, HttpMethod.GET, null, Long.class, null);
   }

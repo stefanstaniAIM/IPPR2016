@@ -23,11 +23,10 @@ import at.fhjoanneum.ippr.commons.dto.processengine.ProcessStateDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.TaskDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.StateObjectChangeDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.StateObjectDTO;
-import at.fhjoanneum.ippr.persistence.objects.engine.enums.ProcessInstanceState;
 import at.fhjoanneum.ippr.processengine.akka.config.Global;
 import at.fhjoanneum.ippr.processengine.akka.config.SpringExtension;
-import at.fhjoanneum.ippr.processengine.akka.messages.analysis.AmountOfActiveProcessesMessage;
-import at.fhjoanneum.ippr.processengine.akka.messages.analysis.AmountOfProcessesPerUserMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.analysis.AmountOfProcessesInStateMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.analysis.AmountOfProcessesInStatePerUserMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.check.ProcessCheckMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.info.ProcessInfoMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.info.ProcessStateMessage;
@@ -111,13 +110,14 @@ public class ProcessServiceImpl implements ProcessService {
 
   @Async
   @Override
-  public Future<Long> getAmountOfActiveProcesses() {
+  public Future<Long> getAmountOfProcessesInState(final String state) {
     final CompletableFuture<Long> future = new CompletableFuture<>();
 
     final ActorRef analysisActor = getAnalysisActor();
 
-    PatternsCS.ask(analysisActor, new AmountOfActiveProcessesMessage.Request(), Global.TIMEOUT)
-        .toCompletableFuture().thenApply(obj -> (AmountOfActiveProcessesMessage.Response) obj)
+    PatternsCS
+        .ask(analysisActor, new AmountOfProcessesInStateMessage.Request(state), Global.TIMEOUT)
+        .toCompletableFuture().thenApply(obj -> (AmountOfProcessesInStateMessage.Response) obj)
         .whenComplete((msg, exc) -> future.complete(msg.getAmount()));
 
     return future;
@@ -125,16 +125,16 @@ public class ProcessServiceImpl implements ProcessService {
 
   @Async
   @Override
-  public Future<Long> getAmountOfActiveProcessesPerUser(final Long userId) {
+  public Future<Long> getAmountOfProcessesInStatePerUser(final String state, final Long userId) {
     final CompletableFuture<Long> future = new CompletableFuture<>();
 
     final ActorRef analysisActor = getAnalysisActor();
 
     PatternsCS
-        .ask(analysisActor,
-            new AmountOfProcessesPerUserMessage.Request(userId, ProcessInstanceState.ACTIVE),
+        .ask(analysisActor, new AmountOfProcessesInStatePerUserMessage.Request(userId, state),
             Global.TIMEOUT)
-        .toCompletableFuture().thenApply(obj -> (AmountOfProcessesPerUserMessage.Response) obj)
+        .toCompletableFuture()
+        .thenApply(obj -> (AmountOfProcessesInStatePerUserMessage.Response) obj)
         .whenComplete((msg, exc) -> future.complete(msg.getAmount()));
 
     return future;
