@@ -196,11 +196,11 @@ export class ActiveProcessDetail implements OnInit {
           userAssignments.push({smId:value.smId, userId:value.userId});
         }
       });
-    } else {
-        this.businessObjects.forEach(bo => {
-          businessObjectsValues.push(this.getBusinessObjectsValues(bo, form));
-        });
     }
+
+    this.businessObjects.forEach(bo => {
+      businessObjectsValues.push(this.getBusinessObjectsValues(bo, form));
+    });
     var businessObjectsAndNextStateAndUserAssignments = {
       nextStateId: form.nextStateId,
       businessObjects: businessObjectsValues,
