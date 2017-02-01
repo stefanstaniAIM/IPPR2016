@@ -70,8 +70,9 @@ public class VacationRequestWithoutChild extends AbstractExample {
     final BusinessObjectModel vacationRequestForm =
         new BusinessObjectModelBuilder().name("Vacation request form").addToState(empState1)
             .addToState(empState2).addToState(bossState1).build();
-    final BusinessObjectFieldModel boFrom = new BusinessObjectFieldModelBuilder().fieldName("From")
-        .fieldType(FieldType.STRING).businessObjectModel(vacationRequestForm).position(1).build();
+    final BusinessObjectFieldModel boFrom =
+        new BusinessObjectFieldModelBuilder().fieldName("From").fieldType(FieldType.STRING)
+            .businessObjectModel(vacationRequestForm).position(1).defaultValue("hohoho").build();
     final BusinessObjectFieldModel boTo = new BusinessObjectFieldModelBuilder().fieldName("To")
         .fieldType(FieldType.STRING).businessObjectModel(vacationRequestForm).position(0).build();
 

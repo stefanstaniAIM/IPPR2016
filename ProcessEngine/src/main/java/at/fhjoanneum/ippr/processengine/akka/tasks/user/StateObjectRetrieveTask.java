@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -183,6 +184,11 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
             value = valueComposer.compose(fieldInstance.getValue(),
                 fieldInstance.getBusinessObjectFieldModel().getFieldType());
           }
+        }
+
+        if (FieldPermission.READ_WRITE.equals(permission)) {
+          value =
+              StringUtils.isNotBlank(value) ? value : businessObjectFieldModel.getDefaultValue();
         }
 
         if (FieldPermission.READ_WRITE.equals(permission)
