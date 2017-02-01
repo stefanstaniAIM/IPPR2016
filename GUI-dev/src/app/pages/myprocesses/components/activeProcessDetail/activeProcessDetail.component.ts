@@ -5,6 +5,22 @@ import { ProcessesService } from '../../../../Processes.service';
 import { BaThemeSpinner } from '../../../../theme/services';
 import { User } from '../../../../user';
 
+type businessObject = {
+  bomId:number,
+  boiId:number,
+  name:string,
+  fields:[{
+    bofmId:number,
+    bofiId:number,
+    name:string,
+    type:string,
+    required:boolean,
+    readonly:boolean,
+    value:any
+  }],
+  children:[businessObject];
+}
+
 @Component({
   selector: 'activeProcessDetail',
   styles: [],
@@ -80,22 +96,7 @@ export class ActiveProcessDetail implements OnInit {
       }
     ]
   }
-
-  businessObjects:[{
-    bomId:number,
-    boiId:number,
-    name:string,
-    fields:[{
-      bofmId:number,
-      bofiId:number,
-      name:string,
-      type:string,
-      required:boolean,
-      readonly:boolean,
-      value:any
-    }],
-    children:[any];
-  }];
+  businessObjects:businessObject[];
   nextStates:[{
     name:string,
     nextStateId:number
@@ -103,7 +104,7 @@ export class ActiveProcessDetail implements OnInit {
   assignedUsers:[{
     smId:number,
     userId:number,
-    assignedGroup:string
+    rules:string[]
   }];
   possibleUserAssignments = [];
   selectedUserAssignments = [];
@@ -157,12 +158,14 @@ export class ActiveProcessDetail implements OnInit {
     this.assignedUsers.forEach(
       au => {
         if(!au.userId){
-          that.service.getPossibleUsersForProcessModel(au.assignedGroup).
+          that.service.getPossibleUsersForProcessModel(au.rules).
           subscribe(
             data => {
               let users = JSON.parse(data['_body']);
-              that.possibleUserAssignments.push({groupName: au.assignedGroup, smId: au.smId, users: users});
-              that.selectedUserAssignments[au.assignedGroup] = undefined;
+              au.rules.forEach(rule => {
+                that.possibleUserAssignments.push({rule: rule, smId: au.smId, users: users});
+                that.selectedUserAssignments[rule] = undefined;
+              });
               console.log(that.possibleUserAssignments);
             },
             err =>{
@@ -188,21 +191,9 @@ export class ActiveProcessDetail implements OnInit {
         }
       });
     } else {
-      this.businessObjects.forEach(bo => {
-        var fields = []
-        var keys = Object.keys(form.value).forEach(k => {
-          var kSplit = k.split("-:_");
-          if(kSplit.length > 1) {
-            var bomId = kSplit[0];
-            var bofmId = kSplit[1];
-            if(bomId === (bo.bomId).toString()) {
-              var value = form.value[k];
-              fields.push({bofmId:bofmId, value:value});
-            }
-          }
+        this.businessObjects.forEach(bo => {
+          businessObjectsValues.push(this.getBusinessObjectsValues(bo, form));
         });
-        businessObjectsValues.push({bomId:bo.bomId, fields:fields});
-      });
     }
     var businessObjectsAndNextStateAndUserAssignments = {
       nextStateId: form.nextStateId,
@@ -212,6 +203,26 @@ export class ActiveProcessDetail implements OnInit {
 
     this.submitStateChange(businessObjectsAndNextStateAndUserAssignments);
 
+  }
+
+  private getBusinessObjectsValues(bo:businessObject, form): any{
+    var fields = []
+    var childBoValues = [];
+    var keys = Object.keys(form.value).forEach(k => {
+      var kSplit = k.split("-:_");
+      if(kSplit.length > 1) {
+        var bomId = kSplit[0];
+        var bofmId = kSplit[1];
+        if(bomId === (bo.bomId).toString()) {
+          var value = form.value[k];
+          fields.push({bofmId:bofmId, value:value});
+        }
+      }
+    });
+    bo.children.forEach(childBo => {
+      childBoValues.push(this.getBusinessObjectsValues(childBo, form))}
+    );
+    return {bomId:bo.bomId, fields:fields, children:childBoValues};
   }
 
   private submitStateChange(businessObjectsAndNextStateAndUserAssignments) {

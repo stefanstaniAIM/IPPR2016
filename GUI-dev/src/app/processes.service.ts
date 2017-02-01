@@ -28,8 +28,8 @@ export class ProcessesService {
      return this._authHttp.get(this.restApi+'/processes/amountOfActiveProcessesPerUser/'+userId);
    }
 
-   getPossibleUsersForProcessModel(groupName:string){
-      return this._authHttp.get(this.restApi+'/processes/possibleUsers/'+groupName);
+   getPossibleUsersForProcessModel(rules:string[]){
+      return this._authHttp.get(this.restApi+'/processes/users/rule/'+rules);
    }
 
    getProcessState(piId:number){
