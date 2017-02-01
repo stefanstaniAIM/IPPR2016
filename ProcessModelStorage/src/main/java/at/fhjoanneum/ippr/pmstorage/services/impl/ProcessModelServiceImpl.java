@@ -18,10 +18,12 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Lists;
 
+import at.fhjoanneum.ippr.commons.dto.pmstorage.FieldPermissionDTO;
 import at.fhjoanneum.ippr.commons.dto.pmstorage.FieldTypeDTO;
 import at.fhjoanneum.ippr.commons.dto.pmstorage.ProcessModelDTO;
 import at.fhjoanneum.ippr.commons.dto.pmstorage.SubjectModelDTO;
 import at.fhjoanneum.ippr.persistence.entities.model.process.ProcessModelImpl;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldPermission;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldType;
 import at.fhjoanneum.ippr.pmstorage.repositories.ProcessModelRepository;
 import at.fhjoanneum.ippr.pmstorage.services.ProcessModelService;
@@ -81,5 +83,13 @@ public class ProcessModelServiceImpl implements ProcessModelService {
     final List<FieldTypeDTO> fieldTypes = Arrays.stream(FieldType.values())
         .map(fieldtype -> new FieldTypeDTO(fieldtype.name())).collect(Collectors.toList());
     return new AsyncResult<List<FieldTypeDTO>>(fieldTypes);
+  }
+
+  @Async
+  @Override
+  public Future<List<FieldPermissionDTO>> getPermissions() {
+    final List<FieldPermissionDTO> permissions = Arrays.stream(FieldPermission.values())
+        .map(permission -> new FieldPermissionDTO(permission.name())).collect(Collectors.toList());
+    return new AsyncResult<List<FieldPermissionDTO>>(permissions);
   }
 }

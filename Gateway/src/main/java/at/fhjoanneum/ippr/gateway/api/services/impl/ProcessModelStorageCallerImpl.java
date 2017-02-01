@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import at.fhjoanneum.ippr.commons.dto.pmstorage.FieldPermissionDTO;
 import at.fhjoanneum.ippr.commons.dto.pmstorage.FieldTypeDTO;
 import at.fhjoanneum.ippr.commons.dto.pmstorage.ProcessModelDTO;
 import at.fhjoanneum.ippr.gateway.api.config.GatewayConfig;
@@ -56,10 +57,19 @@ public class ProcessModelStorageCallerImpl implements Caller {
         httpHeaderUser.getHttpHeaders());
   }
 
+  @Async
   public Future<ResponseEntity<FieldTypeDTO[]>> getFieldTypes() throws URISyntaxException {
     final URIBuilder uri =
         new URIBuilder(gatewayConfig.getProcessModelStorageAddress()).setPath("/fieldtypes");
 
     return createRequest(uri, HttpMethod.GET, null, FieldTypeDTO[].class, null);
+  }
+
+  @Async
+  public Future<ResponseEntity<FieldPermissionDTO[]>> getPermissions() throws URISyntaxException {
+    final URIBuilder uri =
+        new URIBuilder(gatewayConfig.getProcessModelStorageAddress()).setPath("/permissions");
+
+    return createRequest(uri, HttpMethod.GET, null, FieldPermissionDTO[].class, null);
   }
 }

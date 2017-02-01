@@ -181,6 +181,7 @@ public class ProcessEngineCallerImpl implements Caller {
     return createRequest(uri, HttpMethod.POST, null, ProcessInfoDTO.class, header);
   }
 
+  @Async
   public Future<ResponseEntity<TaskDTO[]>> getTasksOfUser(final HttpHeaderUser headerUser,
       final Long userId) throws URISyntaxException {
     final URIBuilder uri = new URIBuilder(gatewayConfig.getProcessEngineAddress())
@@ -190,6 +191,7 @@ public class ProcessEngineCallerImpl implements Caller {
     return createRequest(uri, HttpMethod.GET, null, TaskDTO[].class, header);
   }
 
+  @Async
   public Future<ResponseEntity<StateObjectDTO>> getStateObjectOfUserInProcess(
       final HttpHeaderUser headerUser, final Long piId, final Long userId)
       throws URISyntaxException {
@@ -200,6 +202,7 @@ public class ProcessEngineCallerImpl implements Caller {
     return createRequest(uri, HttpMethod.GET, null, StateObjectDTO.class, header);
   }
 
+  @Async
   public Future<ResponseEntity<Boolean>> changeStateOfUserInProcess(final HttpHeaderUser headerUser,
       final Long piId, final Long userId, final StateObjectChangeDTO stateObjectChangeDTO)
       throws URISyntaxException {

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import at.fhjoanneum.ippr.commons.dto.user.RoleDTO;
 import at.fhjoanneum.ippr.commons.dto.user.RuleDTO;
 import at.fhjoanneum.ippr.commons.dto.user.UserDTO;
+import at.fhjoanneum.ippr.gateway.security.persistence.objects.Rule;
 import at.fhjoanneum.ippr.gateway.security.persistence.objects.User;
 import at.fhjoanneum.ippr.gateway.security.repositories.RBACRepository;
 
@@ -28,18 +29,6 @@ public class RBACServiceImpl implements RBACService {
 
   @Async
   @Override
-  public Future<List<UserDTO>> getPossibleUsersOfGroup(final String groupname) {
-    final List<User> users = rbacRepository.getUsersByRoleName(groupname);
-    return new AsyncResult<List<UserDTO>>(users.stream().map(user -> {
-      final List<RoleDTO> roles = user.getRoles().stream()
-          .map(role -> new RoleDTO(role.getRoleId(), role.getName())).collect(Collectors.toList());
-      final List<RuleDTO> rules = user.getRules().stream()
-          .map(rule -> new RuleDTO(rule.getRuleId(), rule.getName())).collect(Collectors.toList());
-      return new UserDTO(user.getUId(), user.getFirstname(), user.getLastname(), roles, rules);
-    }).collect(Collectors.toList()));
-  }
-
-  @Override
   public Future<List<UserDTO>> getUsersOfRule(final List<String> ruleNames) {
     final List<User> users = rbacRepository.getUsersByRuleNames(ruleNames);
     return new AsyncResult<List<UserDTO>>(users.stream().map(user -> {
@@ -51,4 +40,8 @@ public class RBACServiceImpl implements RBACService {
     }).collect(Collectors.toList()));
   }
 
+  @Override
+  public Future<List<Rule>> getRules() {
+    return new AsyncResult<List<Rule>>(rbacRepository.getRules());
+  }
 }
