@@ -4,7 +4,6 @@ import java.util.concurrent.Callable;
 
 import javax.servlet.http.HttpServletRequest;
 
-import at.fhjoanneum.ippr.commons.dto.owlimport.OWLProcessModelDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,14 +56,6 @@ public class ProcessModelStorageGatewayController {
       final HttpServletRequest request) {
     return () -> {
       return processModelStorageCaller.getFieldTypes().get();
-    };
-  }
-
-  @RequestMapping(value = "api/owlprocessmodel", method = RequestMethod.GET)
-  public @ResponseBody Callable<ResponseEntity<OWLProcessModelDTO[]>> getOWLProcessModel(
-          final HttpServletRequest request) {
-    return () -> {
-      return processModelStorageCaller.getOWLProcessModel().get();
     };
   }
 }
