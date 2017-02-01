@@ -3,6 +3,7 @@ package at.fhjoanneum.ippr.gateway.api.services.impl;
 import java.net.URISyntaxException;
 import java.util.concurrent.Future;
 
+import at.fhjoanneum.ippr.commons.dto.owlimport.OWLProcessModelDTO;
 import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,5 +62,13 @@ public class ProcessModelStorageCallerImpl implements Caller {
         new URIBuilder(gatewayConfig.getProcessModelStorageAddress()).setPath("/fieldtypes");
 
     return createRequest(uri, HttpMethod.GET, null, FieldTypeDTO[].class, null);
+  }
+
+  @Async
+  public Future<ResponseEntity<OWLProcessModelDTO[]>> getOWLProcessModel() throws URISyntaxException {
+    final URIBuilder uri =
+            new URIBuilder(gatewayConfig.getProcessModelStorageAddress()).setPath("/owlprocessmodel");
+
+    return createRequest(uri, HttpMethod.GET, null, OWLProcessModelDTO[].class, null);
   }
 }

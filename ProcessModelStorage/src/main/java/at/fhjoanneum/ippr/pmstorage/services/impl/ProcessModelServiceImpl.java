@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import at.fhjoanneum.ippr.commons.dto.owlimport.OWLProcessModelDTO;
+import at.fhjoanneum.ippr.pmstorage.examples.VacationRequestFromOWL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,9 @@ public class ProcessModelServiceImpl implements ProcessModelService {
 
   @Autowired
   private ProcessModelRepository processModelRepository;
+
+  @Autowired
+  private VacationRequestFromOWL vacationRequestFromOWL;
 
   @Override
   @Async
@@ -81,5 +86,13 @@ public class ProcessModelServiceImpl implements ProcessModelService {
     final List<FieldTypeDTO> fieldTypes = Arrays.stream(FieldType.values())
         .map(fieldtype -> new FieldTypeDTO(fieldtype.name())).collect(Collectors.toList());
     return new AsyncResult<List<FieldTypeDTO>>(fieldTypes);
+  }
+
+  @Override
+  @Async
+  @Transactional
+  public Future<OWLProcessModelDTO> getOWLProcessModel() {
+    final OWLProcessModelDTO owlProcessModel = vacationRequestFromOWL.getProcessModelDTO();
+    return new AsyncResult<OWLProcessModelDTO>(owlProcessModel);
   }
 }

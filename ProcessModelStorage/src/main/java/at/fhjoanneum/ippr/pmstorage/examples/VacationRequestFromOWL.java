@@ -3,6 +3,7 @@ package at.fhjoanneum.ippr.pmstorage.examples;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStream;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +35,7 @@ import org.apache.jena.util.iterator.ExtendedIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import at.fhjoanneum.ippr.commons.dto.owlimport.OWLProcessModelDTO;
 
 import javassist.bytecode.Descriptor.Iterator;
 
@@ -44,6 +46,7 @@ import javassist.bytecode.Descriptor.Iterator;
 public class VacationRequestFromOWL extends AbstractExample {
 
   private static final Logger LOG = LoggerFactory.getLogger(VacationRequestFromOWL.class);
+  public OWLProcessModelDTO processModelDTO;
 
   @PersistenceContext
   private EntityManager entityManager;
@@ -51,6 +54,11 @@ public class VacationRequestFromOWL extends AbstractExample {
   @Override
   protected EntityManager getEntityManager() {
     return entityManager;
+  }
+
+  public OWLProcessModelDTO getProcessModelDTO(){
+      this.createData();
+      return this.processModelDTO;
   }
 
   @Override
@@ -111,6 +119,8 @@ public class VacationRequestFromOWL extends AbstractExample {
             String processName = processModel.getProperty(labelProperty).getString();
             System.out.println("Process Name "+processName);
 
+            processModelDTO = new OWLProcessModelDTO(Long.valueOf(99), processName, "", LocalDateTime.now());
+
             //Find Actors in ProcessModel
             List<? extends OntResource> actors = model.getOntClass(URI_ACTOR).listInstances().toList();
             List actorNames = new ArrayList();
@@ -120,7 +130,7 @@ public class VacationRequestFromOWL extends AbstractExample {
                 actorNames.add(actorName);
                 System.out.println("Found Actor: "+actorName);
 
-                //Find behaviour
+                //Find behaviour for actor
                 Resource behavior = actor.getProperty(behaviorProperty).getResource();
 
                 //Find states
@@ -209,7 +219,6 @@ public class VacationRequestFromOWL extends AbstractExample {
       } catch (Exception e) {
 	  	e.printStackTrace();
 	  }
-   
   }
 
   private SubjectModel createSubjectModel(String name, String assignedGroup){

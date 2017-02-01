@@ -182,7 +182,7 @@ Msg: Vacation Request OK (Min: ) (Max: )</standard-pass-ont:hasModelComponentLab
 		<standard-pass-ont:hasModelComponentLable xml:lang="en" >To: Employee
 Msg: Vacation Request OK</standard-pass-ont:hasModelComponentLable>
 		<standard-pass-ont:hasSourceState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_SendState_96" ></standard-pass-ont:hasSourceState>
-		<standard-pass-ont:hasTargetState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#0,0000" ></standard-pass-ont:hasTargetState>
+		<standard-pass-ont:hasTargetState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_FunctionState_87" ></standard-pass-ont:hasTargetState>
 		<standard-pass-ont:hasAlternativePriorityNumber >0</standard-pass-ont:hasAlternativePriorityNumber>
 		<standard-pass-ont:refersTo rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SID_0_StandardMessageConnector_34_message_38" ></standard-pass-ont:refersTo>
 	</owl:NamedIndividual>
