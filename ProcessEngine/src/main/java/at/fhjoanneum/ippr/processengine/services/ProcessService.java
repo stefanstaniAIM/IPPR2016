@@ -25,6 +25,11 @@ public interface ProcessService {
   Future<Long> getAmountOfStartedProcessesBetweenForUser(LocalDateTime start, LocalDateTime end,
       Long userId);
 
+  Future<Long> getAmountOfFinishedProcessesBetween(LocalDateTime start, LocalDateTime end);
+
+  Future<Long> getAmountOfFinishedProcessesBetweenForUser(LocalDateTime start, LocalDateTime end,
+      Long userId);
+
   Future<ProcessStateDTO> getStateOfProcessInstance(Long piId);
 
   Future<List<ProcessInfoDTO>> getProcessesInfoOfState(String state, int page, int size);

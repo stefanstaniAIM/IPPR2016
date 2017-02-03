@@ -84,6 +84,18 @@ public class ProcessEngineController {
     };
   }
 
+  @RequestMapping(value = "processes/count/finished/{hoursbefore}", method = RequestMethod.GET)
+  public @ResponseBody Callable<Long> getAmountOfFinishedProcessesPerUser(
+      final HttpServletRequest request, @PathVariable("hoursbefore") final Long hoursbefore) {
+
+    return () -> {
+      final LocalDateTime end = LocalDateTime.now();
+      final LocalDateTime start = end.minusHours(hoursbefore);
+
+      return processService.getAmountOfFinishedProcessesBetween(start, end).get();
+    };
+  }
+
   @RequestMapping(value = "processes/count/started/{hoursbefore}/{userId}",
       method = RequestMethod.GET)
   public @ResponseBody Callable<Long> getAmountOfActiveProcessesPerUser(
@@ -95,6 +107,20 @@ public class ProcessEngineController {
       final LocalDateTime start = end.minusHours(hoursbefore);
 
       return processService.getAmountOfStartedProcessesBetweenForUser(start, end, userId).get();
+    };
+  }
+
+  @RequestMapping(value = "processes/count/finished/{hoursbefore}/{userId}",
+      method = RequestMethod.GET)
+  public @ResponseBody Callable<Long> getAmountOfFinishedProcessesPerUser(
+      final HttpServletRequest request, @PathVariable("hoursbefore") final Long hoursbefore,
+      @PathVariable("userId") final Long userId) {
+
+    return () -> {
+      final LocalDateTime end = LocalDateTime.now();
+      final LocalDateTime start = end.minusHours(hoursbefore);
+
+      return processService.getAmountOfFinishedProcessesBetweenForUser(start, end, userId).get();
     };
   }
 

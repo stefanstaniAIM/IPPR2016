@@ -88,10 +88,28 @@ public class ProcessEngineCallerImpl implements Caller {
   }
 
   @Async
+  public Future<ResponseEntity<Long>> getAmountOfFinishedProcessesInRange(final Long hoursbefore)
+      throws URISyntaxException {
+    final URIBuilder uri = new URIBuilder(gatewayConfig.getProcessEngineAddress())
+        .setPath("processes/count/finished/" + hoursbefore);
+
+    return createRequest(uri, HttpMethod.GET, null, Long.class, null);
+  }
+
+  @Async
   public Future<ResponseEntity<Long>> getAmountOfStartedProcessesForUserInRange(
       final Long hoursbefore, final Long userId) throws URISyntaxException {
     final URIBuilder uri = new URIBuilder(gatewayConfig.getProcessEngineAddress())
         .setPath("processes/count/started/" + hoursbefore + "/" + userId);
+
+    return createRequest(uri, HttpMethod.GET, null, Long.class, null);
+  }
+
+  @Async
+  public Future<ResponseEntity<Long>> getAmountOfFinishedProcessesForUserInRange(
+      final Long hoursbefore, final Long userId) throws URISyntaxException {
+    final URIBuilder uri = new URIBuilder(gatewayConfig.getProcessEngineAddress())
+        .setPath("processes/count/finished/" + hoursbefore + "/" + userId);
 
     return createRequest(uri, HttpMethod.GET, null, Long.class, null);
   }

@@ -48,7 +48,7 @@ public class ProcessEngineGatewayController {
   }
 
   @RequestMapping(value = "api/processes/count/{state}", method = RequestMethod.GET)
-  public @ResponseBody Callable<ResponseEntity<Long>> getAmountOfActiveProcesses(
+  public @ResponseBody Callable<ResponseEntity<Long>> getAmountOfProcesses(
       final HttpServletRequest request, @PathVariable("state") final String state) {
 
     return () -> {
@@ -57,7 +57,7 @@ public class ProcessEngineGatewayController {
   }
 
   @RequestMapping(value = "api/processes/count/{state}/{userId}", method = RequestMethod.GET)
-  public @ResponseBody Callable<ResponseEntity<Long>> getAmountOfActiveProcesses(
+  public @ResponseBody Callable<ResponseEntity<Long>> getAmountOfProcesses(
       final HttpServletRequest request, @PathVariable("state") final String state,
       @PathVariable("userId") final Long userId) {
 
@@ -67,7 +67,16 @@ public class ProcessEngineGatewayController {
   }
 
   @RequestMapping(value = "api/processes/count/started/{hoursbefore}", method = RequestMethod.GET)
-  public @ResponseBody Callable<ResponseEntity<Long>> getAmountOfStartedProcessInRange(
+  public @ResponseBody Callable<ResponseEntity<Long>> getAmountOfStartedProcessesInRange(
+      final HttpServletRequest request, @PathVariable("hoursbefore") final Long hoursbefore) {
+
+    return () -> {
+      return processEngineCaller.getAmountOfStartedProcessesInRange(hoursbefore).get();
+    };
+  }
+
+  @RequestMapping(value = "api/processes/count/finished/{hoursbefore}", method = RequestMethod.GET)
+  public @ResponseBody Callable<ResponseEntity<Long>> getAmountOfFinishedProcessesInRange(
       final HttpServletRequest request, @PathVariable("hoursbefore") final Long hoursbefore) {
 
     return () -> {
@@ -77,12 +86,24 @@ public class ProcessEngineGatewayController {
 
   @RequestMapping(value = "api/processes/count/started/{hoursbefore}/{userId}",
       method = RequestMethod.GET)
-  public @ResponseBody Callable<ResponseEntity<Long>> getAmountOfStartedProcessInRangeForUser(
+  public @ResponseBody Callable<ResponseEntity<Long>> getAmountOfStartedProcessesInRangeForUser(
       final HttpServletRequest request, @PathVariable("hoursbefore") final Long hoursbefore,
       @PathVariable("userId") final Long userId) {
 
     return () -> {
       return processEngineCaller.getAmountOfStartedProcessesForUserInRange(hoursbefore, userId)
+          .get();
+    };
+  }
+
+  @RequestMapping(value = "api/processes/count/finished/{hoursbefore}/{userId}",
+      method = RequestMethod.GET)
+  public @ResponseBody Callable<ResponseEntity<Long>> getAmountOfFinishedProcessesInRangeForUser(
+      final HttpServletRequest request, @PathVariable("hoursbefore") final Long hoursbefore,
+      @PathVariable("userId") final Long userId) {
+
+    return () -> {
+      return processEngineCaller.getAmountOfFinishedProcessesForUserInRange(hoursbefore, userId)
           .get();
     };
   }
