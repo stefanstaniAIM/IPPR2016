@@ -128,7 +128,9 @@ public class ProcessEngineCallerImpl implements Caller {
       final List<UserContainer> container = Lists.newArrayList(result.getBody().getSubjects());
       getUser(container);
       future.complete(result.getBody());
-    }, null);
+    }, error -> {
+      future.completeExceptionally(error);
+    });
 
     return future;
   }
@@ -176,7 +178,7 @@ public class ProcessEngineCallerImpl implements Caller {
       final List<T> entries = Lists.newArrayList(result.getBody());
       getUser(Lists.newArrayList(result.getBody()));
       future.complete(entries);
-    }, null);
+    }, error -> future.completeExceptionally(error));
   }
 
   @Async

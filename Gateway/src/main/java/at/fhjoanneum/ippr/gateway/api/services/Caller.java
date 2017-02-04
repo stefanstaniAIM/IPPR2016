@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.client.AsyncRestTemplate;
+import org.springframework.web.client.DefaultResponseErrorHandler;
 
 
 public interface Caller {
@@ -18,6 +19,7 @@ public interface Caller {
   public default <I, O> ListenableFuture<ResponseEntity<O>> createRequest(final URIBuilder uri,
       final HttpMethod method, final I body, final Class<O> returnClazz, final HttpHeaders header) {
     final AsyncRestTemplate restTemplate = new AsyncRestTemplate();
+    restTemplate.setErrorHandler(new DefaultResponseErrorHandler());
     if (header != null) {
       header.setContentType(MediaType.APPLICATION_JSON);
     }
