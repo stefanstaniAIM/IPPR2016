@@ -26,6 +26,8 @@ import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.StateObjectChang
 import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.StateObjectDTO;
 import at.fhjoanneum.ippr.processengine.akka.config.Global;
 import at.fhjoanneum.ippr.processengine.akka.config.SpringExtension;
+import at.fhjoanneum.ippr.processengine.akka.messages.analysis.FinishedProcessesInRangeForUserMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.analysis.FinishedProcessesInRangeMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.analysis.ProcessesInStateMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.analysis.ProcessesInStatePerUserMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.analysis.StartedProcessesInRangeForUserMessage;
@@ -294,7 +296,6 @@ public class ProcessServiceImpl implements ProcessService {
   @Override
   public Future<Long> getAmountOfStartedProcessesBetween(final LocalDateTime start,
       final LocalDateTime end) {
-
     final CompletableFuture<Long> future = new CompletableFuture<>();
 
     final ActorRef analysisActor = getAnalysisActor();
@@ -302,6 +303,21 @@ public class ProcessServiceImpl implements ProcessService {
     PatternsCS
         .ask(analysisActor, new StartedProcessesInRangeMessage.Request(start, end), Global.TIMEOUT)
         .toCompletableFuture().thenApply(obj -> (StartedProcessesInRangeMessage.Response) obj)
+        .whenComplete((msg, exc) -> future.complete(msg.getAmount()));
+
+    return future;
+  }
+
+  @Override
+  public Future<Long> getAmountOfFinishedProcessesBetween(final LocalDateTime start,
+      final LocalDateTime end) {
+    final CompletableFuture<Long> future = new CompletableFuture<>();
+
+    final ActorRef analysisActor = getAnalysisActor();
+
+    PatternsCS
+        .ask(analysisActor, new FinishedProcessesInRangeMessage.Request(start, end), Global.TIMEOUT)
+        .toCompletableFuture().thenApply(obj -> (FinishedProcessesInRangeMessage.Response) obj)
         .whenComplete((msg, exc) -> future.complete(msg.getAmount()));
 
     return future;
@@ -319,6 +335,23 @@ public class ProcessServiceImpl implements ProcessService {
             Global.TIMEOUT)
         .toCompletableFuture()
         .thenApply(obj -> (StartedProcessesInRangeForUserMessage.Response) obj)
+        .whenComplete((msg, exc) -> future.complete(msg.getAmount()));
+
+    return future;
+  }
+
+  @Override
+  public Future<Long> getAmountOfFinishedProcessesBetweenForUser(final LocalDateTime start,
+      final LocalDateTime end, final Long userId) {
+    final CompletableFuture<Long> future = new CompletableFuture<>();
+
+    final ActorRef analysisActor = getAnalysisActor();
+
+    PatternsCS
+        .ask(analysisActor, new FinishedProcessesInRangeForUserMessage.Request(start, end, userId),
+            Global.TIMEOUT)
+        .toCompletableFuture()
+        .thenApply(obj -> (FinishedProcessesInRangeForUserMessage.Response) obj)
         .whenComplete((msg, exc) -> future.complete(msg.getAmount()));
 
     return future;
