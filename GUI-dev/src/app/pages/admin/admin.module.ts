@@ -8,6 +8,7 @@ import { routing }       from './admin.routing';
 import { Pipes }       from '../../pipes/pipes.module';
 
 import { ActiveProcesses } from './components/activeProcesses/activeProcesses.component';
+import { ImportProcessModel } from './components/importProcessModel/importProcessModel.component';
 import { TerminatedProcesses } from './components/terminatedProcesses/terminatedProcesses.component';
 import { ProcessModels } from './components/processModels/processModels.component';
 
@@ -25,7 +26,8 @@ import { AuthGuard } from '../../auth.guard';
     Admin,
     ActiveProcesses,
     TerminatedProcesses,
-    ProcessModels
+    ProcessModels,
+    ImportProcessModel
   ],
   providers: [
     AuthGuard,

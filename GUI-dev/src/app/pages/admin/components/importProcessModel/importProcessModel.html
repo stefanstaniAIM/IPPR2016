@@ -1,0 +1,16 @@
+
+<div class="alert alert-danger alert-dismissible fade in" role="alert" *ngIf="error">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+  <strong>Error!</strong> {{error}}
+</div>
+<div class="row">
+  <div class="alert alert-info fade in" role="alert">
+    Es ist möglich ein OWL-File hochzuladen, dass ein Prozess-Modell nach der Ontologie "standard-pass-ont" spezifiziert. Noch nicht unterstützt werden: Multisubjekte, externe Subjekte.
+  </div>
+   <ba-card class="col-xlg-12 col-xl-12 col-lg-12 col-sm-12 col-xs-12">
+     <label class="control-label">OWL-File: </label>
+     <input type="file" class="form-control">
+   </ba-card>
+</div>

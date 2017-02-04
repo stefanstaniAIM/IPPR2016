@@ -66,12 +66,29 @@ export const PAGES_MENU = [
         },
         children: [
          {
-            path: 'models',
             data: {
               menu: {
                 title: 'Prozessmodelle'
               }
-            }
+            },
+            children: [
+              {
+                path: 'models',
+                data: {
+                  menu: {
+                    title: 'Anzeigen'
+                  }
+                }
+              },
+              {
+                path: 'import',
+                data: {
+                  menu: {
+                    title: 'Importieren'
+                  }
+                }
+              }
+            ]
           },
           {
             path: 'active',

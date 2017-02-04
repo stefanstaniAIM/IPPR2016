@@ -23,7 +23,7 @@
                <td>{{ processModel.pmId }}</td>
                <td>{{ processModel.name }}</td>
                <td>{{ processModel.description }}</td>
-               <td>{{ processModel.createdAt }}</td>
+               <td>{{ processModel.createdAt | commaDate | date:'dd.MM.yyyy HH:mm:ss' }}</td>
                <td><button class="btn btn-primary btn-sm" (click)="deleteProcessModel(processModel.pmId)">Löschen</button></td>
             </tr>
          </tbody>
