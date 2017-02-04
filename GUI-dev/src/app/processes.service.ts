@@ -63,4 +63,12 @@ export class ProcessesService {
    submitBusinessObjectsAndNextStateAndUserAssignments(piId:number, objectsAndStateAndUserAssignments){
      return this._authHttp.post(this.restApi+'/processes/task/'+piId+'/'+this._user.getUid(), objectsAndStateAndUserAssignments);
    }
+
+   uploadOWLModel(owlModel){
+     return this._authHttp.get(this.restApi+'/owlprocessmodel/');
+   }
+
+   getRules(){
+     return this._authHttp.get(this.restApi+'/rules/');
+   }
 }

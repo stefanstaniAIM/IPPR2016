@@ -8,7 +8,8 @@ import { ProcessesService } from '../../../../Processes.service';
   template: require('./importProcessModel.html')
 })
 export class ImportProcessModel implements OnInit {
-   processModels = [];
+   processModel;
+   rules;
    error = undefined;
 
   constructor(protected service:ProcessesService) {}
@@ -25,7 +26,36 @@ export class ImportProcessModel implements OnInit {
        );*/
   }
 
-  deleteProcessModel(pmId:number):void {
-      console.log("delete processModel: " +pmId);
+  uploadOWLModel(form):void {
+    var that = this;
+    console.log("upload owl model");
+    this.service.uploadOWLModel(null)
+       .subscribe(
+          data => {
+             console.log(data);
+             that.processModel = JSON.parse(data['_body']);
+             that.initRules();
+          },
+          err => this.error = err,
+          () => console.log('Request Complete')
+        );
+  }
+
+  initRules():void{
+    var that = this;
+    this.service.getRules()
+       .subscribe(
+          data => {
+             console.log(data);
+             that.rules = JSON.parse(data['_body']);
+          },
+          err => this.error = err,
+          () => console.log('Request Complete')
+        );
+  }
+
+  uploadProcessModel(form):void {
+    var that = this;
+    console.log(form);
   }
 }

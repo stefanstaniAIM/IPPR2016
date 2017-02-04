@@ -1,4 +1,3 @@
-
 <div class="alert alert-danger alert-dismissible fade in" role="alert" *ngIf="error">
   <button type="button" class="close" data-dismiss="alert" aria-label="Close">
     <span aria-hidden="true">&times;</span>
@@ -6,11 +5,69 @@
   <strong>Error!</strong> {{error}}
 </div>
 <div class="row">
-  <div class="alert alert-info fade in" role="alert">
-    Es ist möglich ein OWL-File hochzuladen, dass ein Prozess-Modell nach der Ontologie "standard-pass-ont" spezifiziert. Noch nicht unterstützt werden: Multisubjekte, externe Subjekte.
+  <div *ngIf="!processModel">
+    <div class="alert alert-info fade in" role="alert">
+      Es ist möglich ein OWL-File hochzuladen, dass ein Prozess-Modell nach der Ontologie "standard-pass-ont" spezifiziert. Noch nicht unterstützt werden: Multisubjekte, externe Subjekte.
+    </div>
+     <ba-card class="col-xlg-12 col-xl-12 col-lg-12 col-sm-12 col-xs-12">
+         <form #owlModelForm="ngForm" (ngSubmit)="uploadOWLModel(owlModelForm)">
+         <label class="control-label">OWL-File: </label>
+         <input type="file" class="form-control">
+         <br />
+         <button class="btn btn-primary" type="submit">Upload</button>
+       </form>
+     </ba-card>
+   </div>
+   <div *ngIf="processModel">
+     <form #processModelForm="ngForm" (ngSubmit)="uploadProcessModel(processModelForm)">
+       <ba-card title="Allgemeine Informationen" class="col-xlg-12 col-xl-12 col-lg-12 col-sm-12 col-xs-12">
+         <div class="row">
+           <div class="col-sm-4">
+             <div class="form-group">
+              <label for="name">Name</label>
+              <input type="text" class="form-control" id="name" name="processModel-Name" [(ngModel)]="processModel.name">
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label for="description">Beschreibung</label>
+              <input type="text" class="form-control" id="description" name="processModel-Description" [(ngModel)]="processModel.description">
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label for="createdAt">Erstellt am</label>
+              <input type="text" class="form-control" id="createdAt" name="processModel-CreatedAt" [ngModel]="processModel.createdAt | commaDate | date:'dd.MM.yyyy HH:mm'" readonly>
+            </div>
+          </div>
+        </div>
+      </ba-card>
+      <ba-card title="Subjekte" class="col-xlg-12 col-xl-12 col-lg-12 col-sm-12 col-xs-12">
+        <div class="row">
+           <div class="col-sm-2" *ngFor="let subjectModel of processModel.subjectModels">
+             <div class="form-group">
+               <label for="name">Name</label>
+               <input type="text" class="form-control" id="name" name="subjectModel-'{{processModel.subjectModels.indexOf(subjectModel)}}'-Name" [ngModel]="subjectModel.name" readonly>
+               <br />
+               <label for="assignedRules">Rechte</label>
+               <select multiple class="form-control" name="subjectModel-'{{processModel.subjectModels.indexOf(subjectModel)}}'-Rule" [(ngModel)]="subjectModel.assignedRules" required>
+                 <option *ngFor="let rule of rules" [ngValue]="rule.ruleId">{{rule.name}}</option>
+               </select>
+             </div>
+           </div>
+         </div>
+      </ba-card>
+      <ba-card title="Business Objects" class="col-xlg-12 col-xl-12 col-lg-12 col-sm-12 col-xs-12">
+        <div class="row">
+           <div class="col-sm-2">
+             <ul class="list-group">
+               <button class="list-group-item list-group-item-action" type="button" *ngFor="let businessObject of processModel.boms">{{businessObject.name}}</button>
+             </ul>
+           </div>
+         </div>
+      </ba-card>
+      <br />
+      <button class="btn btn-primary" type="submit">Upload</button>
+    </form>
   </div>
-   <ba-card class="col-xlg-12 col-xl-12 col-lg-12 col-sm-12 col-xs-12">
-     <label class="control-label">OWL-File: </label>
-     <input type="file" class="form-control">
-   </ba-card>
 </div>
