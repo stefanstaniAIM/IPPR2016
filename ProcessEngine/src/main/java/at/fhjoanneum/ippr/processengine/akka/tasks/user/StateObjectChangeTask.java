@@ -45,6 +45,7 @@ import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 import at.fhjoanneum.ippr.processengine.akka.config.Global;
 import at.fhjoanneum.ippr.processengine.akka.config.SpringExtension;
 import at.fhjoanneum.ippr.processengine.akka.messages.EmptyMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.refinement.ExecuteRefinementMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.AssignUsersMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.MessagesSendMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObjectChangeMessage;
@@ -132,6 +133,11 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
             @Override
             public void afterCommit() {
               sender.tell(new EmptyMessage(), getSelf());
+
+              if (StateFunctionType.REFINEMENT
+                  .equals(subjectState.getCurrentState().getFunctionType())) {
+                handleRefinement(subjectState);
+              }
             }
           });
     }
@@ -294,5 +300,12 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
     subjectStateRepository.save((SubjectStateImpl) subjectState);
     LOG.info("Changed subject S_ID [{}] to state: {}", subjectState.getSubject().getSId(),
         nextState);
+  }
+
+  private void handleRefinement(final SubjectState subjectState) {
+    LOG.info("Special handling since [{}] is a REFINEMENT", subjectState);
+
+    getContext().parent().tell(new ExecuteRefinementMessage.Request(subjectState.getSsId()),
+        getSelf());
   }
 }

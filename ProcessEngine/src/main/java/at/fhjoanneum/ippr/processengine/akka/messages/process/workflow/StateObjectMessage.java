@@ -7,10 +7,12 @@ public class StateObjectMessage {
   public static class Request {
     private final Long piId;
     private final Long userId;
+    private final boolean internal;
 
-    public Request(final Long piId, final Long userId) {
+    public Request(final Long piId, final Long userId, final boolean internal) {
       this.piId = piId;
       this.userId = userId;
+      this.internal = internal;
     }
 
     public Long getPiId() {
@@ -19,6 +21,10 @@ public class StateObjectMessage {
 
     public Long getUserId() {
       return userId;
+    }
+
+    public boolean isInternal() {
+      return internal;
     }
   }
 

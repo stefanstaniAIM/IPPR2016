@@ -73,8 +73,10 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
             subjectStateRepository.getSubjectStateOfUser(request.getPiId(), request.getUserId()))
         .get();
 
-    if (StateFunctionType.RECEIVE.equals(subjectState.getCurrentState().getFunctionType())
-        && SubjectSubState.TO_RECEIVE.equals(subjectState.getSubState())) {
+    if ((StateFunctionType.RECEIVE.equals(subjectState.getCurrentState().getFunctionType())
+        && SubjectSubState.TO_RECEIVE.equals(subjectState.getSubState()))
+        || (!request.isInternal() && StateFunctionType.REFINEMENT
+            .equals(subjectState.getCurrentState().getFunctionType()))) {
       LOG.info("Nothing to do here for [{}]", subjectState);
       getSender().tell(new StateObjectMessage.Response(null), getSelf());
       return;
@@ -221,16 +223,25 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
       final Set<BusinessObjectModel> retrievedBusinessObjectModels =
           Sets.newHashSet(subjectState.getCurrentMessageFlow().getBusinessObjectModels());
       nextStates = currentState.getToStates().stream()
+          .filter(transition -> TransitionType.IF_CONDITION.equals(transition.getTransitionType()))
           .filter(
               transition -> checkIfIncludedForNextStates(retrievedBusinessObjectModels, transition))
           .map(state -> new StateDTO(state.getToState().getSId(), state.getToState().getName(),
               StateEventType.END.equals(state.getToState().getEventType())))
           .collect(Collectors.toList());
+
+      currentState.getToStates().stream()
+          .filter(transition -> TransitionType.NORMAL.equals(transition.getTransitionType()))
+          .map(transition -> new StateDTO(transition.getToState().getSId(),
+              transition.getToState().getName(),
+              StateEventType.END.equals(transition.getToState().getEventType())))
+          .forEachOrdered(nextStates::add);
     } else {
       LOG.debug("No special check is necessary, so return all states for [{}]", currentState);
       nextStates = currentState.getToStates().stream()
-          .map(state -> new StateDTO(state.getToState().getSId(), state.getToState().getName(),
-              StateEventType.END.equals(state.getToState().getEventType())))
+          .map(transition -> new StateDTO(transition.getToState().getSId(),
+              transition.getToState().getName(),
+              StateEventType.END.equals(transition.getToState().getEventType())))
           .collect(Collectors.toList());
     }
 

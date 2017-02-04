@@ -252,7 +252,7 @@ public class ProcessServiceImpl implements ProcessService {
   public Future<StateObjectDTO> getStateObjectOfUserInProcess(final Long piId, final Long userId) {
     final CompletableFuture<StateObjectDTO> future = new CompletableFuture<>();
 
-    final StateObjectMessage.Request request = new StateObjectMessage.Request(piId, userId);
+    final StateObjectMessage.Request request = new StateObjectMessage.Request(piId, userId, false);
 
     PatternsCS.ask(userSupervisorActor, request, Global.TIMEOUT).toCompletableFuture()
         .whenComplete((msg, exc) -> {

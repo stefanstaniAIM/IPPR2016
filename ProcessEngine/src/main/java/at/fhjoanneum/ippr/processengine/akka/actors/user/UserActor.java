@@ -16,6 +16,7 @@ import at.fhjoanneum.ippr.persistence.objects.engine.enums.ProcessInstanceState;
 import at.fhjoanneum.ippr.processengine.akka.config.Global;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.info.TasksOfUserMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.initialize.UserActorInitializeMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.refinement.ExecuteRefinementMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.stop.ProcessStopMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.wakeup.UserActorWakeUpMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.AssignUsersMessage;
@@ -68,6 +69,8 @@ public class UserActor extends UntypedActor {
       handleMessageReceived(obj);
     } else if (obj instanceof AssignUsersMessage.Request) {
       handleAssignUsersMessage(obj);
+    } else if (obj instanceof ExecuteRefinementMessage.Request) {
+      handleExecuteRefinementMessage(obj);
     } else {
       unhandled(obj);
     }
@@ -123,5 +126,9 @@ public class UserActor extends UntypedActor {
 
   private void handleAssignUsersMessage(final Object obj) {
     getContext().parent().forward(obj, getContext());
+  }
+
+  private void handleExecuteRefinementMessage(final Object obj) {
+    taskManager.executeTask(TaskAllocation.EXECUTE_REFINEMENT_TASK, getContext(), obj);
   }
 }

@@ -6,6 +6,7 @@ import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import at.fhjoanneum.ippr.persistence.entities.model.businessobject.BusinessObjectModelBuilder;
 import at.fhjoanneum.ippr.persistence.entities.model.businessobject.field.BusinessObjectFieldModelBuilder;
@@ -30,7 +31,7 @@ import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
 import at.fhjoanneum.ippr.persistence.objects.model.transition.Transition;
 
-// @Component
+@Component
 @Transactional
 public class VacationRequest extends AbstractExample {
 
