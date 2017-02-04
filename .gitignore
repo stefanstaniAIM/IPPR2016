@@ -52,6 +52,10 @@ local.properties
 # STS (Spring Tool Suite)
 .springBeans
 
+#Log
+*.log
+.log
+
 # Code Recommenders
 .recommenders/
 node_modules
