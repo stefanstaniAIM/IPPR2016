@@ -218,25 +218,25 @@ public class VacationRequestFromOWL extends AbstractExample {
                         System.out.println("--is SendTransition");
                     }
 
-                    if(transitionResource.hasProperty(refersToProperty)){
+                    if(transitionResource.hasProperty(refersToProperty)) {
                         Resource refersTo = transitionResource.getProperty(refersToProperty).getResource();
                         Resource sender = refersTo.getProperty(senderProperty).getResource();
                         Resource receiver = refersTo.getProperty(receiverProperty).getResource();
                         String messageFlowLabel = refersTo.getProperty(labelProperty).getString();
-                        System.out.println("--With MessageFlow "+messageFlowLabel);
-                        System.out.println("---With Sender "+sender.getProperty(labelProperty).getString());
-                        System.out.println("---With Receiver "+receiver.getProperty(labelProperty).getString());
+                        System.out.println("--With MessageFlow " + messageFlowLabel);
+                        System.out.println("---With Sender " + sender.getProperty(labelProperty).getString());
+                        System.out.println("---With Receiver " + receiver.getProperty(labelProperty).getString());
 
                         Resource messageType = refersTo.getProperty(messageTypeProperty).getResource();
                         String messageTypeLabel = messageType.getProperty(labelProperty).getString();
-                        System.out.println("---With Message "+messageTypeLabel);
+                        System.out.println("---With Message " + messageTypeLabel);
                         String bomIdentifier = messageType.getProperty(identifierProperty).getString();
 
                         List<OWLStateDTO> transitionStateDTOs = new ArrayList<>();
                         transitionStateDTOs.add(stateDTOMap.get(sourceStateIdentifier));
                         transitionStateDTOs.add(stateDTOMap.get(targetStateIdentifier));
                         OWLBomDTO bomDTO = bomDTOMap.get(bomIdentifier);
-                        if(bomDTO == null){
+                        if (bomDTO == null) {
                             bomDTO = new OWLBomDTO(messageTypeLabel, transitionStateDTOs);
                             bomDTOMap.put(bomIdentifier, bomDTO);
                         } else {
@@ -244,21 +244,25 @@ public class VacationRequestFromOWL extends AbstractExample {
                         }
                         bomDTOs.add(bomDTO);
 
-                        String senderIdentifier = sender.getProperty(identifierProperty).getString();
-                        String receiverIdentifier = receiver.getProperty(identifierProperty).getString();
-                        OWLSubjectModelDTO senderDTO = subjectModelDTOMap.get(senderIdentifier);
-                        OWLSubjectModelDTO receiverDTO = subjectModelDTOMap.get(receiverIdentifier);
-                        if(senderDTO == null){
-                            senderDTO = new OWLSubjectModelDTO(sender.getProperty(labelProperty).getString());
-                            subjectModelDTOMap.put(senderIdentifier, senderDTO);
-                        }
-                        if(receiverDTO == null){
-                            receiverDTO = new OWLSubjectModelDTO(receiver.getProperty(labelProperty).getString());
-                            subjectModelDTOMap.put(receiverIdentifier, receiverDTO);
-                        }
+                        if (sourceState.hasProperty(typeProperty, sendStateProperty)) {
 
-                        //null sollte der State sein in unserem Fall, aber im OWL ist das auf der transition und nicht im state??
-                        //OWLMessageFlowDTO messageFlowDTO = new OWLMessageFlowDTO(senderDTO, receiverDTO, null, bomDTO);
+                            String senderIdentifier = sender.getProperty(identifierProperty).getString();
+                            String receiverIdentifier = receiver.getProperty(identifierProperty).getString();
+                            OWLSubjectModelDTO senderDTO = subjectModelDTOMap.get(senderIdentifier);
+                            OWLSubjectModelDTO receiverDTO = subjectModelDTOMap.get(receiverIdentifier);
+                            if (senderDTO == null) {
+                                senderDTO = new OWLSubjectModelDTO(sender.getProperty(labelProperty).getString());
+                                subjectModelDTOMap.put(senderIdentifier, senderDTO);
+                            }
+                            if (receiverDTO == null) {
+                                receiverDTO = new OWLSubjectModelDTO(receiver.getProperty(labelProperty).getString());
+                                subjectModelDTOMap.put(receiverIdentifier, receiverDTO);
+                            }
+
+                            //nur wenn source state = endstate
+                            OWLMessageFlowDTO messageFlowDTO = new OWLMessageFlowDTO(senderDTO, receiverDTO, stateDTOMap.get(sourceStateIdentifier), bomDTO);
+                            messageFlowDTOs.add(messageFlowDTO);
+                        }
                     }
 
 
@@ -292,7 +296,7 @@ public class VacationRequestFromOWL extends AbstractExample {
 
             }
 
-            processModelDTO = new OWLProcessModelDTO(processName, LocalDateTime.now(), new ArrayList<>(subjectModelDTOMap.values()), stateDTOs, new ArrayList<>(transitionDTOs), new ArrayList<>(bomDTOs), null);
+            processModelDTO = new OWLProcessModelDTO(processName, LocalDateTime.now(), new ArrayList<>(subjectModelDTOMap.values()), stateDTOs, new ArrayList<>(transitionDTOs), new ArrayList<>(bomDTOs), messageFlowDTOs);
         }
       } catch (Exception e) {
           e.printStackTrace();
