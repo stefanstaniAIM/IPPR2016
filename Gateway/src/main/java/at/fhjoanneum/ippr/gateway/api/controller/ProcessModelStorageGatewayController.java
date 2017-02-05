@@ -62,7 +62,7 @@ public class ProcessModelStorageGatewayController {
     };
   }
 
-  @RequestMapping(value = "permissions", method = RequestMethod.GET)
+  @RequestMapping(value = "api/permissions", method = RequestMethod.GET)
   public @ResponseBody Callable<ResponseEntity<FieldPermissionDTO[]>> getFieldPermissions(
       final HttpServletRequest request) {
     return () -> {
