@@ -21,6 +21,14 @@ public class StateObjectChangeDTO implements Serializable {
 
   public StateObjectChangeDTO() {}
 
+  public StateObjectChangeDTO(final Long nextStateId,
+      final List<BusinessObjectInstanceDTO> businessObjects,
+      final List<UserAssignmentDTO> userAssignments) {
+    this.nextStateId = nextStateId;
+    this.businessObjects = businessObjects;
+    this.userAssignments = userAssignments;
+  }
+
   public Long getNextStateId() {
     return nextStateId;
   }
