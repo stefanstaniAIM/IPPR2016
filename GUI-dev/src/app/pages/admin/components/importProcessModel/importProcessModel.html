@@ -57,12 +57,15 @@
            </div>
          </div>
       </ba-card>
-      <ba-card title="Business Objects" class="col-xlg-12 col-xl-12 col-lg-12 col-sm-12 col-xs-12">
+      <ba-card title="Business Objects" class="col-xlg-12 col-xl-12 col-lg-12 col-sm-12 col-xs-12 businessObjectsBuilder">
         <div class="row">
            <div class="col-sm-2">
              <ul class="list-group">
-               <button class="list-group-item list-group-item-action" type="button" *ngFor="let businessObject of processModel.boms">{{businessObject.name}}</button>
+               <button class="list-group-item list-group-item-action" [ngClass]="{'list-group-item-selected': businessObject === currentSelectedBusinessObject }" type="button" *ngFor="let businessObject of processModel.boms" (click)="getFormData(businessObject)">{{businessObject.name}}</button>
              </ul>
+           </div>
+           <div class="col-sm-10">
+             <div class="formBuilder"></div>
            </div>
          </div>
       </ba-card>
