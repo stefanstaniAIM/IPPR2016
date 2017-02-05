@@ -155,7 +155,7 @@ public class VacationRequest extends AbstractExample {
 
     // new refinement
     final State empState6 = new StateBuilder().subjectModel(employee).name("Execute Refinement")
-        .functionType(StateFunctionType.REFINEMENT).refinementClass("test").build();
+        .functionType(StateFunctionType.REFINEMENT).refinementClass("TestRefinement").build();
     final BusinessObjectModel boRef =
         new BusinessObjectModelBuilder().name("refinement bo").addToState(empState6).build();
     final BusinessObjectFieldModel boRefF1 =

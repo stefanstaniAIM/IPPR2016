@@ -65,4 +65,8 @@ public class BusinessObjectFieldDTO implements Serializable {
   public int getIndent() {
     return indent;
   }
+
+  public void setValue(final String value) {
+    this.value = value;
+  }
 }

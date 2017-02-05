@@ -15,6 +15,11 @@ public class BusinessObjectFieldInstanceDTO implements Serializable {
 
   public BusinessObjectFieldInstanceDTO() {}
 
+  public BusinessObjectFieldInstanceDTO(final Long bofmId, final String value) {
+    this.bofmId = bofmId;
+    this.value = value;
+  }
+
   public Long getBofmId() {
     return bofmId;
   }

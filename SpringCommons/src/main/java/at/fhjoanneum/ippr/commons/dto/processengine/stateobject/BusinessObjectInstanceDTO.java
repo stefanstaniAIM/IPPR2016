@@ -19,11 +19,21 @@ public class BusinessObjectInstanceDTO implements Serializable {
 
   private Long bomId;
 
-  private final List<BusinessObjectFieldInstanceDTO> fields = Lists.newArrayList();
+  private List<BusinessObjectFieldInstanceDTO> fields = Lists.newArrayList();
 
-  private final List<BusinessObjectInstanceDTO> children = Lists.newArrayList();
+  private List<BusinessObjectInstanceDTO> children = Lists.newArrayList();
 
   public BusinessObjectInstanceDTO() {}
+
+
+
+  public BusinessObjectInstanceDTO(final Long bomId,
+      final List<BusinessObjectFieldInstanceDTO> fields,
+      final List<BusinessObjectInstanceDTO> children) {
+    this.bomId = bomId;
+    this.fields = fields;
+    this.children = children;
+  }
 
   public Long getBomId() {
     return bomId;
