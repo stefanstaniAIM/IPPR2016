@@ -11,8 +11,6 @@ public interface SubjectModel {
 
   String getName();
 
-  String getGroup();
-
   ProcessModel getProcessModel();
 
   List<State> getStates();

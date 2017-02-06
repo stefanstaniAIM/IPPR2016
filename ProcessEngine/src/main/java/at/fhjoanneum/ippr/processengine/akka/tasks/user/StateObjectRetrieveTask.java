@@ -210,7 +210,7 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
     final SubjectModel subjectModel = messageFlow.getReceiver();
     final Subject subject =
         subjectRepository.getSubjectForSubjectModelInProcess(piId, subjectModel.getSmId());
-    return new SubjectDTO(subjectModel.getSmId(), subject.getUser(), subjectModel.getGroup(),
+    return new SubjectDTO(subjectModel.getSmId(), subject.getUser(),
         subjectModel.getAssignedRules());
   }
 

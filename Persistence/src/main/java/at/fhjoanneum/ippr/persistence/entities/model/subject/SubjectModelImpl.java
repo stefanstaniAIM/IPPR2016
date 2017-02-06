@@ -48,11 +48,6 @@ public class SubjectModelImpl implements SubjectModel, Serializable {
   @JoinColumn(name = "pm_id")
   private ProcessModelImpl processModel;
 
-  @Column
-  @NotBlank
-  @Size(min = 1, max = 100)
-  private String assignedGroup;
-
   @OneToMany(mappedBy = "subjectModel")
   @NotNull
   private final List<StateImpl> states = Lists.newArrayList();
@@ -64,10 +59,8 @@ public class SubjectModelImpl implements SubjectModel, Serializable {
 
   SubjectModelImpl() {}
 
-  SubjectModelImpl(final String name, final String assignedGroup,
-      final List<String> assignedRules) {
+  SubjectModelImpl(final String name, final List<String> assignedRules) {
     this.name = name;
-    this.assignedGroup = assignedGroup;
     this.assignedRules = assignedRules;
   }
 
@@ -79,11 +72,6 @@ public class SubjectModelImpl implements SubjectModel, Serializable {
   @Override
   public String getName() {
     return name;
-  }
-
-  @Override
-  public String getGroup() {
-    return assignedGroup;
   }
 
   @Override

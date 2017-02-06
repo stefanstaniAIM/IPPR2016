@@ -342,7 +342,7 @@ public class VacationRequestFromOWL extends AbstractExample {
   private SubjectModel createSubjectModel(final String name, final String assignedGroup,
       final List<String> assignedRules) {
     final SubjectModelBuilder builder = new SubjectModelBuilder();
-    builder.name(name).assignedGroup(assignedGroup);
+    builder.name(name);
     for (final String rule : assignedRules) {
       builder.addAssignedRule(rule);
     }

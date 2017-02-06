@@ -9,16 +9,13 @@ public class SubjectModelDTO {
 
   private Long smId;
   private String name;
-  private String group;
   private List<String> assignedRules;
 
   public SubjectModelDTO() {}
 
-  public SubjectModelDTO(final Long smId, final String name, final String group,
-      final List<String> assignedRules) {
+  public SubjectModelDTO(final Long smId, final String name, final List<String> assignedRules) {
     this.smId = smId;
     this.name = name;
-    this.group = group;
     this.assignedRules = assignedRules;
   }
 
@@ -28,10 +25,6 @@ public class SubjectModelDTO {
 
   public String getName() {
     return name;
-  }
-
-  public String getGroup() {
-    return group;
   }
 
   public List<String> getAssignedRules() {
