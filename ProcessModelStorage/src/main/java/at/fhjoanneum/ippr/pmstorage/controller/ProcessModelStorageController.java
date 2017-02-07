@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -69,5 +70,13 @@ public class ProcessModelStorageController {
     return () -> {
       return processModelService.getPermissions().get();
     };
+  }
+
+  @RequestMapping(value = "processes/disable/{pmId}", method = RequestMethod.POST)
+  public void disableProcessModel(@PathVariable("pmId") final Long pmId) {
+    final Runnable runnable = () -> {
+      processModelService.disableProcessModel(pmId);
+    };
+    runnable.run();
   }
 }

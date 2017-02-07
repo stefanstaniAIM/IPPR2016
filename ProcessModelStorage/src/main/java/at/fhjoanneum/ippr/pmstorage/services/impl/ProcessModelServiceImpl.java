@@ -3,10 +3,9 @@ package at.fhjoanneum.ippr.pmstorage.services.impl;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
-
-import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 
@@ -25,10 +26,13 @@ import at.fhjoanneum.ippr.commons.dto.pmstorage.SubjectModelDTO;
 import at.fhjoanneum.ippr.persistence.entities.model.process.ProcessModelImpl;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldPermission;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldType;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.ProcessModelState;
+import at.fhjoanneum.ippr.persistence.objects.model.process.ProcessModel;
 import at.fhjoanneum.ippr.pmstorage.repositories.ProcessModelRepository;
 import at.fhjoanneum.ippr.pmstorage.services.ProcessModelService;
 
 
+@Transactional(isolation = Isolation.READ_COMMITTED)
 @Service
 public class ProcessModelServiceImpl implements ProcessModelService {
 
@@ -39,7 +43,6 @@ public class ProcessModelServiceImpl implements ProcessModelService {
 
   @Override
   @Async
-  @Transactional
   public Future<List<ProcessModelDTO>> findActiveProcessModels(final Pageable pageable) {
     final List<ProcessModelImpl> results = processModelRepository.findActiveProcesses();
 
@@ -50,7 +53,6 @@ public class ProcessModelServiceImpl implements ProcessModelService {
 
   @Override
   @Async
-  @Transactional
   public Future<List<ProcessModelDTO>> findActiveProcessModelsToStart(final List<String> rules,
       final Pageable pageable) {
     final List<ProcessModelImpl> results = processModelRepository.findActiveProcessesToStart(rules);
@@ -91,5 +93,16 @@ public class ProcessModelServiceImpl implements ProcessModelService {
     final List<FieldPermissionDTO> permissions = Arrays.stream(FieldPermission.values())
         .map(permission -> new FieldPermissionDTO(permission.name())).collect(Collectors.toList());
     return new AsyncResult<List<FieldPermissionDTO>>(permissions);
+  }
+
+  @Async
+  @Override
+  public void disableProcessModel(final Long pmId) {
+    final Optional<ProcessModel> processModel =
+        Optional.ofNullable(processModelRepository.findOne(pmId));
+    if (processModel.isPresent()) {
+      processModel.get().setState(ProcessModelState.INACTIVE);
+      LOG.info("Disabled [{}]", processModel.get());
+    }
   }
 }

@@ -19,4 +19,6 @@ public interface ProcessModelService {
   Future<List<FieldTypeDTO>> getFieldTypes();
 
   Future<List<FieldPermissionDTO>> getPermissions();
+
+  void disableProcessModel(Long pmId);
 }

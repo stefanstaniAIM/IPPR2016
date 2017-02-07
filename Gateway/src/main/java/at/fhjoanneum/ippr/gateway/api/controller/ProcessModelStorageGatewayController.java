@@ -1,5 +1,6 @@
 package at.fhjoanneum.ippr.gateway.api.controller;
 
+import java.net.URISyntaxException;
 import java.util.concurrent.Callable;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -68,5 +70,17 @@ public class ProcessModelStorageGatewayController {
     return () -> {
       return processModelStorageCaller.getPermissions().get();
     };
+  }
+
+  @RequestMapping(value = "api/processes/disable/{pmId}", method = RequestMethod.POST)
+  public void disableProcessModel(@PathVariable("pmId") final Long pmId) {
+    final Runnable runnable = () -> {
+      try {
+        processModelStorageCaller.disableProcessModel(pmId);
+      } catch (final URISyntaxException e) {
+        LOG.error(e.getMessage());
+      }
+    };
+    runnable.run();
   }
 }

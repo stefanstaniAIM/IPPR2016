@@ -72,4 +72,12 @@ public class ProcessModelStorageCallerImpl implements Caller {
 
     return createRequest(uri, HttpMethod.GET, null, FieldPermissionDTO[].class, null);
   }
+
+  @Async
+  public void disableProcessModel(final Long pmId) throws URISyntaxException {
+    final URIBuilder uri = new URIBuilder(gatewayConfig.getProcessModelStorageAddress())
+        .setPath("processes/disable/" + pmId);
+    createRequest(uri, HttpMethod.POST, null, null, null);
+    return;
+  }
 }
