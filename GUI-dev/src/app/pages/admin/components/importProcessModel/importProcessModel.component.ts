@@ -15,7 +15,7 @@ export class ImportProcessModel implements OnInit {
    formBuilder;
    buildedBusinessObjects = {};
    currentSelectedBusinessObject;
-   currentSelectedField;
+   currentSelectedFieldId;
    currentBofms;
    buildedBofps = {};
 
@@ -75,7 +75,7 @@ export class ImportProcessModel implements OnInit {
     processModelResult = this.processModel;
     processModelResult.bofms = this.getBofms();
     processModelResult.bofps = [];
-    Object.keys(this.buildedBofps).forEach(a => processModelResult.bofps = processModelResult.bofps.concat(Object.values(this.buildedBofps[a])));
+    Object.keys(this.buildedBofps).forEach(a => processModelResult.bofps = processModelResult.bofps.concat((<any>Object).values(this.buildedBofps[a])));
   }
 
   getBofms(){
@@ -100,6 +100,7 @@ export class ImportProcessModel implements OnInit {
   }
 
   initFormBuilder(businessObject): void {
+    var that = this;
     var options = {
       dataType: 'json', // default: 'xml',
       typeUserAttrs: {
@@ -127,6 +128,18 @@ export class ImportProcessModel implements OnInit {
       showActionButtons: false
     };
     this.formBuilder = jQuery(".formBuilder").formBuilder(options).data('formBuilder');
+
+    //Timeout, otherwise the formData will still be the old value
+    document.addEventListener("fieldAdded", function(e){
+      setTimeout(function(){
+        that.getFormData(that.currentSelectedBusinessObject);
+      }, 250);
+    });
+    document.addEventListener("fieldRemoved", function(e){
+      setTimeout(function(){
+        that.getFormData(that.currentSelectedBusinessObject);
+      }, 250);
+    });
   }
 
   getFormData(businessObject): void {

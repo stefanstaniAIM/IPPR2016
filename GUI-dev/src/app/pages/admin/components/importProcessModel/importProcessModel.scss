@@ -5,3 +5,24 @@
     margin-bottom: 0 !important;
   }
 }
+
+.subheader {
+  color: #ffffff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  height: 44px;
+  font-size: 16px;
+  padding: 14px 22px;
+  margin-bottom: 10px;
+  h3 {
+    font-weight: 400;
+    font-size: 14px;
+    text-transform: uppercase;
+    opacity: 0.9;
+    color: #ffffff;
+  }
+}
+
+.noFieldsInfo {
+  text-align: center;
+  font-style: italic;
+}

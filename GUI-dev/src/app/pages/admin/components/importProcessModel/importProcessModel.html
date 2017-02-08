@@ -67,18 +67,19 @@
            <div class="col-sm-10">
              <div class="formBuilder"></div>
            </div>
-           <button class="btn btn-primary" type="button">Save</button>
          </div>
+         <br />
          <div class="row permissions">
-           <h4>Permissions</h4>
+           <div class="subheader"><h3>Feld-Berechtigungen</h3></div>
+           <div class="noFieldsInfo" *ngIf="!currentBofms || currentBofms.length === 0">Zu diesem Business Object gibt es noch keine Felder!</div>
            <div class="col-sm-2">
              <ul class="list-group">
-               <button class="list-group-item list-group-item-action" [ngClass]="{'list-group-item-selected': currentSelectedField === field }" type="button" *ngFor="let field of currentBofms" (click)="currentSelectedField = field">{{field.name}}</button>
+               <button class="list-group-item list-group-item-action" [ngClass]="{'list-group-item-selected': currentSelectedFieldId === field.id }" type="button" *ngFor="let field of currentBofms" (click)="currentSelectedFieldId = field.id">{{field.name}}</button>
              </ul>
            </div>
            <div class="col-sm-10">
              <div *ngFor="let field of currentBofms">
-               <table class="table table-striped" *ngIf="currentSelectedField === field">
+               <table class="table table-striped" *ngIf="currentSelectedFieldId === field.id">
                   <thead>
                      <tr>
                         <th>State</th>
