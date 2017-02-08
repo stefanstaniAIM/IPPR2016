@@ -13,7 +13,7 @@ export class ImportProcessModel implements OnInit {
    rules;
    error = undefined;
    formBuilder;
-   buildedBusinessObjects = [];
+   buildedBusinessObjects = {};
    currentSelectedBusinessObject;
 
   constructor(protected service:ProcessesService) {}
@@ -39,7 +39,7 @@ export class ImportProcessModel implements OnInit {
              console.log(data);
              that.processModel = JSON.parse(data['_body']);
              that.processModel.boms.forEach(businessObject => {
-               that.buildedBusinessObjects[businessObject.name] = {};
+               that.buildedBusinessObjects[businessObject.id] = {};
              });
              that.initRules();
           },
@@ -67,7 +67,27 @@ export class ImportProcessModel implements OnInit {
 
   uploadProcessModel(form):void {
     var that = this;
-    console.log(form);
+    this.getFormData(this.currentSelectedBusinessObject);
+    var processModelResult;
+    processModelResult = this.processModel;
+    processModelResult.bofms = [];
+    var bofmId = 0;
+    //buildedBusinessObjects should not be empty...
+    for(var bom in this.buildedBusinessObjects) {
+      if(Object.keys(this.buildedBusinessObjects[bom]).length > 0) {
+        var values = JSON.parse(this.buildedBusinessObjects[bom]);
+        values.forEach(value => {
+          processModelResult.bofms.push({
+            name: value.label,
+            type: value.type,
+            bom: bom,
+            id: bofmId++
+          })
+        });
+        console.log(this.buildedBusinessObjects[bom])
+      }
+    }
+    console.log(processModelResult);
   }
 
   initFormBuilder(businessObject): void {
@@ -81,11 +101,11 @@ export class ImportProcessModel implements OnInit {
 
   getFormData(businessObject): void {
     if(this.currentSelectedBusinessObject !== businessObject){
-      this.buildedBusinessObjects[this.currentSelectedBusinessObject.name] = this.formBuilder.formData;
-      var formData = this.buildedBusinessObjects[businessObject.name];
+      this.buildedBusinessObjects[this.currentSelectedBusinessObject.id] = this.formBuilder.formData;
+      var formData = this.buildedBusinessObjects[businessObject.id];
       formData = jQuery.isEmptyObject(formData) ? undefined : formData === "[]" ? undefined : formData;
       if(formData !== undefined){
-        //This is a hack, otherwise setData will not work correctly
+        //This is a necessary hack, otherwise setData will not work correctly
         this.formBuilder.actions.addField(
         	{
         		"type": "paragraph",
@@ -98,6 +118,8 @@ export class ImportProcessModel implements OnInit {
       } else {
         this.formBuilder.actions.clearFields();
       }
+    } else {
+      this.buildedBusinessObjects[businessObject.id] = this.formBuilder.formData;
     }
     this.currentSelectedBusinessObject = businessObject;
     console.log(this.formBuilder.formData);
