@@ -40,8 +40,16 @@ export class ProcessesService {
       return this._authHttp.get(this.restApi+'/processes/active?page=0');
    }
 
+   getTerminatedProcesses(){
+      return this._authHttp.get(this.restApi+'/processes/finished?page=0');
+   }
+
    getActiveProcessesForUser(){
      return this._authHttp.get(this.restApi+'/processes/active/'+this._user.getUid()+'?page=0');
+   }
+
+   getTerminatedProcessesForUser(){
+     return this._authHttp.get(this.restApi+'/processes/finished/'+this._user.getUid()+'?page=0');
    }
 
    getUserById(userId:number){

@@ -1,5 +1,6 @@
 import { Routes, RouterModule }  from '@angular/router';
 import { AuthGuard } from '../../auth.guard';
+import { AdminGuard } from '../../admin.guard';
 import { Admin } from './admin.component';
 import { ActiveProcesses } from './components/activeProcesses/activeProcesses.component';
 import { TerminatedProcesses } from './components/terminatedProcesses/terminatedProcesses.component';
@@ -11,7 +12,7 @@ const routes: Routes = [
   {
     path: '',
     component: Admin,
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, AdminGuard],
     children: [
       { path: 'active', component: ActiveProcesses },
       { path: 'terminated', component: TerminatedProcesses },
