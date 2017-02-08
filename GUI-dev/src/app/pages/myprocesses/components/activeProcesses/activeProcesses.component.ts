@@ -43,17 +43,4 @@ export class ActiveProcesses implements OnInit  {
   showProcess(piId:number){
     this.router.navigate(['../active', piId], { relativeTo: this.route });
   }
-
-  stopProcess(piId:number){
-    this.service.stopProcess(piId)
-    .subscribe(
-        data => {
-          this.ngOnInit();
-        },
-        err =>{
-          this.msg = {text: err, type: 'error'}
-          console.log(err);
-        }
-      );
-  }
 }
