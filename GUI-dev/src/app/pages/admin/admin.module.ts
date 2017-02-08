@@ -13,6 +13,7 @@ import { TerminatedProcesses } from './components/terminatedProcesses/terminated
 import { ProcessModels } from './components/processModels/processModels.component';
 
 import { AuthGuard } from '../../auth.guard';
+import { AdminGuard } from '../../admin.guard';
 
 @NgModule({
   imports: [
@@ -31,6 +32,7 @@ import { AuthGuard } from '../../auth.guard';
   ],
   providers: [
     AuthGuard,
+    AdminGuard
   ]
 })
 export default class AdminModule {}

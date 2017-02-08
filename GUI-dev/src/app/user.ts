@@ -26,8 +26,6 @@ export class User {
    }
 
    public isAdmin() {
-
-      //return true;
       return this.rules.filter(function(rule){return rule.name.toLowerCase() === "admin_rule"}).length ? true : false;
    }
 
