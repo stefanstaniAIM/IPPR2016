@@ -4,20 +4,40 @@
    }
 
    .form-elements label {
-       color: #000000 !important;
+       color: #000000;
    }
 
    .form-elements a {
-       color: #000000 !important;
+       color: #000000;
    }
 
    .form-builder label {
-       color: #000000 !important;
+       color: #000000;
    }
 
    li input {
-       color: #000000 !important;
+       color: #000000;
    }
+   
+   .form-elements {
+      .required-wrap,
+      .toggle-wrap,
+      .description-wrap,
+      .className-wrap,
+      .name-wrap,
+      .access-wrap,
+      .value-wrap,
+      .min-wrap,
+      .max-wrap,
+      .step-wrap,
+      .other-wrap,
+      .placeholder-wrap, 
+      .rows-wrap, 
+      .maxlength-wrap {
+         display: none;
+      }
+   }
+   
    
 }
 .businessObjectsBuilder {

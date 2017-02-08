@@ -71,12 +71,22 @@ export class ImportProcessModel implements OnInit {
     var processModelResult;
     processModelResult = this.processModel;
     processModelResult.bofms = [];
+    processModelResult.bofps = [];
     var bofmId = 0;
     //buildedBusinessObjects should not be empty...
     for(var bom in this.buildedBusinessObjects) {
       if(Object.keys(this.buildedBusinessObjects[bom]).length > 0) {
         var values = JSON.parse(this.buildedBusinessObjects[bom]);
         values.forEach(value => {
+          bofmValues = []; //not sure how to really find them
+          bofmValues.forEach(bofmValue => {
+            processModelResult.bofps.push({
+              bofmId: bofmId,
+              stateId: bofmValue.stateId,
+              permission: bofmValue.permission,
+              mandatory: bofmValue.mandatory
+            });
+          });
           processModelResult.bofms.push({
             name: value.label,
             type: value.type,
