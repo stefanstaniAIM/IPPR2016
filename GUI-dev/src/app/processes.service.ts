@@ -79,4 +79,28 @@ export class ProcessesService {
    getRules(){
      return this._authHttp.get(this.restApi+'/rules/');
    }
+
+   getProcessesThatStartedHoursAgo(hoursBefore:number){
+     return this._authHttp.get(this.restApi+'/processes/count/started/'+hoursBefore);
+   }
+
+   getProcessesThatStartedHoursAgoForUser(hoursBefore:number){
+     return this._authHttp.get(this.restApi+'/processes/count/started/'+hoursBefore+'/'+this._user.getUid());
+   }
+
+   getProcessesThatFinishedHoursAgo(hoursBefore:number){
+     return this._authHttp.get(this.restApi+'/processes/count/finished/'+hoursBefore);
+   }
+
+   getProcessesThatFinishedHoursAgoForUser(hoursBefore:number){
+     return this._authHttp.get(this.restApi+'/processes/count/finished/'+hoursBefore+'/'+this._user.getUid());
+   }
+
+   getProcessesInState(state:string){
+     return this._authHttp.get(this.restApi+'/processes/count/'+state);
+   }
+
+   getProcessesInStateForUser(state:string){
+     return this._authHttp.get(this.restApi+'/processes/count/'+state+'/'+this._user.getUid());
+   }
 }
