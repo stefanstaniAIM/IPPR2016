@@ -15,6 +15,9 @@ export class ImportProcessModel implements OnInit {
    formBuilder;
    buildedBusinessObjects = {};
    currentSelectedBusinessObject;
+   currentSelectedField;
+   currentBofms;
+   buildedBofps = {};
 
   constructor(protected service:ProcessesService) {}
 
@@ -67,49 +70,67 @@ export class ImportProcessModel implements OnInit {
 
   uploadProcessModel(form):void {
     var that = this;
-    this.getFormData(this.currentSelectedBusinessObject);
     var processModelResult;
+    this.getFormData(this.currentSelectedBusinessObject);
     processModelResult = this.processModel;
-    processModelResult.bofms = [];
+    processModelResult.bofms = this.getBofms();
     processModelResult.bofps = [];
-    var bofmId = 0;
-    //buildedBusinessObjects should not be empty...
-    for(var bom in this.buildedBusinessObjects) {
-      if(Object.keys(this.buildedBusinessObjects[bom]).length > 0) {
-        var values = JSON.parse(this.buildedBusinessObjects[bom]);
-        values.forEach(value => {
-          bofmValues = []; //not sure how to really find them
-          bofmValues.forEach(bofmValue => {
-            processModelResult.bofps.push({
-              bofmId: bofmId,
-              stateId: bofmValue.stateId,
-              permission: bofmValue.permission,
-              mandatory: bofmValue.mandatory
-            });
+    Object.keys(this.buildedBofps).forEach(a => processModelResult.bofps = processModelResult.bofps.concat(Object.values(this.buildedBofps[a])));
+  }
+
+  getBofms(){
+    var result = [];
+    if(this.currentSelectedBusinessObject){
+      //buildedBusinessObjects should not be empty...
+      for(var bom in this.buildedBusinessObjects) {
+        if(Object.keys(this.buildedBusinessObjects[bom]).length > 0) {
+          var values = JSON.parse(this.buildedBusinessObjects[bom]);
+          values.forEach(value => {
+            result.push({
+              name: value.label,
+              type: value.type,
+              bomId: bom,
+              id: value.name
+            })
           });
-          processModelResult.bofms.push({
-            name: value.label,
-            type: value.type,
-            bom: bom,
-            id: bofmId++
-          })
-        });
-        console.log(this.buildedBusinessObjects[bom])
+        }
       }
     }
-    console.log(processModelResult);
+    return result;
   }
 
   initFormBuilder(businessObject): void {
     var options = {
       dataType: 'json', // default: 'xml',
-      disableFields: ['autocomplete', 'button', 'checkbox-group', 'file', 'header', 'hidden', 'paragraph', 'select', 'text'],
+      typeUserAttrs: {
+        "radio-group": {
+          permissions: {
+            label: 'Permissions'
+          },
+          mandatory: {
+            label: 'Mandatory'
+          }
+        },
+        text: {
+          className: {
+            label: 'Class',
+            options: {
+              'red form-control': 'Red',
+              'green form-control': 'Green',
+              'blue form-control': 'Blue'
+            },
+            style: 'border: 1px solid red'
+          }
+        }
+      },
+      disableFields: ['autocomplete', 'button', 'checkbox-group', 'file', 'header', 'hidden', 'paragraph', 'select', 'textarea'],
       showActionButtons: false
     };
     this.formBuilder = jQuery(".formBuilder").formBuilder(options).data('formBuilder');
   }
 
   getFormData(businessObject): void {
+    var that = this;
     if(this.currentSelectedBusinessObject !== businessObject){
       this.buildedBusinessObjects[this.currentSelectedBusinessObject.id] = this.formBuilder.formData;
       var formData = this.buildedBusinessObjects[businessObject.id];
@@ -132,6 +153,41 @@ export class ImportProcessModel implements OnInit {
       this.buildedBusinessObjects[businessObject.id] = this.formBuilder.formData;
     }
     this.currentSelectedBusinessObject = businessObject;
-    console.log(this.formBuilder.formData);
+    this.currentBofms = this.getBofms().filter(b => b.bomId === this.currentSelectedBusinessObject.id);
+    //Add new fields
+    var allBofms = this.getBofms();
+    allBofms.forEach(field => {
+      var boms = that.processModel.boms.filter(bom => bom.id === field.bomId);
+      if(!that.buildedBofps[field.id]) {
+        that.buildedBofps[field.id] = {};
+        boms.forEach(bom => {
+          bom.stateIds.forEach(stateId => {
+            that.buildedBofps[field.id][stateId] = {
+              read: true,
+              write: true,
+              mandatory: false,
+              stateId: stateId,
+              bofmId: field.id
+            }
+          })
+        })
+      }
+    });
+
+    //remove deleted fields
+    Object.keys(this.buildedBofps).forEach(fieldId => {
+      if(allBofms.filter(b => b.id === fieldId).length < 1) {
+          delete this.buildedBofps[fieldId];
+      }
+    });
+  }
+
+  getStateName(stateId): string {
+    return this.processModel.states.filter(s => s.id === stateId)[0].name;
+  }
+
+  getSubjectModelName(stateId): string {
+    var subjectModelId = this.processModel.states.filter(s => s.id === stateId)[0].subjectModelId;
+    return this.processModel.subjectModels.filter(sm => sm.id === subjectModelId)[0].name;
   }
 }

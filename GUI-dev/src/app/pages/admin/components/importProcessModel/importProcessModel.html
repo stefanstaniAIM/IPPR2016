@@ -67,6 +67,39 @@
            <div class="col-sm-10">
              <div class="formBuilder"></div>
            </div>
+           <button class="btn btn-primary" type="button">Save</button>
+         </div>
+         <div class="row permissions">
+           <h4>Permissions</h4>
+           <div class="col-sm-2">
+             <ul class="list-group">
+               <button class="list-group-item list-group-item-action" [ngClass]="{'list-group-item-selected': currentSelectedField === field }" type="button" *ngFor="let field of currentBofms" (click)="currentSelectedField = field">{{field.name}}</button>
+             </ul>
+           </div>
+           <div class="col-sm-10">
+             <div *ngFor="let field of currentBofms">
+               <table class="table table-striped" *ngIf="currentSelectedField === field">
+                  <thead>
+                     <tr>
+                        <th>State</th>
+                        <th>Subject Model</th>
+                        <th>Lesen</th>
+                        <th>Schreiben</th>
+                        <th>Erforderlich</th>
+                     </tr>
+                  </thead>
+                  <tbody *ngIf="currentSelectedBusinessObject">
+                     <tr *ngFor="let stateId of currentSelectedBusinessObject.stateIds">
+                        <td>{{getStateName(stateId)}}</td>
+                        <td>{{getSubjectModelName(stateId)}}</td>
+                        <td><input type="checkbox" name="{{field.id}}-{{stateId}}-read" [(ngModel)]="buildedBofps[field.id][stateId].read"/></td>
+                        <td><input type="checkbox" name="{{field.id}}-{{stateId}}-write" [(ngModel)]="buildedBofps[field.id][stateId].write"/></td>
+                        <td><input type="checkbox" name="{{field.id}}-{{stateId}}-mandatory" [(ngModel)]="buildedBofps[field.id][stateId].mandatory"/></td>
+                     </tr>
+                  </tbody>
+               </table>
+             </div>
+           </div>
          </div>
       </ba-card>
       <br />

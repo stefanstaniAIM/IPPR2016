@@ -20,7 +20,7 @@ import { AuthGuard } from '../../auth.guard';
     FormsModule,
     NgaModule,
     routing,
-    Pipes
+    Pipes,
   ],
   declarations: [
     Admin,
