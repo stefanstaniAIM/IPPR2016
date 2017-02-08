@@ -14,13 +14,14 @@ export class ProcessModels implements OnInit {
   constructor(protected service:ProcessesService) {}
 
   ngOnInit(): void {
-   this.service.getProcessModels()
+    var that = this;
+    this.service.getProcessModels()
       .subscribe(
          data => {
             console.log(data);
-            this.processModels = JSON.parse(data['_body']);
+            that.processModels = JSON.parse(data['_body']);
          },
-         err => this.error = err,
+         err => that.error = err,
          () => console.log('Request Complete')
        );
   }

@@ -22,29 +22,27 @@ export class AuthService {
   }
 
   login(username, password){
-     var headers = new Headers();
-     headers.append('Content-Type', 'application/json');
-
-     this._http.post(window.location.protocol + "//" + window.location.hostname + ":10000/user/login/", {'username':username, 'password':password}, {
+    var that = this;
+    var headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    this._http.post(window.location.protocol + "//" + window.location.hostname + ":10000/user/login/", {'username':username, 'password':password}, {
        headers: headers
-       })
-       .map(res => res.json())
+     }).map(res => res.json())
        .subscribe(
-         data => this.saveJwt(data.token),
+         data => that.saveJwt(data.token),
          err => console.error("Login failed: "+err)
        );
   }
 
-   saveJwt(jwt) {
-      var that = this;
-     if(jwt) {
-         localStorage.setItem('token', jwt);
-         this._backendRequest.load().then(function(){
-            that.initUser();
-         }
-         );
-     }
-   }
+  saveJwt(jwt) {
+    var that = this;
+    if(jwt) {
+      localStorage.setItem('token', jwt);
+      this._backendRequest.load().then(function(){
+        that.initUser();
+      });
+    }
+  }
 
    checkLogin(){
     if(!this.isLoggedIn()){

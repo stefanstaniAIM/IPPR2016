@@ -33,7 +33,7 @@ export class ImportProcessModel implements OnInit {
              console.log(data);
              that.processModel = JSON.parse(data['_body']);
              that.processModel.boms.forEach(businessObject => {
-               that.buildedBusinessObjects[businessObject.i = {};
+               that.buildedBusinessObjects[businessObject.id] = {};
              });
              that.initRules();
           },

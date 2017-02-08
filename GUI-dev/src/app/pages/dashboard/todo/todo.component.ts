@@ -26,10 +26,11 @@ export class Todo {
   ];
 
   constructor(private _baConfig:BaThemeConfigProvider, private _processService:ProcessesService, protected user:User) {
+    var that = this;
     this._processService.getProcessTasksForUser(this.user.getUid())
     .subscribe(
         data => {
-          this.tasks = JSON.parse(data['_body']);
+          that.tasks = JSON.parse(data['_body']);
         },
         err =>{
           console.log(err);

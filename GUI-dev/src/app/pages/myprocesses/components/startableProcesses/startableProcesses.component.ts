@@ -21,27 +21,29 @@ export class StartableProcesses implements OnInit {
   constructor(protected service:ProcessesService, protected route: ActivatedRoute, protected router: Router) {}
 
   ngOnInit(): void {
-   this.service.getProcessModels()
+    var that = this;
+    this.service.getProcessModels()
       .subscribe(
          data => {
-            this.processModels = JSON.parse(data['_body']);
+            that.processModels = JSON.parse(data['_body']);
          },
-         err => this.msg = {text: err, type: 'error'},
+         err => that.msg = {text: err, type: 'error'},
          () => console.log('Request Complete')
        );
   }
 
   startProcess(pmId:number):void {
+    var that = this;
     this.service.startProcess(pmId)
       .subscribe(
         data => {
-          this.msg = {text: "Process started", type: 'success'};
+          that.msg = {text: "Process started", type: 'success'};
           //this.modal.hide();
           var piId = JSON.parse(data['_body']).piId;
-          this.router.navigate(['../active', piId], { relativeTo: this.route });
+          that.router.navigate(['../active', piId], { relativeTo: that.route });
         },
         err =>{
-          this.msg = {text: err, type: 'error'}
+          that.msg = {text: err, type: 'error'}
           //this.modal.hide();
         },
         () => console.log("Request done")

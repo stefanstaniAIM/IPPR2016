@@ -24,17 +24,18 @@ export class ActiveProcesses implements OnInit  {
   }
 
   ngOnInit() {
+    var that = this;
     this.spinner.show();
     this.service.getActiveProcessesForUser()
     .subscribe(
         data => {
-          this.activeProcesses = JSON.parse(data['_body']);
-          this.spinner.hide();
+          that.activeProcesses = JSON.parse(data['_body']);
+          that.spinner.hide();
         },
         err =>{
-          this.msg = {text: err, type: 'error'}
+          that.msg = {text: err, type: 'error'}
           console.log(err);
-          this.spinner.hide();
+          that.spinner.hide();
         }
       );
   }
