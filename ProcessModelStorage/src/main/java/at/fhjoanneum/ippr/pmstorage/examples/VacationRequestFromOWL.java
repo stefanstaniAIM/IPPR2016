@@ -190,7 +190,7 @@ public class VacationRequestFromOWL extends AbstractExample {
             }
 
             final OWLStateDTO stateDTO =
-                new OWLStateDTO(stateLabel, subjectModelIdentifier, stateFunctionType, stateEventType);
+                new OWLStateDTO(stateIdentifier, stateLabel, subjectModelIdentifier, stateFunctionType, stateEventType);
             stateDTOMap.put(stateIdentifier, stateDTO);
             stateDTOs.add(stateDTO);
           }

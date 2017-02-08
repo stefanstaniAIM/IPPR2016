@@ -7,6 +7,7 @@ import java.io.Serializable;
 @XmlRootElement
 public class OWLStateDTO implements Serializable {
 
+    private String id;
     private String name;
     private String subjectModelId;
     private String functionType;
@@ -14,13 +15,16 @@ public class OWLStateDTO implements Serializable {
 
     public OWLStateDTO() {}
 
-    public OWLStateDTO(final String name, final String subjectModelId, final String functionType, final String eventType) {
+    public OWLStateDTO(final String id, final String name, final String subjectModelId, final String functionType, final String eventType) {
 
+        this.id = id;
         this.name = name;
         this.subjectModelId = subjectModelId;
         this.functionType = functionType;
         this.eventType = eventType;
     }
+
+    public String getId() { return id; }
 
     public String getName() {
         return name;
