@@ -10,7 +10,7 @@ import java.util.List;
 @XmlRootElement
 public class OWLProcessModelDTO implements Serializable {
 
-  private String name;
+  private java.lang.String name;
   private LocalDateTime createdAt;
 
   private List<OWLSubjectModelDTO> subjectModels;
@@ -21,7 +21,7 @@ public class OWLProcessModelDTO implements Serializable {
 
   public OWLProcessModelDTO() {}
 
-  public OWLProcessModelDTO(final String name, final LocalDateTime createdAt,
+  public OWLProcessModelDTO(final java.lang.String name, final LocalDateTime createdAt,
                             final List<OWLSubjectModelDTO> subjectModels, final List<OWLStateDTO> states,
                             final List<OWLTransitionDTO> transitions, final List<OWLBomDTO> boms,
                             final List<OWLMessageFlowDTO> messageFlows) {
@@ -34,7 +34,7 @@ public class OWLProcessModelDTO implements Serializable {
     this.messageFlows = messageFlows;
   }
 
-  public String getName() {
+  public java.lang.String getName() {
     return name;
   }
 

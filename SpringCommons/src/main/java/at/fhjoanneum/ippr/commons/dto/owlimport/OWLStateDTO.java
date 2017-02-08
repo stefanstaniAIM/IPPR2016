@@ -8,17 +8,16 @@ import java.io.Serializable;
 public class OWLStateDTO implements Serializable {
 
     private String name;
-
-    private OWLSubjectModelDTO subjectModel;
-
+    private String subjectModelId;
     private String functionType;
     private String eventType;
+
     public OWLStateDTO() {}
 
-    public OWLStateDTO(final String name, final OWLSubjectModelDTO subjectModel, final String functionType, final String eventType) {
+    public OWLStateDTO(final String name, final String subjectModelId, final String functionType, final String eventType) {
 
         this.name = name;
-        this.subjectModel = subjectModel;
+        this.subjectModelId = subjectModelId;
         this.functionType = functionType;
         this.eventType = eventType;
     }
@@ -27,8 +26,8 @@ public class OWLStateDTO implements Serializable {
         return name;
     }
 
-    public OWLSubjectModelDTO getSubjectModel() {
-        return subjectModel;
+    public String getSubjectModelId() {
+        return subjectModelId;
     }
 
     public String getFunctionType() {

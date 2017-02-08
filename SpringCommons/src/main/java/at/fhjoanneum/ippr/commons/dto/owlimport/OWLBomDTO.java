@@ -10,19 +10,23 @@ import java.util.List;
 public class OWLBomDTO implements Serializable {
 
     private String name;
-    private List<OWLStateDTO> states = new ArrayList<>();
+    private List<String> stateIds = new ArrayList<>();
+    private String id;
 
     public OWLBomDTO() {}
 
-    public OWLBomDTO(final String name, final List<OWLStateDTO> states) {
+    public OWLBomDTO(final String id, final String name, final List<String> stateIds) {
 
         this.name = name;
-        this.states = states;
+        this.stateIds = stateIds;
+        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
-    public List<OWLStateDTO> getStates() { return states; }
+    public List<String> getStateIds() { return stateIds; }
+
+    public String getId() { return id; }
 }

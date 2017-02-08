@@ -7,23 +7,22 @@ import java.io.Serializable;
 @XmlRootElement
 public class OWLTransitionDTO implements Serializable {
 
-    private OWLStateDTO toState;
+    private String toStateId;
+    private String fromStateId;
 
     public OWLTransitionDTO() {}
 
-    public OWLTransitionDTO(OWLStateDTO fromState, OWLStateDTO toState) {
-        this.fromState = fromState;
-        this.toState = toState;
+    public OWLTransitionDTO(String fromStateId, String toStateId) {
+        this.fromStateId = fromStateId;
+        this.toStateId = toStateId;
     }
 
-    private OWLStateDTO fromState;
-
-    public OWLStateDTO getFromState() {
-        return fromState;
+    public String getFromStateId() {
+        return fromStateId;
     }
 
-    public OWLStateDTO getToState() {
-        return toState;
+    public String getToStateId() {
+        return toStateId;
     }
 
 }

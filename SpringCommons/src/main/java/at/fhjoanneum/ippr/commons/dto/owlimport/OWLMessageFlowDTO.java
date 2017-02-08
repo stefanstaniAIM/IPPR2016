@@ -7,33 +7,37 @@ import java.io.Serializable;
 @XmlRootElement
 public class OWLMessageFlowDTO implements Serializable {
 
-    private OWLSubjectModelDTO sender;
-    private OWLSubjectModelDTO receiver;
-    private OWLStateDTO state;
-    private OWLBomDTO bom;
+    private String senderId;
+    private String receiverId;
+    private String stateId;
+    private String bomId;
+    private String id;
 
     public OWLMessageFlowDTO() {}
 
-    public OWLMessageFlowDTO(OWLSubjectModelDTO sender, OWLSubjectModelDTO receiver, OWLStateDTO state, OWLBomDTO bom) {
-        this.sender = sender;
-        this.receiver = receiver;
-        this.state = state;
-        this.bom = bom;
+    public OWLMessageFlowDTO(String id, String sender, String receiver, String stateId, String bomId) {
+        this.id = id;
+        this.senderId = sender;
+        this.receiverId = receiver;
+        this.stateId = stateId;
+        this.bomId = bomId;
     }
 
-    public OWLSubjectModelDTO getSender() {
-        return sender;
+    public String getId() { return id; }
+
+    public String getSenderId() {
+        return senderId;
     }
 
-    public OWLSubjectModelDTO getReceiver() {
-        return receiver;
+    public String getReceiverId() {
+        return receiverId;
     }
 
-    public OWLStateDTO getState() {
-        return state;
+    public String getStateId() {
+        return stateId;
     }
 
-    public OWLBomDTO getBom() {
-        return bom;
+    public String getBomId() {
+        return bomId;
     }
 }

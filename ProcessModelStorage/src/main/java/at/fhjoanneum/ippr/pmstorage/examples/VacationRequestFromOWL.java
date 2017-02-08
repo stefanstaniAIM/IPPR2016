@@ -1,34 +1,6 @@
 package at.fhjoanneum.ippr.pmstorage.examples;
 
-import java.io.InputStream;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
-
-import org.apache.jena.ontology.OntDocumentManager;
-import org.apache.jena.ontology.OntModel;
-import org.apache.jena.ontology.OntResource;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Property;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdf.model.Statement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
-import at.fhjoanneum.ippr.commons.dto.owlimport.OWLBomDTO;
-import at.fhjoanneum.ippr.commons.dto.owlimport.OWLMessageFlowDTO;
-import at.fhjoanneum.ippr.commons.dto.owlimport.OWLProcessModelDTO;
-import at.fhjoanneum.ippr.commons.dto.owlimport.OWLStateDTO;
-import at.fhjoanneum.ippr.commons.dto.owlimport.OWLSubjectModelDTO;
-import at.fhjoanneum.ippr.commons.dto.owlimport.OWLTransitionDTO;
+import at.fhjoanneum.ippr.commons.dto.owlimport.*;
 import at.fhjoanneum.ippr.persistence.entities.model.businessobject.BusinessObjectModelBuilder;
 import at.fhjoanneum.ippr.persistence.entities.model.businessobject.field.BusinessObjectFieldModelBuilder;
 import at.fhjoanneum.ippr.persistence.entities.model.businessobject.permission.BusinessObjectFieldPermissionBuilder;
@@ -40,16 +12,29 @@ import at.fhjoanneum.ippr.persistence.entities.model.transition.TransitionBuilde
 import at.fhjoanneum.ippr.persistence.objects.model.businessobject.BusinessObjectModel;
 import at.fhjoanneum.ippr.persistence.objects.model.businessobject.field.BusinessObjectFieldModel;
 import at.fhjoanneum.ippr.persistence.objects.model.businessobject.permission.BusinessObjectFieldPermission;
-import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldPermission;
-import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldType;
-import at.fhjoanneum.ippr.persistence.objects.model.enums.ProcessModelState;
-import at.fhjoanneum.ippr.persistence.objects.model.enums.StateEventType;
-import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.*;
 import at.fhjoanneum.ippr.persistence.objects.model.messageflow.MessageFlow;
 import at.fhjoanneum.ippr.persistence.objects.model.process.ProcessModel;
 import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
 import at.fhjoanneum.ippr.persistence.objects.model.transition.Transition;
+import org.apache.jena.ontology.OntDocumentManager;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntResource;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
+import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.util.*;
 
 
 @Component
@@ -164,7 +149,7 @@ public class VacationRequestFromOWL extends AbstractExample {
           final String subjectModelIdentifier = actor.getProperty(identifierProperty).getString();
           OWLSubjectModelDTO subjectModelDTO = subjectModelDTOMap.get(subjectModelIdentifier);
           if (subjectModelDTO == null) {
-            subjectModelDTO = new OWLSubjectModelDTO(actorName);
+            subjectModelDTO = new OWLSubjectModelDTO(subjectModelIdentifier, actorName);
           }
           subjectModelDTOMap.put(subjectModelIdentifier, subjectModelDTO);
 
@@ -205,7 +190,7 @@ public class VacationRequestFromOWL extends AbstractExample {
             }
 
             final OWLStateDTO stateDTO =
-                new OWLStateDTO(stateLabel, subjectModelDTO, stateFunctionType, stateEventType);
+                new OWLStateDTO(stateLabel, subjectModelIdentifier, stateFunctionType, stateEventType);
             stateDTOMap.put(stateIdentifier, stateDTO);
             stateDTOs.add(stateDTO);
           }
@@ -235,8 +220,7 @@ public class VacationRequestFromOWL extends AbstractExample {
                 targetState.getProperty(identifierProperty).getString();
 
 
-            final OWLTransitionDTO transitionDTO = new OWLTransitionDTO(
-                stateDTOMap.get(sourceStateIdentifier), stateDTOMap.get(targetStateIdentifier));
+            final OWLTransitionDTO transitionDTO = new OWLTransitionDTO(sourceStateIdentifier, targetStateIdentifier);
             transitionDTOs.add(transitionDTO);
 
             // Which type of transition?
@@ -251,6 +235,7 @@ public class VacationRequestFromOWL extends AbstractExample {
             if (transitionResource.hasProperty(refersToProperty)) {
               final Resource refersTo =
                   transitionResource.getProperty(refersToProperty).getResource();
+              final String messageFlowIdentifier = transitionResource.getProperty(identifierProperty).getString();
               final Resource sender = refersTo.getProperty(senderProperty).getResource();
               final Resource receiver = refersTo.getProperty(receiverProperty).getResource();
               final String messageFlowLabel = refersTo.getProperty(labelProperty).getString();
@@ -264,15 +249,15 @@ public class VacationRequestFromOWL extends AbstractExample {
               System.out.println("---With Message " + messageTypeLabel);
               final String bomIdentifier = messageType.getProperty(identifierProperty).getString();
 
-              final List<OWLStateDTO> transitionStateDTOs = new ArrayList<>();
-              transitionStateDTOs.add(stateDTOMap.get(sourceStateIdentifier));
-              transitionStateDTOs.add(stateDTOMap.get(targetStateIdentifier));
+              final List<String> transitionStateIds = new ArrayList<>();
+              transitionStateIds.add(sourceStateIdentifier);
+              transitionStateIds.add(targetStateIdentifier);
               OWLBomDTO bomDTO = bomDTOMap.get(bomIdentifier);
               if (bomDTO == null) {
-                bomDTO = new OWLBomDTO(messageTypeLabel, transitionStateDTOs);
+                bomDTO = new OWLBomDTO(bomIdentifier, messageTypeLabel, transitionStateIds);
                 bomDTOMap.put(bomIdentifier, bomDTO);
               } else {
-                bomDTO.getStates().addAll(transitionStateDTOs);
+                bomDTO.getStateIds().addAll(transitionStateIds);
               }
               bomDTOs.add(bomDTO);
 
@@ -284,18 +269,18 @@ public class VacationRequestFromOWL extends AbstractExample {
                 OWLSubjectModelDTO senderDTO = subjectModelDTOMap.get(senderIdentifier);
                 OWLSubjectModelDTO receiverDTO = subjectModelDTOMap.get(receiverIdentifier);
                 if (senderDTO == null) {
-                  senderDTO = new OWLSubjectModelDTO(sender.getProperty(labelProperty).getString());
+                  senderDTO = new OWLSubjectModelDTO(senderIdentifier, sender.getProperty(labelProperty).getString());
                   subjectModelDTOMap.put(senderIdentifier, senderDTO);
                 }
                 if (receiverDTO == null) {
                   receiverDTO =
-                      new OWLSubjectModelDTO(receiver.getProperty(labelProperty).getString());
+                      new OWLSubjectModelDTO(receiverIdentifier, receiver.getProperty(labelProperty).getString());
                   subjectModelDTOMap.put(receiverIdentifier, receiverDTO);
                 }
 
-                // nur wenn source state = endstate
-                final OWLMessageFlowDTO messageFlowDTO = new OWLMessageFlowDTO(senderDTO,
-                    receiverDTO, stateDTOMap.get(sourceStateIdentifier), bomDTO);
+                // nur wenn source state = sendstate
+                final OWLMessageFlowDTO messageFlowDTO = new OWLMessageFlowDTO(messageFlowIdentifier, senderIdentifier,
+                    receiverIdentifier, sourceStateIdentifier, bomIdentifier);
                 messageFlowDTOs.add(messageFlowDTO);
               }
             }
@@ -340,7 +325,7 @@ public class VacationRequestFromOWL extends AbstractExample {
   }
 
   private SubjectModel createSubjectModel(final String name, final String assignedGroup,
-      final List<String> assignedRules) {
+                                          final List<String> assignedRules) {
     final SubjectModelBuilder builder = new SubjectModelBuilder();
     builder.name(name);
     for (final String rule : assignedRules) {
@@ -350,7 +335,7 @@ public class VacationRequestFromOWL extends AbstractExample {
   }
 
   private ProcessModel createProcessModel(final String name, final String description,
-      final List<SubjectModel> subjectModels, final SubjectModel starterSubject) {
+                                          final List<SubjectModel> subjectModels, final SubjectModel starterSubject) {
     final ProcessModelBuilder builder = new ProcessModelBuilder();
     builder.name(name).description(description).state(ProcessModelState.ACTIVE);
     for (final SubjectModel sm : subjectModels) {
@@ -362,7 +347,7 @@ public class VacationRequestFromOWL extends AbstractExample {
   }
 
   private State createState(final String name, final SubjectModel subjectModel,
-      final StateFunctionType functionType, final StateEventType eventType) {
+                            final StateFunctionType functionType, final StateEventType eventType) {
     final StateBuilder builder = new StateBuilder();
     builder.subjectModel(subjectModel);
     builder.name(name);
@@ -380,7 +365,7 @@ public class VacationRequestFromOWL extends AbstractExample {
   }
 
   private BusinessObjectModel createBusinessObjectModel(final String name, final List<State> states,
-      final BusinessObjectModel parent) {
+                                                        final BusinessObjectModel parent) {
     final BusinessObjectModelBuilder builder = new BusinessObjectModelBuilder();
     builder.name("Vacation request form");
     for (final State state : states) {
