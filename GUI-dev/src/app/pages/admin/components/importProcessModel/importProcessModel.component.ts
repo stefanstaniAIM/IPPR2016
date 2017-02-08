@@ -22,15 +22,6 @@ export class ImportProcessModel implements OnInit {
   constructor(protected service:ProcessesService) {}
 
   ngOnInit(): void {
-   /*this.service.getProcessModels()
-      .subscribe(
-         data => {
-            console.log(data);
-            this.processModels = JSON.parse(data['_body']);
-         },
-         err => this.error = err,
-         () => console.log('Request Complete')
-       );*/
   }
 
   uploadOWLModel(form):void {
@@ -42,7 +33,7 @@ export class ImportProcessModel implements OnInit {
              console.log(data);
              that.processModel = JSON.parse(data['_body']);
              that.processModel.boms.forEach(businessObject => {
-               that.buildedBusinessObjects[businessObject.id] = {};
+               that.buildedBusinessObjects[businessObject.i = {};
              });
              that.initRules();
           },
@@ -81,7 +72,6 @@ export class ImportProcessModel implements OnInit {
   getBofms(){
     var result = [];
     if(this.currentSelectedBusinessObject){
-      //buildedBusinessObjects should not be empty...
       for(var bom in this.buildedBusinessObjects) {
         if(Object.keys(this.buildedBusinessObjects[bom]).length > 0) {
           var values = JSON.parse(this.buildedBusinessObjects[bom]);
@@ -103,27 +93,6 @@ export class ImportProcessModel implements OnInit {
     var that = this;
     var options = {
       dataType: 'json', // default: 'xml',
-      typeUserAttrs: {
-        "radio-group": {
-          permissions: {
-            label: 'Permissions'
-          },
-          mandatory: {
-            label: 'Mandatory'
-          }
-        },
-        text: {
-          className: {
-            label: 'Class',
-            options: {
-              'red form-control': 'Red',
-              'green form-control': 'Green',
-              'blue form-control': 'Blue'
-            },
-            style: 'border: 1px solid red'
-          }
-        }
-      },
       disableFields: ['autocomplete', 'button', 'checkbox-group', 'file', 'header', 'hidden', 'paragraph', 'select', 'textarea'],
       showActionButtons: false
     };
@@ -149,7 +118,7 @@ export class ImportProcessModel implements OnInit {
       var formData = this.buildedBusinessObjects[businessObject.id];
       formData = jQuery.isEmptyObject(formData) ? undefined : formData === "[]" ? undefined : formData;
       if(formData !== undefined){
-        //This is a necessary hack, otherwise setData will not work correctly
+        //This is a necessary thing, otherwise setData will not work correctly
         this.formBuilder.actions.addField(
         	{
         		"type": "paragraph",
