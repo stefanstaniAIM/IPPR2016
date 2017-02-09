@@ -14,6 +14,17 @@ public class ImportBusinessObjectFieldPermissionDTO implements Serializable {
 
   public ImportBusinessObjectFieldPermissionDTO() {}
 
+  public ImportBusinessObjectFieldPermissionDTO(final String bofmId, final String stateId,
+      final boolean read, final boolean write, final boolean mandatory) {
+    this.bofmId = bofmId;
+    this.stateId = stateId;
+    this.read = read;
+    this.write = write;
+    this.mandatory = mandatory;
+  }
+
+
+
   public String getBofmId() {
     return bofmId;
   }

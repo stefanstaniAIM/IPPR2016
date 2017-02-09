@@ -14,6 +14,15 @@ public class ImportMessageFlowDTO implements Serializable {
 
   public ImportMessageFlowDTO() {}
 
+  public ImportMessageFlowDTO(final String id, final String bomId, final String senderId,
+      final String receiverId, final String stateId) {
+    this.id = id;
+    this.bomId = bomId;
+    this.senderId = senderId;
+    this.receiverId = receiverId;
+    this.stateId = stateId;
+  }
+
   public String getId() {
     return id;
   }

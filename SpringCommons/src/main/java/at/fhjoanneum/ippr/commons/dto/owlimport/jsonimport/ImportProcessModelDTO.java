@@ -24,6 +24,29 @@ public class ImportProcessModelDTO implements Serializable {
 
   public ImportProcessModelDTO() {}
 
+
+
+  public ImportProcessModelDTO(final String name, final String description,
+      final String startSubjectModelId, final List<ImportSubjectModelDTO> subjectModels,
+      final List<ImportStateDTO> states, final List<ImportTransitionDTO> transitions,
+      final List<ImportBusinessObjectModelDTO> boms,
+      final List<ImportBusinessObjectFieldsModelDTO> bofms,
+      final List<ImportBusinessObjectFieldPermissionDTO> bofps,
+      final List<ImportMessageFlowDTO> messageFlows) {
+    this.name = name;
+    this.description = description;
+    this.startSubjectModelId = startSubjectModelId;
+    this.subjectModels = subjectModels;
+    this.states = states;
+    this.transitions = transitions;
+    this.boms = boms;
+    this.bofms = bofms;
+    this.bofps = bofps;
+    this.messageFlows = messageFlows;
+  }
+
+
+
   public String getName() {
     return name;
   }
