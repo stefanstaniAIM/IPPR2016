@@ -1,23 +1,17 @@
 package at.fhjoanneum.ippr.pmstorage.examples;
 
-import at.fhjoanneum.ippr.commons.dto.owlimport.*;
-import at.fhjoanneum.ippr.persistence.entities.model.businessobject.BusinessObjectModelBuilder;
-import at.fhjoanneum.ippr.persistence.entities.model.businessobject.field.BusinessObjectFieldModelBuilder;
-import at.fhjoanneum.ippr.persistence.entities.model.businessobject.permission.BusinessObjectFieldPermissionBuilder;
-import at.fhjoanneum.ippr.persistence.entities.model.messageflow.MessageFlowBuilder;
-import at.fhjoanneum.ippr.persistence.entities.model.process.ProcessModelBuilder;
-import at.fhjoanneum.ippr.persistence.entities.model.state.StateBuilder;
-import at.fhjoanneum.ippr.persistence.entities.model.subject.SubjectModelBuilder;
-import at.fhjoanneum.ippr.persistence.entities.model.transition.TransitionBuilder;
-import at.fhjoanneum.ippr.persistence.objects.model.businessobject.BusinessObjectModel;
-import at.fhjoanneum.ippr.persistence.objects.model.businessobject.field.BusinessObjectFieldModel;
-import at.fhjoanneum.ippr.persistence.objects.model.businessobject.permission.BusinessObjectFieldPermission;
-import at.fhjoanneum.ippr.persistence.objects.model.enums.*;
-import at.fhjoanneum.ippr.persistence.objects.model.messageflow.MessageFlow;
-import at.fhjoanneum.ippr.persistence.objects.model.process.ProcessModel;
-import at.fhjoanneum.ippr.persistence.objects.model.state.State;
-import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
-import at.fhjoanneum.ippr.persistence.objects.model.transition.Transition;
+import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
+
 import org.apache.jena.ontology.OntDocumentManager;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntResource;
@@ -29,12 +23,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
-import java.io.InputStream;
-import java.time.LocalDateTime;
-import java.util.*;
+import at.fhjoanneum.ippr.commons.dto.owlimport.reader.OWLBomDTO;
+import at.fhjoanneum.ippr.commons.dto.owlimport.reader.OWLMessageFlowDTO;
+import at.fhjoanneum.ippr.commons.dto.owlimport.reader.OWLProcessModelDTO;
+import at.fhjoanneum.ippr.commons.dto.owlimport.reader.OWLStateDTO;
+import at.fhjoanneum.ippr.commons.dto.owlimport.reader.OWLSubjectModelDTO;
+import at.fhjoanneum.ippr.commons.dto.owlimport.reader.OWLTransitionDTO;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.StateEventType;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
 
 
 @Component
@@ -189,8 +185,8 @@ public class VacationRequestFromOWL extends AbstractExample {
               stateFunctionType = StateFunctionType.RECEIVE.toString();
             }
 
-            final OWLStateDTO stateDTO =
-                new OWLStateDTO(stateIdentifier, stateLabel, subjectModelIdentifier, stateFunctionType, stateEventType);
+            final OWLStateDTO stateDTO = new OWLStateDTO(stateIdentifier, stateLabel,
+                subjectModelIdentifier, stateFunctionType, stateEventType);
             stateDTOMap.put(stateIdentifier, stateDTO);
             stateDTOs.add(stateDTO);
           }
@@ -220,7 +216,8 @@ public class VacationRequestFromOWL extends AbstractExample {
                 targetState.getProperty(identifierProperty).getString();
 
 
-            final OWLTransitionDTO transitionDTO = new OWLTransitionDTO(sourceStateIdentifier, targetStateIdentifier);
+            final OWLTransitionDTO transitionDTO =
+                new OWLTransitionDTO(sourceStateIdentifier, targetStateIdentifier);
             transitionDTOs.add(transitionDTO);
 
             // Which type of transition?
@@ -235,7 +232,8 @@ public class VacationRequestFromOWL extends AbstractExample {
             if (transitionResource.hasProperty(refersToProperty)) {
               final Resource refersTo =
                   transitionResource.getProperty(refersToProperty).getResource();
-              final String messageFlowIdentifier = transitionResource.getProperty(identifierProperty).getString();
+              final String messageFlowIdentifier =
+                  transitionResource.getProperty(identifierProperty).getString();
               final Resource sender = refersTo.getProperty(senderProperty).getResource();
               final Resource receiver = refersTo.getProperty(receiverProperty).getResource();
               final String messageFlowLabel = refersTo.getProperty(labelProperty).getString();
@@ -269,18 +267,20 @@ public class VacationRequestFromOWL extends AbstractExample {
                 OWLSubjectModelDTO senderDTO = subjectModelDTOMap.get(senderIdentifier);
                 OWLSubjectModelDTO receiverDTO = subjectModelDTOMap.get(receiverIdentifier);
                 if (senderDTO == null) {
-                  senderDTO = new OWLSubjectModelDTO(senderIdentifier, sender.getProperty(labelProperty).getString());
+                  senderDTO = new OWLSubjectModelDTO(senderIdentifier,
+                      sender.getProperty(labelProperty).getString());
                   subjectModelDTOMap.put(senderIdentifier, senderDTO);
                 }
                 if (receiverDTO == null) {
-                  receiverDTO =
-                      new OWLSubjectModelDTO(receiverIdentifier, receiver.getProperty(labelProperty).getString());
+                  receiverDTO = new OWLSubjectModelDTO(receiverIdentifier,
+                      receiver.getProperty(labelProperty).getString());
                   subjectModelDTOMap.put(receiverIdentifier, receiverDTO);
                 }
 
                 // nur wenn source state = sendstate
-                final OWLMessageFlowDTO messageFlowDTO = new OWLMessageFlowDTO(messageFlowIdentifier, senderIdentifier,
-                    receiverIdentifier, sourceStateIdentifier, bomIdentifier);
+                final OWLMessageFlowDTO messageFlowDTO =
+                    new OWLMessageFlowDTO(messageFlowIdentifier, senderIdentifier,
+                        receiverIdentifier, sourceStateIdentifier, bomIdentifier);
                 messageFlowDTOs.add(messageFlowDTO);
               }
             }
@@ -322,89 +322,6 @@ public class VacationRequestFromOWL extends AbstractExample {
     } catch (final Exception e) {
       e.printStackTrace();
     }
-  }
-
-  private SubjectModel createSubjectModel(final String name, final String assignedGroup,
-                                          final List<String> assignedRules) {
-    final SubjectModelBuilder builder = new SubjectModelBuilder();
-    builder.name(name);
-    for (final String rule : assignedRules) {
-      builder.addAssignedRule(rule);
-    }
-    return builder.build();
-  }
-
-  private ProcessModel createProcessModel(final String name, final String description,
-                                          final List<SubjectModel> subjectModels, final SubjectModel starterSubject) {
-    final ProcessModelBuilder builder = new ProcessModelBuilder();
-    builder.name(name).description(description).state(ProcessModelState.ACTIVE);
-    for (final SubjectModel sm : subjectModels) {
-      builder.addSubjectModel(sm);
-    }
-    builder.starterSubject(starterSubject);
-    builder.version(1.1F);
-    return builder.build();
-  }
-
-  private State createState(final String name, final SubjectModel subjectModel,
-                            final StateFunctionType functionType, final StateEventType eventType) {
-    final StateBuilder builder = new StateBuilder();
-    builder.subjectModel(subjectModel);
-    builder.name(name);
-    builder.functionType(functionType);
-    if (eventType != null) {
-      builder.eventType(eventType);
-    }
-    return builder.build();
-  }
-
-  private Transition createTransition(final State fromState, final State toState) {
-    final TransitionBuilder builder = new TransitionBuilder();
-    builder.fromState(fromState).toState(toState);
-    return builder.build();
-  }
-
-  private BusinessObjectModel createBusinessObjectModel(final String name, final List<State> states,
-                                                        final BusinessObjectModel parent) {
-    final BusinessObjectModelBuilder builder = new BusinessObjectModelBuilder();
-    builder.name("Vacation request form");
-    for (final State state : states) {
-      builder.addToState(state);
-    }
-    if (parent != null) {
-      builder.parent(parent);
-    }
-    return builder.build();
-  }
-
-  private BusinessObjectFieldModel createBusinessObjectFieldModel(final String name,
-      final FieldType type, final BusinessObjectModel businessObjectModel) {
-    final BusinessObjectFieldModelBuilder builder = new BusinessObjectFieldModelBuilder();
-    builder.fieldName(name);
-    builder.fieldType(type);
-    builder.businessObjectModel(businessObjectModel);
-    return builder.build();
-  }
-
-  private BusinessObjectFieldPermission createBusinessObjectFieldPermission(
-      final BusinessObjectFieldModel fieldModel, final State state,
-      final FieldPermission permission, final boolean mandatory) {
-    final BusinessObjectFieldPermissionBuilder builder = new BusinessObjectFieldPermissionBuilder();
-    builder.businessObjectFieldModel(fieldModel);
-    builder.state(state);
-    builder.permission(permission);
-    builder.mandatory(mandatory);
-    return builder.build();
-  }
-
-  private MessageFlow createMessageFlow(final SubjectModel sender, final SubjectModel receiver,
-      final State state, final BusinessObjectModel businessObjectModel) {
-    final MessageFlowBuilder builder = new MessageFlowBuilder();
-    builder.sender(sender);
-    builder.receiver(receiver);
-    builder.state(state);
-    builder.assignBusinessObjectModel(businessObjectModel);
-    return builder.build();
   }
 
   @Override
