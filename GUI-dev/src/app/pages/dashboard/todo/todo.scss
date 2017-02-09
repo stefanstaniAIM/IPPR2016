@@ -17,12 +17,12 @@ ul.todo-list {
     border: 1px solid $input-border;
     cursor: grab;
     height: 42px;
-    i.remove-todo {
+    i.link {
       position: absolute;
       cursor: pointer;
       top: 0px;
       right: 12px;
-      font-size: 32px;
+      font-size: 16px;
       transition: color 0.2s;
       color: rgba($input-border, 0.5);
       visibility: hidden;
@@ -32,9 +32,10 @@ ul.todo-list {
       }
     }
     &:hover {
-      i.remove-todo {
+      i.link {
         visibility: visible;
       }
+      cursor:pointer;
     }
 
     &.checked {
@@ -152,7 +153,7 @@ label.todo-checkbox {
             -webkit-filter: blur(3px);
           }
         }
-        i.remove-todo {
+        i.link {
           color: white;
           opacity: 0.4;
           &:hover {

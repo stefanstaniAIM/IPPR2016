@@ -3,14 +3,14 @@
 
   <ul class="todo-list">
     <li *ngFor="let task of tasks" [ngClass]="{checked: task.isChecked, active: task.isActive}"
-        (mouseenter)="task.isActive=true" (mouseleave)="task.isActive=false">
+        (mouseenter)="task.isActive=true" (mouseleave)="task.isActive=false"  (click)="goToProcess(task.piId)">
 
       <div class="blur-container"><div class="blur-box"></div></div>
       <i class="mark"></i>
       <label>
         <span class="cut-with-dots">{{ task.stateName }}</span>
       </label>
-      <i class="remove-todo ion-ios-close-empty" (click)="null"></i>
+      <i class="link fa fa-external-link"></i>
     </li>
   </ul>
 </div>

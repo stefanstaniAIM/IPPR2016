@@ -2,7 +2,7 @@ import {Component, ViewEncapsulation} from '@angular/core';
 import {BaThemeConfigProvider} from '../../../theme';
 import { ProcessesService } from '../../../Processes.service';
 import { User } from '../../../user';
-
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'todo',
@@ -25,7 +25,7 @@ export class Todo {
     }
   ];
 
-  constructor(private _baConfig:BaThemeConfigProvider, private _processService:ProcessesService, protected user:User) {
+  constructor(private _baConfig:BaThemeConfigProvider, private _processService:ProcessesService, protected user:User, protected route: ActivatedRoute, protected router: Router) {
     var that = this;
     this._processService.getProcessTasksForUser(this.user.getUid())
     .subscribe(
@@ -36,5 +36,9 @@ export class Todo {
           console.log(err);
         }
       );
+  }
+
+  goToProcess(id){
+    this.router.navigate(['../../myprocesses/active', id], { relativeTo: this.route });
   }
 }
