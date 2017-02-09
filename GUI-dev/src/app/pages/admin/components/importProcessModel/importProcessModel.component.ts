@@ -67,6 +67,14 @@ export class ImportProcessModel implements OnInit {
     processModelResult.bofms = this.getBofms();
     processModelResult.bofps = [];
     Object.keys(this.buildedBofps).forEach(a => processModelResult.bofps = processModelResult.bofps.concat((<any>Object).values(this.buildedBofps[a])));
+    this.service.importProcessModel(processModelResult)
+       .subscribe(
+          data => {
+             console.log(data);
+          },
+          err => this.error = err,
+          () => console.log('Request Complete')
+        );
   }
 
   getBofms(){

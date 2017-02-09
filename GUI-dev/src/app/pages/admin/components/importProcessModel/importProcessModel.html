@@ -56,6 +56,14 @@
              </div>
            </div>
          </div>
+         <div class="row">
+           <div class="col-sm-4">
+             <label for="startSubject">Start-Subjekt</label>
+             <select class="form-control" name="startSubjectModelId" [(ngModel)]="processModel.startSubjectModelId" required>
+               <option *ngFor="let subjectModel of processModel.subjectModels" [ngValue]="subjectModel.id">{{subjectModel.name}}</option>
+             </select>
+           </div>
+         </div>
       </ba-card>
       <ba-card title="Business Objects" class="col-xlg-12 col-xl-12 col-lg-12 col-sm-12 col-xs-12 businessObjectsBuilder">
         <div class="row">

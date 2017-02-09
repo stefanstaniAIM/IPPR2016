@@ -106,4 +106,8 @@ export class ProcessesService {
    getProcessesInStateForUser(state:string){
      return this._authHttp.get(this.restApi+'/processes/count/'+state+'/'+this._user.getUid());
    }
+
+   importProcessModel(processModel){
+     return this._authHttp.post(this.restApi+'/import', processModel);
+   }
 }
