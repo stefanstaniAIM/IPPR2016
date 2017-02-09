@@ -65,14 +65,16 @@ public class ProcessModelServiceImpl implements ProcessModelService {
     final List<ProcessModelDTO> processModels = Lists.newArrayList();
     final List<SubjectModelDTO> subjectModels = Lists.newArrayList();
 
+
     results.forEach(process -> {
       process.getSubjectModels().forEach(subject -> {
         subjectModels.add(
             new SubjectModelDTO(subject.getSmId(), subject.getName(), subject.getAssignedRules()));
       });
 
-      final ProcessModelDTO dto = new ProcessModelDTO(process.getPmId(), process.getName(),
-          process.getDescription(), process.createdAt(), subjectModels);
+      final ProcessModelDTO dto =
+          new ProcessModelDTO(process.getPmId(), process.getName(), process.getDescription(),
+              process.createdAt(), subjectModels, process.getState().name(), process.getVersion());
       processModels.add(dto);
     });
 
@@ -104,5 +106,13 @@ public class ProcessModelServiceImpl implements ProcessModelService {
       processModel.get().setState(ProcessModelState.INACTIVE);
       LOG.info("Disabled [{}]", processModel.get());
     }
+  }
+
+  @Async
+  @Override
+  public Future<List<ProcessModelDTO>> findAllProcessModels() {
+    final List<ProcessModelImpl> results = processModelRepository.findAllOrderedByName();
+    final List<ProcessModelDTO> processModels = createProcessModelDTO(results);
+    return new AsyncResult<List<ProcessModelDTO>>(processModels);
   }
 }

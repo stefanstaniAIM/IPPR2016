@@ -21,4 +21,7 @@ public interface ProcessModelRepository extends PagingAndSortingRepository<Proce
           + "JOIN process_model pm ON pm.starter_subject = sm.sm_id WHERE smr.name in :rules AND pm.state = 'ACTIVE'",
       nativeQuery = true)
   public List<ProcessModelImpl> findActiveProcessesToStart(@Param("rules") List<String> rules);
+
+  @Query(value = "SELECT * FROM process_model ORDER BY name ASC, version ASC", nativeQuery = true)
+  public List<ProcessModelImpl> findAllOrderedByName();
 }

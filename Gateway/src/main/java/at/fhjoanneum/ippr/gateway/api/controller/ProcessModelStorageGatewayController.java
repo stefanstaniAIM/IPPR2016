@@ -83,4 +83,12 @@ public class ProcessModelStorageGatewayController {
     };
     runnable.run();
   }
+
+  @RequestMapping(value = "api/processmodels", method = RequestMethod.GET)
+  public @ResponseBody Callable<ResponseEntity<ProcessModelDTO[]>> findAllProcessModels(
+      final HttpServletRequest request) {
+    return () -> {
+      return processModelStorageCaller.findAllProcessModels().get();
+    };
+  }
 }

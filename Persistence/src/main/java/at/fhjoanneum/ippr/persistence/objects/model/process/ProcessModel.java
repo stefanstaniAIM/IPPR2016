@@ -22,5 +22,7 @@ public interface ProcessModel {
 
   void setState(ProcessModelState state);
 
+  ProcessModelState getState();
+
   float getVersion();
 }

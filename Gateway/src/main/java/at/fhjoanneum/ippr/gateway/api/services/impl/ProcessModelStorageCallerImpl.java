@@ -80,4 +80,13 @@ public class ProcessModelStorageCallerImpl implements Caller {
     createRequest(uri, HttpMethod.POST, null, null, null);
     return;
   }
+
+  @Async
+  public Future<ResponseEntity<ProcessModelDTO[]>> findAllProcessModels()
+      throws URISyntaxException {
+    final URIBuilder uri =
+        new URIBuilder(gatewayConfig.getProcessModelStorageAddress()).setPath("/processmodels");
+
+    return createRequest(uri, HttpMethod.GET, null, ProcessModelDTO[].class, null);
+  }
 }
