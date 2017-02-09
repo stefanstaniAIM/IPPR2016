@@ -84,7 +84,7 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
 
     final List<BusinessObjectDTO> businessObjects = getBusinessObjects(request, subjectState);
 
-    final List<StateDTO> nextStates = getNextStates(subjectState);
+    final List<StateDTO> nextStates = Lists.newArrayList(getNextStates(subjectState));
 
     StateObjectDTO stateObjectDTO = null;
     if (StateFunctionType.SEND.equals(subjectState.getCurrentState().getFunctionType())) {
@@ -214,8 +214,8 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
         subjectModel.getAssignedRules());
   }
 
-  private List<StateDTO> getNextStates(final SubjectState subjectState) {
-    List<StateDTO> nextStates = Lists.newArrayList();
+  private Set<StateDTO> getNextStates(final SubjectState subjectState) {
+    Set<StateDTO> nextStates = Sets.newHashSet();
     final State currentState = subjectState.getCurrentState();
 
     if (filteringNeeded(currentState.getToStates())) {
@@ -228,7 +228,7 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
               transition -> checkIfIncludedForNextStates(retrievedBusinessObjectModels, transition))
           .map(state -> new StateDTO(state.getToState().getSId(), state.getToState().getName(),
               StateEventType.END.equals(state.getToState().getEventType())))
-          .collect(Collectors.toList());
+          .collect(Collectors.toSet());
 
       currentState.getToStates().stream()
           .filter(transition -> TransitionType.NORMAL.equals(transition.getTransitionType()))
@@ -242,7 +242,7 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
           .map(transition -> new StateDTO(transition.getToState().getSId(),
               transition.getToState().getName(),
               StateEventType.END.equals(transition.getToState().getEventType())))
-          .collect(Collectors.toList());
+          .collect(Collectors.toSet());
     }
 
     LOG.info("Possible next states are {} for [{}]", nextStates, subjectState);

@@ -7,6 +7,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import com.google.common.base.Objects;
+
 @XmlRootElement
 public class StateDTO implements Serializable {
 
@@ -34,6 +36,28 @@ public class StateDTO implements Serializable {
 
   public Boolean isEndState() {
     return endState;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(nextStateId);
+  }
+
+  @Override
+  public boolean equals(final Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    final StateDTO other = (StateDTO) obj;
+    if (nextStateId == null) {
+      if (other.nextStateId != null)
+        return false;
+    } else if (!nextStateId.equals(other.nextStateId))
+      return false;
+    return true;
   }
 
   @Override
