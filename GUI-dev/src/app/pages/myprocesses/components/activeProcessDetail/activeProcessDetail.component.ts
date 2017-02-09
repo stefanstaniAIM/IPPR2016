@@ -23,7 +23,7 @@ type businessObject = {
 
 @Component({
   selector: 'activeProcessDetail',
-  styles: [],
+    styles: [require('./activeProcessDetail.scss')],
   template:  require('./activeProcessDetail.html')
 })
 export class ActiveProcessDetail implements OnInit {
@@ -99,7 +99,8 @@ export class ActiveProcessDetail implements OnInit {
   businessObjects:businessObject[];
   nextStates:[{
     name:string,
-    nextStateId:number
+    nextStateId:number,
+    endState:boolean
   }];
   assignedUsers:[{
     smId:number,
@@ -109,54 +110,64 @@ export class ActiveProcessDetail implements OnInit {
   }];
   possibleUserAssignments = [];
   selectedUserAssignments = [];
+  nextIsEndState = false;
+  isFinished = false;
+  myCurrentState;
 
   constructor(protected service: ProcessesService, protected spinner:BaThemeSpinner, protected route: ActivatedRoute, protected router: Router, private _user:User) {
   }
 
   ngOnInit() {
     var that = this;
-    this.spinner.show();
     this.piId = +this.route.snapshot.params['piId'];
     this.businessObjects = undefined;
     this.nextStates = undefined;
-    that.assignedUsers = undefined;
-    //this.route.params
-    //.switchMap((params: Params) => service.loadprocess etc. +params['piId'])
-    //.subscribe((piId:number) => this.piId = piId)
-    this.service.getProcessState(this.piId)
-    .subscribe(
-        data => {
-          that.subjectsState = JSON.parse(data['_body']);
-          that.spinner.hide();
-        },
-        err =>{
-          that.msg = {text: err, type: 'error'}
-          console.log(err);
-          that.spinner.hide();
-        }
-      );
-
-      this.service.getTasksForProcessForUser(this.piId)
+    this.spinner.show();
+    if(!this.nextIsEndState){
+      that.assignedUsers = undefined;
+      //this.route.params
+      //.switchMap((params: Params) => service.loadprocess etc. +params['piId'])
+      //.subscribe((piId:number) => this.piId = piId)
+      this.service.getProcessState(this.piId)
       .subscribe(
-        data => {
-          var dataJson;
-          try {
-            dataJson = JSON.parse(data['_body']);
-          } catch(e) {
-            return false;
+          data => {
+            that.subjectsState = JSON.parse(data['_body']);
+            that.myCurrentState = that.subjectsState.subjects.filter(s => s.userId === that._user.getUid())[0].stateName;
+            that.spinner.hide();
+          },
+          err =>{
+            that.msg = {text: err, type: 'error'}
+            console.log(err);
+            that.spinner.hide();
           }
-          that.businessObjects = dataJson.businessObjects;
-          that.nextStates = dataJson.nextStates;
-          that.assignedUsers = dataJson.assignedUsers;
-          if(that.assignedUsers) {
-            that.getPossibleUserAssignments();
+        );
+
+        this.service.getTasksForProcessForUser(this.piId)
+        .subscribe(
+          data => {
+            var dataJson;
+            try {
+              dataJson = JSON.parse(data['_body']);
+            } catch(e) {
+              return false;
+            }
+            that.businessObjects = dataJson.businessObjects;
+            that.nextStates = dataJson.nextStates;
+            that.nextIsEndState = that.nextStates.filter(ns => ns.endState === true).length > 0;
+            that.assignedUsers = dataJson.assignedUsers;
+            if(that.assignedUsers) {
+              that.getPossibleUserAssignments();
+            }
+          },
+          err =>{
+            that.msg = {text: err, type: 'error'}
+            console.log(err);
           }
-        },
-        err =>{
-          that.msg = {text: err, type: 'error'}
-          console.log(err);
-        }
-      );
+        );
+      } else {
+        this.isFinished = true;
+        this.spinner.hide();
+      }
   }
 
   getPossibleUserAssignments() {

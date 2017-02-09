@@ -4,7 +4,64 @@
   </button>
     {{msg.text}}
 </div>
-<div class="row" *ngIf="subjectsState">
+<div class="row">
+  <div class="col-md-12">
+    <form #objectsAndAssignmentsForm="ngForm" (ngSubmit)="submitForm(objectsAndAssignmentsForm)">
+      <div *ngIf="businessObjects && businessObjects.length > 0">
+        <h3>Business Objects</h3>
+        <p>State: {{myCurrentState}}</p>
+      </div>
+        <div *ngFor="let businessObject of businessObjects">
+          <ba-card title="{{businessObject.name}}" baCardClass="with-scroll">
+          <div *ngFor="let field of businessObject.fields">
+            {{field.name}}
+            <div class="form-group">
+              <div [ngSwitch]="field.type">
+                <label class="control-label" *ngIf="field.type !== 'checkbox'">{{field.description}}</label>
+                <input type="text" *ngSwitchCase="'STRING'" class="form-control" id="{{field.id}}" name="{{businessObject.bomId}}-:_{{field.bofmId}}" [ngModel]="field.value" [attr.maxlength]="field.maxlength" [attr.minlength]="field.minlength" [attr.required]="field.required" [readonly]="field.readonly">
+                <input type="number" *ngSwitchCase="'number'" class="form-control" id="{{field.id}}" name="{{businessObject.bomId}}-:_{{field.bofmId}}" [ngModel]="field.value" [attr.max]="field.max" [attr.min]="field.min" [attr.required]="field.required" [readonly]="field.readonly">
+                <ba-checkbox *ngSwitchCase="'checkbox'" name="{{businessObject.bomId}}-:_{{field.readonly ? field.name + '-:_control' : field.bofmId }}" [ngModel]="field.value" [value]="field.value" [label]="field.description" [onChangeCheckboxFn]="onChangeCheckboxFn" [disabled]="field.readonly"></ba-checkbox>
+                <div class="row" *ngSwitchCase="'radio'">
+                  <div class="col-sm-1" *ngFor="let choice of field.choices">
+                    <label class="radio-inline nowrap">
+                    <input type="radio" [disabled]="field.readonly" [ngModelOptions]="{standalone: true}" [(ngModel)]="field.value" [value]="choice.name" [checked]="choice.name === field.value"/>
+                    <span>{{choice.description}}</span>
+                  </label>
+                </div>
+              </div>
+              <input type="checkbox" *ngIf="field.type === 'checkbox' && field.readonly" name="{{field.name}}" [ngModel]="field.value" value="{{field.value}}" style="display:none" /> <!-- Dirty Hack for sending checkbox value if checkbox is readonly (angular does not send hidden fields) -->
+              <input type="radio" *ngIf="field.type === 'radio'" name="{{businessObject.bomId}}-:_{{field.bofmId}}" [ngModel]="field.value" value="{{field.value}}" style="display:none" /> <!-- Dirty Hack for sending radiofield value -->
+              </div>
+            </div>
+          </div>
+        </ba-card>
+      </div>
+      <div *ngIf="!isReceiveState() && possibleUserAssignments.length > 0" class="col-md-6">
+        <h3>Zuweisungen</h3>
+        <div class="form-group">
+          <div *ngFor="let assignment of possibleUserAssignments">
+            <label>{{assignment.rule}}</label>
+            <select class="form-control" [(ngModel)]="selectedUserAssignments[assignment.rule]" name="User-Assignment_:-{{assignment.smId}}" required>
+              <option *ngFor="let user of assignment.users" [ngValue]="{smId: assignment.smId, userId: user.uid}">{{user.lastname}} {{user.firstname}}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="!isToReceiveState() && nextStates && nextStates.length > 0" class="col-md-12">
+        <h3>Mögliche nächste Schritte</h3>
+        <div *ngFor="let state of nextStates" class="col-md-2">
+          <button class="btn btn-primary btn-lg" type="submit" (click)="objectsAndAssignmentsForm.nextStateId = state.nextStateId">{{state.name}}</button>
+        </div>
+      </div>
+      <div *ngIf="isToReceiveState()" class="col-md-12">
+        <div class="alert alert-info fade in" role="alert">
+            Sie befinden sich momentan im Wartezustand.
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="row  v-padding" *ngIf="subjectsState && !isFinished">
   <ba-card class="col-xlg-12 col-xl-12 col-lg-12 col-sm-12 col-xs-12">
     <p>Status: {{subjectsState.status}}</p>
     <p>Start: {{subjectsState.startTime | commaDate | date:'dd.MM.yyyy HH:mm'}} </p>
@@ -12,83 +69,31 @@
   </ba-card>
 </div>
 <div class="row">
-   <ba-card class="col-xlg-12 col-xl-12 col-lg-12 col-sm-12 col-xs-12">
-      <h4 *ngIf="!subjectsState">Prozessinstanz kann nicht angezeigt werden.</h4>
-      <table class="table table-striped" *ngIf="subjectsState">
-         <thead>
-            <tr>
-               <th>Subjektname</th>
-               <th>User</th>
-               <th>Status</th>
-               <th>Typ</th>
-               <th>Letzte Änderung</th>
-            </tr>
-         </thead>
-         <tbody>
-            <tr *ngFor="let subject of subjectsState.subjects">
-               <td>{{ subject.subjectName }}</td>
-               <td>{{ subject.user ? subject.user.firstname + " " + subject.user.lastname : "Noch keinem User zugewiesen" }}</td>
-               <td>{{ subject.stateName }}</td>
-               <td>{{ subject.stateFunctionType }}</td>
-               <td>{{ subject.lastChanged | commaDate | date:'dd.MM.yyyy HH:mm:ss' }}
-            </tr>
-         </tbody>
+  <ba-card class="col-xlg-12 col-xl-12 col-lg-12 col-sm-12 col-xs-12">
+    <h4 *ngIf="!subjectsState">Prozessinstanz kann nicht angezeigt werden.</h4>
+    <h4 *ngIf="isFinished">Prozess ist für diesen Benutzer beendet.</h4>
+    <table class="table table-striped" *ngIf="subjectsState && !isFinished">
+      <thead>
+        <tr>
+          <th>Subjektname</th>
+          <th>User</th>
+          <th>Status</th>
+          <th>Typ</th>
+          <th>Letzte Änderung</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let subject of subjectsState.subjects">
+          <td>{{ subject.subjectName }}</td>
+          <td>{{ subject.user ? subject.user.firstname + " " + subject.user.lastname : "Noch keinem User zugewiesen" }}</td>
+          <td>{{ subject.stateName }}</td>
+          <td>{{ subject.stateFunctionType }}</td>
+          <td>{{ subject.lastChanged | commaDate | date:'dd.MM.yyyy HH:mm:ss' }}
+          </tr>
+        </tbody>
       </table>
-   </ba-card>
-</div>
-<div class="row">
-  <div class="col-md-12">
-    <form #objectsAndAssignmentsForm="ngForm" (ngSubmit)="submitForm(objectsAndAssignmentsForm)">
-      <h3 *ngIf="businessObjects && businessObjects.length > 0">Business Objects</h3>
-      <div *ngFor="let businessObject of businessObjects">
-        <ba-card title="{{businessObject.name}}" baCardClass="with-scroll">
-        <div *ngFor="let field of businessObject.fields">
-          {{field.name}}
-          <div class="form-group">
-            <div [ngSwitch]="field.type">
-              <label class="control-label" *ngIf="field.type !== 'checkbox'">{{field.description}}</label>
-              <input type="text" *ngSwitchCase="'STRING'" class="form-control" id="{{field.id}}" name="{{businessObject.bomId}}-:_{{field.bofmId}}" [ngModel]="field.value" [attr.maxlength]="field.maxlength" [attr.minlength]="field.minlength" [attr.required]="field.required" [readonly]="field.readonly">
-              <input type="number" *ngSwitchCase="'number'" class="form-control" id="{{field.id}}" name="{{businessObject.bomId}}-:_{{field.bofmId}}" [ngModel]="field.value" [attr.max]="field.max" [attr.min]="field.min" [attr.required]="field.required" [readonly]="field.readonly">
-              <ba-checkbox *ngSwitchCase="'checkbox'" name="{{businessObject.bomId}}-:_{{field.readonly ? field.name + '-:_control' : field.bofmId }}" [ngModel]="field.value" [value]="field.value" [label]="field.description" [onChangeCheckboxFn]="onChangeCheckboxFn" [disabled]="field.readonly"></ba-checkbox>
-              <div class="row" *ngSwitchCase="'radio'">
-                <div class="col-sm-1" *ngFor="let choice of field.choices">
-                  <label class="radio-inline nowrap">
-                  <input type="radio" [disabled]="field.readonly" [ngModelOptions]="{standalone: true}" [(ngModel)]="field.value" [value]="choice.name" [checked]="choice.name === field.value"/>
-                  <span>{{choice.description}}</span>
-                </label>
-              </div>
-            </div>
-            <input type="checkbox" *ngIf="field.type === 'checkbox' && field.readonly" name="{{field.name}}" [ngModel]="field.value" value="{{field.value}}" style="display:none" /> <!-- Dirty Hack for sending checkbox value if checkbox is readonly (angular does not send hidden fields) -->
-            <input type="radio" *ngIf="field.type === 'radio'" name="{{businessObject.bomId}}-:_{{field.bofmId}}" [ngModel]="field.value" value="{{field.value}}" style="display:none" /> <!-- Dirty Hack for sending radiofield value -->
-            </div>
-          </div>
-        </div>
-      </ba-card>
-    </div>
-    <div *ngIf="!isReceiveState() && possibleUserAssignments.length > 0" class="col-md-6">
-      <h3>Zuweisungen</h3>
-      <div class="form-group">
-        <div *ngFor="let assignment of possibleUserAssignments">
-          <label>{{assignment.rule}}</label>
-          <select class="form-control" [(ngModel)]="selectedUserAssignments[assignment.rule]" name="User-Assignment_:-{{assignment.smId}}" required>
-            <option *ngFor="let user of assignment.users" [ngValue]="{smId: assignment.smId, userId: user.uid}">{{user.lastname}} {{user.firstname}}</option>
-          </select>
-        </div>
-      </div>
-    </div>
-    <div *ngIf="!isToReceiveState() && nextStates && nextStates.length > 0" class="col-md-12">
-      <h3>Mögliche nächste Schritte</h3>
-      <div *ngFor="let state of nextStates" class="col-md-2">
-        <button class="btn btn-primary btn-lg" type="submit" (click)="objectsAndAssignmentsForm.nextStateId = state.nextStateId">{{state.name}}</button>
-      </div>
-    </div>
-    <div *ngIf="isToReceiveState()" class="col-md-12">
-      <div class="alert alert-info fade in" role="alert">
-          Sie befinden sich momentan im Wartezustand.
-      </div>
-    </div>
-  </form>
-</div>
+    </ba-card>
+  </div>
 
 <!-- Business Objects Form template START -->
 <!--

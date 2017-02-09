@@ -25,7 +25,7 @@ export class Dashboard {
           console.log(err);
         }
       );
-    this._processService.getProcessesInState("terminated")
+    this._processService.getProcessesInState("finished")
     .subscribe(
         data => {
           that.finishedProcesses = JSON.parse(data['_body']);

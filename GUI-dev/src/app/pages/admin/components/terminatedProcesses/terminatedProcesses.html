@@ -13,6 +13,7 @@
                <th>#</th>
                <th>Prozessname</th>
                <th>Startzeit</th>
+               <th>Endzeit</th>
             </tr>
          </thead>
          <tbody>
@@ -20,6 +21,7 @@
                <td>{{ process.piId }}</td>
                <td>{{ process.processName }}</td>
                <td>{{ process.startTime | commaDate | date:'dd.MM.yyyy HH:mm:ss'}}</td>
+               <td>{{ process.endTime | commaDate | date:'dd.MM.yyyy HH:mm:ss'}}</td>
             </tr>
          </tbody>
       </table>
