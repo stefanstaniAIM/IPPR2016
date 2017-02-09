@@ -39,6 +39,7 @@ import at.fhjoanneum.ippr.gateway.security.repositories.RBACRepository;
 @Service
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class ProcessEngineCallerImpl implements Caller {
+
   private static final Logger LOG = LoggerFactory.getLogger(ProcessEngineCallerImpl.class);
 
   @Autowired

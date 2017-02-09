@@ -6,11 +6,13 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import at.fhjoanneum.ippr.commons.dto.owlimport.jsonimport.ImportProcessModelDTO;
 import at.fhjoanneum.ippr.commons.dto.owlimport.reader.OWLProcessModelDTO;
 import at.fhjoanneum.ippr.gateway.api.services.impl.OwlImportGatewayCallerImpl;
 
@@ -27,5 +29,11 @@ public class OwlImportGatewayController {
     return () -> {
       return owlImportGatewayCaller.getOWLProcessModel().get();
     };
+  }
+
+  @RequestMapping(value = "api/import", method = RequestMethod.POST)
+  public void importProcess(final @RequestBody ImportProcessModelDTO processModelDTO) {
+    final Runnable runner = () -> owlImportGatewayCaller.importProcessModel(processModelDTO);
+    runner.run();
   }
 }
