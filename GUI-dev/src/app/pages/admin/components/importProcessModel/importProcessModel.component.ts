@@ -76,12 +76,32 @@ export class ImportProcessModel implements OnInit {
         if(Object.keys(this.buildedBusinessObjects[bom]).length > 0) {
           var values = JSON.parse(this.buildedBusinessObjects[bom]);
           values.forEach(value => {
-            result.push({
-              name: value.label,
-              type: value.type,
-              bomId: bom,
-              id: value.name
-            })
+            if(value.type !== "paragraph"){
+              var type;
+              switch (value.type) {
+                case "text":
+                  type = "STRING";
+                  break;
+                case "number":
+                  type = "NUMBER";
+                  break;
+                case "date":
+                  type = "DATE";
+                  break;
+                case "checkbox":
+                  type = "CHECKBOX";
+                  break;
+                default:
+                  type = "STRING";
+                  break;
+              }
+              result.push({
+                name: value.label,
+                type: type,
+                bomId: bom,
+                id: value.name
+              })
+            }
           });
         }
       }
@@ -101,23 +121,23 @@ export class ImportProcessModel implements OnInit {
     //Timeout, otherwise the formData will still be the old value
     document.addEventListener("fieldAdded", function(e){
       setTimeout(function(){
-        that.getFormData(that.currentSelectedBusinessObject);
+        that.getFormData(that.currentSelectedBusinessObject, true);
       }, 250);
     });
     document.addEventListener("fieldRemoved", function(e){
       setTimeout(function(){
-        that.getFormData(that.currentSelectedBusinessObject);
+        that.getFormData(that.currentSelectedBusinessObject, true);
       }, 250);
     });
   }
 
-  getFormData(businessObject): void {
+  getFormData(businessObject, internal?:boolean): void {
     var that = this;
     if(this.currentSelectedBusinessObject !== businessObject){
       this.buildedBusinessObjects[this.currentSelectedBusinessObject.id] = this.formBuilder.formData;
       var formData = this.buildedBusinessObjects[businessObject.id];
       formData = jQuery.isEmptyObject(formData) ? undefined : formData === "[]" ? undefined : formData;
-      if(formData !== undefined){
+      if(formData !== undefined && !internal){
         //This is a necessary thing, otherwise setData will not work correctly
         this.formBuilder.actions.addField(
         	{
