@@ -36,8 +36,8 @@
           </div>
           <div class="col-sm-4">
             <div class="form-group">
-              <label for="createdAt">Erstellt am</label>
-              <input type="text" class="form-control" id="createdAt" name="processModel-CreatedAt" [ngModel]="processModel.createdAt | commaDate | date:'dd.MM.yyyy HH:mm'" readonly>
+              <label for="version">Version</label>
+              <input type="number" class="form-control" id="version" type="number" step="0.1" min="0" name="processModel-version" [(ngModel)]="processModel.version" required>
             </div>
           </div>
         </div>
