@@ -31,7 +31,7 @@ export class ImportProcessModel implements OnInit {
     var split = this.owlFile.name.split(".");
     if(split[split.length-1] !== "owl") {
       this.owlFile = undefined;
-      document.getElementById(event.target.id).value = "";
+      event.target.value = "";
     }
   }
 
