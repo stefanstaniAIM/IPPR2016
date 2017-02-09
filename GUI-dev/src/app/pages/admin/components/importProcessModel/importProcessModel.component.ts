@@ -178,15 +178,9 @@ export class ImportProcessModel implements OnInit {
       this.buildedBusinessObjects[businessObject.id] = this.formBuilder.formData;
     }
     this.currentSelectedBusinessObject = businessObject;
-    console.log("CURR SELECTED BO");
-    console.log(businessObject);
     this.currentBofms = this.getBofms().filter(b => b.bomId === this.currentSelectedBusinessObject.id);
     //Add new fields
-    console.log("CURR BOFMS");
-    console.log(this.currentBofms);
     var allBofms = this.getBofms();
-    console.log("ALL BOFMS");
-    console.log(allBofms);
     allBofms.forEach(field => {
       var boms = that.processModel.boms.filter(bom => bom.id === field.bomId);
       if(!that.buildedBofps[field.id]) {
