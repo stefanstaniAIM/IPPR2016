@@ -125,6 +125,11 @@ public class ProcessModelImpl implements ProcessModel, Serializable {
   };
 
   @Override
+  public ProcessModelState getState() {
+    return state;
+  }
+
+  @Override
   public boolean equals(final Object obj) {
     if (obj == null) {
       return false;

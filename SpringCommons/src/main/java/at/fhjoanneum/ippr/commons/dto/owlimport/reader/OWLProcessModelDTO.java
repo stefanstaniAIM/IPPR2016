@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.commons.dto.owlimport;
+package at.fhjoanneum.ippr.commons.dto.owlimport.reader;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;

@@ -16,6 +16,8 @@ public interface ProcessModelService {
   Future<List<ProcessModelDTO>> findActiveProcessModelsToStart(List<String> groups,
       final Pageable pageable);
 
+  Future<List<ProcessModelDTO>> findAllProcessModels();
+
   Future<List<FieldTypeDTO>> getFieldTypes();
 
   Future<List<FieldPermissionDTO>> getPermissions();

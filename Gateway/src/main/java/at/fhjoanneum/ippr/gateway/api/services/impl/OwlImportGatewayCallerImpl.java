@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import at.fhjoanneum.ippr.commons.dto.owlimport.OWLProcessModelDTO;
+import at.fhjoanneum.ippr.commons.dto.owlimport.reader.OWLProcessModelDTO;
 import at.fhjoanneum.ippr.gateway.api.config.GatewayConfig;
 import at.fhjoanneum.ippr.gateway.api.services.Caller;
 
