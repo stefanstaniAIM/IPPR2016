@@ -12,7 +12,7 @@
             <tr>
                <th>#</th>
                <th>Prozessname</th>
-               <th>Startzeit</th>
+               <th>Letzte Änderung</th>
                <th>Aktion</th>
             </tr>
          </thead>
@@ -20,7 +20,7 @@
             <tr *ngFor="let process of activeProcesses">
                <td>{{ process.piId }}</td>
                <td>{{ process.processName }}</td>
-               <td>{{ process.startTime | commaDate | date:'dd.MM.yyyy HH:mm:ss'}}</td>
+               <td>{{ process.lastChanged | commaDate | date:'dd.MM.yyyy HH:mm:ss'}}</td>
                <td>
                  <button class="btn btn-primary btn-sm" (click)="showProcess(process.piId)">Anzeigen</button>
                </td>

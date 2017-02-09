@@ -60,7 +60,10 @@ export class ProcessesService {
       return this._authHttp.post(this.restApi+'/processes/stop/'+piId, {});
    }
 
-   getProcessTasksForUser(userId:number){
+   getProcessTasksForUser(userId?:number){
+     if(!userId){
+       userId = this._user.getUid();
+     }
      return this._authHttp.get(this.restApi+'/processes/tasks/'+userId);
    }
 

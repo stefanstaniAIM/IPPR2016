@@ -26,7 +26,7 @@ export class ActiveProcesses implements OnInit  {
   ngOnInit() {
     var that = this;
     this.spinner.show();
-    this.service.getActiveProcessesForUser()
+    this.service.getProcessTasksForUser()
     .subscribe(
         data => {
           that.activeProcesses = JSON.parse(data['_body']);
