@@ -1,0 +1,265 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE rdf:RDF [ 
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY abstract-pass-ont "http://www.imi.kit.edu/abstract-pass-ont#" >
+    <!ENTITY standard-pass-ont "http://www.imi.kit.edu/standard-pass-ont#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+]>
+
+<rdf:RDF xmlns:abstract-pass-ont="http://www.imi.kit.edu/abstract-pass-ont#" xmlns:standard-pass-ont="http://www.imi.kit.edu/standard-pass-ont#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns="http://www.imi.kit.edu/s-bpm/exampleProcess">
+	<owl:Ontology rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess">
+		<owl:imports rdf:resource="http://www.imi.kit.edu/abstract-pass-ont"></owl:imports>
+		<owl:imports rdf:resource="http://www.imi.kit.edu/standard-pass-ont"></owl:imports>
+	</owl:Ontology>
+	<owl:NamedIndividual rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess#VacationRequest" >
+		<rdf:type rdf:resource="&standard-pass-ont;PASSProcessModel" ></rdf:type>
+		<standard-pass-ont:hasModelComponentID rdf:datatype="&xsd;string" >Layer_0</standard-pass-ont:hasModelComponentID>
+		<standard-pass-ont:hasModelComponentLable xml:lang="en" >VacationRequest</standard-pass-ont:hasModelComponentLable>
+		<standard-pass-ont:hasModelComponent rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SID1" ></standard-pass-ont:hasModelComponent>
+		<standard-pass-ont:hasModelComponent rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SID_0_StandardActor_2" ></standard-pass-ont:hasModelComponent>
+		<standard-pass-ont:hasModelComponent rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SID_0_StandardActor_12" ></standard-pass-ont:hasModelComponent>
+		<standard-pass-ont:hasModelComponent rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#message_27" ></standard-pass-ont:hasModelComponent>
+		<standard-pass-ont:hasModelComponent rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SID_0_StandardMessageConnector_23_message_27" ></standard-pass-ont:hasModelComponent>
+		<standard-pass-ont:hasModelComponent rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#message_38" ></standard-pass-ont:hasModelComponent>
+		<standard-pass-ont:hasModelComponent rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SID_0_StandardMessageConnector_34_message_38" ></standard-pass-ont:hasModelComponent>
+		<standard-pass-ont:hasModelComponent rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#message_47" ></standard-pass-ont:hasModelComponent>
+		<standard-pass-ont:hasModelComponent rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SID_0_StandardMessageConnector_34_message_47" ></standard-pass-ont:hasModelComponent>
+		<standard-pass-ont:hasModelComponent rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_SID_0_StandardActor_2" ></standard-pass-ont:hasModelComponent>
+		<standard-pass-ont:hasModelComponent rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_5_SID_0_StandardActor_12" ></standard-pass-ont:hasModelComponent>
+	</owl:NamedIndividual>
+	<owl:NamedIndividual rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess#SID1" >
+		<rdf:type rdf:resource="&standard-pass-ont;Layer" ></rdf:type>
+		<standard-pass-ont:hasModelComponentID rdf:datatype="&xsd;string" >SID1</standard-pass-ont:hasModelComponentID>
+		<standard-pass-ont:hasModelComponentLable xml:lang="en" >SID1</standard-pass-ont:hasModelComponentLable>
+		<standard-pass-ont:hasModelComponent rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SID_0_StandardActor_2" ></standard-pass-ont:hasModelComponent>
+		<standard-pass-ont:hasModelComponent rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SID_0_StandardActor_12" ></standard-pass-ont:hasModelComponent>
+		<standard-pass-ont:hasModelComponent rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#message_27" ></standard-pass-ont:hasModelComponent>
+		<standard-pass-ont:hasModelComponent rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SID_0_StandardMessageConnector_23_message_27" ></standard-pass-ont:hasModelComponent>
+		<standard-pass-ont:hasModelComponent rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#message_38" ></standard-pass-ont:hasModelComponent>
+		<standard-pass-ont:hasModelComponent rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SID_0_StandardMessageConnector_34_message_38" ></standard-pass-ont:hasModelComponent>
+		<standard-pass-ont:hasModelComponent rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#message_47" ></standard-pass-ont:hasModelComponent>
+		<standard-pass-ont:hasModelComponent rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SID_0_StandardMessageConnector_34_message_47" ></standard-pass-ont:hasModelComponent>
+		<standard-pass-ont:hasModelComponent rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_SID_0_StandardActor_2" ></standard-pass-ont:hasModelComponent>
+		<standard-pass-ont:hasModelComponent rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_5_SID_0_StandardActor_12" ></standard-pass-ont:hasModelComponent>
+	</owl:NamedIndividual>
+	<owl:NamedIndividual rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess#SID_0_StandardActor_2" >
+		<rdf:type rdf:resource="&standard-pass-ont;SingleActor" ></rdf:type>
+		<standard-pass-ont:hasModelComponentID rdf:datatype="&xsd;string" >SID_0_StandardActor_2</standard-pass-ont:hasModelComponentID>
+		<standard-pass-ont:hasModelComponentLable xml:lang="en" >Boss</standard-pass-ont:hasModelComponentLable>
+		<standard-pass-ont:hasBehavior rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_SID_0_StandardActor_2" ></standard-pass-ont:hasBehavior>
+	</owl:NamedIndividual>
+	<owl:NamedIndividual rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess#SID_0_StandardActor_12" >
+		<rdf:type rdf:resource="&standard-pass-ont;SingleActor" ></rdf:type>
+		<standard-pass-ont:hasModelComponentID rdf:datatype="&xsd;string" >SID_0_StandardActor_12</standard-pass-ont:hasModelComponentID>
+		<standard-pass-ont:hasModelComponentLable xml:lang="en" >Employee</standard-pass-ont:hasModelComponentLable>
+		<standard-pass-ont:hasBehavior rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_5_SID_0_StandardActor_12" ></standard-pass-ont:hasBehavior>
+	</owl:NamedIndividual>
+	<owl:NamedIndividual rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess#message_27" >
+		<rdf:type rdf:resource="&standard-pass-ont;MessageSpec" ></rdf:type>
+		<standard-pass-ont:hasModelComponentID rdf:datatype="&xsd;string" >message_27</standard-pass-ont:hasModelComponentID>
+		<standard-pass-ont:hasModelComponentLable xml:lang="en" >Vacation Request</standard-pass-ont:hasModelComponentLable>
+	</owl:NamedIndividual>
+	<owl:NamedIndividual rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess#SID_0_StandardMessageConnector_23_message_27" >
+		<rdf:type rdf:resource="&standard-pass-ont;StandardMessageExchange" ></rdf:type>
+		<standard-pass-ont:hasModelComponentID rdf:datatype="&xsd;string" >SID_0_StandardMessageConnector_23_message_27</standard-pass-ont:hasModelComponentID>
+		<standard-pass-ont:hasModelComponentLable xml:lang="en" >Message: Vacation Request From: SID_0_StandardActor_12 To: SID_0_StandardActor_2</standard-pass-ont:hasModelComponentLable>
+		<standard-pass-ont:hasSender rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SID_0_StandardActor_12" ></standard-pass-ont:hasSender>
+		<standard-pass-ont:hasReceiver rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SID_0_StandardActor_2" ></standard-pass-ont:hasReceiver>
+		<standard-pass-ont:hasMessageType rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#message_27" ></standard-pass-ont:hasMessageType>
+	</owl:NamedIndividual>
+	<owl:NamedIndividual rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess#message_38" >
+		<rdf:type rdf:resource="&standard-pass-ont;MessageSpec" ></rdf:type>
+		<standard-pass-ont:hasModelComponentID rdf:datatype="&xsd;string" >message_38</standard-pass-ont:hasModelComponentID>
+		<standard-pass-ont:hasModelComponentLable xml:lang="en" >Vacation Request OK</standard-pass-ont:hasModelComponentLable>
+	</owl:NamedIndividual>
+	<owl:NamedIndividual rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess#SID_0_StandardMessageConnector_34_message_38" >
+		<rdf:type rdf:resource="&standard-pass-ont;StandardMessageExchange" ></rdf:type>
+		<standard-pass-ont:hasModelComponentID rdf:datatype="&xsd;string" >SID_0_StandardMessageConnector_34_message_38</standard-pass-ont:hasModelComponentID>
+		<standard-pass-ont:hasModelComponentLable xml:lang="en" >Message: Vacation Request OK From: SID_0_StandardActor_2 To: SID_0_StandardActor_12</standard-pass-ont:hasModelComponentLable>
+		<standard-pass-ont:hasSender rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SID_0_StandardActor_2" ></standard-pass-ont:hasSender>
+		<standard-pass-ont:hasReceiver rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SID_0_StandardActor_12" ></standard-pass-ont:hasReceiver>
+		<standard-pass-ont:hasMessageType rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#message_38" ></standard-pass-ont:hasMessageType>
+	</owl:NamedIndividual>
+	<owl:NamedIndividual rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess#message_47" >
+		<rdf:type rdf:resource="&standard-pass-ont;MessageSpec" ></rdf:type>
+		<standard-pass-ont:hasModelComponentID rdf:datatype="&xsd;string" >message_47</standard-pass-ont:hasModelComponentID>
+		<standard-pass-ont:hasModelComponentLable xml:lang="en" >Vacation Request NOK</standard-pass-ont:hasModelComponentLable>
+	</owl:NamedIndividual>
+	<owl:NamedIndividual rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess#SID_0_StandardMessageConnector_34_message_47" >
+		<rdf:type rdf:resource="&standard-pass-ont;StandardMessageExchange" ></rdf:type>
+		<standard-pass-ont:hasModelComponentID rdf:datatype="&xsd;string" >SID_0_StandardMessageConnector_34_message_47</standard-pass-ont:hasModelComponentID>
+		<standard-pass-ont:hasModelComponentLable xml:lang="en" >Message: Vacation Request NOK From: SID_0_StandardActor_2 To: SID_0_StandardActor_12</standard-pass-ont:hasModelComponentLable>
+		<standard-pass-ont:hasSender rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SID_0_StandardActor_2" ></standard-pass-ont:hasSender>
+		<standard-pass-ont:hasReceiver rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SID_0_StandardActor_12" ></standard-pass-ont:hasReceiver>
+		<standard-pass-ont:hasMessageType rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#message_47" ></standard-pass-ont:hasMessageType>
+	</owl:NamedIndividual>
+	<owl:NamedIndividual rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_SID_0_StandardActor_2" >
+		<rdf:type rdf:resource="&standard-pass-ont;Behavior" ></rdf:type>
+		<standard-pass-ont:hasModelComponentID rdf:datatype="&xsd;string" >SBD_4_SID_0_StandardActor_2</standard-pass-ont:hasModelComponentID>
+		<standard-pass-ont:hasModelComponentLable xml:lang="en" >SBD: Boss</standard-pass-ont:hasModelComponentLable>
+		<standard-pass-ont:hasState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_SendState_40" ></standard-pass-ont:hasState>
+		<standard-pass-ont:hasInitialState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_ReceiveState_48" ></standard-pass-ont:hasInitialState>
+		<standard-pass-ont:hasState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_ReceiveState_48" ></standard-pass-ont:hasState>
+		<standard-pass-ont:hasEdge rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_ReceiveTransition_57" ></standard-pass-ont:hasEdge>
+		<standard-pass-ont:hasState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_FunctionState_60" ></standard-pass-ont:hasState>
+		<standard-pass-ont:hasEdge rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_StandardTransition_72" ></standard-pass-ont:hasEdge>
+		<standard-pass-ont:hasEdge rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_SendTransition_84" ></standard-pass-ont:hasEdge>
+		<standard-pass-ont:hasEndState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_FunctionState_87" ></standard-pass-ont:hasEndState>
+		<standard-pass-ont:hasState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_FunctionState_87" ></standard-pass-ont:hasState>
+		<standard-pass-ont:hasState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_SendState_96" ></standard-pass-ont:hasState>
+		<standard-pass-ont:hasEdge rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_StandardTransition_104" ></standard-pass-ont:hasEdge>
+		<standard-pass-ont:hasEdge rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_SendTransition_107" ></standard-pass-ont:hasEdge>
+	</owl:NamedIndividual>
+	<owl:NamedIndividual rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_SendState_40" >
+		<rdf:type rdf:resource="&standard-pass-ont;SendState" ></rdf:type>
+		<standard-pass-ont:hasModelComponentID rdf:datatype="&xsd;string" >SBD_4_SendState_40</standard-pass-ont:hasModelComponentID>
+		<standard-pass-ont:hasModelComponentLable xml:lang="en" >Vacation Request OK</standard-pass-ont:hasModelComponentLable>
+	</owl:NamedIndividual>
+	<owl:NamedIndividual rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_ReceiveState_48" >
+		<rdf:type rdf:resource="&standard-pass-ont;ReceiveState" ></rdf:type>
+		<standard-pass-ont:hasModelComponentID rdf:datatype="&xsd;string" >SBD_4_ReceiveState_48</standard-pass-ont:hasModelComponentID>
+		<standard-pass-ont:hasModelComponentLable xml:lang="en" >Receive Vacation Request</standard-pass-ont:hasModelComponentLable>
+		<rdf:type rdf:resource="&standard-pass-ont;InitialState" ></rdf:type>
+	</owl:NamedIndividual>
+	<owl:NamedIndividual rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_ReceiveTransition_57" >
+		<rdf:type rdf:resource="&standard-pass-ont;ReceiveTransition" ></rdf:type>
+		<standard-pass-ont:hasModelComponentID rdf:datatype="&xsd;string" >SBD_4_ReceiveTransition_57</standard-pass-ont:hasModelComponentID>
+		<standard-pass-ont:hasModelComponentLable xml:lang="en" >From: Employee
+Msg: Vacation Request (Max: )</standard-pass-ont:hasModelComponentLable>
+		<standard-pass-ont:hasSourceState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_ReceiveState_48" ></standard-pass-ont:hasSourceState>
+		<standard-pass-ont:hasTargetState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_FunctionState_60" ></standard-pass-ont:hasTargetState>
+		<standard-pass-ont:hasAlternativePriorityNumber >0</standard-pass-ont:hasAlternativePriorityNumber>
+		<standard-pass-ont:refersTo rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SID_0_StandardMessageConnector_23_message_27" ></standard-pass-ont:refersTo>
+	</owl:NamedIndividual>
+	<owl:NamedIndividual rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_FunctionState_60" >
+		<rdf:type rdf:resource="&standard-pass-ont;FunctionState" ></rdf:type>
+		<standard-pass-ont:hasModelComponentID rdf:datatype="&xsd;string" >SBD_4_FunctionState_60</standard-pass-ont:hasModelComponentID>
+		<standard-pass-ont:hasModelComponentLable xml:lang="en" >Vacation Request OK or NOK</standard-pass-ont:hasModelComponentLable>
+	</owl:NamedIndividual>
+	<owl:NamedIndividual rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_StandardTransition_72" >
+		<rdf:type rdf:resource="&standard-pass-ont;StandardTransition" ></rdf:type>
+		<standard-pass-ont:hasModelComponentID rdf:datatype="&xsd;string" >SBD_4_StandardTransition_72</standard-pass-ont:hasModelComponentID>
+		<standard-pass-ont:hasModelComponentLable xml:lang="en" >done</standard-pass-ont:hasModelComponentLable>
+		<standard-pass-ont:hasSourceState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_FunctionState_60" ></standard-pass-ont:hasSourceState>
+		<standard-pass-ont:hasTargetState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_SendState_40" ></standard-pass-ont:hasTargetState>
+		<standard-pass-ont:hasAlternativePriorityNumber >0</standard-pass-ont:hasAlternativePriorityNumber>
+	</owl:NamedIndividual>
+	<owl:NamedIndividual rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_SendTransition_84" >
+		<rdf:type rdf:resource="&standard-pass-ont;SendTransition" ></rdf:type>
+		<standard-pass-ont:hasModelComponentID rdf:datatype="&xsd;string" >SBD_4_SendTransition_84</standard-pass-ont:hasModelComponentID>
+		<standard-pass-ont:hasModelComponentLable xml:lang="en" >To: Employee
+Msg: Vacation Request OK (Min: ) (Max: )</standard-pass-ont:hasModelComponentLable>
+		<standard-pass-ont:hasSourceState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_SendState_40" ></standard-pass-ont:hasSourceState>
+		<standard-pass-ont:hasTargetState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_FunctionState_87" ></standard-pass-ont:hasTargetState>
+		<standard-pass-ont:hasAlternativePriorityNumber >0</standard-pass-ont:hasAlternativePriorityNumber>
+		<standard-pass-ont:refersTo rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SID_0_StandardMessageConnector_34_message_38" ></standard-pass-ont:refersTo>
+	</owl:NamedIndividual>
+	<owl:NamedIndividual rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_FunctionState_87" >
+		<rdf:type rdf:resource="&standard-pass-ont;FunctionState" ></rdf:type>
+		<standard-pass-ont:hasModelComponentID rdf:datatype="&xsd;string" >SBD_4_FunctionState_87</standard-pass-ont:hasModelComponentID>
+		<standard-pass-ont:hasModelComponentLable xml:lang="en" >Function State</standard-pass-ont:hasModelComponentLable>
+		<rdf:type rdf:resource="&standard-pass-ont;EndState" ></rdf:type>
+	</owl:NamedIndividual>
+	<owl:NamedIndividual rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_SendState_96" >
+		<rdf:type rdf:resource="&standard-pass-ont;SendState" ></rdf:type>
+		<standard-pass-ont:hasModelComponentID rdf:datatype="&xsd;string" >SBD_4_SendState_96</standard-pass-ont:hasModelComponentID>
+		<standard-pass-ont:hasModelComponentLable xml:lang="en" >Vacation Request NOK</standard-pass-ont:hasModelComponentLable>
+	</owl:NamedIndividual>
+	<owl:NamedIndividual rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_StandardTransition_104" >
+		<rdf:type rdf:resource="&standard-pass-ont;StandardTransition" ></rdf:type>
+		<standard-pass-ont:hasModelComponentID rdf:datatype="&xsd;string" >SBD_4_StandardTransition_104</standard-pass-ont:hasModelComponentID>
+		<standard-pass-ont:hasModelComponentLable xml:lang="en" >done</standard-pass-ont:hasModelComponentLable>
+		<standard-pass-ont:hasSourceState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_FunctionState_60" ></standard-pass-ont:hasSourceState>
+		<standard-pass-ont:hasTargetState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_SendState_96" ></standard-pass-ont:hasTargetState>
+		<standard-pass-ont:hasAlternativePriorityNumber >0</standard-pass-ont:hasAlternativePriorityNumber>
+	</owl:NamedIndividual>
+	<owl:NamedIndividual rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_SendTransition_107" >
+		<rdf:type rdf:resource="&standard-pass-ont;SendTransition" ></rdf:type>
+		<standard-pass-ont:hasModelComponentID rdf:datatype="&xsd;string" >SBD_4_SendTransition_107</standard-pass-ont:hasModelComponentID>
+		<standard-pass-ont:hasModelComponentLable xml:lang="en" >To: Employee
+Msg: Vacation Request OK</standard-pass-ont:hasModelComponentLable>
+		<standard-pass-ont:hasSourceState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_SendState_96" ></standard-pass-ont:hasSourceState>
+		<standard-pass-ont:hasTargetState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_4_FunctionState_87" ></standard-pass-ont:hasTargetState>
+		<standard-pass-ont:hasAlternativePriorityNumber >0</standard-pass-ont:hasAlternativePriorityNumber>
+		<standard-pass-ont:refersTo rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SID_0_StandardMessageConnector_34_message_38" ></standard-pass-ont:refersTo>
+	</owl:NamedIndividual>
+	<owl:NamedIndividual rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_5_SID_0_StandardActor_12" >
+		<rdf:type rdf:resource="&standard-pass-ont;Behavior" ></rdf:type>
+		<standard-pass-ont:hasModelComponentID rdf:datatype="&xsd;string" >SBD_5_SID_0_StandardActor_12</standard-pass-ont:hasModelComponentID>
+		<standard-pass-ont:hasModelComponentLable xml:lang="en" >SBD: Employee</standard-pass-ont:hasModelComponentLable>
+		<standard-pass-ont:hasInitialState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_5_FunctionState_2" ></standard-pass-ont:hasInitialState>
+		<standard-pass-ont:hasState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_5_FunctionState_2" ></standard-pass-ont:hasState>
+		<standard-pass-ont:hasEdge rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_5_StandardTransition_19" ></standard-pass-ont:hasEdge>
+		<standard-pass-ont:hasState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_5_SendState_10" ></standard-pass-ont:hasState>
+		<standard-pass-ont:hasState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_5_ReceiveState_22" ></standard-pass-ont:hasState>
+		<standard-pass-ont:hasEdge rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_5_ReceiveTransition_50" ></standard-pass-ont:hasEdge>
+		<standard-pass-ont:hasEndState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_5_FunctionState_34" ></standard-pass-ont:hasEndState>
+		<standard-pass-ont:hasState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_5_FunctionState_34" ></standard-pass-ont:hasState>
+		<standard-pass-ont:hasEdge rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_5_ReceiveTransition_54" ></standard-pass-ont:hasEdge>
+		<standard-pass-ont:hasEdge rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_5_SendTransition_66" ></standard-pass-ont:hasEdge>
+	</owl:NamedIndividual>
+	<owl:NamedIndividual rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_5_FunctionState_2" >
+		<rdf:type rdf:resource="&standard-pass-ont;FunctionState" ></rdf:type>
+		<standard-pass-ont:hasModelComponentID rdf:datatype="&xsd;string" >SBD_5_FunctionState_2</standard-pass-ont:hasModelComponentID>
+		<standard-pass-ont:hasModelComponentLable xml:lang="en" >Create Vacation Request</standard-pass-ont:hasModelComponentLable>
+		<rdf:type rdf:resource="&standard-pass-ont;InitialState" ></rdf:type>
+	</owl:NamedIndividual>
+	<owl:NamedIndividual rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_5_StandardTransition_19" >
+		<rdf:type rdf:resource="&standard-pass-ont;StandardTransition" ></rdf:type>
+		<standard-pass-ont:hasModelComponentID rdf:datatype="&xsd;string" >SBD_5_StandardTransition_19</standard-pass-ont:hasModelComponentID>
+		<standard-pass-ont:hasModelComponentLable xml:lang="en" >done</standard-pass-ont:hasModelComponentLable>
+		<standard-pass-ont:hasSourceState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_5_FunctionState_2" ></standard-pass-ont:hasSourceState>
+		<standard-pass-ont:hasTargetState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_5_SendState_10" ></standard-pass-ont:hasTargetState>
+		<standard-pass-ont:hasAlternativePriorityNumber >0</standard-pass-ont:hasAlternativePriorityNumber>
+	</owl:NamedIndividual>
+	<owl:NamedIndividual rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_5_SendState_10" >
+		<rdf:type rdf:resource="&standard-pass-ont;SendState" ></rdf:type>
+		<standard-pass-ont:hasModelComponentID rdf:datatype="&xsd;string" >SBD_5_SendState_10</standard-pass-ont:hasModelComponentID>
+		<standard-pass-ont:hasModelComponentLable xml:lang="en" >Send Vacation Request</standard-pass-ont:hasModelComponentLable>
+	</owl:NamedIndividual>
+	<owl:NamedIndividual rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_5_ReceiveState_22" >
+		<rdf:type rdf:resource="&standard-pass-ont;ReceiveState" ></rdf:type>
+		<standard-pass-ont:hasModelComponentID rdf:datatype="&xsd;string" >SBD_5_ReceiveState_22</standard-pass-ont:hasModelComponentID>
+		<standard-pass-ont:hasModelComponentLable xml:lang="en" >Receive Vacation Request Response</standard-pass-ont:hasModelComponentLable>
+	</owl:NamedIndividual>
+	<owl:NamedIndividual rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_5_ReceiveTransition_50" >
+		<rdf:type rdf:resource="&standard-pass-ont;ReceiveTransition" ></rdf:type>
+		<standard-pass-ont:hasModelComponentID rdf:datatype="&xsd;string" >SBD_5_ReceiveTransition_50</standard-pass-ont:hasModelComponentID>
+		<standard-pass-ont:hasModelComponentLable xml:lang="en" >From: Boss
+Msg: Vacation Request OK</standard-pass-ont:hasModelComponentLable>
+		<standard-pass-ont:hasSourceState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_5_ReceiveState_22" ></standard-pass-ont:hasSourceState>
+		<standard-pass-ont:hasTargetState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_5_FunctionState_34" ></standard-pass-ont:hasTargetState>
+		<standard-pass-ont:hasAlternativePriorityNumber >0</standard-pass-ont:hasAlternativePriorityNumber>
+		<standard-pass-ont:refersTo rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SID_0_StandardMessageConnector_34_message_38" ></standard-pass-ont:refersTo>
+	</owl:NamedIndividual>
+	<owl:NamedIndividual rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_5_FunctionState_34" >
+		<rdf:type rdf:resource="&standard-pass-ont;FunctionState" ></rdf:type>
+		<standard-pass-ont:hasModelComponentID rdf:datatype="&xsd;string" >SBD_5_FunctionState_34</standard-pass-ont:hasModelComponentID>
+		<standard-pass-ont:hasModelComponentLable xml:lang="en" >End State</standard-pass-ont:hasModelComponentLable>
+		<rdf:type rdf:resource="&standard-pass-ont;EndState" ></rdf:type>
+	</owl:NamedIndividual>
+	<owl:NamedIndividual rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_5_ReceiveTransition_54" >
+		<rdf:type rdf:resource="&standard-pass-ont;ReceiveTransition" ></rdf:type>
+		<standard-pass-ont:hasModelComponentID rdf:datatype="&xsd;string" >SBD_5_ReceiveTransition_54</standard-pass-ont:hasModelComponentID>
+		<standard-pass-ont:hasModelComponentLable xml:lang="en" >From: Boss
+Msg: Vacation Request NOK</standard-pass-ont:hasModelComponentLable>
+		<standard-pass-ont:hasSourceState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_5_ReceiveState_22" ></standard-pass-ont:hasSourceState>
+		<standard-pass-ont:hasTargetState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_5_FunctionState_34" ></standard-pass-ont:hasTargetState>
+		<standard-pass-ont:hasAlternativePriorityNumber >0</standard-pass-ont:hasAlternativePriorityNumber>
+		<standard-pass-ont:refersTo rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SID_0_StandardMessageConnector_34_message_47" ></standard-pass-ont:refersTo>
+	</owl:NamedIndividual>
+	<owl:NamedIndividual rdf:about="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_5_SendTransition_66" >
+		<rdf:type rdf:resource="&standard-pass-ont;SendTransition" ></rdf:type>
+		<standard-pass-ont:hasModelComponentID rdf:datatype="&xsd;string" >SBD_5_SendTransition_66</standard-pass-ont:hasModelComponentID>
+		<standard-pass-ont:hasModelComponentLable xml:lang="en" >To: Boss
+Msg: Vacation Request</standard-pass-ont:hasModelComponentLable>
+		<standard-pass-ont:hasSourceState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_5_SendState_10" ></standard-pass-ont:hasSourceState>
+		<standard-pass-ont:hasTargetState rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SBD_5_ReceiveState_22" ></standard-pass-ont:hasTargetState>
+		<standard-pass-ont:hasAlternativePriorityNumber >0</standard-pass-ont:hasAlternativePriorityNumber>
+		<standard-pass-ont:refersTo rdf:resource="http://www.imi.kit.edu/s-bpm/exampleProcess#SID_0_StandardMessageConnector_23_message_27" ></standard-pass-ont:refersTo>
+	</owl:NamedIndividual>
+</rdf:RDF>
+

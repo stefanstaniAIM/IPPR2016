@@ -78,7 +78,7 @@
          </div>
          <br />
          <div class="row permissions">
-           <div class="subheader"><h3>Feld-Berechtigungen</h3></div>
+           <div class="subheader"><h3>Feld-Berechtigungen</h3> <button class="btn btn-success btn-xs" type="button" (click)="getFormData(currentSelectedBusinessObject)">Felder aktualisieren</button></div>
            <div class="noFieldsInfo" *ngIf="!currentBofms || currentBofms.length === 0">Zu diesem Business Object gibt es noch keine Felder!</div>
            <div class="col-sm-2">
              <ul class="list-group">
