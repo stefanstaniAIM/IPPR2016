@@ -131,9 +131,9 @@ public class VacationRequestWithoutChild extends AbstractExample {
         .functionType(StateFunctionType.FUNCTION).build();
 
     final Transition if1 = new TransitionBuilder().fromState(empState3).toState(empState4)
-        .transitionType(TransitionType.IF_CONDITION).build();
+        .transitionType(TransitionType.NORMAL).build();
     final Transition if2 = new TransitionBuilder().fromState(empState3).toState(empState5)
-        .transitionType(TransitionType.IF_CONDITION).build();
+        .transitionType(TransitionType.NORMAL).build();
 
     // finish the employee
     final State empState6 = new StateBuilder().subjectModel(employee).name("END")
@@ -181,10 +181,19 @@ public class VacationRequestWithoutChild extends AbstractExample {
 
     final MessageFlow mf1 = new MessageFlowBuilder().sender(employee).receiver(boss)
         .state(empState2).assignBusinessObjectModel(vacationRequestForm).build();
+    final MessageFlow mf4 = new MessageFlowBuilder().sender(employee).receiver(boss)
+        .state(bossState1).assignBusinessObjectModel(vacationRequestForm).build();
+
     final MessageFlow mf2 = new MessageFlowBuilder().sender(boss).receiver(employee)
         .state(bossState3).assignBusinessObjectModel(okForm).build();
+    final MessageFlow mf5 = new MessageFlowBuilder().sender(boss).receiver(employee)
+        .state(empState3).assignBusinessObjectModel(okForm).build();
+
     final MessageFlow mf3 = new MessageFlowBuilder().sender(boss).receiver(employee)
         .state(bossState4).assignBusinessObjectModel(nokForm).build();
+    final MessageFlow mf6 = new MessageFlowBuilder().sender(boss).receiver(employee)
+        .state(empState3).assignBusinessObjectModel(nokForm).build();
+
 
     saveSubjectModels(boss, employee);
     saveProcessModel(pm);
@@ -200,7 +209,7 @@ public class VacationRequestWithoutChild extends AbstractExample {
         okFormFieldInformationPermission2, nokFormFieldInformationPermission1,
         nokFormFieldInformationPermission2, boFromPermissionEmp3, boFromPermissionEmp4,
         okFormFieldInformationPermission3, nokFormFieldInformationPermission3);
-    saveMessageFlows(mf1, mf2, mf3);
+    saveMessageFlows(mf1, mf2, mf3, mf4, mf5, mf6);
   }
 
   @Override
