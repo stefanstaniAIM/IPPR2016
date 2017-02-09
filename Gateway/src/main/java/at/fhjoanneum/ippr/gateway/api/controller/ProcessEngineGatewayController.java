@@ -80,7 +80,7 @@ public class ProcessEngineGatewayController {
       final HttpServletRequest request, @PathVariable("hoursbefore") final Long hoursbefore) {
 
     return () -> {
-      return processEngineCaller.getAmountOfStartedProcessesInRange(hoursbefore).get();
+      return processEngineCaller.getAmountOfFinishedProcessesInRange(hoursbefore).get();
     };
   }
 

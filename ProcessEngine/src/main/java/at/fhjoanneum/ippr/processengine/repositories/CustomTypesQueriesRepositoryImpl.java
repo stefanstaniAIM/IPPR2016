@@ -29,7 +29,7 @@ public class CustomTypesQueriesRepositoryImpl implements CustomTypesQueriesRepos
             + "   JOIN SUBJECT s ON s.s_id = ss.s_id                                                                         "
             + "   JOIN PROCESS_MODEL pm ON pm.pm_id = pi.pm_id                                                               "
             + "   WHERE s.user_id = :userId                                                                                  "
-            + "   AND pi.state = 'ACTIVE' AND s.EVENT_TYPE NOT LIKE 'END'                                                    "
+            + "   AND pi.state = 'ACTIVE' AND state.EVENT_TYPE NOT LIKE 'END'                                                "
             + "   AND state.function_type IN ('FUNCTION', 'SEND')                                                            "
             + "   OR (state.function_type = 'RECEIVE' AND ss.sub_state = 'RECEIVED')                                         "
             + "   ORDER BY ss.last_changed ASC                                                                               ";
