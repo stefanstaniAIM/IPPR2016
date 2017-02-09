@@ -33,11 +33,12 @@ public class OwlImportGatewayController {
   }
 
   @RequestMapping(value = "api/import", method = RequestMethod.POST)
-  public void importProcess(final @RequestBody ImportProcessModelDTO processModelDTO,
-      final HttpServletRequest request) {
-    // final Runnable runner = () -> owlImportGatewayCaller.importProcessModel(processModelDTO);
-    // runner.run();
-    final HttpHeaderUser user = new HttpHeaderUser(request);
-    owlImportGatewayCaller.importProcessModel(processModelDTO, user);
+  public @ResponseBody Callable<ResponseEntity<Boolean>> importProcess(
+      final @RequestBody ImportProcessModelDTO processModelDTO, final HttpServletRequest request) {
+    return () -> {
+      final HttpHeaderUser user = new HttpHeaderUser(request);
+      return owlImportGatewayCaller.importProcessModel(processModelDTO, user).get();
+    };
   }
+
 }

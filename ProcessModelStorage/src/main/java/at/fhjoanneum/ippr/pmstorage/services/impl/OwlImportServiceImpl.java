@@ -70,116 +70,124 @@ public class OwlImportServiceImpl implements OwlImportService {
 
   @Async
   @Override
-  public void importProcessModel(final ImportProcessModelDTO processModelDTO) {
-    final ProcessModelBuilder pmBuilder = new ProcessModelBuilder().name(processModelDTO.getName())
-        .state(ProcessModelState.ACTIVE).description(processModelDTO.getDescription());
+  public Future<Boolean> importProcessModel(final ImportProcessModelDTO processModelDTO) {
+    try {
+      final ProcessModelBuilder pmBuilder =
+          new ProcessModelBuilder().name(processModelDTO.getName()).state(ProcessModelState.ACTIVE)
+              .description(processModelDTO.getDescription());
 
-    final Map<String, SubjectModel> subjectModelMap = Maps.newHashMap();
+      final Map<String, SubjectModel> subjectModelMap = Maps.newHashMap();
 
-    processModelDTO.getSubjectModels().stream().forEachOrdered(subjectModelDTO -> {
-      final SubjectModelBuilder smBuilder =
-          new SubjectModelBuilder().name(subjectModelDTO.getName());
-      subjectModelDTO.getAssignedRules().stream()
-          .forEachOrdered(rule -> smBuilder.addAssignedRule(rule));
+      processModelDTO.getSubjectModels().stream().forEachOrdered(subjectModelDTO -> {
+        final SubjectModelBuilder smBuilder =
+            new SubjectModelBuilder().name(subjectModelDTO.getName());
+        subjectModelDTO.getAssignedRules().stream()
+            .forEachOrdered(rule -> smBuilder.addAssignedRule(rule));
 
-      final SubjectModel subjectModel = smBuilder.build();
-      subjectModelMap.put(subjectModelDTO.getId(), subjectModel);
-      pmBuilder.addSubjectModel(subjectModel);
-    });
-
-    pmBuilder.starterSubject(subjectModelMap.get(processModelDTO.getStartSubjectModelId()));
-
-    final Map<String, State> stateMap = Maps.newHashMap();
-
-    processModelDTO.getStates().stream().forEachOrdered(stateDTO -> {
-      final StateBuilder stateBuilder = new StateBuilder().name(stateDTO.getName());
-      if (StringUtils.isNotBlank(stateDTO.getEventType())) {
-        stateBuilder.eventType(StateEventType.valueOf(stateDTO.getEventType()));
-      }
-      stateBuilder.functionType(StateFunctionType.valueOf(stateDTO.getFunctionType()));
-      stateBuilder.subjectModel(subjectModelMap.get(stateDTO.getSubjectModelId()));
-
-      final State state = stateBuilder.build();
-      stateMap.put(stateDTO.getId(), state);
-    });
-
-    final List<Transition> transitions = Lists.newArrayList();
-
-    processModelDTO.getTransitions().stream().forEach(transitionDTO -> {
-      final TransitionBuilder tBuilder =
-          new TransitionBuilder().fromState(stateMap.get(transitionDTO.getFromStateId()))
-              .toState(stateMap.get(transitionDTO.getToStateId()));
-
-      // TODO check transition type
-      tBuilder.transitionType(TransitionType.NORMAL);
-
-      transitions.add(tBuilder.build());
-    });
-
-    final Map<String, BusinessObjectModel> bomMap = Maps.newHashMap();
-
-    processModelDTO.getBoms().stream().forEachOrdered(bomDTO -> {
-      final BusinessObjectModelBuilder bomBuilder =
-          new BusinessObjectModelBuilder().name(bomDTO.getName());
-      bomDTO.getStateIds().stream().forEachOrdered(stateId -> {
-        bomBuilder.addToState(stateMap.get(stateId));
+        final SubjectModel subjectModel = smBuilder.build();
+        subjectModelMap.put(subjectModelDTO.getId(), subjectModel);
+        pmBuilder.addSubjectModel(subjectModel);
       });
 
-      final BusinessObjectModel bom = bomBuilder.build();
-      bomMap.put(bomDTO.getId(), bom);
-    });
+      pmBuilder.starterSubject(subjectModelMap.get(processModelDTO.getStartSubjectModelId()));
 
-    final Map<String, BusinessObjectFieldModel> bofmMap = Maps.newHashMap();
+      final Map<String, State> stateMap = Maps.newHashMap();
 
-    IntStream.range(0, processModelDTO.getBofms().size()).forEach(idx -> {
-      final ImportBusinessObjectFieldsModelDTO bofmDTO = processModelDTO.getBofms().get(idx);
-      final BusinessObjectFieldModelBuilder builder =
-          new BusinessObjectFieldModelBuilder().fieldName(bofmDTO.getName()).position(idx);
-      builder.fieldType(FieldType.valueOf(bofmDTO.getType()));
-      builder.businessObjectModel(bomMap.get(bofmDTO.getBomId()));
+      processModelDTO.getStates().stream().forEachOrdered(stateDTO -> {
+        final StateBuilder stateBuilder = new StateBuilder().name(stateDTO.getName());
+        if (StringUtils.isNotBlank(stateDTO.getEventType())) {
+          stateBuilder.eventType(StateEventType.valueOf(stateDTO.getEventType()));
+        }
+        stateBuilder.functionType(StateFunctionType.valueOf(stateDTO.getFunctionType()));
+        stateBuilder.subjectModel(subjectModelMap.get(stateDTO.getSubjectModelId()));
 
-      final BusinessObjectFieldModel fieldModel = builder.build();
-      bofmMap.put(bofmDTO.getId(), fieldModel);
-    });
+        final State state = stateBuilder.build();
+        stateMap.put(stateDTO.getId(), state);
+      });
 
-    final List<BusinessObjectFieldPermission> permissions = Lists.newArrayList();
+      final List<Transition> transitions = Lists.newArrayList();
 
-    processModelDTO.getBofps().stream().forEachOrdered(bofpDTO -> {
-      final BusinessObjectFieldPermissionBuilder builder =
-          new BusinessObjectFieldPermissionBuilder();
+      processModelDTO.getTransitions().stream().forEach(transitionDTO -> {
+        final TransitionBuilder tBuilder =
+            new TransitionBuilder().fromState(stateMap.get(transitionDTO.getFromStateId()))
+                .toState(stateMap.get(transitionDTO.getToStateId()));
 
-      if (bofpDTO.isRead()) {
-        builder.permission(FieldPermission.READ);
-      } else if (bofpDTO.isWrite()) {
-        builder.permission(FieldPermission.READ_WRITE);
-      } else {
-        builder.permission(FieldPermission.NONE);
-      }
+        // TODO check transition type
+        tBuilder.transitionType(TransitionType.NORMAL);
 
-      builder.mandatory(bofpDTO.isMandatory());
-      builder.businessObjectFieldModel(bofmMap.get(bofpDTO.getBofmId()));
-      builder.state(stateMap.get(bofpDTO.getStateId()));
-      permissions.add(builder.build());
-    });
+        transitions.add(tBuilder.build());
+      });
 
-    final List<MessageFlow> messageFlows = Lists.newArrayList();
+      final Map<String, BusinessObjectModel> bomMap = Maps.newHashMap();
 
-    processModelDTO.getMessageFlows().stream().forEachOrdered(messageFlowDTO -> {
-      final MessageFlowBuilder builder = new MessageFlowBuilder();
-      builder.sender(subjectModelMap.get(messageFlowDTO.getSenderId()));
-      builder.receiver(subjectModelMap.get(messageFlowDTO.getReceiverId()));
-      builder.state(stateMap.get(messageFlowDTO.getStateId()));
-      builder.assignBusinessObjectModel(bomMap.get(messageFlowDTO.getBomId()));
-    });
+      processModelDTO.getBoms().stream().forEachOrdered(bomDTO -> {
+        final BusinessObjectModelBuilder bomBuilder =
+            new BusinessObjectModelBuilder().name(bomDTO.getName());
+        bomDTO.getStateIds().stream().forEachOrdered(stateId -> {
+          bomBuilder.addToState(stateMap.get(stateId));
+        });
 
-    saveSubjectModels(subjectModelMap.values());
-    saveProcessModel(pmBuilder.build());
-    saveStates(stateMap.values());
-    saveTransitions(transitions);
-    saveBusinessObjectModels(bomMap.values());
-    saveBusinessObjectFieldModels(bofmMap.values());
-    saveBusinessObjectFieldPermissions(permissions);
-    saveMessageFlows(messageFlows);
+        final BusinessObjectModel bom = bomBuilder.build();
+        bomMap.put(bomDTO.getId(), bom);
+      });
+
+      final Map<String, BusinessObjectFieldModel> bofmMap = Maps.newHashMap();
+
+      IntStream.range(0, processModelDTO.getBofms().size()).forEach(idx -> {
+        final ImportBusinessObjectFieldsModelDTO bofmDTO = processModelDTO.getBofms().get(idx);
+        final BusinessObjectFieldModelBuilder builder =
+            new BusinessObjectFieldModelBuilder().fieldName(bofmDTO.getName()).position(idx);
+        builder.fieldType(FieldType.valueOf(bofmDTO.getType()));
+        builder.businessObjectModel(bomMap.get(bofmDTO.getBomId()));
+
+        final BusinessObjectFieldModel fieldModel = builder.build();
+        bofmMap.put(bofmDTO.getId(), fieldModel);
+      });
+
+      final List<BusinessObjectFieldPermission> permissions = Lists.newArrayList();
+
+      processModelDTO.getBofps().stream().forEachOrdered(bofpDTO -> {
+        final BusinessObjectFieldPermissionBuilder builder =
+            new BusinessObjectFieldPermissionBuilder();
+
+        if (bofpDTO.isWrite()) {
+          builder.permission(FieldPermission.READ_WRITE);
+        } else if (bofpDTO.isRead()) {
+          builder.permission(FieldPermission.READ);
+        } else {
+          builder.permission(FieldPermission.NONE);
+        }
+
+        builder.mandatory(bofpDTO.isMandatory());
+        builder.businessObjectFieldModel(bofmMap.get(bofpDTO.getBofmId()));
+        builder.state(stateMap.get(bofpDTO.getStateId()));
+        permissions.add(builder.build());
+      });
+
+      final List<MessageFlow> messageFlows = Lists.newArrayList();
+
+      processModelDTO.getMessageFlows().stream().forEachOrdered(messageFlowDTO -> {
+        final MessageFlowBuilder builder = new MessageFlowBuilder();
+        builder.sender(subjectModelMap.get(messageFlowDTO.getSenderId()));
+        builder.receiver(subjectModelMap.get(messageFlowDTO.getReceiverId()));
+        builder.state(stateMap.get(messageFlowDTO.getStateId()));
+        builder.assignBusinessObjectModel(bomMap.get(messageFlowDTO.getBomId()));
+      });
+
+      saveSubjectModels(subjectModelMap.values());
+      saveProcessModel(pmBuilder.build());
+      saveStates(stateMap.values());
+      saveTransitions(transitions);
+      saveBusinessObjectModels(bomMap.values());
+      saveBusinessObjectFieldModels(bofmMap.values());
+      saveBusinessObjectFieldPermissions(permissions);
+      saveMessageFlows(messageFlows);
+
+      return new AsyncResult<Boolean>(Boolean.TRUE);
+    } catch (final Exception e) {
+      e.printStackTrace();
+      return new AsyncResult<Boolean>(Boolean.FALSE);
+    }
   }
 
   protected void saveProcessModel(final ProcessModel processModel) {

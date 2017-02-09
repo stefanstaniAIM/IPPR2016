@@ -39,8 +39,8 @@ public class OwlImportGatewayCallerImpl implements Caller {
   }
 
   @Async
-  public void importProcessModel(final ImportProcessModelDTO processModelDTO,
-      final HttpHeaderUser headerUser) {
+  public Future<ResponseEntity<Boolean>> importProcessModel(
+      final ImportProcessModelDTO processModelDTO, final HttpHeaderUser headerUser) {
     URIBuilder uri = null;
     try {
       uri = new URIBuilder(gatewayConfig.getProcessModelStorageAddress()).setPath("/import");
@@ -49,6 +49,6 @@ public class OwlImportGatewayCallerImpl implements Caller {
     }
 
     final HttpHeaders header = headerUser.getHttpHeaders();
-    createRequest(uri, HttpMethod.POST, processModelDTO, null, header);
+    return createRequest(uri, HttpMethod.POST, processModelDTO, Boolean.class, header);
   }
 }

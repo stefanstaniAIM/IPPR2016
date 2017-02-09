@@ -9,5 +9,5 @@ public interface OwlImportService {
 
   Future<OWLProcessModelDTO> getOwlProcessModelDTO();
 
-  void importProcessModel(ImportProcessModelDTO processModelDTO);
+  Future<Boolean> importProcessModel(ImportProcessModelDTO processModelDTO);
 }
