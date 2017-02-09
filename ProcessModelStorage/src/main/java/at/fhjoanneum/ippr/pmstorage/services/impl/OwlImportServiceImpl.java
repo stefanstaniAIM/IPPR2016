@@ -74,7 +74,7 @@ public class OwlImportServiceImpl implements OwlImportService {
     try {
       final ProcessModelBuilder pmBuilder =
           new ProcessModelBuilder().name(processModelDTO.getName()).state(ProcessModelState.ACTIVE)
-              .description(processModelDTO.getDescription());
+              .description(processModelDTO.getDescription()).version(processModelDTO.getVersion());
 
       final Map<String, SubjectModel> subjectModelMap = Maps.newHashMap();
 

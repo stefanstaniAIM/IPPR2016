@@ -252,7 +252,7 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
   private boolean filteringNeeded(final List<Transition> toStates) {
     if (toStates.stream()
         .filter(transition -> TransitionType.IF_CONDITION.equals(transition.getTransitionType()))
-        .count() >= 2) {
+        .count() >= 1) {
       return true;
     }
     return false;

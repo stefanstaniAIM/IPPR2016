@@ -13,6 +13,7 @@ public class ImportProcessModelDTO implements Serializable {
   private String name;
   private String description;
   private String startSubjectModelId;
+  private float version;
 
   private List<ImportSubjectModelDTO> subjectModels;
   private List<ImportStateDTO> states;
@@ -32,7 +33,7 @@ public class ImportProcessModelDTO implements Serializable {
       final List<ImportBusinessObjectModelDTO> boms,
       final List<ImportBusinessObjectFieldsModelDTO> bofms,
       final List<ImportBusinessObjectFieldPermissionDTO> bofps,
-      final List<ImportMessageFlowDTO> messageFlows) {
+      final List<ImportMessageFlowDTO> messageFlows, final float version) {
     this.name = name;
     this.description = description;
     this.startSubjectModelId = startSubjectModelId;
@@ -43,9 +44,8 @@ public class ImportProcessModelDTO implements Serializable {
     this.bofms = bofms;
     this.bofps = bofps;
     this.messageFlows = messageFlows;
+    this.version = version;
   }
-
-
 
   public String getName() {
     return name;
@@ -85,5 +85,9 @@ public class ImportProcessModelDTO implements Serializable {
 
   public List<ImportMessageFlowDTO> getMessageFlows() {
     return messageFlows;
+  }
+
+  public float getVersion() {
+    return version;
   }
 }
