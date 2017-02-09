@@ -18,6 +18,7 @@ export class ImportProcessModel implements OnInit {
    currentSelectedFieldId;
    currentBofms;
    buildedBofps = {};
+   success;
 
   constructor(protected service:ProcessesService) {}
 
@@ -37,7 +38,7 @@ export class ImportProcessModel implements OnInit {
              });
              that.initRules();
           },
-          err => this.error = err,
+          err => that.error = "Die OWL Datei konnte nicht richtig interpretiert werden!",
           () => {
             console.log('Request Complete');
           }
@@ -54,7 +55,7 @@ export class ImportProcessModel implements OnInit {
              that.currentSelectedBusinessObject = that.processModel.boms[0];
              that.initFormBuilder(that.currentSelectedBusinessObject);
           },
-          err => this.error = err,
+          err => that.error = err,
           () => console.log('Request Complete')
         );
   }
@@ -70,9 +71,23 @@ export class ImportProcessModel implements OnInit {
     this.service.importProcessModel(processModelResult)
        .subscribe(
           data => {
-             console.log(data);
+             if(JSON.parse(data['_body']) === true){
+               that.processModel = undefined;
+               that.rules= undefined;
+               that.error = undefined;
+               that.formBuilder= undefined;
+               that.buildedBusinessObjects = {};
+               that.currentSelectedBusinessObject= undefined;
+               that.currentSelectedFieldId= undefined;
+               that.currentBofms= undefined;
+               that.buildedBofps = {};
+               that.success = "Das Prozessmodell wurde erfolgreich importiert!";
+             } else {
+               that.error = "Das Prozessmodell konnte nicht importiert werden!";
+               window.scrollTo(0, 0);
+             }
           },
-          err => this.error = err,
+          err => that.error = "Das Prozessmodell konnte nicht importiert werden!",
           () => console.log('Request Complete')
         );
   }
