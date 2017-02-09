@@ -42,7 +42,7 @@ public interface ProcessInstanceRepository
       @Param("user") Long user, @Param("state") ProcessInstanceState state);
 
   @Query(
-      value = "select count(p) from PROCESS_INSTANCE p where p.startTime between :start and :end and p.state = 'ACTIVE'",
+      value = "select count(p) from PROCESS_INSTANCE p where p.startTime between :start and :end",
       nativeQuery = false)
   Long getAmountOfStartedProcessesBetweenRange(@Param("start") LocalDateTime start,
       @Param("end") LocalDateTime end);
@@ -54,7 +54,7 @@ public interface ProcessInstanceRepository
       @Param("end") LocalDateTime end);
 
   @Query(
-      value = "select count(p) from PROCESS_INSTANCE p JOIN p.subjects s where p.startTime between :start and :end and p.state = 'ACTIVE' and s.userId = :user",
+      value = "select count(p) from PROCESS_INSTANCE p JOIN p.subjects s where p.startTime between :start and :end and s.userId = :user",
       nativeQuery = false)
   Long getAmountOfStartedProcessesBetweenRangeForUser(@Param("start") LocalDateTime start,
       @Param("end") LocalDateTime end, @Param("user") Long userId);
