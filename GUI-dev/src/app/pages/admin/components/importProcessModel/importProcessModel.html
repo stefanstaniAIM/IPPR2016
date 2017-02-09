@@ -18,7 +18,7 @@
      <ba-card class="col-xlg-12 col-xl-12 col-lg-12 col-sm-12 col-xs-12">
          <form #owlModelForm="ngForm" (ngSubmit)="uploadOWLModel(owlModelForm)">
          <label class="control-label">OWL-File: </label>
-         <input type="file" class="form-control">
+         <input type="file" name="fileUpload" id="fileUpload" class="form-control" accept=".owl," (change)="onFileChange($event)">
          <br />
          <button class="btn btn-primary" type="submit">Upload</button>
        </form>

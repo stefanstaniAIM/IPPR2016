@@ -19,15 +19,32 @@ export class ImportProcessModel implements OnInit {
    currentBofms;
    buildedBofps = {};
    success;
+   owlFile;
 
   constructor(protected service:ProcessesService) {}
 
   ngOnInit(): void {
   }
 
+  onFileChange(event) {
+    this.owlFile = event.srcElement.files[0];
+    var split = this.owlFile.name.split(".");
+    if(split[split.length-1] !== "owl") {
+      this.owlFile = undefined;
+      document.getElementById(event.target.id).value = "";
+    }
+  }
+
   uploadOWLModel(form):void {
     var that = this;
     console.log("upload owl model");
+    var reader = new FileReader();
+    if(this.owlFile) {
+      reader.onload = function(e) {
+        console.log(reader.result);
+      }
+      reader.readAsText(this.owlFile);
+    }
     this.service.uploadOWLModel(null)
        .subscribe(
           data => {
