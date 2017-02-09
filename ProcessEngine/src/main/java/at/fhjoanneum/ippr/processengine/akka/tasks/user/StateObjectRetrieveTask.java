@@ -218,24 +218,32 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
     Set<StateDTO> nextStates = Sets.newHashSet();
     final State currentState = subjectState.getCurrentState();
 
-    if (filteringNeeded(currentState.getToStates())) {
+    if (filteringNeeded(subjectState)) {
       LOG.debug("Special check is necessary to return next states for [{}] ", currentState);
-      final Set<BusinessObjectModel> retrievedBusinessObjectModels =
+      final Set<BusinessObjectModel> retrievedBoms =
           Sets.newHashSet(subjectState.getCurrentMessageFlow().getBusinessObjectModels());
-      nextStates = currentState.getToStates().stream()
-          .filter(transition -> TransitionType.IF_CONDITION.equals(transition.getTransitionType()))
-          .filter(
-              transition -> checkIfIncludedForNextStates(retrievedBusinessObjectModels, transition))
-          .map(state -> new StateDTO(state.getToState().getSId(), state.getToState().getName(),
-              StateEventType.END.equals(state.getToState().getEventType())))
-          .collect(Collectors.toSet());
+      final List<Set<BusinessObjectModel>> possibleRetrievedBoms =
+          subjectState.getCurrentState().getMessageFlow().stream().map(mf -> {
+            final Set<BusinessObjectModel> boms = Sets.newHashSet(mf.getBusinessObjectModels());
+            return boms;
+          }).collect(Collectors.toList());
 
-      currentState.getToStates().stream()
-          .filter(transition -> TransitionType.NORMAL.equals(transition.getTransitionType()))
+      nextStates = subjectState.getCurrentState().getToStates().stream()
+          .filter(transition -> checkIfIncludedForNextStates(possibleRetrievedBoms, retrievedBoms,
+              transition))
           .map(transition -> new StateDTO(transition.getToState().getSId(),
               transition.getToState().getName(),
               StateEventType.END.equals(transition.getToState().getEventType())))
-          .forEachOrdered(nextStates::add);
+          .collect(Collectors.toSet());
+
+      if (nextStates.isEmpty()) {
+        LOG.warn("Could not find possible next states for [{}], add all states", subjectState);
+        nextStates = currentState.getToStates().stream()
+            .map(transition -> new StateDTO(transition.getToState().getSId(),
+                transition.getToState().getName(),
+                StateEventType.END.equals(transition.getToState().getEventType())))
+            .collect(Collectors.toSet());
+      }
     } else {
       LOG.debug("No special check is necessary, so return all states for [{}]", currentState);
       nextStates = currentState.getToStates().stream()
@@ -249,26 +257,47 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
     return nextStates;
   }
 
-  private boolean filteringNeeded(final List<Transition> toStates) {
-    if (toStates.stream()
-        .filter(transition -> TransitionType.IF_CONDITION.equals(transition.getTransitionType()))
-        .count() >= 1) {
+  private boolean filteringNeeded(final SubjectState subjectState) {
+    if (StateFunctionType.RECEIVE.equals(subjectState.getCurrentState().getFunctionType())
+        && subjectState.getCurrentState().getToStates().stream()
+            .filter(transition -> TransitionType.NORMAL.equals(transition.getTransitionType()))
+            .count() >= 2) {
       return true;
     }
     return false;
   }
 
   private boolean checkIfIncludedForNextStates(
-      final Set<BusinessObjectModel> retrievedBusinessObjectModels, final Transition transition) {
+      final List<Set<BusinessObjectModel>> possibleRetrievedBoms,
+      final Set<BusinessObjectModel> retrievedBoms, final Transition transition) {
     final Set<BusinessObjectModel> stateBusinessObjectModels =
         Sets.newHashSet(transition.getToState().getBusinessObjectModels());
-    if (Sets.difference(retrievedBusinessObjectModels, stateBusinessObjectModels).isEmpty()) {
+    if (Sets.difference(retrievedBoms, stateBusinessObjectModels).isEmpty()) {
       LOG.debug("Retrieved BOMs {} are part of {}, therefore, [{}] is part of next state",
-          retrievedBusinessObjectModels, stateBusinessObjectModels, transition.getToState());
+          retrievedBoms, stateBusinessObjectModels, transition.getToState());
       return true;
+    } else if (!canBeRetrieved(possibleRetrievedBoms, retrievedBoms)) {
+      return true;
+    } else {
+      return false;
     }
-    LOG.debug("Retrieved BOMs {} are NOT part of {}, therefore, [{}] is NOT part of next state",
-        retrievedBusinessObjectModels, stateBusinessObjectModels, transition.getToState());
+  }
+
+  private boolean canBeRetrieved(final List<Set<BusinessObjectModel>> possibleRetrievedBoms,
+      final Set<BusinessObjectModel> retrievedBoms) {
+    for (final Set<BusinessObjectModel> boms : possibleRetrievedBoms) {
+      if (Sets.difference(retrievedBoms, boms).isEmpty()) {
+        LOG.debug(
+            "Retrieved BOMs {} are POSSIBLE part of {}, therefore, [{}] is NO part of next state",
+            retrievedBoms, possibleRetrievedBoms, boms);
+        return true;
+      } else {
+        LOG.debug(
+            "Retrieved BOMs {} are NO POSSIBLE part of {}, therefore, [{}] is part of next state",
+            retrievedBoms, possibleRetrievedBoms, boms);
+        return false;
+      }
+    }
     return false;
   }
 }
