@@ -13,6 +13,13 @@ public class ImportSubjectModelDTO implements Serializable {
 
   public ImportSubjectModelDTO() {}
 
+  public ImportSubjectModelDTO(final String id, final String name,
+      final List<String> assignedRules) {
+    this.id = id;
+    this.name = name;
+    this.assignedRules = assignedRules;
+  }
+
   public String getId() {
     return id;
   }

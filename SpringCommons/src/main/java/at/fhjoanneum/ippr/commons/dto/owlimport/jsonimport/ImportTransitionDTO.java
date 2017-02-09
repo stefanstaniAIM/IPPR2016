@@ -11,6 +11,11 @@ public class ImportTransitionDTO implements Serializable {
 
   public ImportTransitionDTO() {}
 
+  public ImportTransitionDTO(final String fromStateId, final String toStateId) {
+    this.fromStateId = fromStateId;
+    this.toStateId = toStateId;
+  }
+
   public String getFromStateId() {
     return fromStateId;
   }

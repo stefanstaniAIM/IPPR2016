@@ -13,6 +13,13 @@ public class ImportBusinessObjectModelDTO implements Serializable {
 
   public ImportBusinessObjectModelDTO() {}
 
+  public ImportBusinessObjectModelDTO(final String id, final String name,
+      final List<String> stateIds) {
+    this.id = id;
+    this.name = name;
+    this.stateIds = stateIds;
+  }
+
   public String getId() {
     return id;
   }

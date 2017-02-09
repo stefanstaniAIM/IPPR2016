@@ -14,6 +14,15 @@ public class ImportStateDTO implements Serializable {
 
   public ImportStateDTO() {}
 
+  public ImportStateDTO(final String id, final String name, final String functionType,
+      final String eventType, final String subjectModelId) {
+    this.id = id;
+    this.name = name;
+    this.functionType = functionType;
+    this.eventType = eventType;
+    this.subjectModelId = subjectModelId;
+  }
+
   public String getId() {
     return id;
   }

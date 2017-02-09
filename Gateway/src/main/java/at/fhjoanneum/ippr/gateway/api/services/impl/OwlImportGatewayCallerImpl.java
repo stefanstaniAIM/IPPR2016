@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import at.fhjoanneum.ippr.commons.dto.owlimport.jsonimport.ImportProcessModelDTO;
 import at.fhjoanneum.ippr.commons.dto.owlimport.reader.OWLProcessModelDTO;
 import at.fhjoanneum.ippr.gateway.api.config.GatewayConfig;
+import at.fhjoanneum.ippr.gateway.api.controller.user.HttpHeaderUser;
 import at.fhjoanneum.ippr.gateway.api.services.Caller;
 
 @Service
@@ -36,7 +38,9 @@ public class OwlImportGatewayCallerImpl implements Caller {
     return createRequest(uri, HttpMethod.GET, null, OWLProcessModelDTO.class, null);
   }
 
-  public void importProcessModel(final ImportProcessModelDTO processModelDTO) {
+  @Async
+  public void importProcessModel(final ImportProcessModelDTO processModelDTO,
+      final HttpHeaderUser headerUser) {
     URIBuilder uri = null;
     try {
       uri = new URIBuilder(gatewayConfig.getProcessModelStorageAddress()).setPath("/import");
@@ -44,6 +48,7 @@ public class OwlImportGatewayCallerImpl implements Caller {
       LOG.error(e.getMessage());
     }
 
-    createRequest(uri, HttpMethod.POST, ImportProcessModelDTO.class, null, null);
+    final HttpHeaders header = headerUser.getHttpHeaders();
+    createRequest(uri, HttpMethod.POST, processModelDTO, null, header);
   }
 }
