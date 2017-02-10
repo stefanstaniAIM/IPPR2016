@@ -32,9 +32,8 @@ public class OwlImportGatewayController {
   public @ResponseBody Callable<ResponseEntity<OWLProcessModelDTO>> getOWLProcessModel(
       final @RequestBody String owlContent, final HttpServletRequest request) {
     return () -> {
-      LOG.debug("Retrieved owl content: {}", owlContent);
       final HttpHeaderUser user = new HttpHeaderUser(request);
-      return owlImportGatewayCaller.getOWLProcessModel().get();
+      return owlImportGatewayCaller.getOWLProcessModel(owlContent, user).get();
     };
   }
 

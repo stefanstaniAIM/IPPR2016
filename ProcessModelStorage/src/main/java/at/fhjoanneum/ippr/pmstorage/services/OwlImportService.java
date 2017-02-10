@@ -7,7 +7,7 @@ import at.fhjoanneum.ippr.commons.dto.owlimport.reader.OWLProcessModelDTO;
 
 public interface OwlImportService {
 
-  Future<OWLProcessModelDTO> getOwlProcessModelDTO();
+  Future<OWLProcessModelDTO> getOwlProcessModelDTO(String owlContent);
 
   Future<Boolean> importProcessModel(ImportProcessModelDTO processModelDTO);
 }

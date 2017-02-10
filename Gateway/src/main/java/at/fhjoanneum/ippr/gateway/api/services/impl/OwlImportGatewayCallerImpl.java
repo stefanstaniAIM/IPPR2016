@@ -31,11 +31,13 @@ public class OwlImportGatewayCallerImpl implements Caller {
   private GatewayConfig gatewayConfig;
 
   @Async
-  public Future<ResponseEntity<OWLProcessModelDTO>> getOWLProcessModel() throws URISyntaxException {
+  public Future<ResponseEntity<OWLProcessModelDTO>> getOWLProcessModel(final String owlContent,
+      final HttpHeaderUser headerUser) throws URISyntaxException {
     final URIBuilder uri =
         new URIBuilder(gatewayConfig.getProcessModelStorageAddress()).setPath("/owlprocessmodel");
 
-    return createRequest(uri, HttpMethod.GET, null, OWLProcessModelDTO.class, null);
+    return createRequest(uri, HttpMethod.POST, owlContent, OWLProcessModelDTO.class,
+        headerUser.getHttpHeaders());
   }
 
   @Async

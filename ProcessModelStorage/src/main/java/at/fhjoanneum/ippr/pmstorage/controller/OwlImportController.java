@@ -22,11 +22,11 @@ public class OwlImportController {
   @Autowired
   private OwlImportService owlImportService;
 
-  @RequestMapping(value = "owlprocessmodel", method = RequestMethod.GET)
+  @RequestMapping(value = "owlprocessmodel", method = RequestMethod.POST)
   public @ResponseBody Callable<OWLProcessModelDTO> getOwlProcessModel(
-      final HttpServletRequest request) {
+      @RequestBody final String owlContent, final HttpServletRequest request) {
     return () -> {
-      return owlImportService.getOwlProcessModelDTO().get();
+      return owlImportService.getOwlProcessModelDTO(owlContent).get();
     };
   }
 

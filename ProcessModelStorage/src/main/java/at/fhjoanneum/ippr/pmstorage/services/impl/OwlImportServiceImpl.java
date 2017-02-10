@@ -46,7 +46,7 @@ import at.fhjoanneum.ippr.persistence.objects.model.process.ProcessModel;
 import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
 import at.fhjoanneum.ippr.persistence.objects.model.transition.Transition;
-import at.fhjoanneum.ippr.pmstorage.examples.VacationRequestFromOWL;
+import at.fhjoanneum.ippr.pmstorage.parser.OWLParser;
 import at.fhjoanneum.ippr.pmstorage.services.OwlImportService;
 
 @Transactional
@@ -59,12 +59,12 @@ public class OwlImportServiceImpl implements OwlImportService {
   private EntityManager entityManager;
 
   @Autowired
-  private VacationRequestFromOWL vacationRequestFromOWL;
+  private OWLParser owlParser;
 
   @Async
   @Override
-  public Future<OWLProcessModelDTO> getOwlProcessModelDTO() {
-    final OWLProcessModelDTO owlProcessModel = vacationRequestFromOWL.getProcessModelDTO();
+  public Future<OWLProcessModelDTO> getOwlProcessModelDTO(final String owlContent) {
+    final OWLProcessModelDTO owlProcessModel = owlParser.parseFile(owlContent);
     return new AsyncResult<OWLProcessModelDTO>(owlProcessModel);
   }
 
