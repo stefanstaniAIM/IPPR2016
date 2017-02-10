@@ -12,14 +12,16 @@ public class SubjectDTO implements Serializable {
 
   private Long smId;
   private Long userId;
-  private String assignedGroup;
+  private String subjectName;
   private List<String> assignedRules;
 
   public SubjectDTO() {}
 
-  public SubjectDTO(final Long smId, final Long userId, final List<String> assignedRules) {
+  public SubjectDTO(final Long smId, final Long userId, final String subjectName,
+      final List<String> assignedRules) {
     this.smId = smId;
     this.userId = userId;
+    this.subjectName = subjectName;
     this.assignedRules = assignedRules;
   }
 
@@ -29,6 +31,10 @@ public class SubjectDTO implements Serializable {
 
   public Long getUserId() {
     return userId;
+  }
+
+  public String getSubjectName() {
+    return subjectName;
   }
 
   public List<String> getAssignedRules() {
