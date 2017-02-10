@@ -40,7 +40,7 @@
         <h3>Zuweisungen</h3>
         <div class="form-group">
           <div *ngFor="let assignment of possibleUserAssignments">
-            <label>{{assignment.rule}}</label>
+            <label>{{assignment.subjectName}}: {{assignment.rule}}</label>
             <select class="form-control" [(ngModel)]="selectedUserAssignments[assignment.rule]" name="User-Assignment_:-{{assignment.smId}}" required>
               <option *ngFor="let user of assignment.users" [ngValue]="{smId: assignment.smId, userId: user.uid}">{{user.lastname}} {{user.firstname}}</option>
             </select>

@@ -105,8 +105,8 @@ export class ActiveProcessDetail implements OnInit {
   assignedUsers:[{
     smId:number,
     userId:number,
-    assignedGroup:string,
-    assignedRules:string[]
+    assignedRules:string[],
+    subjectName:string
   }];
   possibleUserAssignments = [];
   selectedUserAssignments = [];
@@ -179,7 +179,7 @@ export class ActiveProcessDetail implements OnInit {
             data => {
               let users = JSON.parse(data['_body']);
               au.assignedRules.forEach(rule => {
-                that.possibleUserAssignments.push({rule: rule, smId: au.smId, users: users});
+                that.possibleUserAssignments.push({rule: rule, smId: au.smId, users: users, subjectName: au.subjectName});
                 that.selectedUserAssignments[rule] = undefined;
               });
               console.log(that.possibleUserAssignments);
