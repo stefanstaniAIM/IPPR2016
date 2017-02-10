@@ -1,15 +1,8 @@
 package at.fhjoanneum.ippr.pmstorage.parser;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-
+import at.fhjoanneum.ippr.commons.dto.owlimport.reader.*;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.StateEventType;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
 import org.apache.jena.ontology.OntDocumentManager;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntResource;
@@ -19,14 +12,11 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 import org.springframework.stereotype.Service;
 
-import at.fhjoanneum.ippr.commons.dto.owlimport.reader.OWLBomDTO;
-import at.fhjoanneum.ippr.commons.dto.owlimport.reader.OWLMessageFlowDTO;
-import at.fhjoanneum.ippr.commons.dto.owlimport.reader.OWLProcessModelDTO;
-import at.fhjoanneum.ippr.commons.dto.owlimport.reader.OWLStateDTO;
-import at.fhjoanneum.ippr.commons.dto.owlimport.reader.OWLSubjectModelDTO;
-import at.fhjoanneum.ippr.commons.dto.owlimport.reader.OWLTransitionDTO;
-import at.fhjoanneum.ippr.persistence.objects.model.enums.StateEventType;
-import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 public class OWLParser implements FileParser<String, OWLProcessModelDTO> {
@@ -238,7 +228,7 @@ public class OWLParser implements FileParser<String, OWLProcessModelDTO> {
               }
               bomDTOs.add(bomDTO);
 
-              if (sourceState.hasProperty(typeProperty, sendStateProperty)) {
+              if (sourceState.hasProperty(typeProperty, sendStateProperty) || sourceState.hasProperty(typeProperty, receiveStateProperty)) {
 
                 final String senderIdentifier = sender.getProperty(identifierProperty).getString();
                 final String receiverIdentifier =
