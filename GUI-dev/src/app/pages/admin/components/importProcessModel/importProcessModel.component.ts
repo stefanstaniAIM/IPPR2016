@@ -27,6 +27,7 @@ export class ImportProcessModel implements OnInit {
   }
 
   onFileChange(event) {
+    var that = this;
     this.owlFile = event.srcElement.files[0];
     var split = this.owlFile.name.split(".");
     if(split[split.length-1] !== "owl") {
@@ -41,25 +42,23 @@ export class ImportProcessModel implements OnInit {
     var reader = new FileReader();
     if(this.owlFile) {
       reader.onload = function(e) {
-        console.log(reader.result);
+        that.service.uploadOWLModel(reader.result)
+        .subscribe(
+            data => {
+               that.processModel = JSON.parse(data['_body']);
+               that.processModel.boms.forEach(businessObject => {
+                 that.buildedBusinessObjects[businessObject.id] = {};
+               });
+               that.initRules();
+            },
+            err => that.error = "Die OWL Datei konnte nicht richtig interpretiert werden!",
+            () => {
+              console.log('Request Complete');
+            }
+          );
       }
       reader.readAsText(this.owlFile);
     }
-    this.service.uploadOWLModel(null)
-       .subscribe(
-          data => {
-             console.log(data);
-             that.processModel = JSON.parse(data['_body']);
-             that.processModel.boms.forEach(businessObject => {
-               that.buildedBusinessObjects[businessObject.id] = {};
-             });
-             that.initRules();
-          },
-          err => that.error = "Die OWL Datei konnte nicht richtig interpretiert werden!",
-          () => {
-            console.log('Request Complete');
-          }
-        );
   }
 
   initRules():void{

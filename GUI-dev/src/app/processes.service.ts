@@ -76,7 +76,7 @@ export class ProcessesService {
    }
 
    uploadOWLModel(owlModel){
-     return this._authHttp.get(this.restApi+'/owlprocessmodel/');
+     return this._authHttp.post(this.restApi+'/owlprocessmodel/', owlModel);
    }
 
    getRules(){
