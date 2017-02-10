@@ -273,6 +273,7 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
       final Set<BusinessObjectModel> retrievedBoms, final Transition transition) {
     final Set<BusinessObjectModel> stateBusinessObjectModels =
         Sets.newHashSet(transition.getToState().getBusinessObjectModels());
+    possibleRetrievedBoms.removeAll(retrievedBoms);
     if (Sets.difference(retrievedBoms, stateBusinessObjectModels).isEmpty()) {
       LOG.debug("Retrieved BOMs {} are part of {}, therefore, [{}] is part of next state",
           retrievedBoms, stateBusinessObjectModels, transition.getToState());
@@ -287,7 +288,9 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
   private boolean canBeIncluded(final List<Set<BusinessObjectModel>> possibleRetrievedBoms,
       final Set<BusinessObjectModel> stateBusinessObjectModels, final Transition transition) {
     for (final Set<BusinessObjectModel> posBom : possibleRetrievedBoms) {
-      if (Sets.difference(stateBusinessObjectModels, posBom).isEmpty()) {
+      if (Sets.difference(posBom, stateBusinessObjectModels).isEmpty()) {
+        LOG.debug("BOMs {} are POSSIBLE part of {}, therfore [{}] is NO part of next state", posBom,
+            stateBusinessObjectModels, transition.getToState());
         return false;
       }
     }
