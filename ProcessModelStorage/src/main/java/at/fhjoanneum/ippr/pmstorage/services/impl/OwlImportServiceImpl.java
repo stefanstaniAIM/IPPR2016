@@ -170,9 +170,12 @@ public class OwlImportServiceImpl implements OwlImportService {
         final MessageFlowBuilder builder = new MessageFlowBuilder();
         builder.sender(subjectModelMap.get(messageFlowDTO.getSenderId()));
         builder.receiver(subjectModelMap.get(messageFlowDTO.getReceiverId()));
-        builder.state(stateMap.get(messageFlowDTO.getStateId()));
         builder.assignBusinessObjectModel(bomMap.get(messageFlowDTO.getBomId()));
 
+        builder.state(stateMap.get(messageFlowDTO.getSenderId()));
+        messageFlows.add(builder.build());
+
+        builder.state(stateMap.get(messageFlowDTO.getReceiverId()));
         messageFlows.add(builder.build());
       });
 

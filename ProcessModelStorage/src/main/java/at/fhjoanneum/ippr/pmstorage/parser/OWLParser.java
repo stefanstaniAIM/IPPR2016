@@ -257,9 +257,9 @@ public class OWLParser implements FileParser<String, OWLProcessModelDTO> {
                 }
 
                 // nur wenn source state = sendstate
-                final OWLMessageFlowDTO messageFlowDTO =
-                    new OWLMessageFlowDTO(messageFlowIdentifier, senderIdentifier,
-                        receiverIdentifier, sourceStateIdentifier, bomIdentifier);
+                final OWLMessageFlowDTO messageFlowDTO = new OWLMessageFlowDTO(
+                    messageFlowIdentifier, senderIdentifier, receiverIdentifier, bomIdentifier,
+                    sourceStateIdentifier, targetStateIdentifier);
                 messageFlowDTOs.add(messageFlowDTO);
               }
             }

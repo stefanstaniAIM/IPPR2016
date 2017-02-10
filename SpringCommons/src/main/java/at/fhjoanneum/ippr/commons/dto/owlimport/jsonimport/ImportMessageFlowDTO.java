@@ -10,17 +10,19 @@ public class ImportMessageFlowDTO implements Serializable {
   private String bomId;
   private String senderId;
   private String receiverId;
-  private String stateId;
+  private String senderStateId;
+  private String receiverStateId;
 
   public ImportMessageFlowDTO() {}
 
   public ImportMessageFlowDTO(final String id, final String bomId, final String senderId,
-      final String receiverId, final String stateId) {
+      final String receiverId, final String senderStateId, final String receiverStateId) {
     this.id = id;
     this.bomId = bomId;
     this.senderId = senderId;
     this.receiverId = receiverId;
-    this.stateId = stateId;
+    this.senderStateId = senderStateId;
+    this.receiverStateId = receiverStateId;
   }
 
   public String getId() {
@@ -39,7 +41,11 @@ public class ImportMessageFlowDTO implements Serializable {
     return receiverId;
   }
 
-  public String getStateId() {
-    return stateId;
+  public String getSenderStateId() {
+    return senderStateId;
+  }
+
+  public String getReceiverStateId() {
+    return receiverStateId;
   }
 }
