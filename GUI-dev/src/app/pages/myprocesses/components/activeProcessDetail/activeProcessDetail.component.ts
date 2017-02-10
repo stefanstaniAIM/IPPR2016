@@ -153,7 +153,6 @@ export class ActiveProcessDetail implements OnInit {
             }
             that.businessObjects = dataJson.businessObjects;
             that.nextStates = dataJson.nextStates;
-            that.nextIsEndState = that.nextStates.filter(ns => ns.endState === true).length > 0;
             that.assignedUsers = dataJson.assignedUsers;
             if(that.assignedUsers) {
               that.getPossibleUserAssignments();
@@ -199,6 +198,7 @@ export class ActiveProcessDetail implements OnInit {
     var that = this;
     var businessObjectsValues = [];
     var userAssignments = [];
+    that.nextIsEndState = that.nextStates.filter(ns => ns.nextStateId === form.nextStateId)[0].endState;
     if(this.isSendState()){
       var keys = Object.keys(form.value).forEach(k => {
         var kSplit = k.split("User-Assignment_:-");
