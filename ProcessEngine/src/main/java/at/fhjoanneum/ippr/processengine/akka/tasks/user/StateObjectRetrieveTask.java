@@ -199,7 +199,8 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
               value, indent));
         }
       } else {
-        LOG.debug("Not necessary to add field [{}] since permission is 'NONE'");
+        LOG.debug("Not necessary to add field [{}] since permission is 'NONE'",
+            businessObjectFieldModel);
         continue;
       }
     }
@@ -276,26 +277,20 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
       LOG.debug("Retrieved BOMs {} are part of {}, therefore, [{}] is part of next state",
           retrievedBoms, stateBusinessObjectModels, transition.getToState());
       return true;
-    } else if (!canBeRetrieved(possibleRetrievedBoms, retrievedBoms)) {
+    } else if (canBeIncluded(possibleRetrievedBoms, stateBusinessObjectModels, transition)) {
       return true;
     } else {
       return false;
     }
   }
 
-  private boolean canBeRetrieved(final List<Set<BusinessObjectModel>> possibleRetrievedBoms,
-      final Set<BusinessObjectModel> retrievedBoms) {
-    for (final Set<BusinessObjectModel> boms : possibleRetrievedBoms) {
-      if (Sets.difference(retrievedBoms, boms).isEmpty()) {
-        LOG.debug("BOMs {} are POSSIBLE part of {}, therefore, [{}] is NO part of next state",
-            retrievedBoms, possibleRetrievedBoms, boms);
-        return true;
-      } else {
-        LOG.debug("BOMs {} are NO POSSIBLE part of {}, therefore, [{}] is part of next state",
-            retrievedBoms, possibleRetrievedBoms, boms);
+  private boolean canBeIncluded(final List<Set<BusinessObjectModel>> possibleRetrievedBoms,
+      final Set<BusinessObjectModel> stateBusinessObjectModels, final Transition transition) {
+    for (final Set<BusinessObjectModel> posBom : possibleRetrievedBoms) {
+      if (Sets.difference(stateBusinessObjectModels, posBom).isEmpty()) {
         return false;
       }
     }
-    return false;
+    return true;
   }
 }
