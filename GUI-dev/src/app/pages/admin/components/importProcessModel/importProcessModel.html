@@ -20,7 +20,7 @@
          <label class="control-label">OWL-File: </label>
          <input type="file" name="fileUpload" id="fileUpload" class="form-control" accept=".owl," (change)="onFileChange($event)">
          <br />
-         <button class="btn btn-primary" type="submit">Upload</button>
+         <button class="btn btn-primary" type="submit" [disabled]="!owlFile">Upload</button>
        </form>
      </ba-card>
    </div>
