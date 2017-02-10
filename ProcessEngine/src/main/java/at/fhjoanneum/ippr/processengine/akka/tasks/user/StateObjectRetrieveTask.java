@@ -287,13 +287,11 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
       final Set<BusinessObjectModel> retrievedBoms) {
     for (final Set<BusinessObjectModel> boms : possibleRetrievedBoms) {
       if (Sets.difference(retrievedBoms, boms).isEmpty()) {
-        LOG.debug(
-            "Retrieved BOMs {} are POSSIBLE part of {}, therefore, [{}] is NO part of next state",
+        LOG.debug("BOMs {} are POSSIBLE part of {}, therefore, [{}] is NO part of next state",
             retrievedBoms, possibleRetrievedBoms, boms);
         return true;
       } else {
-        LOG.debug(
-            "Retrieved BOMs {} are NO POSSIBLE part of {}, therefore, [{}] is part of next state",
+        LOG.debug("BOMs {} are NO POSSIBLE part of {}, therefore, [{}] is part of next state",
             retrievedBoms, possibleRetrievedBoms, boms);
         return false;
       }
