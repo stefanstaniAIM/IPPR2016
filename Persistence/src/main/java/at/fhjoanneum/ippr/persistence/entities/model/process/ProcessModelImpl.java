@@ -15,6 +15,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -32,6 +34,7 @@ import at.fhjoanneum.ippr.persistence.objects.model.process.ProcessModel;
 import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
 
 @Entity(name = "PROCESS_MODEL")
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "version"})})
 public class ProcessModelImpl implements ProcessModel, Serializable {
 
   private static final long serialVersionUID = -7935085761537865714L;
