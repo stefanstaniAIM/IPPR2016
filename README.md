@@ -81,3 +81,5 @@ Just for development purposes, not for production!
 ###sbpm-modeler-Dev###
 Just for development purposes, not for production!
 //todo maks
+
+##Licence##
