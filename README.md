@@ -48,7 +48,7 @@ link to youtube videos
 |Send State|yes|-|
 |Receive State|yes|-|
 |Function State|yes|-|
-|OWL-Import|no|-|
+|OWL-Import|no|standard-pass-ont|
 |OWL-Export|yes|-|
 |ZoomIn/Out|no|-|
 |Customizability|no|-|
