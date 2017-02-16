@@ -58,6 +58,7 @@ link to youtube videos
 
  - Java Platform (JDK) 8
  - MySQL
+ 
 **Development only:**
  - NodeJS for Angular development in GUI-Dev and ModellingPlatform-Dev
  - Gulp for Angular development in ModellingPlatform-Dev
