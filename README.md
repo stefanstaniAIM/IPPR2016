@@ -21,3 +21,15 @@ Basically, the platform consists of the following modules:
 ###Database Settings###
 Please execute following statements to create the schema and the db user in your MySQL database:
 [DB_setup.sql](Setup/DB_setup.sql)
+
+##Startup##
+###Execution Platform###
+ 1. Start the MySQL Service
+ 2. Go to ProcessModelStorage and run in cmd: 
+ ```gradlew bootRun```
+ 3. Go to ProcessEngine and run in cmd: 
+ ```gradlew bootRun```
+ 4. Go to Gateway and run in cmd: 
+ ```gradlew bootRun```
+ 5. Go to GUI and run in cmd: 
+ ```gradlew bootRun```
