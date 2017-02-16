@@ -163,4 +163,4 @@ Any further development concerning the ModellingPlatform has to be done in the M
  4. Go to [ModellingPlatform](ModellingPlatform) and run ```gradlew build``` or ```gradlew run```
  
 ##License##
-[License](LICENSE)
+[MIT License](LICENSE)
