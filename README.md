@@ -15,6 +15,33 @@ Basically, the platform consists of the following modules:
 ##Tutorial Videos##
 link to youtube videos
 
+##Functionalities##
+
+###Execution###
+| Functionality | Implemented | Comment |
+| ------------ | ------------ | ------- |
+| Internal Subjects | Yes | - |
+| Multisubjects | No | - |
+| External Subjects | No | - |
+| Function States | Yes | - |
+| Send States | Yes | - |
+| Receive States | Yes | - |
+| Timeouts | No | - |
+| Refinements | Yes | partially |
+| Business Objects | Yes | - |
+| Start Process | Yes | - |
+| Stop Process | Yes | - |
+| Nested Business Objects | Yes | partially |
+| Formbuilder | Yes | - |
+| OWL-Import | Yes | standard-pass-ont |
+| Connected Processes | No | - |
+| Multiprocesses | No | - |
+
+###Modelling###
+| Functionality | Implemented | Comment |
+| ------------ | ------------ | ------- |
+//Todo maks
+
 ##Setup##
 ###Prerequisites###
 
