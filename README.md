@@ -56,6 +56,15 @@ Currently, there *.csv files for the user configuration:
 - [roles.csv](Gateway/src/main/resources/roles.csv)
 - [rules.csv](Gateway/src/main/resources/rules.csv)
 
+#####Standard configuration:#####
+
+|  User  |  Roles  |  Password  |
+|  ----  |  -----  |  --------  |
+|  robert  |  BOSS  |  1234  |
+|  matthias  |  ADMIN, EMPLOYEE  |  1234  |
+|  stefan  |  EMPLOYEE  |  1234  |
+|  maksym  |  EMPLOYEE  |  1234  |
+
 ###GUI-Dev###
 1. run in cmd: ```npm install```
 2. Go to GUI-Dev and run in cmd: ```npm start```
