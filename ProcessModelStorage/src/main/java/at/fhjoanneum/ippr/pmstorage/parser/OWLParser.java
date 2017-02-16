@@ -98,8 +98,6 @@ public class OWLParser implements FileParser<String, OWLProcessModelDTO> {
 
         // Get ProcessModelName
         final String processName = processModel.getProperty(labelProperty).getString();
-        System.out.println("Process Name " + processName);
-
 
         // Find Actors in ProcessModel
         final List<? extends OntResource> actors =
@@ -109,7 +107,6 @@ public class OWLParser implements FileParser<String, OWLProcessModelDTO> {
           // Get ActorName
           final String actorName = actor.getProperty(labelProperty).getString();
           actorNames.add(actorName);
-          System.out.println("Found Actor: " + actorName);
 
           final String subjectModelIdentifier = actor.getProperty(identifierProperty).getString();
           OWLSubjectModelDTO subjectModelDTO = subjectModelDTOMap.get(subjectModelIdentifier);
@@ -127,7 +124,6 @@ public class OWLParser implements FileParser<String, OWLProcessModelDTO> {
           for (final Statement state : states) {
             final Resource stateResource = state.getResource();
             final String stateLabel = stateResource.getProperty(labelProperty).getString();
-            System.out.println("-With State: " + stateLabel);
 
             final String stateIdentifier =
                 stateResource.getProperty(identifierProperty).getString();
@@ -137,20 +133,15 @@ public class OWLParser implements FileParser<String, OWLProcessModelDTO> {
 
             // Which type of state?
             if (stateResource.hasProperty(typeProperty, endStateProperty)) {
-              System.out.println("--is EndState");
               stateEventType = StateEventType.END.toString();
             } else if (stateResource.hasProperty(typeProperty, initialStateProperty)) {
-              System.out.println("--is InitialState");
               stateEventType = StateEventType.START.toString();
             }
             if (stateResource.hasProperty(typeProperty, functionStateProperty)) {
-              System.out.println("--is FunctionState");
               stateFunctionType = StateFunctionType.FUNCTION.toString();
             } else if (stateResource.hasProperty(typeProperty, sendStateProperty)) {
-              System.out.println("--is SendState");
               stateFunctionType = StateFunctionType.SEND.toString();
             } else if (stateResource.hasProperty(typeProperty, receiveStateProperty)) {
-              System.out.println("--is ReceiveState");
               stateFunctionType = StateFunctionType.RECEIVE.toString();
             }
 
@@ -168,19 +159,14 @@ public class OWLParser implements FileParser<String, OWLProcessModelDTO> {
             final Resource transitionResource = transition.getResource();
             final String transitionLabel =
                 transitionResource.getProperty(labelProperty).getString();
-            System.out.println("-With Transition: " + transitionLabel);
 
             final Resource sourceState =
                 transitionResource.getProperty(sourceStateProperty).getResource();
-            System.out.println(
-                "--Has Source State: " + sourceState.getProperty(labelProperty).getString());
             final String sourceStateIdentifier =
                 sourceState.getProperty(identifierProperty).getString();
 
             final Resource targetState =
                 transitionResource.getProperty(targetStateProperty).getResource();
-            System.out.println(
-                "--Has Target State: " + targetState.getProperty(labelProperty).getString());
             final String targetStateIdentifier =
                 targetState.getProperty(identifierProperty).getString();
 
@@ -190,14 +176,6 @@ public class OWLParser implements FileParser<String, OWLProcessModelDTO> {
             transitionDTOs.add(transitionDTO);
 
             // Which type of transition?
-            if (transitionResource.hasProperty(typeProperty, standardTransitionProperty)) {
-              System.out.println("--is StandardTransition");
-            } else if (transitionResource.hasProperty(typeProperty, receiveTransitionProperty)) {
-              System.out.println("--is ReceiveTransition");
-            } else if (transitionResource.hasProperty(typeProperty, sendTransitionProperty)) {
-              System.out.println("--is SendTransition");
-            }
-
             if (transitionResource.hasProperty(refersToProperty)) {
               final Resource refersTo =
                   transitionResource.getProperty(refersToProperty).getResource();
@@ -206,14 +184,9 @@ public class OWLParser implements FileParser<String, OWLProcessModelDTO> {
               final Resource sender = refersTo.getProperty(senderProperty).getResource();
               final Resource receiver = refersTo.getProperty(receiverProperty).getResource();
               final String messageFlowLabel = refersTo.getProperty(labelProperty).getString();
-              System.out.println("--With MessageFlow " + messageFlowLabel);
-              System.out.println("---With Sender " + sender.getProperty(labelProperty).getString());
-              System.out
-                  .println("---With Receiver " + receiver.getProperty(labelProperty).getString());
 
               final Resource messageType = refersTo.getProperty(messageTypeProperty).getResource();
               final String messageTypeLabel = messageType.getProperty(labelProperty).getString();
-              System.out.println("---With Message " + messageTypeLabel);
               final String bomIdentifier = messageType.getProperty(identifierProperty).getString();
 
               final List<String> transitionStateIds = new ArrayList<>();
@@ -254,8 +227,6 @@ public class OWLParser implements FileParser<String, OWLProcessModelDTO> {
               }
             }
           }
-
-          System.out.println("End");
         }
 
         processModelDTO = new OWLProcessModelDTO(processName, LocalDateTime.now(),
