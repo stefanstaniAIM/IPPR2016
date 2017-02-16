@@ -61,7 +61,7 @@ Basically, the following ports are used:
 |  ProcessModelStorage  |  11000  |
 |  ProcessEngine  |  14000  |
 |  GUI  |  3000  |
-|  sbpm-modeler  |  ????  |
+|  sbpm-modeler  |  //todo maks  |
 
 To change the port configuration, change the server port in this file e.g. Gateway: [application.properties] (Gateway/src/main/resources/application.properties)
 Make sure to change the ipconfig in the Gateway, if you change the ports of ProcessModelStorage or ProcessEngine
@@ -88,10 +88,29 @@ Just for development purposes, not for production!
  1. run in cmd: ```npm install```
  2. Go to GUI-Dev and run in cmd: ```npm start```
  3. in case of any errors when starting the first time, please stick to the installation guide of [ng2-admin](https://github.com/akveo/ng2-admin/)
+ 4. Go to ```http://localhost:3000```
 
 ###sbpm-modeler-Dev###
 Just for development purposes, not for production!
 //todo maks
 
+##Development##
+###Spring Boot Modules###
+Any further development concerning the Gateway, the ProcessModelStorage or the ProcessEngine can be done directly in java. For further information please use the [Spring Boot Documentation](https://projects.spring.io/spring-boot/)
+
+**Note:** If you do any changes to a module, you have to rebuild it with ```gradlew build```
+
+###GUI###
+Any further development concerning the Gateway has to be done in the GUI-Dev module be using typescript and Angular 2. For further information please use the [Angular Documentation](https://angular.io/) and the [ng2-admin Documentation](https://akveo.github.io/ng2-admin/articles/001-getting-started/).
+
+**Note:** If you do any changes to the GUI-Dev project, you have to update the GUI project afterwards:
+ 1. Go to GUI-Dev and run in cmd: ```npm run prebuild:prod && npm run build:prod```
+ 2. Go to [GUI/src/main/resources/public/](GUI/src/main/resources/public/) and remove of all of its content.
+ 3. Go to [GUI-Dev/dist](GUI-Dev/dist) and move all of its content to [GUI/src/main/resources/public/](GUI/src/main/resources/public/).
+ 4. Go to [GUI](GUI) and run ```gradlew build``` or ```gradlew run```
+ 
+###sbpm-modeler###
+//Todo maks
+ 
 ##License##
 [License](LICENSE)
