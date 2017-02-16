@@ -48,6 +48,14 @@ Basically, the following ports are used:
 To change the port configuration, change the server port in this file e.g. Gateway: [application.properties] (Gateway/src/main/resources/application.properties)
 Make sure to change the ipconfig in the Gateway, if you change the ports of ProcessModelStorage or ProcessEngine
 
+####User Configuration####
+In general, the authentication concept ist based on RBAC. Each user can be assigned to one or more roles. Each role can be assigned to one more rules.
+
+Currently, there *.csv files for the user configuration:
+- [users.csv](Gateway/src/main/resources/users.csv)
+- [roles.csv](Gateway/src/main/resources/roles.csv)
+- [rules.csv](Gateway/src/main/resources/rules.csv)
+
 ###GUI-Dev###
 1. run in cmd: ```npm install```
 2. Go to GUI-Dev and run in cmd: ```npm start```
