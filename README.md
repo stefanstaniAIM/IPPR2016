@@ -57,7 +57,7 @@ If you prefer to run the jar files, without using gradlew:
  ```gradlew bootRun```
  2. Go to ```http://localhost:4000```
  
- ####Alternative####
+####Alternative####
 If you prefer to run the jar files, without using gradlew:
  1. Go to [builds](builds)
  2. run in cmd: ```java -jar ModellingPlatform-0.0.1-SNAPSHOT.jar```
