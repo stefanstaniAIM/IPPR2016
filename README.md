@@ -173,7 +173,7 @@ Any further development concerning the ModellingPlatform has to be done in the M
  3. Go to [ModellingPlatform-Dev/dist](ModellingPlatform-Dev/dist) and move all of its content to [ModellingPlatform/src/main/resources/public/](ModellingPlatform/src/main/resources/public/).
  4. Go to [ModellingPlatform](ModellingPlatform) and run ```gradlew build``` or ```gradlew run```
  
-**Note:** You can change the appearance of the elements by modify the following file: ```ModellingPlatform-dev\src\app\components\services\ui-joint\ui-joint-shape\ui-joint-shape.template.scss```
+**Note:** You can change the appearance of the elements by modify the following file: [ModellingPlatform-dev\src\app\components\services\ui-joint\ui-joint-shape\ui-joint-shape.template.scss](ModellingPlatform-dev\src\app\components\services\ui-joint\ui-joint-shape\ui-joint-shape.template.scss)
  
 ##License##
 [MIT License](LICENSE)
