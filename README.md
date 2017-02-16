@@ -33,6 +33,7 @@ Please execute following statements to create the schema and the db user in your
  ```gradlew bootRun```
  5. Go to GUI and run in cmd: 
  ```gradlew bootRun```
+ 6. Go to ```http://localhost:3000```
  
 ####Ports####
 Basically, the following ports are used:
@@ -46,3 +47,8 @@ Basically, the following ports are used:
 
 To change the port configuration, change the server port in this file e.g. Gateway: [application.properties] (Gateway/src/main/resources/application.properties)
 Make sure to change the ipconfig in the Gateway, if you change the ports of ProcessModelStorage or ProcessEngine
+
+###GUI-Dev###
+1. run in cmd: ```npm install```
+2. Go to GUI-Dev and run in cmd: ```npm start```
+3. in case of any errors when starting the first time, please stick to the installation guide of [ng2-admin](https://github.com/akveo/ng2-admin/)
