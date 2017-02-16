@@ -33,3 +33,16 @@ Please execute following statements to create the schema and the db user in your
  ```gradlew bootRun```
  5. Go to GUI and run in cmd: 
  ```gradlew bootRun```
+ 
+####Ports####
+Basically, the following ports are used:
+
+|  Service  |  Port  |
+|  -------  |  ----- |
+|  Gateway  |  10000 |
+|  ProcessModelStorage  |  11000  |
+|  ProcessEngine  |  14000  |
+|  GUI  |  3000  |
+
+To change the port configuration, change the server port in this file e.g. Gateway: [application.properties] (Gateway/src/main/resources/application.properties)
+Make sure to change the ipconfig in the Gateway, if you change the ports of ProcessModelStorage or ProcessEngine
