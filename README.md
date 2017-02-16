@@ -10,3 +10,14 @@ Basically, the platform consists of the following modules:
  - **GUI-Dev:** Development project for the Angular 2 execution platform frontend (With some dev tools, with node server backend).
  - **GUI:** Production project for the Angular 2 execution platform frontend (minified, uglified, with Spring Boot backend).
  - **sbpm-modeler:** Project for the Angular 1 modelling platform frontend.
+
+##Setup##
+###Prerequisites###
+
+ - Java Platform (JDK) 8
+ - MySQL
+ - npm for Angular development
+
+###Database Settings###
+Please execute following statements to create the schema and the db user in your MySQL database:
+[DB_setup.sql](Setup/DB_setup.sql)
