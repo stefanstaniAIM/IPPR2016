@@ -46,56 +46,6 @@ export class ActiveProcessDetail implements OnInit {
       user: any
     }]
   };
-  businessObjectTemplate = {
-    fields:[
-      {
-        type: "text",
-        name: "Textfeld",
-        description: "Textfeld für XY",
-        value: "Default Value",
-        minlength: 5,
-        maxlength: 20,
-        required: true,
-        readonly: false
-      },
-      {
-        type: "number",
-        name: "Nummernfeld",
-        description: "Nummernfeld für XY",
-        value: 123,
-        min: 5,
-        max: 200,
-        required: true,
-        readonly: false
-      },
-      {
-        type: "checkbox",
-        name: "Checkbox",
-        description: "Checkbox für XY",
-        value: true,
-        readonly: false
-      },
-      {
-        type: "radio",
-        name: "Radiofield",
-        description: "Radiofield für XY",
-        value: "radio1",
-        readonly: true,
-        choices: [
-          {
-            name: 'radio1',
-            description: 'Radio1'
-          }, {
-            name: 'radio2',
-            description: 'Radio2'
-          }, {
-            name: 'radio3',
-            description: 'Radio3'
-          }
-        ]
-      }
-    ]
-  }
   businessObjects:businessObject[];
   nextStates:[{
     name:string,
@@ -125,9 +75,6 @@ export class ActiveProcessDetail implements OnInit {
     this.spinner.show();
     if(!this.nextIsEndState){
       that.assignedUsers = undefined;
-      //this.route.params
-      //.switchMap((params: Params) => service.loadprocess etc. +params['piId'])
-      //.subscribe((piId:number) => this.piId = piId)
       this.service.getProcessState(this.piId)
       .subscribe(
           data => {

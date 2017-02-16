@@ -15,7 +15,6 @@
                <th>Name</th>
                <th>Beschreibung</th>
                <th>Erstelldatum</th>
-               <th>Aktion</th>
             </tr>
          </thead>
          <tbody>
@@ -24,7 +23,6 @@
                <td>{{ processModel.name }}</td>
                <td>{{ processModel.description }}</td>
                <td>{{ processModel.createdAt | commaDate | date:'dd.MM.yyyy HH:mm:ss' }}</td>
-               <td><button class="btn btn-primary btn-sm" (click)="deleteProcessModel(processModel.pmId)">Löschen</button></td>
             </tr>
          </tbody>
       </table>
