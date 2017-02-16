@@ -38,7 +38,6 @@ export class ImportProcessModel implements OnInit {
 
   uploadOWLModel(form):void {
     var that = this;
-    console.log("upload owl model");
     var reader = new FileReader();
     if(this.owlFile) {
       reader.onload = function(e) {
@@ -53,7 +52,6 @@ export class ImportProcessModel implements OnInit {
             },
             err => that.error = "Die OWL Datei konnte nicht richtig interpretiert werden!",
             () => {
-              console.log('Request Complete');
             }
           );
       }

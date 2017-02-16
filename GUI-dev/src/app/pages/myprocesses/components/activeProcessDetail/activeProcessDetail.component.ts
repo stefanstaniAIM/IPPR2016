@@ -182,7 +182,6 @@ export class ActiveProcessDetail implements OnInit {
                 that.possibleUserAssignments.push({rule: rule, smId: au.smId, users: users, subjectName: au.subjectName});
                 that.selectedUserAssignments[rule] = undefined;
               });
-              console.log(that.possibleUserAssignments);
             },
             err =>{
               this.msg = {text: err, type: 'error'}
@@ -247,7 +246,6 @@ export class ActiveProcessDetail implements OnInit {
     this.service.submitBusinessObjectsAndNextStateAndUserAssignments(this.piId, businessObjectsAndNextStateAndUserAssignments)
     .subscribe(
         data => {
-          console.log(data);
           that.ngOnInit();
         },
         err =>{
@@ -255,7 +253,6 @@ export class ActiveProcessDetail implements OnInit {
           console.log(err);
         }
       );
-    console.log(businessObjectsAndNextStateAndUserAssignments);
   }
 
   //dirty hack so that the value of the checkbox changes (otherwise the form submit value will stay the original value)

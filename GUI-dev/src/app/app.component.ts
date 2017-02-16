@@ -39,14 +39,13 @@ export class App {
     });
   }
 
-  
+
   ngOnInit(): void {
-    console.log("OnInit");
     if(this._authService.isLoggedIn()){
       this._authService.initUser();
     }
   }
-  
+
   public ngAfterViewInit(): void {
     // hide spinner once all loaders are completed
     BaThemePreloader.load().then((values) => {

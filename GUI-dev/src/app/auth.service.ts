@@ -55,7 +55,6 @@ export class AuthService {
    }
 
    initUser() {
-      console.log("AUTHSERVICE INITUSER");
       const result = <any> this._backendRequest.getResult();
       this._user.set(result.firstname, result.lastname, result.username, result.rules, result.roles, result.uid);
       this._router.navigate(['Dashboard'])

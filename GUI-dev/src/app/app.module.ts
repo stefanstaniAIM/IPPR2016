@@ -72,12 +72,10 @@ type StoreType = {
 export class AppModule {
 
   constructor(public appRef: ApplicationRef, public appState: AppState) {
-     console.log("CONSTRUCTOR");
   }
 
   hmrOnInit(store: StoreType) {
     if (!store || !store.state) return;
-    console.log('HMR store', JSON.stringify(store, null, 2));
     // set state
     this.appState._state = store.state;
     // set input values

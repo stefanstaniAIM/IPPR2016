@@ -49,39 +49,4 @@ export class StartableProcesses implements OnInit {
         () => console.log("Request done")
       );
   }
-
-  /*selectProcessModel(pm):void {
-    var that = this;
-    this.isSelectionValid = false;
-    this.possibleUserAssignments = [];
-    this.selectedProcessModel = pm;
-    const subjectModels = pm.subjectModels;
-    subjectModels.forEach(
-      sm => {
-        that.service.getPossibleUsersForProcessModel(sm.group).
-        subscribe(
-          data => {
-                let users = JSON.parse(data['_body']);
-                this.possibleUserAssignments.push({groupName: sm.group, smId: sm.smId, users: users});
-                this.selectedUserAssignments[sm.group] = undefined;
-                this.modal.show();
-                console.log(this.possibleUserAssignments);
-          },
-          err =>{
-            this.msg = {text: err, type: 'error'}
-            this.possibleUserAssignments = [];
-            this.modal.hide();
-          },
-          () => console.log("Request done")
-        );
-      });
-  }
-
-  unselectProcessModel():void {
-    this.selectedProcessModel = {name: "Kein Prozess ausgewählt"};
-    this.possibleUserAssignments = [];
-    this.isSelectionValid = false;
-    this.modal.hide();
-  }*/
-
 }

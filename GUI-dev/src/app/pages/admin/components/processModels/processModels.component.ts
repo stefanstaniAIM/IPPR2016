@@ -18,15 +18,13 @@ export class ProcessModels implements OnInit {
     this.service.getProcessModels()
       .subscribe(
          data => {
-            console.log(data);
             that.processModels = JSON.parse(data['_body']);
          },
-         err => that.error = err,
-         () => console.log('Request Complete')
+         err => that.error = err
        );
   }
 
   deleteProcessModel(pmId:number):void {
-      console.log("delete processModel: " +pmId);
+    // not implemented
   }
 }
