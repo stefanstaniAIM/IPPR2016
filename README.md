@@ -35,7 +35,7 @@ Please execute following statements to create the schema and the db user in your
  ```gradlew bootRun```
  6. Go to ```http://localhost:3000```
  
- ###sbpm-modeler###
+###sbpm-modeler###
 //Todo Maks
  
 ####Ports####
