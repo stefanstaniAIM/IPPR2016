@@ -67,7 +67,7 @@ To change the port configuration, change the server port in this file e.g. Gatew
 
 **Note:** Make sure to change the ipconfig in the Gateway, if you change the ports of ProcessModelStorage or ProcessEngine.
 
-**Note:** If you change the port of the Gateway, make sure to change the restApi configuration in [processes.service.ts](GUI-Dev/src/app/processes.service.ts) and to rebuild the GUI-Dev and GUI project according to the guide provide [below](#GUI).
+**Note:** If you change the port of the Gateway, make sure to change the restApi configuration in [processes.service.ts](GUI-Dev/src/app/processes.service.ts) and to rebuild the GUI-Dev and GUI project according to the guide provide [below](#gui).
 
 ####User Configuration####
 In general, the authentication concept ist based on RBAC. Each user can be assigned to one or more roles. Each role can be assigned to one more rules.
