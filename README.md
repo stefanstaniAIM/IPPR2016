@@ -82,4 +82,5 @@ Just for development purposes, not for production!
 Just for development purposes, not for production!
 //todo maks
 
-##Licence##
+##License##
+[License](LICENSE)
