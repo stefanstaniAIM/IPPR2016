@@ -11,6 +11,9 @@ Basically, the platform consists of the following modules:
  - **GUI:** Production project for the Angular 2 execution platform frontend (minified, uglified, with Spring Boot backend).
  - **sbpm-modeler:** Project for the Angular 1 modelling platform frontend.
 
+##Tutorial Videos##
+link to youtube videos
+
 ##Setup##
 ###Prerequisites###
 
