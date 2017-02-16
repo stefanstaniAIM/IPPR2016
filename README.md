@@ -40,7 +40,18 @@ link to youtube videos
 ###Modelling###
 | Functionality | Implemented | Comment |
 | ------------ | ------------ | ------- |
-//Todo maks
+|SID View|yes|-|
+|SBD View|yes|-|
+|Subjects|yes|-|
+|Message Connector|yes|-|
+|Message Types (Business Objects)|yes|-|
+|Send State|yes|-|
+|Receive State|yes|-|
+|Function State|yes|-|
+|OWL-Import|no|-|
+|OWL-Export|yes|-|
+|ZoomIn/Out|no|-|
+|Customizability|no|-|
 
 ##Setup##
 ###Prerequisites###
@@ -161,6 +172,8 @@ Any further development concerning the ModellingPlatform has to be done in the M
  2. Go to [ModellingPlatform/src/main/resources/public/](ModellingPlatform/src/main/resources/public/) and remove of all of its content.
  3. Go to [ModellingPlatform-Dev/dist](ModellingPlatform-Dev/dist) and move all of its content to [ModellingPlatform/src/main/resources/public/](ModellingPlatform/src/main/resources/public/).
  4. Go to [ModellingPlatform](ModellingPlatform) and run ```gradlew build``` or ```gradlew run```
+ 
+ **Note:** If you want to change the appearance of the elements you have to modify following file: ```ModellingPlatform-dev\src\app\components\services\ui-joint\ui-joint-shape\ui-joint-shape.template.scss```
  
 ##License##
 [MIT License](LICENSE)
