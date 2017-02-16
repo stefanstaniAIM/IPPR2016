@@ -85,9 +85,9 @@ If you prefer to run the jar files, without using gradlew:
  1. Start the MySQL Service
  2. Go to [builds](builds)
  3. run in cmd: ```java -jar Gateway-0.0.1-SNAPSHOT.jar```
- 4. run in cmd: ```java -jar ProcessModelStorage-0.0.1-SNAPSHOT.jar```
- 5. run in cmd: ```java -jar ProcessEngine-0.0.1-SNAPSHOT.jar```
- 6. run in cmd: ```java -jar GUI-0.0.1-SNAPSHOT.jar```
+ 4. run in cmd: ```java -jar pmstorage-0.0.1-SNAPSHOT.jar```
+ 5. run in cmd: ```java -jar processengine-0.0.1-SNAPSHOT.jar```
+ 6. run in cmd: ```java -jar gui-0.0.1-SNAPSHOT.jar```
  7. Go to ```http://localhost:3000```
 
 **Note:** If you do any changes to a module, you have to rebuild it with ```gradlew build``` and use the *.jar that is generated in ```(name of module)/build/libs/```
