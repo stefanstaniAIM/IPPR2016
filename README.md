@@ -70,9 +70,9 @@ Make sure to change the ipconfig in the Gateway, if you change the ports of Proc
 In general, the authentication concept ist based on RBAC. Each user can be assigned to one or more roles. Each role can be assigned to one more rules.
 
 Currently, there *.csv files for the user configuration:
-- [users.csv](Gateway/src/main/resources/users.csv)
-- [roles.csv](Gateway/src/main/resources/roles.csv)
-- [rules.csv](Gateway/src/main/resources/rules.csv)
+- [users.csv](Gateway/src/main/resources/memoryusers/users.csv)
+- [roles.csv](Gateway/src/main/resources/memoryusers/roles.csv)
+- [rules.csv](Gateway/src/main/resources/memoryusers/rules.csv)
 
 #####Standard configuration:#####
 
