@@ -1,0 +1,36 @@
+<md-dialog class="select-message-type-dialog" aria-label="Select a message type">
+        <div layout="column">
+            <md-toolbar>
+                <div class="md-toolbar-tools">
+                    <h2>Select a message type</h2>
+                    <span flex></span>
+                    <md-button class="md-icon-button" ng-click="smt.cancel()">
+                        <md-icon aria-label="Close dialog">close</md-icon>
+                    </md-button>
+                </div>
+            </md-toolbar>
+
+            <div ng-show="smt.messageTypesAvailable()">
+                <md-subheader class="md-primary md-no-sticky">Name</md-subheader>
+                <md-divider></md-divider>
+            </div>
+            <md-dialog-content>
+                <md-list layout-padding ng-show="smt.messageTypesAvailable()">
+                    <md-list-item ng-repeat="messageType in smt.availableMessageTypes">
+                        <p>{{messageType.name}}</p>
+                        <md-icon class="md-secondary" aria-label="Add" ng-click="smt.addMessageType(messageType)">add</md-icon>
+                    </md-list-item>
+                </md-list>
+
+                <div layout-padding ng-hide="smt.messageTypesAvailable()">
+                    No message types available
+                </div>
+            </md-dialog-content>
+
+            <md-dialog-actions>
+                <md-button class="md-primary md-raised" ng-click="smt.cancel()">
+                    Close
+                </md-button>
+            </md-dialog-actions>
+        </div>
+</md-dialog>

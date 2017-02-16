@@ -1,0 +1,26 @@
+<md-content layout="column" class="state-properties-form" flex layout-padding>
+    <form name="statePropertiesForm" layout="column" flex>
+        <div layout="column" flex>
+            <md-input-container class="md-block">
+                <label>Name</label>
+                <input required name="name" ng-model="stp.state.customAttrs.name">
+                <div ng-messages="statePropertiesForm.name.$error">
+                    <div ng-message="required">This is required.</div>
+                </div>
+            </md-input-container>
+            <selection layout="row">
+                <span flex>Start state</span>
+                <md-checkbox ng-model="stp.state.customAttrs.startState" ng-click="stp.setEndStateToFalse()"></md-checkbox>
+            </selection>
+            <selection layout="row">
+                <span flex>End state</span>
+                <md-checkbox ng-model="stp.state.customAttrs.endState" ng-click="stp.setStartStateToFalse()"></md-checkbox>
+            </selection>
+        </div>
+        <div class="properties-right-footer" layout="row">
+            <md-button class="md-button md-raised md-primary" flex type="submit" ng-click="stp.saveStateProperties()">
+                Save
+            </md-button>
+        </div>
+    </form>
+</md-content>

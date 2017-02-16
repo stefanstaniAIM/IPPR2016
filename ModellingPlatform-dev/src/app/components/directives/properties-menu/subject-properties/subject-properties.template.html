@@ -1,0 +1,22 @@
+<md-content layout="column" flex class="subject-properties-form" layout-padding>
+    <form name="subjectPropertiesForm" layout="column" flex>
+        <div layout="column" flex>
+            <md-input-container class="md-block">
+                <label>Name</label>
+                <input required name="name" ng-model="sbp.subject.customAttrs.name">
+                <div ng-messages="subjectPropertiesForm.name.$error">
+                    <div ng-message="required">This is required.</div>
+                </div>
+            </md-input-container>
+            <selection layout="row">
+                <span flex>Start subject</span>
+                <md-checkbox ng-model="sbp.subject.customAttrs.startSubject"></md-checkbox>
+            </selection>
+        </div>
+        <div class="properties-right-footer" layout="row">
+            <md-button class="md-button md-raised md-primary" flex type="submit" ng-click="sbp.saveSubjectProperties()"
+                       ng-disabled="subjectPropertiesForm.$invalid">Save
+            </md-button>
+        </div>
+    </form>
+</md-content>

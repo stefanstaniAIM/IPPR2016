@@ -1,0 +1,23 @@
+<div class="navigation-menu-basic-element-selector" layout-padding>
+    <div class="nm-bes-sid" ng-show="bes.selectedViewSID()">
+        <div class="nm-bes-sid-subject" layout="row" ui-draggable="true" drag="'subject-element'">
+            Subject
+        </div>
+    </div>
+    <div class="nm-bes-sbd" ng-hide="bes.selectedViewSID()" layout="column">
+        <div class="nm-bes-sbd-state" layout="row" ui-draggable="true" drag="'receive-state-element'">
+            <div>Receive</div>
+            <div class="nm-bes-sbd-state-receive"></div>
+        </div>
+        <div class="nm-bes-sbd-state" layout="row" ui-draggable="true" drag="'function-state-element'">
+            <div>Function</div>
+            <div class="nm-bes-sbd-state-function">
+                <div class="nm-bes-sbd-state-function-triangle"></div>
+            </div>
+        </div>
+        <div class="nm-bes-sbd-state" layout="row" ui-draggable="true" drag="'send-state-element'">
+            <div>Send</div>
+            <div class="nm-bes-sbd-state-send"></div>
+        </div>
+    </div>
+</div>

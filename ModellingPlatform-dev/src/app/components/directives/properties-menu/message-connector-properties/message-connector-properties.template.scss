@@ -1,0 +1,80 @@
+.message-connector-properties-form {
+    overflow: hidden !important;
+    md-divider {
+        position: relative;
+        left: -16px;
+        width: 320px;
+    }
+
+    .msg-con-pr-unidirectional {
+
+        border: 2px solid #757575;
+        border-radius: 3px;
+        padding: 5px;
+        margin-top: 15px;
+        margin-bottom: 15px;
+
+        .msg-con-pr-unidirectional-from {
+            padding-bottom: 5px;
+            .msg-con-pr-unidirectional-from-heading {
+                width: 45px;
+                font-weight: bold;
+                float: left;
+            }
+        }
+
+        .msg-con-pr-unidirectional-to {
+            .msg-con-pr-unidirectional-to-heading {
+                width: 45px;
+                font-weight: bold;
+                float: left;
+            }
+        }
+    }
+
+    .msg-con-pr-unidirectional-message-type {
+        border: 2px solid #757575;
+        border-radius: 3px;
+
+        md-content {
+            height: 230px;
+            width: 100%;
+        }
+    }
+
+    .msg-con-pr-bidirectional {
+
+        border: 2px solid #757575;
+        border-radius: 3px;
+        padding: 5px;
+        margin-top: 15px;
+        margin-bottom: 15px;
+
+        .msg-con-pr-bidirectional-from {
+            padding-bottom: 5px;
+            .msg-con-pr-bidirectional-from-heading {
+                width: 45px;
+                font-weight: bold;
+                float: left;
+            }
+        }
+
+        .msg-con-pr-bidirectional-to {
+            .msg-con-pr-bidirectional-to-heading {
+                width: 45px;
+                font-weight: bold;
+                float: left;
+            }
+        }
+    }
+
+    .msg-con-pr-bidirectional-message-type {
+        border: 2px solid #757575;
+        border-radius: 3px;
+
+        md-content {
+            height: 238px;
+            width: 100%;
+        }
+    }
+}

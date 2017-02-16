@@ -1,0 +1,23 @@
+<md-sidenav class="properties-menu md-sidenav-right" md-is-open="false" md-component-id="properties-menu"
+            id="properties-menu"
+            md-whiteframe="4"
+            md-disable-backdrop="false"
+            layout="column">
+    <md-toolbar class="md-theme-indigo md-toolbar-tools">
+        <div flex>Properties</div>
+    </md-toolbar>
+    <md-content layout="column" flex>
+        <div ng-show="pm.isSelectedViewSID()" flex layout="column">
+            <subject-properties layout="column" ng-show="pm.handleSidViewProperties()" flex></subject-properties>
+            <message-connector-properties layout="column" flex
+                                          ng-hide="pm.handleSidViewProperties()"></message-connector-properties>
+        </div>
+        <div ng-hide="pm.isSelectedViewSID()" layout="column" flex>
+            <state-properties layout="column" flex ng-show="pm.isState()"></state-properties>
+            <from-send-state-properties layout="column" flex ng-show="pm.isFromSendState()"></from-send-state-properties>
+            <from-receive-state-properties layout="column" flex ng-show="pm.isFromReceiveState()"></from-receive-state-properties>
+            <from-function-state-properties layout="column" flex ng-show="pm.isFromFunctionState()"></from-function-state-properties>
+        </div>
+    </md-content>
+</md-sidenav>
+

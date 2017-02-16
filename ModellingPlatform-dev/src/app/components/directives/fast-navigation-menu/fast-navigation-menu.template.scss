@@ -1,0 +1,21 @@
+.fast-nav {
+    position: fixed;
+    bottom: 3%;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    z-index: 10;
+
+    .fast-nav-views {
+        width: 300px;
+        margin-top: 10px;
+        background-color: white;
+    }
+
+    .fast-nav-subjects {
+
+        .fast-nav-subjects-md-autocomplete {
+            width: 300px !important;
+        }
+    }
+}
+

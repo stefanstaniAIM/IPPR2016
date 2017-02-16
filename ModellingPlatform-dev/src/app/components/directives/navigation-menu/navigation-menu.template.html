@@ -1,0 +1,66 @@
+<!-- navigation-menu opened-->
+<div class="row">
+    <md-sidenav class="navigation-menu-opened md-navigation-menu" md-is-open="true" md-component-id="navigation-menu" md-whiteframe="4"
+                md-disable-backdrop="false">
+        <md-toolbar class="md-theme-indigo md-toolbar-tools">
+            <div flex>Pallet</div>
+            <md-button class="md-icon-button" ng-click="nmc.toggleSidenav()">
+                <md-icon>menu</md-icon>
+            </md-button>
+        </md-toolbar>
+        <md-content>
+            <md-list flex>
+                <navigation-menu-item item-name="Basic elements">
+
+                    <basic-element-selector></basic-element-selector>
+
+                </navigation-menu-item>
+
+                <navigation-menu-item item-name="Message types">
+
+                    <md-button class="md-button navigation-menu-item-md-button" flex ng-click="nmc.showCreateNewMessageTypeDialog()">
+                        Create a new message type
+                    </md-button>
+                    <md-button class="md-button navigation-menu-item-md-button" flex ng-click="nmc.showViewMessageTypesDialog()">
+                        View message types
+                    </md-button>
+
+                </navigation-menu-item>
+
+                <!--<navigation-menu-item item-name="Navigation">
+
+                    <md-button class="md-button navigation-menu-item-md-button" flex ng-click="nmc.changeView()">
+                        Change view
+                    </md-button>
+                    <md-button class="md-button navigation-menu-item-md-button" flex ng-disabled="nmc.selectedViewSID()">
+                        Change subject
+                    </md-button>
+
+                </navigation-menu-item>-->
+
+                <navigation-menu-item item-name="Actions">
+
+                    <md-button class="md-button navigation-menu-item-md-button" flex ng-click="nmc.showNewFileDialog()">
+                        <md-icon>insert_drive_file</md-icon>
+                        <span>New file</span>
+                    </md-button>
+                    <md-button class="md-button navigation-menu-item-md-button" flex ng-click="nmc.downloadOwlFile()">
+                        <md-icon>file_download</md-icon>
+                        <span>Save as OWL</span>
+                    </md-button>
+
+                </navigation-menu-item>
+
+            </md-list>
+        </md-content>
+    </md-sidenav>
+</div>
+
+<!-- navigation-menu closed-->
+<div class="navigation-menu-closed navigation-menu-closed-toggle" md-whiteframe="4" ng-hide="nmc.sideNavOpened()">
+    <md-toolbar class="md-toolbar-tools">
+        <md-button class="md-icon-button" ng-click="nmc.toggleSidenav()">
+            <md-icon>menu</md-icon>
+        </md-button>
+    </md-toolbar>
+</div>

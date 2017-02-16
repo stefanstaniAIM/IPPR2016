@@ -1,0 +1,19 @@
+<md-content layout="column" class="from-function-state-properties-form" flex layout-padding>
+    <form name="fromFunctionStatePropertiesForm" layout="column" flex>
+        <div layout="column" flex>
+            <md-input-container class="md-block">
+                <label>Name</label>
+                <input required name="name" ng-model="ffsp.fromFunctionState.customAttrs.transitionName">
+                <div ng-messages="fromFunctionStatePropertiesForm.name.$error">
+                    <div ng-message="required">This is required.</div>
+                </div>
+            </md-input-container>
+        </div>
+        <div class="properties-right-footer" layout="row">
+            <md-button class="md-button md-raised md-primary" flex type="submit" ng-click="ffsp.saveStateTransitionProperties()"
+                       ng-disabled="fromFunctionStatePropertiesForm.$invalid">
+                Save
+            </md-button>
+        </div>
+    </form>
+</md-content>

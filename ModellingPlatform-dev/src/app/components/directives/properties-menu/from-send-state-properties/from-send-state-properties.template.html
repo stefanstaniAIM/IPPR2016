@@ -1,0 +1,36 @@
+<md-content layout="column" class="from-send-state-properties-form" flex layout-padding>
+    <form name="fromSendStatePropertiesForm" layout="column" flex>
+        <div layout="column" flex>
+            <md-input-container>
+                <label>Receiver of the message</label>
+                <md-select required name="subject" ng-model="fssp.selectedSubjectName">
+                    <md-option ng-repeat="sb in fssp.availableSubjects" ng-value="sb.display"
+                               ng-click="fssp.changeSubject(sb)">
+                        {{sb.display}}
+                    </md-option>
+                </md-select>
+                <div ng-messages="fromSendStatePropertiesForm.subject.$error">
+                    <div ng-message="required">This is required.</div>
+                </div>
+            </md-input-container>
+            <md-input-container>
+                <label>Message to be send</label>
+                <md-select required name="message" ng-model="fssp.selectedMessageName">
+                    <md-option ng-repeat="msg in fssp.availableMessageTypes" ng-value="msg.name"
+                               ng-click="fssp.changeMessage(msg)">
+                        {{msg.name}}
+                    </md-option>
+                </md-select>
+                <div ng-messages="fromSendStatePropertiesForm.message.$error">
+                    <div ng-message="required">This is required.</div>
+                </div>
+            </md-input-container>
+        </div>
+        <div class="properties-right-footer" layout="row">
+            <md-button class="md-button md-raised md-primary" flex type="submit" ng-click="fssp.saveStateTransitionProperties()"
+                       ng-disabled="fromSendStatePropertiesForm.$invalid">
+                Save
+            </md-button>
+        </div>
+    </form>
+</md-content>

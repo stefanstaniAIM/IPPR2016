@@ -1,0 +1,645 @@
+.subject-element {
+    position: absolute;
+    background: transparent;
+    /* Make sure events are propagated to the JointJS element so, e.g. dragging works.*/
+    pointer-events: none;
+    -webkit-user-select: none;
+
+    .subject-element-inner {
+        //position: fixed;
+        background: #ffffff;
+        /* Make sure events are propagated to the JointJS element so, e.g. dragging works.*/
+        //pointer-events: none;
+        //-webkit-user-select: none;
+        border-radius: 6px;
+        border: 3px solid #000000;
+        //border: 3px solid #2980B9;
+        //box-shadow: 0 0 5px black;
+        //padding: 2.5px !important;
+        //box-sizing: border-box;
+        width: 150px;
+        height: 130px;
+
+        .sb-name {
+            text-align: center;
+            font-size: 1em;
+            width: inherit;
+            white-space: pre-line;
+            text-align: center;
+        }
+
+        button.sb-remove-btn, button.sb-connector-btn {
+            /* Enable interacting with inputs only. */
+            pointer-events: auto;
+        }
+
+        button.sb-remove-btn {
+            font-size: 1.5em;
+            color: #000000;
+            border: none;
+            border-radius: 50%;
+            background: #ffffff;
+            width: 30px;
+            height: 30px;
+            //text-align: middle;
+            position: absolute;
+            top: -10px;
+            left: 155px;
+            padding: 0px;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        button.sb-connector-btn {
+            font-size: 1.5em;
+            color: #000000;
+            border: none;
+            border-radius: 50%;
+            background: #ffffff;
+            width: 30px;
+            height: 30px;
+            //text-align: middle;
+            position: absolute;
+            top: 30px;
+            left: 155px;
+            padding: 0;
+            margin: 0;
+            cursor: pointer;
+            transform: rotate(-45deg);
+        }
+
+        button.sb-remove-btn:active, button.sb-remove-btn:focus, button.sb-connector-btn:active, button.sb-connector-btn:focus {
+            outline: 0;
+        }
+
+        button.sb-remove-btn:hover {
+            transform: scale(1.1);
+        }
+
+        button.sb-connector-btn:hover {
+            transform: rotate(-45deg) scale(1.1);
+        }
+    }
+}
+
+.message-connector-element {
+    position: absolute;
+    background: transparent;
+    /* Make sure events are propagated to the JointJS element so, e.g. dragging works.*/
+    //pointer-events: none;
+    //-webkit-user-select: none;
+    //visibility: hidden;
+    cursor: pointer;
+
+    .message-connector-element-inner {
+        //position: fixed;
+        background: #ffffff;
+        /* Make sure events are propagated to the JointJS element so, e.g. dragging works.*/
+        //pointer-events: none;
+        //-webkit-user-select: none;
+        border-radius: 6px;
+        border: 3px solid #000000;
+        //border: 3px solid #2980B9;
+        //box-shadow: 0 0 5px black;
+        //padding: 2.5px !important;
+        //box-sizing: border-box;
+        width: 80px;
+        height: 50px;
+    }
+
+    .msg-unidirectional {
+        font-size: 2em;
+    }
+
+    .msg-bidirectional {
+        font-size: 2em;
+    }
+
+    .msg-target-source {
+        padding: 6px;
+    }
+
+    button.msg-remove-btn {
+        /* Enable interacting with inputs only. */
+        pointer-events: auto;
+    }
+
+    button.msg-remove-btn {
+        font-size: 1.5em;
+        color: #000000;
+        border: none;
+        border-radius: 50%;
+        background: #ffffff;
+        width: 30px;
+        height: 30px;
+        //text-align: middle;
+        position: absolute;
+        top: -10px;
+        left: 85px;
+        padding: 0px;
+        margin: 0;
+        cursor: pointer;
+    }
+
+    button.msg-remove-btn:active, button.msg-remove-btn:focus {
+        outline: 0;
+    }
+
+    button.msg-remove-btn:hover {
+        transform: scale(1.1);
+    }
+
+}
+
+.send-state-element {
+    position: absolute;
+    background: transparent;
+    /* Make sure events are propagated to the JointJS element so, e.g. dragging works.*/
+    pointer-events: none;
+    -webkit-user-select: none;
+
+    .send-state-element-inner {
+        //position: fixed;
+        background: #ffffff;
+        /* Make sure events are propagated to the JointJS element so, e.g. dragging works.*/
+        //pointer-events: none;
+        //-webkit-user-select: none;
+        border-radius: 6px;
+        border: 3px solid #000000;
+        //border: 3px solid #2980B9;
+        //box-shadow: 0 0 5px black;
+        //padding: 2.5px !important;
+        //box-sizing: border-box;
+        width: 150px;
+        height: 130px;
+
+        .ss-name {
+            text-align: center;
+            font-size: 1em;
+            width: inherit;
+            white-space: pre-line;
+            text-align: center;
+        }
+
+        .ss-icon-box {
+            border: 1px solid #000000;
+            height: 20px;
+            width: 40px;
+
+            .ss-icon {
+                width: 0;
+                height: 0;
+                border-left: 15px solid transparent;
+                border-right: 15px solid transparent;
+                border-top: 15px solid #000000;
+            }
+
+            .ss-start-icon, .ss-end-icon {
+                font-size: 2.4em;
+            }
+        }
+
+        button.ss-remove-btn, button.ss-connector-btn {
+            /* Enable interacting with inputs only. */
+            pointer-events: auto;
+        }
+
+        button.ss-remove-btn {
+            font-size: 1.5em;
+            color: #000000;
+            border: none;
+            border-radius: 50%;
+            background: #ffffff;
+            width: 30px;
+            height: 30px;
+            //text-align: middle;
+            position: absolute;
+            top: -10px;
+            left: 155px;
+            padding: 0px;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        button.ss-connector-btn {
+            font-size: 1.5em;
+            color: #000000;
+            border: none;
+            border-radius: 50%;
+            background: #ffffff;
+            width: 30px;
+            height: 30px;
+            //text-align: middle;
+            position: absolute;
+            top: 30px;
+            left: 155px;
+            padding: 0;
+            margin: 0;
+            cursor: pointer;
+            transform: rotate(-45deg);
+        }
+
+        button.ss-remove-btn:active, button.ss-remove-btn:focus, button.ss-connector-btn:active, button.ss-connector-btn:focus {
+            outline: 0;
+        }
+
+        button.ss-remove-btn:hover {
+            transform: scale(1.1);
+        }
+
+        button.ss-connector-btn:hover {
+            transform: rotate(-45deg) scale(1.1);
+        }
+    }
+}
+
+.receive-state-element {
+    position: absolute;
+    background: transparent;
+    /* Make sure events are propagated to the JointJS element so, e.g. dragging works.*/
+    pointer-events: none;
+    -webkit-user-select: none;
+
+    .receive-state-element-inner {
+        //position: fixed;
+        background: #ffffff;
+        /* Make sure events are propagated to the JointJS element so, e.g. dragging works.*/
+        //pointer-events: none;
+        //-webkit-user-select: none;
+        border-radius: 6px;
+        border: 3px solid #000000;
+        //border: 3px solid #2980B9;
+        //box-shadow: 0 0 5px black;
+        //padding: 2.5px !important;
+        //box-sizing: border-box;
+        width: 150px;
+        height: 130px;
+
+        .rs-name {
+            text-align: center;
+            font-size: 1em;
+            width: inherit;
+            white-space: pre-line;
+            text-align: center;
+        }
+
+        .rs-icon-box {
+            border: 1px solid #000000;
+            height: 20px;
+            width: 40px;
+
+            .rs-icon {
+                width: 0;
+                height: 0;
+                border-left: 15px solid transparent;
+                border-right: 15px solid transparent;
+                border-top: 15px solid #000000;
+            }
+
+            .rs-start-icon, .rs-end-icon {
+                font-size: 2.4em;
+            }
+        }
+
+        button.rs-remove-btn, button.rs-connector-btn {
+            /* Enable interacting with inputs only. */
+            pointer-events: auto;
+        }
+
+        button.rs-remove-btn {
+            font-size: 1.5em;
+            color: #000000;
+            border: none;
+            border-radius: 50%;
+            background: #ffffff;
+            width: 30px;
+            height: 30px;
+            //text-align: middle;
+            position: absolute;
+            top: -10px;
+            left: 155px;
+            padding: 0px;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        button.rs-connector-btn {
+            font-size: 1.5em;
+            color: #000000;
+            border: none;
+            border-radius: 50%;
+            background: #ffffff;
+            width: 30px;
+            height: 30px;
+            //text-align: middle;
+            position: absolute;
+            top: 30px;
+            left: 155px;
+            padding: 0;
+            margin: 0;
+            cursor: pointer;
+            transform: rotate(-45deg);
+        }
+
+        button.rs-remove-btn:active, button.rs-remove-btn:focus, button.rs-connector-btn:active, button.rs-connector-btn:focus {
+            outline: 0;
+        }
+
+        button.rs-remove-btn:hover {
+            transform: scale(1.1);
+        }
+
+        button.rs-connector-btn:hover {
+            transform: rotate(-45deg) scale(1.1);
+        }
+    }
+}
+
+.function-state-element {
+    position: absolute;
+    background: transparent;
+    /* Make sure events are propagated to the JointJS element so, e.g. dragging works.*/
+    pointer-events: none;
+    -webkit-user-select: none;
+
+    .function-state-element-inner {
+        //position: fixed;
+        background: #ffffff;
+        /* Make sure events are propagated to the JointJS element so, e.g. dragging works.*/
+        //pointer-events: none;
+        //-webkit-user-select: none;
+        border-radius: 6px;
+        border: 3px solid #000000;
+        //border: 3px solid #2980B9;
+        //box-shadow: 0 0 5px black;
+        //padding: 2.5px !important;
+        //box-sizing: border-box;
+        width: 150px;
+        height: 130px;
+
+        .fs-name {
+            text-align: center;
+            font-size: 1em;
+            width: inherit;
+            white-space: pre-line;
+            text-align: center;
+        }
+
+        .fs-icon-box {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid #000000;
+            background: #ffffff;
+
+            .fs-icon {
+                width: 0;
+                height: 0;
+                border-style: solid;
+                border-width: 21px 0 0 21px;
+                border-color: transparent transparent transparent #000000;
+                background: #ffffff;
+                //visibility: hidden;
+            }
+
+            .fs-start-icon, .fs-end-icon {
+                font-size: 2.4em;
+            }
+        }
+
+        button.fs-remove-btn, button.fs-connector-btn {
+            /* Enable interacting with inputs only. */
+            pointer-events: auto;
+        }
+
+        button.fs-remove-btn {
+            font-size: 1.5em;
+            color: #000000;
+            border: none;
+            border-radius: 50%;
+            background: #ffffff;
+            width: 30px;
+            height: 30px;
+            //text-align: middle;
+            position: absolute;
+            top: -10px;
+            left: 155px;
+            padding: 0px;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        button.fs-connector-btn {
+            font-size: 1.5em;
+            color: #000000;
+            border: none;
+            border-radius: 50%;
+            background: #ffffff;
+            width: 30px;
+            height: 30px;
+            //text-align: middle;
+            position: absolute;
+            top: 30px;
+            left: 155px;
+            padding: 0;
+            margin: 0;
+            cursor: pointer;
+            transform: rotate(-45deg);
+        }
+
+        button.fs-remove-btn:active, button.fs-remove-btn:focus, button.fs-connector-btn:active, button.fs-connector-btn:focus {
+            outline: 0;
+        }
+
+        button.fs-remove-btn:hover {
+            transform: scale(1.1);
+        }
+
+        button.fs-connector-btn:hover {
+            transform: rotate(-45deg) scale(1.1);
+        }
+    }
+}
+
+.from-send-state-connector-element {
+    position: absolute;
+    background: transparent;
+    /* Make sure events are propagated to the JointJS element so, e.g. dragging works.*/
+    //pointer-events: none;
+    //-webkit-user-select: none;
+    //visibility: hidden;
+    cursor: pointer;
+
+    .from-send-state-connector-element-inner {
+        //position: fixed;
+        background: #ffffff;
+        /* Make sure events are propagated to the JointJS element so, e.g. dragging works.*/
+        //pointer-events: none;
+        //-webkit-user-select: none;
+        border-radius: 6px;
+        border: 3px solid #000000;
+        //border: 3px solid #2980B9;
+        //box-shadow: 0 0 5px black;
+        //padding: 2.5px !important;
+        //box-sizing: border-box;
+        width: 200px;
+        height: 80px;
+
+        .fss-subject, .fss-message {
+            font-size: 1em;
+            padding: 5px;
+        }
+
+        button.fss-remove-btn {
+            /* Enable interacting with inputs only. */
+            pointer-events: auto;
+        }
+
+        button.fss-remove-btn {
+            font-size: 1.5em;
+            color: #000000;
+            border: none;
+            border-radius: 50%;
+            background: #ffffff;
+            width: 30px;
+            height: 30px;
+            //text-align: middle;
+            position: absolute;
+            top: -10px;
+            left: 205px;
+            padding: 0px;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        button.fss-remove-btn:active, button.fss-remove-btn:focus {
+            outline: 0;
+        }
+
+        button.fss-remove-btn:hover {
+            transform: scale(1.1);
+        }
+    }
+}
+
+.from-receive-state-connector-element {
+    position: absolute;
+    background: transparent;
+    /* Make sure events are propagated to the JointJS element so, e.g. dragging works.*/
+    //pointer-events: none;
+    //-webkit-user-select: none;
+    //visibility: hidden;
+    cursor: pointer;
+
+    .from-receive-state-connector-element-inner {
+        //position: fixed;
+        background: #ffffff;
+        /* Make sure events are propagated to the JointJS element so, e.g. dragging works.*/
+        //pointer-events: none;
+        //-webkit-user-select: none;
+        border-radius: 6px;
+        border: 3px solid #000000;
+        //border: 3px solid #2980B9;
+        //box-shadow: 0 0 5px black;
+        //padding: 2.5px !important;
+        //box-sizing: border-box;
+        width: 200px;
+        height: 80px;
+
+        .frs-subject, .frs-message {
+            font-size: 1em;
+            padding: 5px;
+        }
+
+        button.frs-remove-btn {
+            /* Enable interacting with inputs only. */
+            pointer-events: auto;
+        }
+
+        button.frs-remove-btn {
+            font-size: 1.5em;
+            color: #000000;
+            border: none;
+            border-radius: 50%;
+            background: #ffffff;
+            width: 30px;
+            height: 30px;
+            //text-align: middle;
+            position: absolute;
+            top: -10px;
+            left: 205px;
+            padding: 0px;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        button.frs-remove-btn:active, button.frs-remove-btn:focus {
+            outline: 0;
+        }
+
+        button.frs-remove-btn:hover {
+            transform: scale(1.1);
+        }
+    }
+}
+
+.from-function-state-connector-element {
+    position: absolute;
+    background: transparent;
+    /* Make sure events are propagated to the JointJS element so, e.g. dragging works.*/
+    //pointer-events: none;
+    //-webkit-user-select: none;
+    //visibility: hidden;
+    cursor: pointer;
+
+    .from-function-state-connector-element-inner {
+        //position: fixed;
+        background: #ffffff;
+        /* Make sure events are propagated to the JointJS element so, e.g. dragging works.*/
+        //pointer-events: none;
+        //-webkit-user-select: none;
+        border-radius: 6px;
+        border: 3px solid #000000;
+        //border: 3px solid #2980B9;
+        //box-shadow: 0 0 5px black;
+        //padding: 2.5px !important;
+        //box-sizing: border-box;
+        width: 200px;
+        height: 80px;
+
+        .ffs-name {
+            font-size: 1em;
+            padding: 5px;
+        }
+
+        button.ffs-remove-btn {
+            /* Enable interacting with inputs only. */
+            pointer-events: auto;
+        }
+
+        button.ffs-remove-btn {
+            font-size: 1.5em;
+            color: #000000;
+            border: none;
+            border-radius: 50%;
+            background: #ffffff;
+            width: 30px;
+            height: 30px;
+            //text-align: middle;
+            position: absolute;
+            top: -10px;
+            left: 205px;
+            padding: 0px;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        button.ffs-remove-btn:active, button.ffs-remove-btn:focus {
+            outline: 0;
+        }
+
+        button.ffs-remove-btn:hover {
+            transform: scale(1.1);
+        }
+    }
+}

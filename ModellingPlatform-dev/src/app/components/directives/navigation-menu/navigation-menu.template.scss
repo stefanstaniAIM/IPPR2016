@@ -1,0 +1,25 @@
+// Sidenav closed
+.navigation-menu-closed {
+    width: 57px;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 10;
+}
+
+.navigation-menu-closed-toggle {
+    transition: 0.3s;
+    transform: translate3d(0px, 0px, 0px);
+}
+
+.navigation-menu-closed-toggle.ng-hide {
+    transition: 0.3s;
+    transform: translate3d(-57px, 0px, 0px);
+}
+
+.navigation-menu-opened {
+
+    z-index: 10;
+
+}
+

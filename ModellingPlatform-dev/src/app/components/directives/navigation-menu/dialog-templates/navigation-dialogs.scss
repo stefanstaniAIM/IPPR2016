@@ -1,0 +1,29 @@
+.view-message-types-dialog {
+    width: 800px;
+    height: 500px;
+
+    md-dialog-content {
+        height: 400px;
+    }
+}
+
+.create-new-message-type-dialog {
+    width: 600px;
+
+    md-dialog-content {
+
+        mdt-table > md-content {
+            background: #ffffff;
+            box-shadow: none;
+            border: 1px solid ;
+
+            md-content {
+                background: #ffffff;
+            }
+        }
+    }
+
+    md-dialog-actions {
+        padding-left: 0px;
+    }
+}

@@ -1,0 +1,34 @@
+<div class="fast-nav" layout="column">
+
+    <div class="fast-nav-subjects" layout="row" ng-hide="fnmc.selectedViewSID()">
+        <form ng-submit="$event.preventDefault()">
+            <md-autocomplete class="fast-nav-subjects-md-autocomplete" ng-disabled="false"
+                             md-no-cache="true"
+                             md-selected-item="fnmc.subjectDisplayItem"
+                             md-selected-item-change="fnmc.selectedItemChange(item)"
+                             md-search-text="fnmc.searchText"
+                             md-items="item in fnmc.querySearch(fnmc.searchText)"
+                             md-item-text="item.display" md-min-length="0" placeholder="Select a subject">
+                <md-item-template>
+                    <span md-highlight-text="fnmc.searchText" md-highlight-flags="^i">{{item.display}}</span>
+                </md-item-template>
+                <md-not-found>
+                    No subjects matching "{{fnmc.searchText}}" were found.
+                </md-not-found>
+            </md-autocomplete>
+        </form>
+    </div>
+
+    <div class="fast-nav-views" layout="row" md-whiteframe="1">
+        <md-button class="md-button" ng-class="fnmc.selectedViewSID() ? 'md-raised md-primary' : ''" flex="50"
+                   ng-click="fnmc.changeSelectedView()" ng-disabled="fnmc.selectedViewSID() ? true : false">
+            SID
+        </md-button>
+        <md-divider></md-divider>
+        <md-button class="md-button" flex="50" ng-class="fnmc.selectedViewSID() ? '' : 'md-raised md-primary'"
+                   ng-click="fnmc.changeSelectedView()" ng-disabled="fnmc.selectedViewSID() && !fnmc.selectedSubjectEmpty() ? false : true">
+            SBD
+        </md-button>
+    </div>
+</div>
+

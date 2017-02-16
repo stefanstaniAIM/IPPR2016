@@ -1,0 +1,64 @@
+<md-content layout="column" class="message-connector-properties-form" flex layout-padding>
+    <form name="messageConnectorPropertiesForm" flex layout="column">
+        <div layout="column" flex>
+            <selection layout="row">
+                <span flex>Bidirectional</span>
+                <md-checkbox ng-model="mcp.messageConnector.customAttrs.isBidirectional" ng-change="mcp.isBidirectionalChanged()"></md-checkbox>
+            </selection>
+            <md-divider></md-divider>
+            <div flex>
+                <section class="msg-con-pr-unidirectional">
+                    <div class="msg-con-pr-unidirectional-from">
+                        <div class="msg-con-pr-unidirectional-from-heading">From:</div>
+                        <div>{{mcp.sourceSubjectName}}</div>
+                    </div>
+                    <div class="msg-con-pr-unidirectional-to">
+                        <div class="msg-con-pr-unidirectional-to-heading">To:</div>
+                        <div>{{mcp.targetSubjectName}}</div>
+                    </div>
+                </section>
+                <selection layout="column" class="msg-con-pr-unidirectional-message-type">
+                    <md-content layout="column">
+                        <md-list>
+                            <md-list-item ng-repeat="stMessageType in mcp.messageConnector.customAttrs.sourceToTarget.messageTypes">
+                                <p>{{stMessageType.name}}</p>
+                                <md-icon class="md-secondary" aria-label="Remove" ng-click="mcp.removeMessageType(true, stMessageType)">delete</md-icon>
+                            </md-list-item>
+                        </md-list>
+                    </md-content>
+                    <md-button class="md-primary" ng-click="mcp.showSelectMessageTypeDialog(true)">Add message type</md-button>
+                </selection>
+            </div>
+            <md-divider></md-divider>
+            <div flex ng-show="mcp.messageConnector.customAttrs.isBidirectional">
+                <section class="msg-con-pr-bidirectional">
+                    <div class="msg-con-pr-bidirectional-from">
+                        <div class="msg-con-pr-bidirectional-from-heading">From:</div>
+                        <div>{{mcp.targetSubjectName}}</div>
+                    </div>
+                    <div class="msg-con-pr-bidirectional-to">
+                        <div class="msg-con-pr-bidirectional-to-heading">To:</div>
+                        <div>{{mcp.sourceSubjectName}}</div>
+                    </div>
+                </section>
+                <selection layout="column" class="msg-con-pr-bidirectional-message-type">
+                    <md-content layout="column">
+                        <md-list>
+                            <md-list-item ng-repeat="tsMessageType in mcp.messageConnector.customAttrs.targetToSource.messageTypes">
+                                <p>{{tsMessageType.name}}</p>
+                                <md-icon class="md-secondary" aria-label="Remove" ng-click="mcp.removeMessageType(false, tsMessageType)">delete</md-icon>
+                            </md-list-item>
+                        </md-list>
+                    </md-content>
+                    <md-button class="md-primary" ng-click="mcp.showSelectMessageTypeDialog(false)">Add message type</md-button>
+                </selection>
+            </div>
+        </div>
+        <div class="properties-right-footer" layout="row">
+            <md-button class="md-button md-raised md-primary" flex type="submit"
+                       ng-click="mcp.saveMessageConnectorProperties()"
+                       ng-disabled="messageConnectorPropertiesForm.$invalid">Save
+            </md-button>
+        </div>
+    </form>
+</md-content>

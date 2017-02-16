@@ -1,0 +1,14 @@
+<md-divider></md-divider>
+<md-subheader class="navigation-menu-item-md-subheader md-no-sticky" layout="column">
+    <div layout="row">
+        <span class="navigation-menu-item-md-subheader-text" flex>{{nmic.itemName}}</span>
+        <md-button class="md-icon-button" ng-click="nmic.isOpen = !nmic.isOpen">
+            <md-icon>{{nmic.isOpen ? 'keyboard_arrow_down' : 'keyboard_arrow_right'}}</md-icon>
+        </md-button>
+    </div>
+</md-subheader>
+<md-list-item ng-show="nmic.isOpen">
+    <div layout="column" flex ng-transclude>
+
+    </div>
+</md-list-item>
