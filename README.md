@@ -38,14 +38,16 @@ Please execute following statements to create the schema and the db user in your
  ```gradlew bootRun```
  6. Go to ```http://localhost:3000```
  
- ####Alternative####
- If you prefer to run the jar files, without using gradlew:
- 1. Start the MySQL Service
- 2. copy the jars to a folder you like: [Gateway-0.0.1-SNAPSHOT.jar](Gateway/builds/libs/Gateway-0.0.1-SNAPSHOT.jar), [ProcessModelStorage-0.0.1-SNAPSHOT.jar](ProcessModelStorage/builds/libs/ProcessModelStorage-0.0.1-SNAPSHOT.jar), [ProcessEngine-0.0.1-SNAPSHOT.jar](ProcessEngine/builds/libs/ProcessEngine-0.0.1-SNAPSHOT.jar)
- 3. run in cmd: ```java -jar Gateway-0.0.1-SNAPSHOT.jar```
- 4. run in cmd: ```java -jar ProcessModelStorage-0.0.1-SNAPSHOT.jar```
- 5. run in cmd: ```java -jar ProcessEngine-0.0.1-SNAPSHOT.jar```
- 
+####Alternative####
+If you prefer to run the jar files, without using gradlew:
+1. Start the MySQL Service
+2. Go to [builds](builds)
+3. run in cmd: ```java -jar Gateway-0.0.1-SNAPSHOT.jar```
+4. run in cmd: ```java -jar ProcessModelStorage-0.0.1-SNAPSHOT.jar```
+5. run in cmd: ```java -jar ProcessEngine-0.0.1-SNAPSHOT.jar```
+6. run in cmd: ```java -jar GUI-0.0.1-SNAPSHOT.jar```
+
+**Note:** If you do any changes to a module, you have to rebuild it with ```gradlew build``` and use the *.jar that is generated in ```(name of module)/build/libs/```
  
 ###sbpm-modeler###
 //Todo Maks
