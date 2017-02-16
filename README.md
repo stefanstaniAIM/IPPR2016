@@ -85,9 +85,9 @@ Currently, there *.csv files for the user configuration:
 
 ###GUI-Dev###
 Just for development purposes, not for production!
-1. run in cmd: ```npm install```
-2. Go to GUI-Dev and run in cmd: ```npm start```
-3. in case of any errors when starting the first time, please stick to the installation guide of [ng2-admin](https://github.com/akveo/ng2-admin/)
+ 1. run in cmd: ```npm install```
+ 2. Go to GUI-Dev and run in cmd: ```npm start```
+ 3. in case of any errors when starting the first time, please stick to the installation guide of [ng2-admin](https://github.com/akveo/ng2-admin/)
 
 ###sbpm-modeler-Dev###
 Just for development purposes, not for production!
