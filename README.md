@@ -27,11 +27,11 @@ link to youtube videos
 | Send States | Yes | - |
 | Receive States | Yes | - |
 | Timeouts | No | - |
-| Refinements | Yes | partially |
+| Refinements | Yes | partially (Engine) |
 | Business Objects | Yes | - |
 | Start Process | Yes | - |
 | Stop Process | Yes | - |
-| Nested Business Objects | Yes | partially |
+| Nested Business Objects | Yes | partially (Engine) |
 | Formbuilder | Yes | - |
 | OWL-Import | Yes | standard-pass-ont |
 | Connected Processes | No | - |
