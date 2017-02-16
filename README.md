@@ -103,6 +103,24 @@ If you prefer to run the jar files, without using gradlew:
  2. run in cmd: ```java -jar ModellingPlatform-0.0.1-SNAPSHOT.jar```
  3. Go to ```http://localhost:4000```
  
+
+
+###GUI-Dev###
+Just for development purposes, not for production!
+ 1. run in cmd: ```npm install```
+ 2. Go to GUI-Dev and run in cmd: ```npm start```
+ 3. in case of any errors when starting the first time, please stick to the installation guide of [ng2-admin](https://github.com/akveo/ng2-admin/)
+ 4. Go to ```http://localhost:3000```
+
+###ModellingPlatform-Dev###
+Just for development purposes, not for production!
+ 1. Run ```npm install -g yo bower grunt-cli gulp && npm install && bower install``` to install required dependencies.
+ 2. Go to ModellingPlatform-Dev and run in cmd: ```npm install && bower install```
+ 3. Run in cmd: ```gulp serve```
+ 4. Go to ```http://localhost:3000```
+ 
+##Configuration##
+
 ###Ports###
 Basically, the following ports are used:
 
@@ -136,20 +154,6 @@ Currently, there *.csv files for the user configuration:
 |  matthias  |  ADMIN, EMPLOYEE  |  1234  |
 |  stefan  |  EMPLOYEE  |  1234  |
 |  maksym  |  EMPLOYEE  |  1234  |
-
-###GUI-Dev###
-Just for development purposes, not for production!
- 1. run in cmd: ```npm install```
- 2. Go to GUI-Dev and run in cmd: ```npm start```
- 3. in case of any errors when starting the first time, please stick to the installation guide of [ng2-admin](https://github.com/akveo/ng2-admin/)
- 4. Go to ```http://localhost:3000```
-
-###ModellingPlatform-Dev###
-Just for development purposes, not for production!
- 1. Run ```npm install -g yo bower grunt-cli gulp && npm install && bower install``` to install required dependencies.
- 2. Go to ModellingPlatform-Dev and run in cmd: ```npm install && bower install```
- 3. Run in cmd: ```gulp serve```
- 4. Go to ```http://localhost:3000```
 
 ##Development##
 ###Spring Boot Modules###
