@@ -35,6 +35,9 @@ Please execute following statements to create the schema and the db user in your
  ```gradlew bootRun```
  6. Go to ```http://localhost:3000```
  
+ ###sbpm-modeler###
+//Todo Maks
+ 
 ####Ports####
 Basically, the following ports are used:
 
@@ -44,6 +47,7 @@ Basically, the following ports are used:
 |  ProcessModelStorage  |  11000  |
 |  ProcessEngine  |  14000  |
 |  GUI  |  3000  |
+|  sbpm-modeler  |  ????  |
 
 To change the port configuration, change the server port in this file e.g. Gateway: [application.properties] (Gateway/src/main/resources/application.properties)
 Make sure to change the ipconfig in the Gateway, if you change the ports of ProcessModelStorage or ProcessEngine
@@ -66,6 +70,11 @@ Currently, there *.csv files for the user configuration:
 |  maksym  |  EMPLOYEE  |  1234  |
 
 ###GUI-Dev###
+Just for development purposes, not for production!
 1. run in cmd: ```npm install```
 2. Go to GUI-Dev and run in cmd: ```npm start```
 3. in case of any errors when starting the first time, please stick to the installation guide of [ng2-admin](https://github.com/akveo/ng2-admin/)
+
+###sbpm-modeler-Dev###
+Just for development purposes, not for production!
+//todo maks
