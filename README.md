@@ -103,7 +103,7 @@ If you prefer to run the jar files, without using gradlew:
  2. run in cmd: ```java -jar ModellingPlatform-0.0.1-SNAPSHOT.jar```
  3. Go to ```http://localhost:4000```
  
-####Ports####
+###Ports###
 Basically, the following ports are used:
 
 |  Service  |  Port  |
@@ -120,7 +120,7 @@ To change the port configuration, change the server port in this file e.g. Gatew
 
 **Note:** If you change the port of the Gateway, make sure to change the restApi configuration in [processes.service.ts](GUI-Dev/src/app/processes.service.ts) and to rebuild the GUI-Dev and GUI project according to the guide provide [below](#gui).
 
-####User Configuration####
+###User Configuration###
 In general, the authentication concept ist based on RBAC. Each user can be assigned to one or more roles. Each role can be assigned to one more rules.
 
 Currently, there *.csv files for the user configuration:
