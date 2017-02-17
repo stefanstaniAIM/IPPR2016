@@ -1,11 +1,11 @@
 #S-BPM Modelling and Execution Platform#
 
-This is a modelling and execution platform for S-BPM processes, based on microservices powered by Spring Boot. The modelling platform is based on Angular 1, the frontend for th execution platform, however, is based on Angular 2.
+This is a modelling and execution platform for S-BPM processes, based on microservices powered by Spring Boot. The modelling platform is based on Angular 1, the frontend for the execution platform, however, is based on Angular 2.
 Basically, the platform consists of the following modules:
 
  - **ProcessModelStorage:** This is the process repository.
  - **ProcessEngine:** Responsible for the execution of processes, based on Akka. 
- - **Gateway:** Authentication and authorization service and handles the request of the process execution frontend (GUI).
+ - **Gateway:** Authentication and authorization service and handles the requests of the process execution frontend (GUI).
  - **Persistence:** Hibernate mapping of the database tables.
  - **GUI-Dev:** Development project for the Angular 2 execution platform frontend (With some dev tools, with node server backend).
  - **GUI:** Production project for the Angular 2 execution platform frontend (minified, uglified, with Spring Boot backend).
@@ -141,7 +141,7 @@ To change the port configuration, change the server port in this file e.g. Gatew
 ###User Configuration###
 In general, the authentication concept ist based on RBAC. Each user can be assigned to one or more roles. Each role can be assigned to one more rules.
 
-Currently, there *.csv files for the user configuration:
+The current *.csv files for the user configuration:
 - [users.csv](Gateway/src/main/resources/memoryusers/users.csv)
 - [roles.csv](Gateway/src/main/resources/memoryusers/roles.csv)
 - [rules.csv](Gateway/src/main/resources/memoryusers/rules.csv)
