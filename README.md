@@ -13,7 +13,7 @@ Basically, the platform consists of the following modules:
  - **ModellingPlatform:** Production project for the Angular 1 modelling platform frontend (with Spring Boot backend).
 
 ##Tutorial Videos##
-link to youtube videos
+[ModellingPlatform](https://youtu.be/3gJXmBRKWNo)
 
 ##Functionalities##
 
