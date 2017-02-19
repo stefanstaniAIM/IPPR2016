@@ -162,7 +162,7 @@ Any further development concerning the Gateway, the ProcessModelStorage or the P
 **Note:** If you do any changes to a module, you have to rebuild it with ```gradlew build```
 
 ###GUI###
-Any further development concerning the GUI has to be done in the GUI-Dev module be using typescript and Angular 2. For further information please use the [Angular Documentation](https://angular.io/) and the [ng2-admin Documentation](https://akveo.github.io/ng2-admin/articles/001-getting-started/).
+Any further development concerning the GUI has to be done in the GUI-Dev module by using typescript and Angular 2. For further information please use the [Angular Documentation](https://angular.io/) and the [ng2-admin Documentation](https://akveo.github.io/ng2-admin/articles/001-getting-started/).
 
 **Note:** If you do any changes to the GUI-Dev project, you have to update the GUI project afterwards:
  1. Go to GUI-Dev and run in cmd: ```npm run prebuild:prod && npm run build:prod```
@@ -171,7 +171,7 @@ Any further development concerning the GUI has to be done in the GUI-Dev module 
  4. Go to [GUI](GUI) and run ```gradlew build``` or ```gradlew run```
  
 ###ModellingPlatform###
-Any further development concerning the ModellingPlatform has to be done in the ModellingPlatform-Dev module be using javascript and Angular 1.
+Any further development concerning the ModellingPlatform has to be done in the ModellingPlatform-Dev module by using javascript and Angular 1.
 
 **Note:** If you do any changes to the ModellingPlatform-Dev project, you have to update the ModellingPlatform project afterwards:
  1. Go to ModellingPlatform-Dev and run in cmd: ```gulp build```
