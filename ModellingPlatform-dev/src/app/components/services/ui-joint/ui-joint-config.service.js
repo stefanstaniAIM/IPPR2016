@@ -10,7 +10,7 @@
 
         var subjectElementDefaults = {
             position: {x: 0, y: 0},
-            size: {width: 150, height: 130},
+            size: {width: 210.35, height: 130},
             attrs: { rect: { cursor: 'pointer', stroke: 'none', 'fill-opacity': 1, fill: 'blue'} },
             customAttrs: {
                 name: 'Subject',
@@ -40,7 +40,7 @@
 
         var sendStateElementDefaults = {
             position: {x: 0, y: 0},
-            size: {width: 150, height: 130},
+            size: {width: 210.35, height: 130},
             attrs: { rect: { cursor: 'pointer', stroke: 'none', 'fill-opacity': 0, fill: 'blue'} },
             customAttrs: {
                 name: 'Send',
@@ -51,7 +51,7 @@
 
         var receiveStateElementDefaults = {
             position: {x: 0, y: 0},
-            size: {width: 150, height: 130},
+            size: {width: 210.35, height: 130},
             attrs: { rect: { cursor: 'pointer', stroke: 'none', 'fill-opacity': 0, fill: 'blue'} },
             customAttrs: {
                 name: 'Receive',
@@ -62,7 +62,7 @@
 
         var functionStateElementDefaults = {
             position: {x: 0, y: 0},
-            size: {width: 150, height: 130},
+            size: {width: 210.35, height: 130},
             attrs: { rect: { cursor: 'pointer', stroke: 'none', 'fill-opacity': 0, fill: 'blue'} },
             customAttrs: {
                 name: 'Function',

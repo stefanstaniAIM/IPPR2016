@@ -300,8 +300,8 @@
             service.paper.on({
                 'cell:pointerdown': service.cellPointerDownListener,
                 'cell:pointerup': service.cellPointerUpListener,
-                'blank:pointerdown': service.blankPointerDownListener,
-                'blank:mousewheel': service.blankMousewheelListener
+                'blank:pointerdown': service.blankPointerDownListener
+                //'blank:mousewheel': service.blankMousewheelListener
             });
 
             service.graph.on({
@@ -363,6 +363,7 @@
             }));
         };
 
+        //ZoomIn/Out
         service.blankMousewheelListener = function (evt, x, y, delta) {
 
             var paperScale = function(sx, sy) {

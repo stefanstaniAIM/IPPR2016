@@ -483,13 +483,13 @@
 
                 ssStartIcon.css({
                     position: 'fixed',
-                    left: bbox.x + 110,
+                    left: bbox.x + 170,
                     top: bbox.y
                 });
 
                 ssEndIcon.css({
                     position: 'fixed',
-                    left: bbox.x + 110,
+                    left: bbox.x + 170,
                     top: bbox.y
                 });
             },
@@ -611,13 +611,13 @@
 
                 rsStartIcon.css({
                     position: 'fixed',
-                    left: bbox.x + 110,
+                    left: bbox.x + 170,
                     top: bbox.y
                 });
 
                 rsEndIcon.css({
                     position: 'fixed',
-                    left: bbox.x + 110,
+                    left: bbox.x + 170,
                     top: bbox.y
                 });
             },
@@ -739,13 +739,13 @@
 
                 fsStartIcon.css({
                     position: 'fixed',
-                    left: bbox.x + 110,
+                    left: bbox.x + 170,
                     top: bbox.y
                 });
 
                 fsEndIcon.css({
                     position: 'fixed',
-                    left: bbox.x + 110,
+                    left: bbox.x + 170,
                     top: bbox.y
                 });
             },
