@@ -70,6 +70,11 @@ Please execute following statements to create the schema and the db user in your
 [DB_setup.sql](Setup/DB_setup.sql)
 
 ##Startup##
+###Start everything (Windows)###
+ 1. Start the MySQL Service
+ 2. Go to [Setup/start_windows](Setup/start_windows)
+ 3. Open [start.bat](Setup/start_windows/start.bat)
+
 ###Execution Platform###
  1. Start the MySQL Service
  2. Go to ProcessModelStorage and run in cmd: 
