@@ -5,7 +5,7 @@
         .factory('joint', joint);
 
     /** @ngInject */
-    function joint($log, $rootScope, jointWindow, jointGraph, jointPaper, jointShape, jointConfig, modelerStorage) {
+    function joint($log, $rootScope, $window, jointWindow, jointGraph, jointPaper, jointShape, jointConfig, modelerStorage) {
         var service = this;
 
         service.graph = null;
@@ -508,6 +508,20 @@
                 }*/
 
                 service.connectorId = null;
+            }
+        };
+
+        $window.onload = function () {
+            $log.info('Page loaded');
+            service.handleViewChange();
+        };
+
+        $window.onbeforeunload = function () {
+            //modelerStorage.clear();
+            if (modelerStorage.getSelectedView() === 'SID') {
+                saveSidView();
+            } else {
+                saveSelectedSubject();
             }
         };
 

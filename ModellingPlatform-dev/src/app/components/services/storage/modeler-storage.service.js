@@ -234,6 +234,10 @@
             local.set('modelerSettings', modelerSettings);
         };
 
+        service.modelerSettingsValid =function () {
+          $log.debug(local.get('modelerSettings'));
+        };
+
         service.clear = function () {
             local.removeItem('modelerSettings');
         };

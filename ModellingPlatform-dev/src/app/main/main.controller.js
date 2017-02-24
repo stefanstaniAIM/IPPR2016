@@ -54,37 +54,33 @@
         main.onDrop = function (target, source, ev) {
             if (source === 'subject-element') {
                 main.subjectElementDefaults.position = {
-                    x: ev.originalEvent.x - (main.subjectElementDefaults.size.width/2),
-                    y: ev.originalEvent.y - (main.subjectElementDefaults.size.height/2)
+                    x: ev.originalEvent.x - (main.subjectElementDefaults.size.width / 2),
+                    y: ev.originalEvent.y - (main.subjectElementDefaults.size.height / 2)
                 };
                 joint.addSubjectElement(main.subjectElementDefaults);
                 /*joint.addMessageConnectorElement({
-                    source: {x: 500, y: 500},
-                    target: {x: 800, y: 500}
-                });*/
+                 source: {x: 500, y: 500},
+                 target: {x: 800, y: 500}
+                 });*/
             } else if (source === 'send-state-element') {
                 main.sendStateElementDefaults.position = {
-                    x: ev.originalEvent.x - (main.sendStateElementDefaults.size.width/2),
-                    y: ev.originalEvent.y - (main.sendStateElementDefaults.size.height/2)
+                    x: ev.originalEvent.x - (main.sendStateElementDefaults.size.width / 2),
+                    y: ev.originalEvent.y - (main.sendStateElementDefaults.size.height / 2)
                 };
                 joint.addSendStateElement(main.sendStateElementDefaults);
             } else if (source === 'receive-state-element') {
                 main.receiveStateElementDefaults.position = {
-                    x: ev.originalEvent.x - (main.receiveStateElementDefaults.size.width/2),
-                    y: ev.originalEvent.y - (main.receiveStateElementDefaults.size.height/2)
+                    x: ev.originalEvent.x - (main.receiveStateElementDefaults.size.width / 2),
+                    y: ev.originalEvent.y - (main.receiveStateElementDefaults.size.height / 2)
                 };
                 joint.addReceiveStateElement(main.receiveStateElementDefaults);
-            }  else if (source === 'function-state-element') {
+            } else if (source === 'function-state-element') {
                 main.functionStateElementDefaults.position = {
-                    x: ev.originalEvent.x - (main.functionStateElementDefaults.size.width/2),
-                    y: ev.originalEvent.y - (main.functionStateElementDefaults.size.height/2)
+                    x: ev.originalEvent.x - (main.functionStateElementDefaults.size.width / 2),
+                    y: ev.originalEvent.y - (main.functionStateElementDefaults.size.height / 2)
                 };
                 joint.addFunctionStateElement(main.functionStateElementDefaults);
             }
-        };
-
-        $window.onbeforeunload = function () {
-            modelerStorage.clear();
         };
     }
 })();
