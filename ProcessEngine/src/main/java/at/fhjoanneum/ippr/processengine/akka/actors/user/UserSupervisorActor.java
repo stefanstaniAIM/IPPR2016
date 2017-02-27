@@ -22,6 +22,7 @@ import at.fhjoanneum.ippr.processengine.akka.config.SpringExtension;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.info.TasksOfUserMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.initialize.ActorInitializeMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.stop.ProcessStopMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.timeout.TimeoutScheduleStartMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.wakeup.UserActorWakeUpMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.AssignUsersMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.MessagesSendMessage;
@@ -68,7 +69,10 @@ public class UserSupervisorActor extends UntypedActor {
       handleSendMessages(obj);
     } else if (obj instanceof AssignUsersMessage.Request) {
       handleAssignUsersMessage(obj);
+    } else if (obj instanceof TimeoutScheduleStartMessage) {
+      handleTimeoutScheduleStartMessage(obj);
     } else {
+      LOG.warn("Unhandled message: {}", obj);
       unhandled(obj);
     }
   }
@@ -165,5 +169,10 @@ public class UserSupervisorActor extends UntypedActor {
 
   private void handleAssignUsersMessage(final Object obj) {
     taskManager.executeTask(TaskAllocation.ASSIGN_USERS_TASK, getContext(), obj);
+  }
+
+  private void handleTimeoutScheduleStartMessage(final Object obj) {
+    final TimeoutScheduleStartMessage msg = (TimeoutScheduleStartMessage) obj;
+    forwardToUserActor(msg.getUserId(), msg);
   }
 }

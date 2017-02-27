@@ -53,6 +53,7 @@ public class ProcessSupervisorActor extends UntypedActor {
     } else if (obj instanceof StateObjectChangeMessage.Request) {
       handleStateObjectChangeMessage(obj);
     } else {
+      LOG.warn("Unhandled message: {}", obj);
       unhandled(obj);
     }
   }

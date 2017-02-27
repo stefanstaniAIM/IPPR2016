@@ -6,6 +6,7 @@ import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import at.fhjoanneum.ippr.persistence.entities.model.businessobject.BusinessObjectModelBuilder;
 import at.fhjoanneum.ippr.persistence.entities.model.businessobject.field.BusinessObjectFieldModelBuilder;
@@ -30,7 +31,7 @@ import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
 import at.fhjoanneum.ippr.persistence.objects.model.transition.Transition;
 
-// @Component
+@Component
 @Transactional
 public class VacationRequestWithoutChild extends AbstractExample {
 
@@ -123,6 +124,8 @@ public class VacationRequestWithoutChild extends AbstractExample {
         .name("Receive vacation request response").functionType(StateFunctionType.RECEIVE).build();
     final Transition empT2 =
         new TransitionBuilder().fromState(empState2).toState(empState3).build();
+    final Transition empT10 = new TransitionBuilder().fromState(empState3).toState(empState2)
+        .transitionType(TransitionType.AUTO_TIMEOUT).timeout(1L).build();
 
     final State empState4 = new StateBuilder().subjectModel(employee).name("Received OK")
         .functionType(StateFunctionType.FUNCTION).build();
@@ -199,7 +202,8 @@ public class VacationRequestWithoutChild extends AbstractExample {
 
     saveStates(empState1, empState2, empState3, empState4, empState5, empState6, bossState1,
         bossState2, bossState3, bossState4, bossState5);
-    saveTransitions(empT1, empT2, empT3, empT4, bossT1, bossT2, bossT3, bossT4, bossT5, if1, if2);
+    saveTransitions(empT1, empT2, empT3, empT4, empT10, bossT1, bossT2, bossT3, bossT4, bossT5, if1,
+        if2);
 
     saveBusinessObjectModels(vacationRequestForm, okForm, nokForm);
     saveBusinessObjectFieldModels(boFrom, boTo, nokFormFieldInformation, okFormFieldInformation);

@@ -3,6 +3,7 @@ package at.fhjoanneum.ippr.persistence.entities.model.state;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -35,6 +36,7 @@ import at.fhjoanneum.ippr.persistence.entities.model.transition.TransitionImpl;
 import at.fhjoanneum.ippr.persistence.objects.model.businessobject.BusinessObjectModel;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.StateEventType;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.TransitionType;
 import at.fhjoanneum.ippr.persistence.objects.model.messageflow.MessageFlow;
 import at.fhjoanneum.ippr.persistence.objects.model.state.RefinementState;
 import at.fhjoanneum.ippr.persistence.objects.model.state.State;
@@ -135,7 +137,21 @@ public class StateImpl implements State, Serializable {
 
   @Override
   public List<Transition> getToStates() {
-    return ImmutableList.copyOf(toStates);
+    return ImmutableList.copyOf(toStates.stream()
+        .filter(transition -> TransitionType.NORMAL.equals(transition.getTransitionType()))
+        .collect(Collectors.toList()));
+  }
+
+  @Override
+  public Optional<Transition> getTimeoutTransition() {
+    final Optional<TransitionImpl> findFirst = toStates.stream()
+        .filter(transition -> TransitionType.AUTO_TIMEOUT.equals(transition.getTransitionType()))
+        .findFirst();
+    if (findFirst.isPresent()) {
+      return Optional.of(findFirst.get());
+    } else {
+      return Optional.empty();
+    }
   }
 
   @Override

@@ -26,6 +26,8 @@ public interface State {
 
   List<Transition> getToStates();
 
+  Optional<Transition> getTimeoutTransition();
+
   List<MessageFlow> getMessageFlow();
 
   List<BusinessObjectModel> getBusinessObjectModels();

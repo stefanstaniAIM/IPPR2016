@@ -46,6 +46,7 @@ import at.fhjoanneum.ippr.processengine.akka.config.Global;
 import at.fhjoanneum.ippr.processengine.akka.config.SpringExtension;
 import at.fhjoanneum.ippr.processengine.akka.messages.EmptyMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.refinement.ExecuteRefinementMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.timeout.TimeoutScheduleStartMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.AssignUsersMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.MessagesSendMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObjectChangeMessage;
@@ -133,11 +134,7 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
             @Override
             public void afterCommit() {
               sender.tell(new EmptyMessage(), getSelf());
-
-              if (StateFunctionType.REFINEMENT
-                  .equals(subjectState.getCurrentState().getFunctionType())) {
-                handleRefinement(subjectState);
-              }
+              handleAdditionalActions(subjectState);
             }
           });
     }
@@ -302,10 +299,30 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
         nextState);
   }
 
+  private void handleAdditionalActions(final SubjectState subjectState) {
+    final State currentState = subjectState.getCurrentState();
+
+    if (StateFunctionType.RECEIVE.equals(currentState.getFunctionType())
+        && currentState.getTimeoutTransition().isPresent()) {
+      startTimeout(subjectState);
+    }
+
+    if (StateFunctionType.REFINEMENT.equals(currentState.getFunctionType())) {
+      handleRefinement(subjectState);
+    }
+  }
+
   private void handleRefinement(final SubjectState subjectState) {
     LOG.info("Special handling since [{}] is a REFINEMENT", subjectState);
 
     getContext().parent().tell(new ExecuteRefinementMessage.Request(subjectState.getSsId()),
         getSelf());
+  }
+
+  private void startTimeout(final SubjectState subjectState) {
+    LOG.info("Start timeout for [{}]", subjectState);
+
+    getContext().parent().tell(new TimeoutScheduleStartMessage(subjectState.getSubject().getUser(),
+        subjectState.getSsId()), getSelf());
   }
 }

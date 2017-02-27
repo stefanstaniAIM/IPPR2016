@@ -31,4 +31,8 @@ public interface SubjectState {
   LocalDateTime getLastChanged();
 
   boolean isNextState(final State nextState);
+
+  void setTimeoutActor(final String timeoutActor);
+
+  String getTimeoutActor();
 }

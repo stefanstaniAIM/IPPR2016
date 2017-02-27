@@ -11,4 +11,6 @@ public interface Transition {
   State getToState();
 
   TransitionType getTransitionType();
+
+  Long getTimeout();
 }

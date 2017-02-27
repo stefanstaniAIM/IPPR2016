@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
+import akka.actor.Cancellable;
 import at.fhjoanneum.ippr.processengine.parser.db.DbDecimalParser;
 import scala.concurrent.duration.Duration;
 
@@ -32,8 +33,9 @@ public class TestRunner implements CommandLineRunner {
     LOG.debug(
         "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
-    actorSystem.scheduler().scheduleOnce(Duration.create(50, TimeUnit.MILLISECONDS),
-        userSupervisorActor, "foo", actorSystem.dispatcher(), null);
+    final Cancellable scheduleOnce =
+        actorSystem.scheduler().scheduleOnce(Duration.create(50, TimeUnit.MILLISECONDS),
+            userSupervisorActor, "foo", actorSystem.dispatcher(), null);
 
     final Float f = new Float(123456.5);
     LOG.debug(parser.parse(f));

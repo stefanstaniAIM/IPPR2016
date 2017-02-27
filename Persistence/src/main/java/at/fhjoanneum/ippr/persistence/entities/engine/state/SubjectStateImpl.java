@@ -66,6 +66,9 @@ public class SubjectStateImpl implements SubjectState, Serializable {
   @NotNull
   private LocalDateTime lastChanged;
 
+  @Column
+  private String timeoutActor;
+
   SubjectStateImpl() {}
 
   SubjectStateImpl(final StateImpl currentState, final ProcessInstanceImpl processInstance,
@@ -145,6 +148,16 @@ public class SubjectStateImpl implements SubjectState, Serializable {
   public boolean isNextState(final State nextState) {
     return currentState.getToStates().stream()
         .filter(transition -> transition.getToState().equals(nextState)).count() >= 1;
+  }
+
+  @Override
+  public void setTimeoutActor(final String timeoutActor) {
+    this.timeoutActor = timeoutActor;
+  }
+
+  @Override
+  public String getTimeoutActor() {
+    return timeoutActor;
   }
 
   @Override

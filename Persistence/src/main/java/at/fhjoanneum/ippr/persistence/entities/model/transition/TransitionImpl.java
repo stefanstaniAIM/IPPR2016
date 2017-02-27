@@ -45,6 +45,9 @@ public class TransitionImpl implements Transition, Serializable {
   @Enumerated(EnumType.STRING)
   private TransitionType transitionType;
 
+  @Column
+  private Long timeout;
+
   TransitionImpl() {}
 
   TransitionImpl(final StateImpl fromState, final StateImpl toState,
@@ -56,6 +59,12 @@ public class TransitionImpl implements Transition, Serializable {
     } else {
       this.transitionType = transitionType;
     }
+  }
+
+  TransitionImpl(final StateImpl fromState, final StateImpl toState,
+      final TransitionType transitionType, final Long timeout) {
+    this(fromState, toState, transitionType);
+    this.timeout = timeout;
   }
 
   @Override
@@ -76,6 +85,11 @@ public class TransitionImpl implements Transition, Serializable {
   @Override
   public TransitionType getTransitionType() {
     return transitionType;
+  }
+
+  @Override
+  public Long getTimeout() {
+    return timeout;
   }
 
   @Override

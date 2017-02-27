@@ -14,6 +14,7 @@ public class TransitionBuilder implements Builder<Transition> {
   private StateImpl fromState;
   private StateImpl toState;
   private TransitionType transitionType;
+  private Long timeout;
 
   public TransitionBuilder fromState(final State fromState) {
     checkNotNull(fromState);
@@ -29,6 +30,13 @@ public class TransitionBuilder implements Builder<Transition> {
     return this;
   }
 
+  public TransitionBuilder timeout(final Long timeout) {
+    checkNotNull(toState);
+    checkArgument(timeout.longValue() > 0);
+    this.timeout = timeout;
+    return this;
+  }
+
   public TransitionBuilder transitionType(final TransitionType transitionType) {
     checkNotNull(transitionType);
     this.transitionType = transitionType;
@@ -39,8 +47,15 @@ public class TransitionBuilder implements Builder<Transition> {
   public Transition build() {
     checkNotNull(fromState);
     checkNotNull(toState);
+    if (TransitionType.AUTO_TIMEOUT.equals(transitionType)) {
+      checkNotNull(timeout);
+    }
 
-    return new TransitionImpl(fromState, toState, transitionType);
+    if (timeout == null) {
+      return new TransitionImpl(fromState, toState, transitionType);
+    } else {
+      return new TransitionImpl(fromState, toState, transitionType, timeout);
+    }
   }
 
 }
