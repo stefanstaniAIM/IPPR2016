@@ -18,6 +18,8 @@ import at.fhjoanneum.ippr.processengine.akka.messages.process.info.TasksOfUserMe
 import at.fhjoanneum.ippr.processengine.akka.messages.process.initialize.UserActorInitializeMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.refinement.ExecuteRefinementMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.stop.ProcessStopMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.timeout.TimeoutExecuteMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.timeout.TimeoutScheduleCancelMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.timeout.TimeoutScheduleStartMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.wakeup.UserActorWakeUpMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.AssignUsersMessage;
@@ -74,6 +76,10 @@ public class UserActor extends UntypedActor {
       handleExecuteRefinementMessage(obj);
     } else if (obj instanceof TimeoutScheduleStartMessage) {
       handleTimeoutScheduleStartMessage(obj);
+    } else if (obj instanceof TimeoutExecuteMessage) {
+      handleTimeoutExecuteMessage(obj);
+    } else if (obj instanceof TimeoutScheduleCancelMessage) {
+      handleTimeoutCancelMessage(obj);
     } else {
       LOG.warn("Unhandled message: {}", obj);
       unhandled(obj);
@@ -138,5 +144,13 @@ public class UserActor extends UntypedActor {
 
   private void handleTimeoutScheduleStartMessage(final Object obj) {
     taskManager.executeTaskInContext(TaskAllocation.START_TIMEOUT_TASK, getContext(), obj);
+  }
+
+  private void handleTimeoutExecuteMessage(final Object obj) {
+    taskManager.executeTask(TaskAllocation.EXECUTE_TIMEOUT_TASK, getContext(), obj);
+  }
+
+  private void handleTimeoutCancelMessage(final Object obj) {
+    taskManager.executeTaskInContext(TaskAllocation.CANCEL_TIMEOUT_TASK, getContext(), obj);
   }
 }

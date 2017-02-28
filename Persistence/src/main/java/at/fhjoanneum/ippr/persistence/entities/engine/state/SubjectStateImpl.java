@@ -92,7 +92,7 @@ public class SubjectStateImpl implements SubjectState, Serializable {
 
   @Override
   public void setCurrentState(final State nextState) {
-    setCurrentState(nextState, true);
+    setCurrentState(nextState, false);
   }
 
   private void setCurrentState(final State nextState, final boolean isChecked) {

@@ -15,6 +15,7 @@ import akka.actor.Status;
 import at.fhjoanneum.ippr.persistence.entities.engine.enums.SubjectSubState;
 import at.fhjoanneum.ippr.persistence.entities.engine.state.SubjectStateImpl;
 import at.fhjoanneum.ippr.persistence.objects.engine.state.SubjectState;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.timeout.TimeoutScheduleCancelMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.MessageReceiveMessage;
 import at.fhjoanneum.ippr.processengine.akka.tasks.AbstractTask;
 import at.fhjoanneum.ippr.processengine.repositories.MessageFlowRepository;
@@ -58,6 +59,10 @@ public class MessageReceivedTask extends AbstractTask<MessageReceiveMessage.Requ
       LOG.debug("Message already received: {}", subjectState);
     } else {
       subjectState.setToReceived(messageFlowRepository.findOne(request.getMfId()));
+      if (subjectState.getTimeoutActor() != null) {
+        getContext().parent().tell(new TimeoutScheduleCancelMessage(subjectState.getSsId()),
+            getSelf());
+      }
       subjectStateRepository.save((SubjectStateImpl) subjectState);
       LOG.info("New received sub state: {}", subjectState);
     }

@@ -16,6 +16,7 @@ import akka.actor.ActorSystem;
 import akka.actor.Cancellable;
 import akka.actor.UntypedActor;
 import at.fhjoanneum.ippr.persistence.objects.engine.state.SubjectState;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.timeout.TimeoutExecuteMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.timeout.TimeoutScheduleCancelMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.timeout.TimeoutScheduleStartMessage;
 import at.fhjoanneum.ippr.processengine.repositories.SubjectStateRepository;
@@ -66,7 +67,7 @@ public class TimeoutScheduleActor extends UntypedActor {
     LOG.info("Start [{}] min. timeout for [{}]", actualTimeout, subjectState);
     scheduler = actorSystem.scheduler()
         .scheduleOnce(Duration.create(actualTimeout, TimeUnit.MINUTES), () -> {
-          getContext().parent().tell(System.currentTimeMillis(), getSelf());
+          getContext().parent().tell(new TimeoutExecuteMessage(subjectState.getSsId()), getSelf());
           getContext().stop(getSelf());
         }, actorSystem.dispatcher());
   }
@@ -74,10 +75,11 @@ public class TimeoutScheduleActor extends UntypedActor {
   private void handleTimeoutScheduleCancelMessage(final Object obj) {
     if (scheduler != null) {
       scheduler.cancel();
-      LOG.info("Timeout scheduler is stopped for [{}]");
+      LOG.info("Timeout scheduler is stopped for [{}]",
+          ((TimeoutScheduleCancelMessage) obj).getSsId());
       getContext().stop(getSelf());
     } else {
-      LOG.error("The scheduler is null");
+      throw new IllegalStateException("The scheduler is null");
     }
   }
 }
