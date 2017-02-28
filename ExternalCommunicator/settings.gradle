@@ -1,0 +1,2 @@
+include ':SpringCommons'
+project(':SpringCommons').projectDir = new File(settingsDir, '../SpringCommons')
