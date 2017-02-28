@@ -28,7 +28,7 @@ Basically, the platform consists of the following modules:
 | Function States | Yes | - |
 | Send States | Yes | - |
 | Receive States | Yes | - |
-| Timeouts | No | - |
+| Timeouts | Yes | partially (Engine) |
 | Refinements | Yes | partially (Engine) |
 | Business Objects | Yes | - |
 | Start Process | Yes | - |
