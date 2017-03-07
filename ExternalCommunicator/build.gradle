@@ -38,6 +38,10 @@ dependencies {
 	compile 'org.springframework.boot:spring-boot-starter-data-rest'
 	compile 'org.springframework.boot:spring-boot-starter-data-jpa'
 	compile 'org.hibernate:hibernate-core:5.2.4.Final'
+	
+	// akka
+	compile group: 'com.typesafe.akka', name: 'akka-actor_2.11', version: '2.4.17'
+
 	runtime 'mysql:mysql-connector-java'
     
     compile group: 'javax.mail', name: 'mail', version: '1.5.0-b01'
