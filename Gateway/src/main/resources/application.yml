@@ -1,0 +1,5 @@
+zuul:
+  routes:
+    external-communicator:
+      path: /ec/**
+      serviceId: external-communicator

@@ -15,7 +15,6 @@ public class GatewayConfig {
 
 
   public String getProcessModelStorageAddress() {
-    final ServiceInstance localServiceInstance = discoveryClient.getLocalServiceInstance();
     return discoveryClient.getInstances(ServiceIdentifiers.PROCESS_MODEL_STORAGE).get(0).getUri()
         .toString() + "/";
   }
