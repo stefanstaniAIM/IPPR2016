@@ -16,6 +16,7 @@ import at.fhjoanneum.ippr.persistence.entities.engine.state.SubjectStateImpl;
 import at.fhjoanneum.ippr.persistence.objects.engine.process.ProcessInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.state.SubjectState;
 import at.fhjoanneum.ippr.persistence.objects.engine.subject.Subject;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.SubjectModelType;
 import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 import at.fhjoanneum.ippr.processengine.akka.messages.EmptyMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.initialize.UserActorInitializeMessage;
@@ -57,15 +58,19 @@ public class UserActorInitializeTask extends AbstractTask<UserActorInitializeMes
 
     final Subject subject = Optional.ofNullable(subjectRepository.findOne(msg.getSId())).get();
 
-    final State state = Optional
-        .ofNullable(stateRepository.getStartStateOfSubject(subject.getSubjectModel().getSmId()))
-        .get();
+    if (SubjectModelType.INTERNAL.equals(subject.getSubjectModel().getSubjectModelType())) {
+      final State state = Optional
+          .ofNullable(stateRepository.getStartStateOfSubject(subject.getSubjectModel().getSmId()))
+          .get();
 
-    final SubjectState subjectState = new SubjectStateBuilder().processInstance(processInstance)
-        .subject(subject).state(state).build();
+      final SubjectState subjectState = new SubjectStateBuilder().processInstance(processInstance)
+          .subject(subject).state(state).build();
 
-    subjectStateRepository.save((SubjectStateImpl) subjectState);
-    LOG.info("Subject is now in initial state: {}", subjectState);
+      subjectStateRepository.save((SubjectStateImpl) subjectState);
+      LOG.info("Subject is now in initial state: {}", subjectState);
+    } else {
+      LOG.info("No need to set subject to initial state since it is 'EXTERNAL' [{}]", subject);
+    }
 
     final ActorRef sender = getSender();
     TransactionSynchronizationManager
