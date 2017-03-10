@@ -7,6 +7,8 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -26,6 +28,7 @@ import com.google.common.collect.Lists;
 
 import at.fhjoanneum.ippr.persistence.entities.model.process.ProcessModelImpl;
 import at.fhjoanneum.ippr.persistence.entities.model.state.StateImpl;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.SubjectModelType;
 import at.fhjoanneum.ippr.persistence.objects.model.process.ProcessModel;
 import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
@@ -44,6 +47,11 @@ public class SubjectModelImpl implements SubjectModel, Serializable {
   @Size(min = 1, max = 100)
   private String name;
 
+  @Column(name = "subject_model_type")
+  @NotNull
+  @Enumerated(EnumType.STRING)
+  private SubjectModelType type;
+
   @ManyToOne
   @JoinColumn(name = "pm_id")
   private ProcessModelImpl processModel;
@@ -59,9 +67,11 @@ public class SubjectModelImpl implements SubjectModel, Serializable {
 
   SubjectModelImpl() {}
 
-  SubjectModelImpl(final String name, final List<String> assignedRules) {
+  SubjectModelImpl(final String name, final List<String> assignedRules,
+      final SubjectModelType type) {
     this.name = name;
     this.assignedRules = assignedRules;
+    this.type = type;
   }
 
   @Override
@@ -72,6 +82,11 @@ public class SubjectModelImpl implements SubjectModel, Serializable {
   @Override
   public String getName() {
     return name;
+  }
+
+  @Override
+  public SubjectModelType getSubjectModelType() {
+    return type;
   }
 
   @Override
