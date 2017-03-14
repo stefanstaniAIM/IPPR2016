@@ -17,11 +17,16 @@ public class RestConfigurationImpl extends AbstractBasicConfiguration implements
   private static final long serialVersionUID = 6340416494140692436L;
 
   @Column
-  private final String endpoint;
+  private String endpoint;
 
-  RestConfigurationImpl(final String name, final Map<DataType, DataTypeComposerImpl> composer,
-      final MessageProtocolImpl messageProtocol, final String endpoint) {
-    super(name, composer, messageProtocol);
+  RestConfigurationImpl() {
+    super();
+  }
+
+  RestConfigurationImpl(final String name, final Map<DataType, DataTypeComposerImpl> parser,
+      final MessageProtocolImpl messageProtocol, final String composerClass,
+      final String endpoint) {
+    super(name, parser, messageProtocol, composerClass);
     this.endpoint = endpoint;
   }
 

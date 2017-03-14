@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.communicator.persistence.entities.messageflow;
+package at.fhjoanneum.ippr.communicator.persistence.objects.internal;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -27,5 +27,10 @@ public class InternalObject implements Serializable {
 
   public Map<String, InternalField> getFields() {
     return fields;
+  }
+
+  @Override
+  public String toString() {
+    return "InternalObject [name=" + name + ", fields=" + fields + "]";
   }
 }

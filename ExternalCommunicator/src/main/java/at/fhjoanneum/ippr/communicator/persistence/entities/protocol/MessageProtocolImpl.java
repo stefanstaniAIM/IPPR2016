@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,12 +30,12 @@ public class MessageProtocolImpl implements MessageProtocol, Serializable {
   private Long id;
 
   @Column
-  private final String externalName;
+  private String externalName;
 
   @Column
-  private final String internalName;
+  private String internalName;
 
-  @OneToMany(mappedBy = "messageProtocol")
+  @OneToMany(mappedBy = "messageProtocol", fetch = FetchType.EAGER)
   private final List<MessageProtocolFieldImpl> fields = Lists.newArrayList();
 
   @ManyToOne
@@ -43,6 +44,8 @@ public class MessageProtocolImpl implements MessageProtocol, Serializable {
 
   @OneToMany(mappedBy = "parent")
   private final List<MessageProtocolImpl> children = Lists.newArrayList();
+
+  MessageProtocolImpl() {}
 
   MessageProtocolImpl(final String externalName, final String internalName) {
     this.externalName = externalName;

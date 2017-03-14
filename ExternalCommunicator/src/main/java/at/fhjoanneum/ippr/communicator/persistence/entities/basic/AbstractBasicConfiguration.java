@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -37,24 +38,30 @@ public abstract class AbstractBasicConfiguration implements BasicConfiguration, 
   private Long id;
 
   @Column
-  private final String name;
+  private String name;
 
   @ManyToOne
-  private final MessageProtocolImpl messageProtocol;
+  private MessageProtocolImpl messageProtocol;
 
-  @ManyToMany
+  @Column
+  private String composerClass;
+
+  @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(name = "basic_configuration_composer_map",
       joinColumns = {@JoinColumn(name = "abstract_basic_configuration_id")},
       inverseJoinColumns = {@JoinColumn(name = "composer_id")})
   @MapKey
   private Map<DataType, DataTypeComposerImpl> composer = Maps.newHashMap();
 
+  protected AbstractBasicConfiguration() {}
+
   protected AbstractBasicConfiguration(final String name,
-      final Map<DataType, DataTypeComposerImpl> composer,
-      final MessageProtocolImpl messageProtocol) {
+      final Map<DataType, DataTypeComposerImpl> composer, final MessageProtocolImpl messageProtocol,
+      final String composerClass) {
     this.name = name;
     this.composer = composer;
     this.messageProtocol = messageProtocol;
+    this.composerClass = composerClass;
   }
 
   @Override
@@ -65,6 +72,11 @@ public abstract class AbstractBasicConfiguration implements BasicConfiguration, 
   @Override
   public String getName() {
     return name;
+  }
+
+  @Override
+  public String getComposerClass() {
+    return composerClass;
   }
 
   @Override

@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.communicator.persistence.entities.messageflow;
+package at.fhjoanneum.ippr.communicator.persistence.objects.internal;
 
 import java.io.Serializable;
 
@@ -33,5 +33,10 @@ public class InternalField implements Serializable {
 
   public String getValue() {
     return value;
+  }
+
+  @Override
+  public String toString() {
+    return "InternalField [name=" + name + ", dataType=" + dataType + ", value=" + value + "]";
   }
 }

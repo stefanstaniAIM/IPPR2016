@@ -9,4 +9,6 @@ public interface DataTypeComposer {
   DataType getDataType();
 
   String getComposerClass();
+
+  String getDescription();
 }

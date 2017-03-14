@@ -76,7 +76,8 @@ public class MessageImpl implements Serializable, Message {
 
   @Override
   public String toString() {
-    return "Message [id=" + id + ", transferId=" + transferId + "]";
+    return "MessageImpl [id=" + id + ", transferId=" + transferId + ", internalData=" + internalData
+        + ", externalData=" + externalData + "]";
   }
 
   @Override

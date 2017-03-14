@@ -27,6 +27,7 @@ import at.fhjoanneum.ippr.persistence.objects.model.businessobject.field.Busines
 import at.fhjoanneum.ippr.persistence.objects.model.businessobject.permission.BusinessObjectFieldPermission;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldPermission;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.SubjectModelType;
 import at.fhjoanneum.ippr.persistence.objects.model.messageflow.MessageFlow;
 import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
@@ -113,6 +114,7 @@ public class BusinessObjectCheckActor extends UntypedActor {
     if (state.getFunctionType().equals(StateFunctionType.SEND)) {
 
       final List<MessageFlow> missingUsers = state.getMessageFlow().stream()
+          .filter(mf -> SubjectModelType.INTERNAL.equals(mf.getReceiver().getSubjectModelType()))
           .filter(messageFlow -> isUserIdNotAssigned(messageFlow, request.getPiId()))
           .collect(Collectors.toList());
 

@@ -10,18 +10,18 @@ public class ExternalOutputMessage implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  private Long transferId;
+  private String transferId;
 
   private Set<BusinessObject> businessObjects;
 
   public ExternalOutputMessage() {}
 
-  public ExternalOutputMessage(final Long transferId, final Set<BusinessObject> businessObjects) {
+  public ExternalOutputMessage(final String transferId, final Set<BusinessObject> businessObjects) {
     this.transferId = transferId;
     this.businessObjects = businessObjects;
   }
 
-  public Long getTransferId() {
+  public String getTransferId() {
     return transferId;
   }
 

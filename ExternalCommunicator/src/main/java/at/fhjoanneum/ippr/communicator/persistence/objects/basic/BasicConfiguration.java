@@ -14,5 +14,7 @@ public interface BasicConfiguration {
 
   MessageProtocol getMessageProtocol();
 
+  String getComposerClass();
+
   Map<DataType, DataTypeComposer> getDataTypeComposer();
 }

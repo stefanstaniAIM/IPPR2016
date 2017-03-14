@@ -24,14 +24,25 @@ public class DataTypeComposerImpl implements DataTypeComposer, Serializable {
 
   @Column
   @Enumerated(EnumType.STRING)
-  private final DataType dataType;
+  private DataType dataType;
 
   @Column
-  private final String composerClass;
+  private String composerClass;
+
+  @Column
+  private String description;
+
+  DataTypeComposerImpl() {}
 
   DataTypeComposerImpl(final DataType dataType, final String composerClass) {
     this.dataType = dataType;
     this.composerClass = composerClass;
+  }
+
+  DataTypeComposerImpl(final DataType dataType, final String composerClass,
+      final String description) {
+    this(dataType, composerClass);
+    this.description = description;
   }
 
   @Override
@@ -47,6 +58,12 @@ public class DataTypeComposerImpl implements DataTypeComposer, Serializable {
   @Override
   public String getComposerClass() {
     return composerClass;
+  }
+
+
+  @Override
+  public String getDescription() {
+    return description;
   }
 
   @Override

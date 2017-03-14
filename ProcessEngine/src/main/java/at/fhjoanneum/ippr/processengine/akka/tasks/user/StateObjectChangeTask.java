@@ -1,7 +1,9 @@
 package at.fhjoanneum.ippr.processengine.akka.tasks.user;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -23,6 +25,8 @@ import akka.actor.ActorRef;
 import akka.actor.Status;
 import akka.pattern.Patterns;
 import akka.pattern.PatternsCS;
+import at.fhjoanneum.ippr.commons.dto.communicator.BusinessObject;
+import at.fhjoanneum.ippr.commons.dto.communicator.ExternalOutputMessage;
 import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.BusinessObjectInstanceDTO;
 import at.fhjoanneum.ippr.persistence.entities.engine.businessobject.BusinessObjectInstanceBuilder;
 import at.fhjoanneum.ippr.persistence.entities.engine.businessobject.BusinessObjectInstanceImpl;
@@ -40,6 +44,7 @@ import at.fhjoanneum.ippr.persistence.objects.model.businessobject.permission.Bu
 import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldPermission;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldType;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.SubjectModelType;
 import at.fhjoanneum.ippr.persistence.objects.model.messageflow.MessageFlow;
 import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 import at.fhjoanneum.ippr.processengine.akka.config.Global;
@@ -51,6 +56,7 @@ import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.AssignUse
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.MessagesSendMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObjectChangeMessage;
 import at.fhjoanneum.ippr.processengine.akka.tasks.AbstractTask;
+import at.fhjoanneum.ippr.processengine.feign.ExternalCommunicatorClient;
 import at.fhjoanneum.ippr.processengine.parser.DbValueParser;
 import at.fhjoanneum.ippr.processengine.repositories.BusinessObjectFieldInstanceRepository;
 import at.fhjoanneum.ippr.processengine.repositories.BusinessObjectFieldPermissionRepository;
@@ -84,6 +90,9 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
   private StateRepository stateRepository;
   @Autowired
   private SubjectRepository subjectRepository;
+
+  @Autowired
+  private ExternalCommunicatorClient externalCommunicatorClient;
 
   @Autowired
   private DbValueParser valueParser;
@@ -244,7 +253,9 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
             .toCompletableFuture().get();
       }
 
-      triggerSend(subjectState, request);
+      triggerSendInternal(subjectState, request);
+      triggerSendExternal(subjectState, request);
+
     } catch (final Exception e) {
       LOG.error("Error when assign users to subject");
       sender.tell(
@@ -254,31 +265,36 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
     }
   }
 
-  private void triggerSend(final SubjectState subjectState,
+  private void triggerSendInternal(final SubjectState subjectState,
       final StateObjectChangeMessage.Request request) {
     final ActorRef userActor = getContext().parent();
 
     final List<Pair<Long, Long>> userMessageFlowIds =
         subjectState.getCurrentState().getMessageFlow().stream()
+            .filter(mf -> SubjectModelType.INTERNAL.equals(mf.getReceiver().getSubjectModelType()))
             .map(messageFlow -> getUserMessageFlowIds(request.getPiId(), messageFlow))
             .collect(Collectors.toList());
-    try {
-      PatternsCS.ask(userActor, new MessagesSendMessage.Request(request.getPiId(),
-          subjectState.getSsId(), userMessageFlowIds), Global.TIMEOUT).toCompletableFuture().get();
-      LOG.info("All users [{}] received the message in PI_ID [{}]", userMessageFlowIds,
-          request.getPiId());
-      entityManager.refresh(subjectState);
-      if (SubjectSubState.SENT.equals(subjectState.getSubState())) {
-        changeToNextState(subjectState, request);
-      } else {
-        sender.tell(new Status.Failure(new IllegalStateException(
-            "Sender state is not in 'SENT' state [" + subjectState + "]")), getSelf());
+    if (!userMessageFlowIds.isEmpty()) {
+      try {
+        PatternsCS
+            .ask(userActor, new MessagesSendMessage.Request(request.getPiId(),
+                subjectState.getSsId(), userMessageFlowIds), Global.TIMEOUT)
+            .toCompletableFuture().get();
+        LOG.info("All users [{}] received the message in PI_ID [{}]", userMessageFlowIds,
+            request.getPiId());
+        entityManager.refresh(subjectState);
+        if (SubjectSubState.SENT.equals(subjectState.getSubState())) {
+          changeToNextState(subjectState, request);
+        } else {
+          sender.tell(new Status.Failure(new IllegalStateException(
+              "Sender state is not in 'SENT' state [" + subjectState + "]")), getSelf());
+        }
+      } catch (final Exception e) {
+        sender.tell(
+            new Status.Failure(new IllegalStateException(
+                "Could not send message to all users in PI_ID [" + request.getPiId() + "]")),
+            getSelf());
       }
-    } catch (final Exception e) {
-      sender.tell(
-          new Status.Failure(new IllegalStateException(
-              "Could not send message to all users in PI_ID [" + request.getPiId() + "]")),
-          getSelf());
     }
   }
 
@@ -287,6 +303,40 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
         messageFlow.getReceiver().getSmId());
     entityManager.refresh(receiver);
     return Pair.of(receiver.getUser(), messageFlow.getMfId());
+  }
+
+  private void triggerSendExternal(final SubjectState subjectState,
+      final StateObjectChangeMessage.Request request) {
+
+    subjectState.getCurrentState().getMessageFlow().stream()
+        .filter(mf -> SubjectModelType.EXTERNAL.equals(mf.getReceiver().getSubjectModelType()))
+        .map(mf -> getExternalOutputMessage(request.getPiId(), mf)).forEachOrdered(output -> {
+          LOG.debug("Send message to external-communicator [{}]", output);
+          externalCommunicatorClient.handleExternalOutputMessage(output);
+        });
+
+  }
+
+  private ExternalOutputMessage getExternalOutputMessage(final Long piId,
+      final MessageFlow messageFlow) {
+    final Set<BusinessObject> businessObjects = new HashSet<>();
+
+    messageFlow.getBusinessObjectModels().stream().forEachOrdered(bom -> {
+      final Set<at.fhjoanneum.ippr.commons.dto.communicator.BusinessObjectField> fields =
+          new HashSet<>();
+      bom.getBusinessObjectFieldModels().stream().forEachOrdered(field -> {
+        final BusinessObjectFieldInstance instance = businessObjectFieldInstanceRepository
+            .getBusinessObjectFieldInstanceForModelInProcess(piId, field.getBofmId());
+        fields.add(new at.fhjoanneum.ippr.commons.dto.communicator.BusinessObjectField(
+            field.getFieldName(), field.getFieldType().name(),
+            instance != null ? instance.getValue() : StringUtils.EMPTY));
+      });
+
+      businessObjects.add(new BusinessObject(bom.getName(), fields));
+    });
+
+    return new ExternalOutputMessage(piId + "-" + messageFlow.getReceiver().getSmId(),
+        businessObjects);
   }
 
   private void changeToNextState(final SubjectState subjectState,

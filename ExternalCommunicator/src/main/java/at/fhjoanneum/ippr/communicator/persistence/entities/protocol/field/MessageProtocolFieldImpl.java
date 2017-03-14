@@ -28,23 +28,25 @@ public class MessageProtocolFieldImpl implements MessageProtocolField, Serializa
 
   @ManyToOne
   @JoinColumn(name = "message_protocol_id", referencedColumnName = "id")
-  private final MessageProtocolImpl messageProtocol;
+  private MessageProtocolImpl messageProtocol;
 
   @Column
-  private final String externalName;
+  private String externalName;
 
   @Column
-  private final String internalName;
+  private String internalName;
 
   @Column
   @Enumerated(EnumType.STRING)
-  private final DataType dataType;
+  private DataType dataType;
 
   @Column
-  private final boolean mandatory;
+  private boolean mandatory;
 
   @Column
-  private final String defaultValue;
+  private String defaultValue;
+
+  MessageProtocolFieldImpl() {}
 
   MessageProtocolFieldImpl(final MessageProtocolImpl messageProtocol, final String externalName,
       final String internalName, final DataType dataType, final boolean mandatory,

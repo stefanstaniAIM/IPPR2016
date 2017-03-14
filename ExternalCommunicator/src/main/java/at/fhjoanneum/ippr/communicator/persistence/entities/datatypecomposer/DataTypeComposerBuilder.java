@@ -10,6 +10,7 @@ public class DataTypeComposerBuilder implements Builder<DataTypeComposer> {
 
   private DataType dataType;
   private String composerClass;
+  private String description;
 
   public DataTypeComposerBuilder dataType(final DataType dataType) {
     Objects.requireNonNull(dataType);
@@ -23,11 +24,17 @@ public class DataTypeComposerBuilder implements Builder<DataTypeComposer> {
     return this;
   }
 
+  public DataTypeComposerBuilder description(final String description) {
+    Objects.requireNonNull(description);
+    this.description = description;
+    return this;
+  }
+
   @Override
   public DataTypeComposer build() {
     Objects.requireNonNull(dataType);
     Objects.requireNonNull(composerClass);
-    return new DataTypeComposerImpl(dataType, composerClass);
+    return new DataTypeComposerImpl(dataType, composerClass, description);
   }
 
 }

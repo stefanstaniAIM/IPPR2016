@@ -24,6 +24,7 @@ import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldType;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.ProcessModelState;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.StateEventType;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.SubjectModelType;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.TransitionType;
 import at.fhjoanneum.ippr.persistence.objects.model.messageflow.MessageFlow;
 import at.fhjoanneum.ippr.persistence.objects.model.process.ProcessModel;
@@ -51,6 +52,9 @@ public class VacationRequestWithoutChild extends AbstractExample {
         new SubjectModelBuilder().name("Employee").addAssignedRule("EMPLOYEE_RULE").build();
     final SubjectModel boss =
         new SubjectModelBuilder().name("Boss").addAssignedRule("BOSS_RULE").build();
+
+    final SubjectModel travelMgt =
+        new SubjectModelBuilder().name("Travel Management").type(SubjectModelType.EXTERNAL).build();
 
     // create vacation request
     final State empState1 =
@@ -124,26 +128,34 @@ public class VacationRequestWithoutChild extends AbstractExample {
         .name("Receive vacation request response").functionType(StateFunctionType.RECEIVE).build();
     final Transition empT2 =
         new TransitionBuilder().fromState(empState2).toState(empState3).build();
-    final Transition empT10 = new TransitionBuilder().fromState(empState3).toState(empState2)
-        .transitionType(TransitionType.AUTO_TIMEOUT).timeout(1L).build();
 
     final State empState4 = new StateBuilder().subjectModel(employee).name("Received OK")
         .functionType(StateFunctionType.FUNCTION).build();
     final State empState5 = new StateBuilder().subjectModel(employee).name("Received NOK")
         .functionType(StateFunctionType.FUNCTION).build();
 
+
+
     final Transition if1 = new TransitionBuilder().fromState(empState3).toState(empState4)
         .transitionType(TransitionType.NORMAL).build();
     final Transition if2 = new TransitionBuilder().fromState(empState3).toState(empState5)
         .transitionType(TransitionType.NORMAL).build();
 
-    // finish the employee
-    final State empState6 = new StateBuilder().subjectModel(employee).name("END")
-        .eventType(StateEventType.END).functionType(StateFunctionType.FUNCTION).build();
+    final State empState6 = new StateBuilder().subjectModel(employee)
+        .name("Send to travel management").functionType(StateFunctionType.SEND).build();
     final Transition empT3 =
         new TransitionBuilder().fromState(empState4).toState(empState6).build();
+
+
+    // finish the employee
+    final State empState8 = new StateBuilder().subjectModel(employee).name("END")
+        .eventType(StateEventType.END).functionType(StateFunctionType.FUNCTION).build();
+
+    final Transition empT5 =
+        new TransitionBuilder().fromState(empState6).toState(empState8).build();
+
     final Transition empT4 =
-        new TransitionBuilder().fromState(empState5).toState(empState6).build();
+        new TransitionBuilder().fromState(empState5).toState(empState8).build();
 
     final BusinessObjectModel okForm =
         new BusinessObjectModelBuilder().name("Vacation request accept").addToState(bossState3)
@@ -196,14 +208,16 @@ public class VacationRequestWithoutChild extends AbstractExample {
     final MessageFlow mf6 = new MessageFlowBuilder().sender(boss).receiver(employee)
         .state(empState3).assignBusinessObjectModel(nokForm).build();
 
+    final MessageFlow mf7 = new MessageFlowBuilder().sender(employee).receiver(travelMgt)
+        .state(empState6).assignBusinessObjectModel(vacationRequestForm).build();
 
-    saveSubjectModels(boss, employee);
+    saveSubjectModels(boss, employee, travelMgt);
     saveProcessModel(pm);
 
-    saveStates(empState1, empState2, empState3, empState4, empState5, empState6, bossState1,
-        bossState2, bossState3, bossState4, bossState5);
-    saveTransitions(empT1, empT2, empT3, empT4, empT10, bossT1, bossT2, bossT3, bossT4, bossT5, if1,
-        if2);
+    saveStates(empState1, empState2, empState3, empState4, empState5, empState8, bossState1,
+        bossState2, bossState3, bossState4, bossState5, empState6);
+    saveTransitions(empT1, empT2, empT3, empT4, bossT1, bossT2, bossT3, bossT4, bossT5, if1, if2,
+        empT5);
 
     saveBusinessObjectModels(vacationRequestForm, okForm, nokForm);
     saveBusinessObjectFieldModels(boFrom, boTo, nokFormFieldInformation, okFormFieldInformation);
@@ -212,7 +226,7 @@ public class VacationRequestWithoutChild extends AbstractExample {
         okFormFieldInformationPermission2, nokFormFieldInformationPermission1,
         nokFormFieldInformationPermission2, boFromPermissionEmp3, boFromPermissionEmp4,
         okFormFieldInformationPermission3, nokFormFieldInformationPermission3);
-    saveMessageFlows(mf1, mf2, mf3, mf4, mf5, mf6);
+    saveMessageFlows(mf1, mf2, mf3, mf4, mf5, mf6, mf7);
   }
 
   @Override

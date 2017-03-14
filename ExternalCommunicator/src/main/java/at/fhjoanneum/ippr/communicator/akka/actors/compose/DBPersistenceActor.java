@@ -1,8 +1,6 @@
 package at.fhjoanneum.ippr.communicator.akka.actors.compose;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,19 +12,22 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import akka.actor.UntypedActor;
 import at.fhjoanneum.ippr.communicator.akka.messages.commands.StoreExternalDataCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.ComposeMessageCreateCommand;
+import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.ConfigRetrievalCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.events.ComposeMessageCreatedEvent;
-import at.fhjoanneum.ippr.communicator.persistence.entities.messageflow.InternalData;
-import at.fhjoanneum.ippr.communicator.persistence.entities.messageflow.InternalField;
-import at.fhjoanneum.ippr.communicator.persistence.entities.messageflow.InternalObject;
+import at.fhjoanneum.ippr.communicator.akka.messages.compose.events.ConfigRetrievedEvent;
+import at.fhjoanneum.ippr.communicator.persistence.entities.basic.AbstractBasicConfiguration;
 import at.fhjoanneum.ippr.communicator.persistence.entities.messageflow.MessageBuilder;
 import at.fhjoanneum.ippr.communicator.persistence.entities.messageflow.MessageImpl;
-import at.fhjoanneum.ippr.communicator.persistence.objects.DataType;
+import at.fhjoanneum.ippr.communicator.persistence.objects.internal.InternalData;
 import at.fhjoanneum.ippr.communicator.persistence.objects.messageflow.Message;
+import at.fhjoanneum.ippr.communicator.repositories.BasicConfigurationRepository;
 import at.fhjoanneum.ippr.communicator.repositories.MessageRepository;
 
 @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -39,12 +40,17 @@ public class DBPersistenceActor extends UntypedActor {
   @Autowired
   private MessageRepository messageRepository;
 
+  @Autowired
+  private BasicConfigurationRepository basicConfigurationRepository;
+
   @Override
   public void onReceive(final Object msg) throws Throwable {
     if (msg instanceof ComposeMessageCreateCommand) {
       handleComposeMessageCreateCommand(msg);
     } else if (msg instanceof StoreExternalDataCommand) {
       handleStoreExternalDataCommand(msg);
+    } else if (msg instanceof ConfigRetrievalCommand) {
+      handleConfigRetrievalCommand(msg);
     } else {
       LOG.warn("Unhandled message [{}]", msg);
       unhandled(msg);
@@ -55,22 +61,9 @@ public class DBPersistenceActor extends UntypedActor {
     final ComposeMessageCreateCommand cmd = (ComposeMessageCreateCommand) obj;
     final Message message = new MessageBuilder().transferId(cmd.getTransferId()).build();
 
-    final InternalField internalField =
-        new InternalField("string field", DataType.STRING, "test value");
-    final Map<String, InternalField> fieldMap = new HashMap<>();
-    fieldMap.put("string field", internalField);
-    final InternalObject internalObject = new InternalObject("my object", fieldMap);
-    final Map<String, InternalObject> objectMap = new HashMap<>();
-    objectMap.put("my object", internalObject);
-    final InternalData internalData = new InternalData(objectMap);
     final ObjectMapper mapper = new ObjectMapper();
-    final String value = mapper.writeValueAsString(internalData);
-    LOG.debug("jackson parsing: {}", value);
-
+    final String value = mapper.writeValueAsString(cmd.getData());
     message.setInternalData(value);
-
-    mapper.readValue(message.getInternalData(), InternalData.class);
-
 
     messageRepository.save((MessageImpl) message);
     final String actorId = getContext().parent().path().name();
@@ -97,10 +90,25 @@ public class DBPersistenceActor extends UntypedActor {
           @Override
           public void afterCommit() {
             LOG.info("Updated external data of [{}]", message);
-
             stop();
           }
         });
+  }
+
+  private void handleConfigRetrievalCommand(final Object obj)
+      throws JsonParseException, JsonMappingException, IOException {
+    final ConfigRetrievalCommand cmd = (ConfigRetrievalCommand) obj;
+
+    final AbstractBasicConfiguration config =
+        basicConfigurationRepository.findOne(cmd.getConfigId());
+    LOG.debug("Retrieved config [{}]", config);
+
+    final Message msg = messageRepository.findOne(cmd.getId());
+    final ObjectMapper mapper = new ObjectMapper();
+    final InternalData data = mapper.readValue(msg.getInternalData(), InternalData.class);
+
+    getContext().parent()
+        .tell(new ConfigRetrievedEvent(cmd.getId(), msg.getTransferId(), data, config), getSelf());
   }
 
   private void stop() {

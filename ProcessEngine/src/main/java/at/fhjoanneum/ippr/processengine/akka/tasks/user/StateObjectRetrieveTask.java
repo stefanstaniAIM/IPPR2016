@@ -31,6 +31,7 @@ import at.fhjoanneum.ippr.persistence.objects.model.businessobject.permission.Bu
 import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldPermission;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.StateEventType;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.SubjectModelType;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.TransitionType;
 import at.fhjoanneum.ippr.persistence.objects.model.messageflow.MessageFlow;
 import at.fhjoanneum.ippr.persistence.objects.model.state.State;
@@ -89,6 +90,8 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
     StateObjectDTO stateObjectDTO = null;
     if (StateFunctionType.SEND.equals(subjectState.getCurrentState().getFunctionType())) {
       final List<SubjectDTO> subjects = subjectState.getCurrentState().getMessageFlow().stream()
+          .filter(messageFlow -> messageFlow.getReceiver().getSubjectModelType()
+              .equals(SubjectModelType.INTERNAL))
           .map(messageFlow -> getAssignedUser(messageFlow, request.getPiId()))
           .collect(Collectors.toList());
       stateObjectDTO = new StateObjectDTO(request.getPiId(), subjectState.getSsId(),

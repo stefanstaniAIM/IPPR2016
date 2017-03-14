@@ -10,14 +10,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.gson.JsonObject;
-
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import at.fhjoanneum.ippr.communicator.akka.config.SpringExtension;
 import at.fhjoanneum.ippr.communicator.akka.messages.commands.StoreExternalDataCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.ComposeMessageCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.ComposeMessageCreateCommand;
+import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.ConfigRetrievalCommand;
+import at.fhjoanneum.ippr.communicator.akka.messages.compose.events.ConfigRetrievedEvent;
+import at.fhjoanneum.ippr.communicator.composer.Composer;
 
 @Transactional(isolation = Isolation.READ_COMMITTED)
 @Component("ComposeMessageActor")
@@ -35,6 +36,8 @@ public class ComposeMessageActor extends UntypedActor {
       handleComposeMessageCreateCommand(msg);
     } else if (msg instanceof ComposeMessageCommand) {
       handleComposeMessageCommand(msg);
+    } else if (msg instanceof ConfigRetrievedEvent) {
+      handleConfigRetrievedEvent(msg);
     } else {
       LOG.warn("Unhandled message [{}]", msg);
       unhandled(msg);
@@ -47,12 +50,27 @@ public class ComposeMessageActor extends UntypedActor {
 
   private void handleComposeMessageCommand(final Object msg) {
     final ComposeMessageCommand cmd = (ComposeMessageCommand) msg;
-    final JsonObject jsonObject = new JsonObject();
-    jsonObject.addProperty("test", "new json :)");
-    LOG.debug(jsonObject.toString());
-    getDBPersistenceActor()
-        .forward(new StoreExternalDataCommand(cmd.getId(), jsonObject.toString()), getContext());
 
+    // TODO get config from cmd
+    getDBPersistenceActor().tell(new ConfigRetrievalCommand(cmd.getId(), 1L), getSelf());
+
+
+  }
+
+  private void handleConfigRetrievedEvent(final Object msg)
+      throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+    final ConfigRetrievedEvent evt = (ConfigRetrievedEvent) msg;
+
+    final Composer composer =
+        getClass().getClassLoader().loadClass(evt.getBasicConfiguration().getComposerClass())
+            .asSubclass(Composer.class).newInstance();
+
+    final String composedValue = composer.compose(evt.getTransferId(), evt.getData(),
+        evt.getBasicConfiguration().getMessageProtocol(),
+        evt.getBasicConfiguration().getDataTypeComposer());
+
+    getDBPersistenceActor().forward(new StoreExternalDataCommand(evt.getId(), composedValue),
+        getContext());
   }
 
   private ActorRef getDBPersistenceActor() {

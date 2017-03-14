@@ -42,6 +42,8 @@ dependencies {
 	// akka
 	compile group: 'com.typesafe.akka', name: 'akka-actor_2.11', version: '2.4.17'
 
+	compile group: 'com.jcabi.incubator', name: 'xembly', version: '0.22'
+
 	runtime 'mysql:mysql-connector-java'
     
     compile group: 'javax.mail', name: 'mail', version: '1.5.0-b01'

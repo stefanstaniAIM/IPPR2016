@@ -41,7 +41,10 @@ public class SubjectModelBuilder implements Builder<SubjectModel> {
     if (type == null) {
       type = SubjectModelType.INTERNAL;
     }
-    Preconditions.checkArgument(!assignedRules.isEmpty() && SubjectModelType.INTERNAL.equals(type));
+
+    if (SubjectModelType.INTERNAL.equals(type)) {
+      Preconditions.checkArgument(!assignedRules.isEmpty());
+    }
 
     final SubjectModel subjectModel = new SubjectModelImpl(name, assignedRules, type);
     return subjectModel;

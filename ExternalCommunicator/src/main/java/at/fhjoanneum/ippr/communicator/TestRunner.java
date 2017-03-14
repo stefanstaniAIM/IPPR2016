@@ -7,7 +7,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import akka.actor.ActorRef;
-import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.ComposeMessageCreateCommand;
 
 @Component
 @Transactional
@@ -18,6 +17,6 @@ public class TestRunner implements CommandLineRunner {
 
   @Override
   public void run(final String... args) throws Exception {
-    composeSupervisorActor.tell(new ComposeMessageCreateCommand("xoxo"), ActorRef.noSender());
+    // composeSupervisorActor.tell(new ComposeMessageCreateCommand("xoxo"), ActorRef.noSender());
   }
 }

@@ -22,8 +22,9 @@ public class RestConfigurationBuilder extends AbstractBasicConfigurationBuilder
   @Override
   public RestConfiguration build() {
     Objects.requireNonNull(super.name);
-    Preconditions.checkArgument(!super.composer.isEmpty());
+    Preconditions.checkArgument(!super.parser.isEmpty());
+    Objects.requireNonNull(super.composerClass);
     Objects.requireNonNull(messageProtocol);
-    return new RestConfigurationImpl(name, composer, messageProtocol, endpoint);
+    return new RestConfigurationImpl(name, parser, messageProtocol, composerClass, endpoint);
   }
 }
