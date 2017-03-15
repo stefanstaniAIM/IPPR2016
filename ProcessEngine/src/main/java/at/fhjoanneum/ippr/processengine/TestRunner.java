@@ -10,6 +10,7 @@ import com.google.common.collect.Sets;
 
 import at.fhjoanneum.ippr.commons.dto.communicator.BusinessObject;
 import at.fhjoanneum.ippr.commons.dto.communicator.BusinessObjectField;
+import at.fhjoanneum.ippr.commons.dto.communicator.ExternalOutputMessage;
 import at.fhjoanneum.ippr.processengine.feign.ExternalCommunicatorClient;
 
 @Component
@@ -32,7 +33,7 @@ public class TestRunner implements CommandLineRunner {
     final BusinessObjectField fieldC = new BusinessObjectField("ort", "STRING", "New York");
     final BusinessObject boB = new BusinessObject("ziel", Sets.newHashSet(fieldC));
 
-    // externalCommunicatorClient.handleExternalOutputMessage(
-    // new ExternalOutputMessage("123-55", Sets.newHashSet(boA, boB)));
+    externalCommunicatorClient.handleExternalOutputMessage(
+        new ExternalOutputMessage("123-55", Sets.newHashSet(boA, boB)));
   }
 }

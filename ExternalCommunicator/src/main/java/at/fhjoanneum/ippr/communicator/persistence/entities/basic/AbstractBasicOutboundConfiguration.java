@@ -23,13 +23,13 @@ import com.google.common.collect.Maps;
 import at.fhjoanneum.ippr.communicator.persistence.entities.datatypecomposer.DataTypeComposerImpl;
 import at.fhjoanneum.ippr.communicator.persistence.entities.protocol.MessageProtocolImpl;
 import at.fhjoanneum.ippr.communicator.persistence.objects.DataType;
-import at.fhjoanneum.ippr.communicator.persistence.objects.basic.BasicConfiguration;
+import at.fhjoanneum.ippr.communicator.persistence.objects.basic.BasicOutboundConfiguration;
 import at.fhjoanneum.ippr.communicator.persistence.objects.datatypecomposer.DataTypeComposer;
 import at.fhjoanneum.ippr.communicator.persistence.objects.protocol.MessageProtocol;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class AbstractBasicConfiguration implements BasicConfiguration, Serializable {
+public abstract class AbstractBasicOutboundConfiguration implements BasicOutboundConfiguration, Serializable {
 
   private static final long serialVersionUID = -7550233823589354342L;
 
@@ -46,6 +46,9 @@ public abstract class AbstractBasicConfiguration implements BasicConfiguration, 
   @Column
   private String composerClass;
 
+  @Column
+  private String sendPlugin;
+
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(name = "basic_configuration_composer_map",
       joinColumns = {@JoinColumn(name = "abstract_basic_configuration_id")},
@@ -53,15 +56,16 @@ public abstract class AbstractBasicConfiguration implements BasicConfiguration, 
   @MapKey
   private Map<DataType, DataTypeComposerImpl> composer = Maps.newHashMap();
 
-  protected AbstractBasicConfiguration() {}
+  protected AbstractBasicOutboundConfiguration() {}
 
-  protected AbstractBasicConfiguration(final String name,
+  protected AbstractBasicOutboundConfiguration(final String name,
       final Map<DataType, DataTypeComposerImpl> composer, final MessageProtocolImpl messageProtocol,
-      final String composerClass) {
+      final String composerClass, final String sendPlugin) {
     this.name = name;
     this.composer = composer;
     this.messageProtocol = messageProtocol;
     this.composerClass = composerClass;
+    this.sendPlugin = sendPlugin;
   }
 
   @Override
@@ -77,6 +81,11 @@ public abstract class AbstractBasicConfiguration implements BasicConfiguration, 
   @Override
   public String getComposerClass() {
     return composerClass;
+  }
+
+  @Override
+  public String getSendPlugin() {
+    return sendPlugin;
   }
 
   @Override
@@ -98,7 +107,7 @@ public abstract class AbstractBasicConfiguration implements BasicConfiguration, 
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((id == null) ? 0 : id.hashCode());
+    result = (prime * result) + ((id == null) ? 0 : id.hashCode());
     return result;
   }
 
@@ -113,7 +122,7 @@ public abstract class AbstractBasicConfiguration implements BasicConfiguration, 
     if (getClass() != obj.getClass()) {
       return false;
     }
-    final AbstractBasicConfiguration other = (AbstractBasicConfiguration) obj;
+    final AbstractBasicOutboundConfiguration other = (AbstractBasicOutboundConfiguration) obj;
     if (id == null) {
       if (other.id != null) {
         return false;

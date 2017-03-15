@@ -6,7 +6,7 @@ import at.fhjoanneum.ippr.communicator.persistence.objects.DataType;
 import at.fhjoanneum.ippr.communicator.persistence.objects.datatypecomposer.DataTypeComposer;
 import at.fhjoanneum.ippr.communicator.persistence.objects.protocol.MessageProtocol;
 
-public interface BasicConfiguration {
+public interface BasicOutboundConfiguration {
 
   Long getId();
 
@@ -15,6 +15,8 @@ public interface BasicConfiguration {
   MessageProtocol getMessageProtocol();
 
   String getComposerClass();
+
+  String getSendPlugin();
 
   Map<DataType, DataTypeComposer> getDataTypeComposer();
 }

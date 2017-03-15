@@ -17,7 +17,9 @@ import akka.actor.UntypedActor;
 import at.fhjoanneum.ippr.communicator.akka.config.SpringExtension;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.ComposeMessageCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.ComposeMessageCreateCommand;
+import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.SendMessageCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.events.ComposeMessageCreatedEvent;
+import at.fhjoanneum.ippr.communicator.akka.messages.compose.events.ComposedMessageEvent;
 
 @Transactional(isolation = Isolation.READ_COMMITTED)
 @Component("ComposeSupervisorActor")
@@ -37,6 +39,8 @@ public class ComposeSupervisorActor extends UntypedActor {
       handleComposeMessageCreateCommand(msg);
     } else if (msg instanceof ComposeMessageCreatedEvent) {
       handleComposeMessageCreatedEvent(msg);
+    } else if (msg instanceof ComposedMessageEvent) {
+      handleComposedMessagenEvent(msg);
     } else {
       LOG.warn("Unhandled message [{}]", msg);
       unhandled(msg);
@@ -54,5 +58,11 @@ public class ComposeSupervisorActor extends UntypedActor {
     final ComposeMessageCreatedEvent evt = (ComposeMessageCreatedEvent) msg;
     final ActorRef actor = actors.get(evt.getActorId());
     actor.tell(new ComposeMessageCommand(evt.getId()), getSelf());
+  }
+
+  private void handleComposedMessagenEvent(final Object msg) {
+    final ComposedMessageEvent evt = (ComposedMessageEvent) msg;
+    final ActorRef actor = actors.get(evt.getActorId());
+    actor.tell(new SendMessageCommand(evt.getId()), getSelf());
   }
 }

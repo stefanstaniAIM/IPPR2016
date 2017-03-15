@@ -2,6 +2,8 @@ package at.fhjoanneum.ippr.communicator;
 
 import java.util.List;
 
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +11,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @EnableDiscoveryClient
@@ -31,6 +35,13 @@ public class ExternalCommunicatorApplication {
     @RequestMapping("message")
     public List<String> serviceInstancesByApplicationName() {
       return this.discoveryClient.getServices();
+    }
+
+    @RequestMapping(value = "testpost", method = RequestMethod.POST, consumes = "application/json")
+    public void post(@RequestBody final String body) throws JSONException {
+      final JSONObject object = new JSONObject(body);
+
+      LOG.debug("Received [{}]", object);
     }
   }
 }

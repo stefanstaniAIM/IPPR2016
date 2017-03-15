@@ -12,36 +12,44 @@ import at.fhjoanneum.ippr.communicator.persistence.objects.DataType;
 import at.fhjoanneum.ippr.communicator.persistence.objects.datatypecomposer.DataTypeComposer;
 import at.fhjoanneum.ippr.communicator.persistence.objects.protocol.MessageProtocol;
 
-public class AbstractBasicConfigurationBuilder {
+public class AbstractBasicOutboundConfigurationBuilder {
 
   protected String name;
-  protected final Map<DataType, DataTypeComposerImpl> parser = new HashMap<>();
+  protected final Map<DataType, DataTypeComposerImpl> composer = new HashMap<>();
   protected MessageProtocolImpl messageProtocol;
   protected String composerClass;
+  protected String sendPlugin;
 
-  public AbstractBasicConfigurationBuilder name(final String name) {
+  public AbstractBasicOutboundConfigurationBuilder name(final String name) {
     Objects.requireNonNull(name);
     this.name = name;
     return this;
   }
 
-  public AbstractBasicConfigurationBuilder messageProtocol(final MessageProtocol messageProtocol) {
+  public AbstractBasicOutboundConfigurationBuilder messageProtocol(
+      final MessageProtocol messageProtocol) {
     Objects.requireNonNull(messageProtocol);
     Preconditions.checkArgument(messageProtocol instanceof MessageProtocolImpl);
     this.messageProtocol = (MessageProtocolImpl) messageProtocol;
     return this;
   }
 
-  public AbstractBasicConfigurationBuilder composerClass(final String composerClass) {
+  public AbstractBasicOutboundConfigurationBuilder composerClass(final String composerClass) {
     Objects.requireNonNull(composerClass);
     this.composerClass = composerClass;
     return this;
   }
 
-  public AbstractBasicConfigurationBuilder addParser(final DataTypeComposer parser) {
-    Objects.requireNonNull(parser);
-    Preconditions.checkArgument(parser instanceof DataTypeComposerImpl);
-    this.parser.put(parser.getDataType(), (DataTypeComposerImpl) parser);
+  public AbstractBasicOutboundConfigurationBuilder sendPlugin(final String sendPlugin) {
+    Objects.requireNonNull(sendPlugin);
+    this.sendPlugin = sendPlugin;
+    return this;
+  }
+
+  public AbstractBasicOutboundConfigurationBuilder addComposer(final DataTypeComposer composer) {
+    Objects.requireNonNull(composer);
+    Preconditions.checkArgument(composer instanceof DataTypeComposerImpl);
+    this.composer.put(composer.getDataType(), (DataTypeComposerImpl) composer);
     return this;
   }
 }

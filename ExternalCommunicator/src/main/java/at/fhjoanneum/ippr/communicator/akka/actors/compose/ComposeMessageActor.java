@@ -17,8 +17,12 @@ import at.fhjoanneum.ippr.communicator.akka.messages.commands.StoreExternalDataC
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.ComposeMessageCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.ComposeMessageCreateCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.ConfigRetrievalCommand;
+import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.SendConfigRetrieveCommand;
+import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.SendMessageCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.events.ConfigRetrievedEvent;
+import at.fhjoanneum.ippr.communicator.akka.messages.compose.events.SendConfigRetrievedEvent;
 import at.fhjoanneum.ippr.communicator.composer.Composer;
+import at.fhjoanneum.ippr.communicator.plugins.send.SendPlugin;
 
 @Transactional(isolation = Isolation.READ_COMMITTED)
 @Component("ComposeMessageActor")
@@ -38,6 +42,10 @@ public class ComposeMessageActor extends UntypedActor {
       handleComposeMessageCommand(msg);
     } else if (msg instanceof ConfigRetrievedEvent) {
       handleConfigRetrievedEvent(msg);
+    } else if (msg instanceof SendMessageCommand) {
+      handleSendMessageCommand(msg);
+    } else if (msg instanceof SendConfigRetrievedEvent) {
+      handleSendConfigRetrievedEvent(msg);
     } else {
       LOG.warn("Unhandled message [{}]", msg);
       unhandled(msg);
@@ -45,7 +53,7 @@ public class ComposeMessageActor extends UntypedActor {
   }
 
   private void handleComposeMessageCreateCommand(final Object msg) {
-    getDBPersistenceActor().forward(msg, getContext());
+    getDBPersistenceActor().tell(msg, getContext().parent());
   }
 
   private void handleComposeMessageCommand(final Object msg) {
@@ -53,8 +61,6 @@ public class ComposeMessageActor extends UntypedActor {
 
     // TODO get config from cmd
     getDBPersistenceActor().tell(new ConfigRetrievalCommand(cmd.getId(), 1L), getSelf());
-
-
   }
 
   private void handleConfigRetrievedEvent(final Object msg)
@@ -69,12 +75,29 @@ public class ComposeMessageActor extends UntypedActor {
         evt.getBasicConfiguration().getMessageProtocol(),
         evt.getBasicConfiguration().getDataTypeComposer());
 
-    getDBPersistenceActor().forward(new StoreExternalDataCommand(evt.getId(), composedValue),
-        getContext());
+    getDBPersistenceActor().tell(new StoreExternalDataCommand(evt.getId(), composedValue),
+        getContext().parent());
+  }
+
+  private void handleSendMessageCommand(final Object msg) {
+    final SendMessageCommand cmd = (SendMessageCommand) msg;
+
+    // TODO get config from cmd
+    getDBPersistenceActor().tell(new SendConfigRetrieveCommand(cmd.getId(), 1L), getSelf());
+  }
+
+  private void handleSendConfigRetrievedEvent(final Object msg)
+      throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+    final SendConfigRetrievedEvent evt = (SendConfigRetrievedEvent) msg;
+
+    final SendPlugin plugin = getClass().getClassLoader().loadClass(evt.getSendPlugin())
+        .asSubclass(SendPlugin.class).newInstance();
+
+    final boolean sent = plugin.send(evt.getBody(), evt.getEndpoint());
   }
 
   private ActorRef getDBPersistenceActor() {
-    return getContext().actorOf(springExtension.props("DBPersistenceActor"),
+    return getContext().actorOf(springExtension.props("ComposePersistenceActor"),
         UUID.randomUUID().toString());
   }
 }

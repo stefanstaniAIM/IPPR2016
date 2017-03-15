@@ -16,26 +16,31 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import at.fhjoanneum.ippr.communicator.akka.messages.commands.StoreExternalDataCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.ComposeMessageCreateCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.ConfigRetrievalCommand;
+import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.SendConfigRetrieveCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.events.ComposeMessageCreatedEvent;
+import at.fhjoanneum.ippr.communicator.akka.messages.compose.events.ComposedMessageEvent;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.events.ConfigRetrievedEvent;
-import at.fhjoanneum.ippr.communicator.persistence.entities.basic.AbstractBasicConfiguration;
+import at.fhjoanneum.ippr.communicator.akka.messages.compose.events.SendConfigRetrievedEvent;
+import at.fhjoanneum.ippr.communicator.persistence.entities.basic.AbstractBasicOutboundConfiguration;
 import at.fhjoanneum.ippr.communicator.persistence.entities.messageflow.MessageBuilder;
 import at.fhjoanneum.ippr.communicator.persistence.entities.messageflow.MessageImpl;
+import at.fhjoanneum.ippr.communicator.persistence.objects.basic.RestOutboundConfiguration;
 import at.fhjoanneum.ippr.communicator.persistence.objects.internal.InternalData;
 import at.fhjoanneum.ippr.communicator.persistence.objects.messageflow.Message;
 import at.fhjoanneum.ippr.communicator.repositories.BasicConfigurationRepository;
 import at.fhjoanneum.ippr.communicator.repositories.MessageRepository;
 
 @Transactional(isolation = Isolation.READ_COMMITTED)
-@Component("DBPersistenceActor")
+@Component("ComposePersistenceActor")
 @Scope("prototype")
-public class DBPersistenceActor extends UntypedActor {
+public class ComposePersistenceActor extends UntypedActor {
 
-  private final static Logger LOG = LoggerFactory.getLogger(DBPersistenceActor.class);
+  private final static Logger LOG = LoggerFactory.getLogger(ComposePersistenceActor.class);
 
   @Autowired
   private MessageRepository messageRepository;
@@ -51,6 +56,8 @@ public class DBPersistenceActor extends UntypedActor {
       handleStoreExternalDataCommand(msg);
     } else if (msg instanceof ConfigRetrievalCommand) {
       handleConfigRetrievalCommand(msg);
+    } else if (msg instanceof SendConfigRetrieveCommand) {
+      handleSendConfigRetrieveCommand(msg);
     } else {
       LOG.warn("Unhandled message [{}]", msg);
       unhandled(msg);
@@ -85,11 +92,13 @@ public class DBPersistenceActor extends UntypedActor {
     messageRepository.save((MessageImpl) message);
     final String actorId = getContext().parent().path().name();
 
+    final ActorRef sender = getSender();
     TransactionSynchronizationManager
         .registerSynchronization(new TransactionSynchronizationAdapter() {
           @Override
           public void afterCommit() {
             LOG.info("Updated external data of [{}]", message);
+            sender.tell(new ComposedMessageEvent(actorId, message.getId()), getSelf());
             stop();
           }
         });
@@ -99,7 +108,7 @@ public class DBPersistenceActor extends UntypedActor {
       throws JsonParseException, JsonMappingException, IOException {
     final ConfigRetrievalCommand cmd = (ConfigRetrievalCommand) obj;
 
-    final AbstractBasicConfiguration config =
+    final AbstractBasicOutboundConfiguration config =
         basicConfigurationRepository.findOne(cmd.getConfigId());
     LOG.debug("Retrieved config [{}]", config);
 
@@ -109,6 +118,25 @@ public class DBPersistenceActor extends UntypedActor {
 
     getContext().parent()
         .tell(new ConfigRetrievedEvent(cmd.getId(), msg.getTransferId(), data, config), getSelf());
+  }
+
+  private void handleSendConfigRetrieveCommand(final Object obj) {
+    final SendConfigRetrieveCommand cmd = (SendConfigRetrieveCommand) obj;
+
+    final AbstractBasicOutboundConfiguration config =
+        basicConfigurationRepository.findOne(cmd.getConfigId());
+    LOG.debug("Retrieved config [{}]", config);
+
+    final Message msg = messageRepository.findOne(cmd.getId());
+
+    String endpoint = null;
+    if (config instanceof RestOutboundConfiguration) {
+      final RestOutboundConfiguration restConfig = (RestOutboundConfiguration) config;
+      endpoint = restConfig.getEndpoint();
+    }
+
+    getContext().parent().tell(new SendConfigRetrievedEvent(cmd.getId(), config.getSendPlugin(),
+        endpoint, msg.getExternalData()), getSelf());
   }
 
   private void stop() {
