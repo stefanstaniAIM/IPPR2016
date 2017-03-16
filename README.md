@@ -1,4 +1,4 @@
-#S-BPM Modelling and Execution Platform#
+# S-BPM Modelling and Execution Platform #
 
 This is a modelling and execution platform for S-BPM processes, based on microservices powered by Spring Boot. The modelling platform is based on Angular 1, the frontend for the execution platform, however, is based on Angular 2.
 Basically, the platform consists of the following modules:
@@ -12,15 +12,15 @@ Basically, the platform consists of the following modules:
  - **ModellingPlatform-Dev:** Development project for the Angular 1 modelling platform frontend (with node server backend).
  - **ModellingPlatform:** Production project for the Angular 1 modelling platform frontend (with Spring Boot backend).
 
-##Tutorial Videos##
+## Tutorial Videos ##
 [ModellingPlatform](https://youtu.be/3gJXmBRKWNo)
 
 [ExecutionPlatform](https://youtu.be/LkoJVZ__f1k)
 
-##Functionalities##
+## Functionalities ##
 
 
-###Execution###
+### Execution ###
 | Functionality | Implemented | Comment |
 | ------------ | ------------ | ------- |
 | Internal Subjects | Yes | - |
@@ -39,7 +39,7 @@ Basically, the platform consists of the following modules:
 | Connected Processes | No | - |
 | Multiprocesses | No | - |
 
-###Modelling###
+### Modelling ###
 | Functionality | Implemented | Comment |
 | ------------ | ------------ | ------- |
 |SID View|yes|-|
@@ -55,8 +55,8 @@ Basically, the platform consists of the following modules:
 |ZoomIn/Out|no|-|
 |Customizability|no|-|
 
-##Setup##
-###Prerequisites###
+## Setup ##
+### Prerequisites ###
 
  - Java Platform (JDK) 8
  - MySQL
@@ -65,17 +65,17 @@ Basically, the platform consists of the following modules:
  - NodeJS for Angular development in GUI-Dev and ModellingPlatform-Dev
  - Gulp for Angular development in ModellingPlatform-Dev
 
-###Database Settings###
+### Database Settings ###
 Please execute following statements to create the schema and the db user in your MySQL database:
 [DB_setup.sql](Setup/DB_setup.sql)
 
-##Startup##
-###Start everything (Windows)###
+## Startup ##
+### Start everything (Windows) ###
  1. Start the MySQL Service
  2. Go to [Setup/start_windows](Setup/start_windows)
  3. Open [start.bat](Setup/start_windows/start.bat)
 
-###Execution Platform###
+### Execution Platform ###
  1. Start the MySQL Service
  2. Go to ProcessModelStorage and run in cmd: 
  ```gradlew bootRun```
@@ -87,7 +87,7 @@ Please execute following statements to create the schema and the db user in your
  ```gradlew bootRun```
  6. Go to ```http://localhost:3000```
  
-####Alternative####
+#### Alternative ####
 If you prefer to run the jar files, without using gradlew:
  1. Start the MySQL Service
  2. Go to [builds](builds)
@@ -99,12 +99,12 @@ If you prefer to run the jar files, without using gradlew:
 
 **Note:** If you do any changes to a module, you have to rebuild it with ```gradlew build``` and use the *.jar that is generated in ```(name of module)/build/libs/```
  
-###Modelling Platform###
+### Modelling Platform ###
  1. Go to ModellingPlatform and run in cmd: 
  ```gradlew bootRun```
  2. Go to ```http://localhost:4000```
  
-####Alternative####
+#### Alternative ####
 If you prefer to run the jar files, without using gradlew:
  1. Go to [builds](builds)
  2. run in cmd: ```java -jar ModellingPlatform-0.0.1-SNAPSHOT.jar```
@@ -112,23 +112,23 @@ If you prefer to run the jar files, without using gradlew:
  
 
 
-###GUI-Dev###
+### GUI-Dev ###
 Just for development purposes, not for production!
  1. run in cmd: ```npm install```
  2. Go to GUI-Dev and run in cmd: ```npm start```
  3. in case of any errors when starting the first time, please stick to the installation guide of [ng2-admin](https://github.com/akveo/ng2-admin/)
  4. Go to ```http://localhost:3000```
 
-###ModellingPlatform-Dev###
+### ModellingPlatform-Dev ###
 Just for development purposes, not for production!
  1. Run ```npm install -g yo bower grunt-cli gulp && npm install && bower install``` to install required dependencies.
  2. Go to ModellingPlatform-Dev and run in cmd: ```npm install && bower install```
  3. Run in cmd: ```gulp serve```
  4. Go to ```http://localhost:3000```
  
-##Configuration##
+## Configuration ##
 
-###Ports###
+### Ports ###
 Basically, the following ports are used:
 
 |  Service  |  Port  |
@@ -145,7 +145,7 @@ To change the port configuration, change the server port in this file e.g. Gatew
 
 **Note:** If you change the port of the Gateway, make sure to change the restApi configuration in [processes.service.ts](GUI-Dev/src/app/processes.service.ts) and to rebuild the GUI-Dev and GUI project according to the guide provide [below](#gui).
 
-###User Configuration###
+### User Configuration ###
 In general, the authentication concept ist based on RBAC. Each user can be assigned to one or more roles. Each role can be assigned to one more rules.
 
 The current *.csv files for the user configuration:
@@ -153,7 +153,7 @@ The current *.csv files for the user configuration:
 - [roles.csv](Gateway/src/main/resources/memoryusers/roles.csv)
 - [rules.csv](Gateway/src/main/resources/memoryusers/rules.csv)
 
-#####Standard configuration:#####
+##### Standard configuration: #####
 
 |  User  |  Roles  |  Password  |
 |  ----  |  -----  |  --------  |
@@ -162,13 +162,13 @@ The current *.csv files for the user configuration:
 |  stefan  |  EMPLOYEE  |  1234  |
 |  maksym  |  EMPLOYEE  |  1234  |
 
-##Development##
-###Spring Boot Modules###
+## Development ##
+### Spring Boot Modules ###
 Any further development concerning the Gateway, the ProcessModelStorage or the ProcessEngine can be done directly in java. For further information please use the [Spring Boot Documentation](https://projects.spring.io/spring-boot/)
 
 **Note:** If you do any changes to a module, you have to rebuild it with ```gradlew build```
 
-###GUI###
+### GUI ###
 Any further development concerning the GUI has to be done in the GUI-Dev module by using typescript and Angular 2. For further information please use the [Angular Documentation](https://angular.io/) and the [ng2-admin Documentation](https://akveo.github.io/ng2-admin/articles/001-getting-started/).
 
 **Note:** If you do any changes to the GUI-Dev project, you have to update the GUI project afterwards:
@@ -177,7 +177,7 @@ Any further development concerning the GUI has to be done in the GUI-Dev module 
  3. Go to [GUI-Dev/dist](GUI-Dev/dist) and move all of its content to [GUI/src/main/resources/public/](GUI/src/main/resources/public/).
  4. Go to [GUI](GUI) and run ```gradlew build``` or ```gradlew run```
  
-###ModellingPlatform###
+### ModellingPlatform ###
 Any further development concerning the ModellingPlatform has to be done in the ModellingPlatform-Dev module by using javascript and Angular 1.
 
 **Note:** If you do any changes to the ModellingPlatform-Dev project, you have to update the ModellingPlatform project afterwards:
@@ -188,5 +188,5 @@ Any further development concerning the ModellingPlatform has to be done in the M
  
 **Note:** You can change the appearance of the elements by modify the following file: [ui-joint-shape.template.scss](ModellingPlatform-dev/src/app/components/services/ui-joint/ui-joint-shape/ui-joint-shape.template.scss)
  
-##License##
+## License ##
 [MIT License](LICENSE)
