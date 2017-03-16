@@ -19,6 +19,7 @@ Basically, the platform consists of the following modules:
 
 ##Functionalities##
 
+
 ###Execution###
 | Functionality | Implemented | Comment |
 | ------------ | ------------ | ------- |
@@ -33,8 +34,7 @@ Basically, the platform consists of the following modules:
 | Business Objects | Yes | - |
 | Start Process | Yes | - |
 | Stop Process | Yes | - |
-| Nested Business Objects | Yes | partially (Engine) |
-| Formbuilder | Yes | - |
+| Nested Business Objects | Yes | partially (Engine) || Formbuilder | Yes | - |
 | OWL-Import | Yes | standard-pass-ont |
 | Connected Processes | No | - |
 | Multiprocesses | No | - |
