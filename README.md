@@ -2,11 +2,13 @@
 
 This is a modelling and execution platform for S-BPM processes, based on microservices powered by Spring Boot. The modelling platform is based on Angular 1, the frontend for the execution platform, however, is based on Angular 2.
 Basically, the platform consists of the following modules:
-
+ - **ServiceDiscovery:** Automatic detection of devices and services.
+ - **ConfigurationService:** Central repository for configuration files.
  - **ProcessModelStorage:** This is the process repository.
  - **ProcessEngine:** Responsible for the execution of processes, based on Akka. 
  - **Gateway:** Authentication and authorization service and handles the requests of the process execution frontend (GUI).
  - **Persistence:** Hibernate mapping of the database tables.
+ - **ExternalCommunicator:** For the support of external projects.
  - **GUI-Dev:** Development project for the Angular 2 execution platform frontend (With some dev tools, with node server backend).
  - **GUI:** Production project for the Angular 2 execution platform frontend (minified, uglified, with Spring Boot backend).
  - **ModellingPlatform-Dev:** Development project for the Angular 1 modelling platform frontend (with node server backend).
@@ -77,15 +79,21 @@ Please execute following statements to create the schema and the db user in your
 
 ### Execution Platform ###
  1. Start the MySQL Service
- 2. Go to ProcessModelStorage and run in cmd: 
+ 2. Go to ServiceDiscovery and run in cmd:
  ```gradlew bootRun```
- 3. Go to ProcessEngine and run in cmd: 
+ 3. Go to ConfigurationService and run in cmd:
  ```gradlew bootRun```
- 4. Go to Gateway and run in cmd: 
+ 4. Go to ProcessModelStorage and run in cmd: 
  ```gradlew bootRun```
- 5. Go to GUI and run in cmd: 
+ 5. Go to ProcessEngine and run in cmd: 
  ```gradlew bootRun```
- 6. Go to ```http://localhost:3000```
+ 6. Go to Gateway and run in cmd: 
+ ```gradlew bootRun```
+ 7. Go to ExternalCommunicator and run in cmd: 
+ ```gradlew bootRun```
+ 8. Go to GUI and run in cmd: 
+ ```gradlew bootRun```
+ 9. Go to ```http://localhost:3000```
  
 #### Alternative ####
 If you prefer to run the jar files, without using gradlew:
@@ -134,14 +142,15 @@ Basically, the following ports are used:
 |  Service  |  Port  |
 |  -------  |  ----- |
 |  Gateway  |  10000 |
-|  ProcessModelStorage  |  11000  |
-|  ProcessEngine  |  14000  |
+|  ServiceDiscovery  |  8761 |
+|  ConfigurationService  |  8888 |
+|  ProcessModelStorage  |  Random  |
+|  ProcessEngine  |  Random  |
+|  ExternalCommunicator | Random |
 |  GUI  |  3000  |
 |  ModellingPlatform  |  4000  |
 
 To change the port configuration, change the server port in this file e.g. Gateway: [application.properties] (Gateway/src/main/resources/application.properties)
-
-**Note:** Make sure to change the ipconfig in the Gateway, if you change the ports of ProcessModelStorage or ProcessEngine.
 
 **Note:** If you change the port of the Gateway, make sure to change the restApi configuration in [processes.service.ts](GUI-Dev/src/app/processes.service.ts) and to rebuild the GUI-Dev and GUI project according to the guide provide [below](#gui).
 
