@@ -173,7 +173,7 @@ The current *.csv files for the user configuration:
 
 ## Development ##
 ### Spring Boot Modules ###
-Any further development concerning the Gateway, the ProcessModelStorage or the ProcessEngine can be done directly in java. For further information please use the [Spring Boot Documentation](https://projects.spring.io/spring-boot/)
+Any further development concerning the ServiceDiscovery, the ConfigurationService, the Gateway, the ProcessModelStorage, the ExternalCommunicator or the ProcessEngine can be done directly in java. For further information please use the [Spring Boot Documentation](https://projects.spring.io/spring-boot/)
 
 **Note:** If you do any changes to a module, you have to rebuild it with ```gradlew build```
 
