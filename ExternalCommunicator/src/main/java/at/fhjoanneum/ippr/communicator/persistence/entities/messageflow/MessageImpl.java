@@ -4,16 +4,22 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 
 import org.hibernate.validator.constraints.NotBlank;
 
 import com.google.common.base.Preconditions;
 
+import at.fhjoanneum.ippr.communicator.persistence.entities.basic.AbstractBasicOutboundConfiguration;
+import at.fhjoanneum.ippr.communicator.persistence.objects.basic.BasicOutboundConfiguration;
 import at.fhjoanneum.ippr.communicator.persistence.objects.messageflow.Message;
+import at.fhjoanneum.ippr.communicator.persistence.objects.messageflow.MessageState;
 
 @Entity(name = "MESSAGE")
 public class MessageImpl implements Serializable, Message {
@@ -36,10 +42,18 @@ public class MessageImpl implements Serializable, Message {
   @Lob
   private String externalData;
 
+  @Column
+  @Enumerated(EnumType.STRING)
+  private MessageState messageState;
+
+  @ManyToOne
+  private AbstractBasicOutboundConfiguration outboundConfiguration;
+
   MessageImpl() {}
 
-  MessageImpl(final String transferId) {
+  MessageImpl(final String transferId, final MessageState messageState) {
     this.transferId = transferId;
+    this.messageState = messageState;
   }
 
   @Override
@@ -52,6 +66,14 @@ public class MessageImpl implements Serializable, Message {
   public void setExternalData(final String data) {
     Preconditions.checkNotNull(data);
     this.externalData = data;
+  }
+
+  @Override
+  public void setOutboundConfiguration(final BasicOutboundConfiguration outboundConfiguration) {
+    Preconditions.checkNotNull(outboundConfiguration);
+    Preconditions
+        .checkArgument(outboundConfiguration instanceof AbstractBasicOutboundConfiguration);
+    this.outboundConfiguration = (AbstractBasicOutboundConfiguration) outboundConfiguration;
   }
 
   @Override
@@ -72,6 +94,21 @@ public class MessageImpl implements Serializable, Message {
   @Override
   public String getExternalData() {
     return externalData;
+  }
+
+  @Override
+  public void setMessageState(final MessageState messageState) {
+    this.messageState = messageState;
+  }
+
+  @Override
+  public MessageState getMessageState() {
+    return messageState;
+  }
+
+  @Override
+  public BasicOutboundConfiguration getOutboundConfiguration() {
+    return outboundConfiguration;
   }
 
   @Override

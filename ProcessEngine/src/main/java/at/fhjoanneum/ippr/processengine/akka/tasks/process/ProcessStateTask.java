@@ -16,6 +16,7 @@ import at.fhjoanneum.ippr.commons.dto.processengine.SubjectStateDTO;
 import at.fhjoanneum.ippr.persistence.objects.engine.process.ProcessInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.state.SubjectState;
 import at.fhjoanneum.ippr.persistence.objects.engine.subject.Subject;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.SubjectModelType;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.info.ProcessStateMessage;
 import at.fhjoanneum.ippr.processengine.akka.tasks.AbstractTask;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
@@ -45,6 +46,8 @@ public class ProcessStateTask extends AbstractTask<ProcessStateMessage.Request> 
 
     final ProcessInstance process = processOpt.get();
     final List<SubjectStateDTO> subjectStates = process.getSubjects().stream()
+        .filter(subject -> subject.getSubjectModel().getSubjectModelType()
+            .equals(SubjectModelType.INTERNAL))
         .map(this::convertToSubjectStateDTO).collect(Collectors.toList());
 
     getSender().tell(new ProcessStateMessage.Response(

@@ -19,6 +19,7 @@ import at.fhjoanneum.ippr.persistence.objects.engine.enums.ProcessInstanceState;
 import at.fhjoanneum.ippr.persistence.objects.engine.process.ProcessInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.subject.Subject;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.StateEventType;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.SubjectModelType;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObjectChangeMessage;
 import at.fhjoanneum.ippr.processengine.akka.tasks.AbstractTask;
 import at.fhjoanneum.ippr.processengine.akka.tasks.TaskCallback;
@@ -53,15 +54,18 @@ public class ProcessStateChangeTask extends AbstractTask<StateObjectChangeMessag
     if (processOpt.isPresent()) {
       final ProcessInstance process = processOpt.get();
       for (final Subject subject : process.getSubjects()) {
-        entityManager.refresh(subject);
-        final StateEventType eventType = subject.getSubjectState().getCurrentState().getEventType();
-        if (StateEventType.END.equals(eventType)
-            || StateEventType.START.equals(eventType) && subject.getUser() == null) {
-        } else {
-          getSender().tell(new StateObjectChangeMessage.Response(request.getPiId(), Boolean.FALSE),
-              getSelf());
-          callback(Boolean.FALSE);
-          return;
+        if (SubjectModelType.INTERNAL.equals(subject.getSubjectModel().getSubjectModelType())) {
+          entityManager.refresh(subject);
+          final StateEventType eventType =
+              subject.getSubjectState().getCurrentState().getEventType();
+          if (StateEventType.END.equals(eventType)
+              || StateEventType.START.equals(eventType) && subject.getUser() == null) {
+          } else {
+            getSender().tell(
+                new StateObjectChangeMessage.Response(request.getPiId(), Boolean.FALSE), getSelf());
+            callback(Boolean.FALSE);
+            return;
+          }
         }
       }
 

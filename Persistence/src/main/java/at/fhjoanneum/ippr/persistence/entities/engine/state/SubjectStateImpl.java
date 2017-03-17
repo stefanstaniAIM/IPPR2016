@@ -124,8 +124,20 @@ public class SubjectStateImpl implements SubjectState, Serializable {
       throw new IllegalStateException();
     }
 
-    if (SubjectSubState.TO_SEND.equals(subState)) {
+    if (SubjectSubState.TO_SEND.equals(subState) || SubjectSubState.NOTIFIED_EC.equals(subState)) {
       subState = SubjectSubState.SENT;
+      lastChanged = LocalDateTime.now();
+    }
+  }
+
+  @Override
+  public void setToNotifiedEC() {
+    if (!StateFunctionType.SEND.equals(currentState.getFunctionType())) {
+      throw new IllegalStateException();
+    }
+
+    if (SubjectSubState.TO_SEND.equals(subState)) {
+      subState = SubjectSubState.NOTIFIED_EC;
       lastChanged = LocalDateTime.now();
     }
   }

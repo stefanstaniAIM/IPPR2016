@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import at.fhjoanneum.ippr.communicator.akka.messages.commands.StoreExternalDataCommand;
+import at.fhjoanneum.ippr.communicator.akka.messages.commands.UpdateMessageStateCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.ComposeMessageCreateCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.ConfigRetrievalCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.SendConfigRetrieveCommand;
@@ -26,12 +27,13 @@ import at.fhjoanneum.ippr.communicator.akka.messages.compose.events.ComposeMessa
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.events.ComposedMessageEvent;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.events.ConfigRetrievedEvent;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.events.SendConfigRetrievedEvent;
-import at.fhjoanneum.ippr.communicator.persistence.entities.basic.AbstractBasicOutboundConfiguration;
 import at.fhjoanneum.ippr.communicator.persistence.entities.messageflow.MessageBuilder;
 import at.fhjoanneum.ippr.communicator.persistence.entities.messageflow.MessageImpl;
+import at.fhjoanneum.ippr.communicator.persistence.objects.basic.BasicOutboundConfiguration;
 import at.fhjoanneum.ippr.communicator.persistence.objects.basic.RestOutboundConfiguration;
 import at.fhjoanneum.ippr.communicator.persistence.objects.internal.InternalData;
 import at.fhjoanneum.ippr.communicator.persistence.objects.messageflow.Message;
+import at.fhjoanneum.ippr.communicator.persistence.objects.messageflow.MessageState;
 import at.fhjoanneum.ippr.communicator.repositories.BasicConfigurationRepository;
 import at.fhjoanneum.ippr.communicator.repositories.MessageRepository;
 
@@ -58,6 +60,8 @@ public class ComposePersistenceActor extends UntypedActor {
       handleConfigRetrievalCommand(msg);
     } else if (msg instanceof SendConfigRetrieveCommand) {
       handleSendConfigRetrieveCommand(msg);
+    } else if (msg instanceof UpdateMessageStateCommand) {
+      handleUpdateMessageStateCommand(msg);
     } else {
       LOG.warn("Unhandled message [{}]", msg);
       unhandled(msg);
@@ -66,11 +70,16 @@ public class ComposePersistenceActor extends UntypedActor {
 
   private void handleComposeMessageCreateCommand(final Object obj) throws IOException {
     final ComposeMessageCreateCommand cmd = (ComposeMessageCreateCommand) obj;
-    final Message message = new MessageBuilder().transferId(cmd.getTransferId()).build();
+    final Message message = new MessageBuilder().transferId(cmd.getTransferId())
+        .messageState(MessageState.TO_COMPOSE).build();
 
     final ObjectMapper mapper = new ObjectMapper();
     final String value = mapper.writeValueAsString(cmd.getData());
     message.setInternalData(value);
+
+    final BasicOutboundConfiguration configuration =
+        basicConfigurationRepository.findOne(cmd.getConfigId());
+    message.setOutboundConfiguration(configuration);
 
     messageRepository.save((MessageImpl) message);
     final String actorId = getContext().parent().path().name();
@@ -89,6 +98,7 @@ public class ComposePersistenceActor extends UntypedActor {
     final StoreExternalDataCommand cmd = (StoreExternalDataCommand) obj;
     final Message message = messageRepository.findOne(cmd.getId());
     message.setExternalData(cmd.getData());
+    message.setMessageState(MessageState.COMPOSED);
     messageRepository.save((MessageImpl) message);
     final String actorId = getContext().parent().path().name();
 
@@ -108,13 +118,14 @@ public class ComposePersistenceActor extends UntypedActor {
       throws JsonParseException, JsonMappingException, IOException {
     final ConfigRetrievalCommand cmd = (ConfigRetrievalCommand) obj;
 
-    final AbstractBasicOutboundConfiguration config =
-        basicConfigurationRepository.findOne(cmd.getConfigId());
-    LOG.debug("Retrieved config [{}]", config);
-
     final Message msg = messageRepository.findOne(cmd.getId());
     final ObjectMapper mapper = new ObjectMapper();
     final InternalData data = mapper.readValue(msg.getInternalData(), InternalData.class);
+
+
+    final BasicOutboundConfiguration config = msg.getOutboundConfiguration();
+    LOG.debug("Retrieved config [{}]", config);
+
 
     getContext().parent()
         .tell(new ConfigRetrievedEvent(cmd.getId(), msg.getTransferId(), data, config), getSelf());
@@ -123,11 +134,10 @@ public class ComposePersistenceActor extends UntypedActor {
   private void handleSendConfigRetrieveCommand(final Object obj) {
     final SendConfigRetrieveCommand cmd = (SendConfigRetrieveCommand) obj;
 
-    final AbstractBasicOutboundConfiguration config =
-        basicConfigurationRepository.findOne(cmd.getConfigId());
-    LOG.debug("Retrieved config [{}]", config);
-
     final Message msg = messageRepository.findOne(cmd.getId());
+
+    final BasicOutboundConfiguration config = msg.getOutboundConfiguration();
+    LOG.debug("Retrieved config [{}]", config);
 
     String endpoint = null;
     if (config instanceof RestOutboundConfiguration) {
@@ -135,8 +145,16 @@ public class ComposePersistenceActor extends UntypedActor {
       endpoint = restConfig.getEndpoint();
     }
 
-    getContext().parent().tell(new SendConfigRetrievedEvent(cmd.getId(), config.getSendPlugin(),
-        endpoint, msg.getExternalData()), getSelf());
+    getContext().parent().tell(new SendConfigRetrievedEvent(cmd.getId(), msg.getTransferId(),
+        config.getSendPlugin(), endpoint, msg.getExternalData()), getSelf());
+  }
+
+  private void handleUpdateMessageStateCommand(final Object obj) {
+    final UpdateMessageStateCommand cmd = (UpdateMessageStateCommand) obj;
+
+    final Message message = messageRepository.findOne(cmd.getId());
+    message.setMessageState(cmd.getMessageState());
+    messageRepository.save((MessageImpl) message);
   }
 
   private void stop() {

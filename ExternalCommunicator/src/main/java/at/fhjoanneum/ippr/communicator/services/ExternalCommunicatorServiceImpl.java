@@ -16,6 +16,7 @@ import at.fhjoanneum.ippr.communicator.persistence.objects.DataType;
 import at.fhjoanneum.ippr.communicator.persistence.objects.internal.InternalData;
 import at.fhjoanneum.ippr.communicator.persistence.objects.internal.InternalField;
 import at.fhjoanneum.ippr.communicator.persistence.objects.internal.InternalObject;
+import at.fhjoanneum.ippr.communicator.repositories.OutboundConfigurationMapRepository;
 
 @Service
 public class ExternalCommunicatorServiceImpl implements ExternalCommunicatorService {
@@ -25,10 +26,16 @@ public class ExternalCommunicatorServiceImpl implements ExternalCommunicatorServ
   @Autowired
   private ActorRef composeSupervisorActor;
 
+  @Autowired
+  private OutboundConfigurationMapRepository outboundConfigurationMapRepository;
+
   @Async
   @Override
   public void handleExternalOutputMessage(final ExternalOutputMessage message) {
     LOG.debug("Received request for external out message [{}]", message);
+
+    final Long messageFlowId = getMessageFlowId(message.getTransferId());
+    final Long configId = getActiveOutboundConfig(messageFlowId);
 
     final Map<String, InternalObject> businessObjects = new HashMap<>();
     message.getBusinessObjects().stream().forEachOrdered(bo -> {
@@ -40,9 +47,15 @@ public class ExternalCommunicatorServiceImpl implements ExternalCommunicatorServ
       businessObjects.put(bo.getName(), new InternalObject(bo.getName(), fields));
     });
 
-    composeSupervisorActor.tell(
-        new ComposeMessageCreateCommand(message.getTransferId(), new InternalData(businessObjects)),
-        ActorRef.noSender());
+    composeSupervisorActor.tell(new ComposeMessageCreateCommand(message.getTransferId(),
+        new InternalData(businessObjects), configId), ActorRef.noSender());
   }
 
+  private Long getMessageFlowId(final String transferId) {
+    return Long.valueOf(transferId.split("-")[2]);
+  }
+
+  private Long getActiveOutboundConfig(final Long messageFlowId) {
+    return outboundConfigurationMapRepository.findByMessageFlowId(messageFlowId).getId();
+  }
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -257,7 +258,7 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
       triggerSendExternal(subjectState, request);
 
     } catch (final Exception e) {
-      LOG.error("Error when assign users to subject");
+      LOG.error(e.getMessage());
       sender.tell(
           new Status.Failure(new IllegalStateException(
               "Error when assign users to subject in PI_ID [" + request.getPiId() + "]")),
@@ -308,17 +309,31 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
   private void triggerSendExternal(final SubjectState subjectState,
       final StateObjectChangeMessage.Request request) {
 
-    subjectState.getCurrentState().getMessageFlow().stream()
+    final List<MessageFlow> messageFlows = subjectState.getCurrentState().getMessageFlow().stream()
         .filter(mf -> SubjectModelType.EXTERNAL.equals(mf.getReceiver().getSubjectModelType()))
-        .map(mf -> getExternalOutputMessage(request.getPiId(), mf)).forEachOrdered(output -> {
+        .collect(Collectors.toList());
+
+    messageFlows.stream()
+        .map(mf -> getExternalOutputMessage(request.getPiId(), mf, subjectState.getSubject()))
+        .forEachOrdered(output -> {
           LOG.debug("Send message to external-communicator [{}]", output);
           externalCommunicatorClient.handleExternalOutputMessage(output);
+          subjectState.setToNotifiedEC();
         });
 
+    if (messageFlows.size() >= 1) {
+      if (waitForECResponse(subjectState)) {
+        changeToNextState(subjectState, request);
+      } else {
+        sender.tell(new Status.Failure(new IllegalStateException(
+            "Could not send message to all external users in PI_ID [" + request.getPiId() + "]")),
+            getSelf());
+      }
+    }
   }
 
   private ExternalOutputMessage getExternalOutputMessage(final Long piId,
-      final MessageFlow messageFlow) {
+      final MessageFlow messageFlow, final Subject sender) {
     final Set<BusinessObject> businessObjects = new HashSet<>();
 
     messageFlow.getBusinessObjectModels().stream().forEachOrdered(bom -> {
@@ -335,8 +350,26 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
       businessObjects.add(new BusinessObject(bom.getName(), fields));
     });
 
-    return new ExternalOutputMessage(piId + "-" + messageFlow.getReceiver().getSmId(),
+    return new ExternalOutputMessage(piId + "-" + sender.getSId() + "-" + messageFlow.getMfId(),
         businessObjects);
+  }
+
+
+  private boolean waitForECResponse(final SubjectState subjectState) {
+    try {
+      for (int i = 0; i < 3; i++) {
+        TimeUnit.SECONDS.sleep(1);
+        entityManager.refresh(subjectState);
+        if (SubjectSubState.SENT.equals(subjectState.getSubState())) {
+          LOG.debug("Subject is now in 'SENT' [{}]", subjectState);
+          return true;
+        }
+      }
+      return false;
+    } catch (final Exception e) {
+      LOG.error(e.getMessage());
+      return false;
+    }
   }
 
   private void changeToNextState(final SubjectState subjectState,

@@ -14,6 +14,7 @@ import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import at.fhjoanneum.ippr.communicator.akka.config.SpringExtension;
 import at.fhjoanneum.ippr.communicator.akka.messages.commands.StoreExternalDataCommand;
+import at.fhjoanneum.ippr.communicator.akka.messages.commands.UpdateMessageStateCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.ComposeMessageCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.ComposeMessageCreateCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.ConfigRetrievalCommand;
@@ -22,6 +23,8 @@ import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.SendMessag
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.events.ConfigRetrievedEvent;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.events.SendConfigRetrievedEvent;
 import at.fhjoanneum.ippr.communicator.composer.Composer;
+import at.fhjoanneum.ippr.communicator.feign.ProcessEngineClient;
+import at.fhjoanneum.ippr.communicator.persistence.objects.messageflow.MessageState;
 import at.fhjoanneum.ippr.communicator.plugins.send.SendPlugin;
 
 @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -33,6 +36,9 @@ public class ComposeMessageActor extends UntypedActor {
 
   @Autowired
   private SpringExtension springExtension;
+
+  @Autowired
+  private ProcessEngineClient processEngineClient;
 
   @Override
   public void onReceive(final Object msg) throws Throwable {
@@ -58,9 +64,7 @@ public class ComposeMessageActor extends UntypedActor {
 
   private void handleComposeMessageCommand(final Object msg) {
     final ComposeMessageCommand cmd = (ComposeMessageCommand) msg;
-
-    // TODO get config from cmd
-    getDBPersistenceActor().tell(new ConfigRetrievalCommand(cmd.getId(), 1L), getSelf());
+    getDBPersistenceActor().tell(new ConfigRetrievalCommand(cmd.getId()), getSelf());
   }
 
   private void handleConfigRetrievedEvent(final Object msg)
@@ -81,9 +85,7 @@ public class ComposeMessageActor extends UntypedActor {
 
   private void handleSendMessageCommand(final Object msg) {
     final SendMessageCommand cmd = (SendMessageCommand) msg;
-
-    // TODO get config from cmd
-    getDBPersistenceActor().tell(new SendConfigRetrieveCommand(cmd.getId(), 1L), getSelf());
+    getDBPersistenceActor().tell(new SendConfigRetrieveCommand(cmd.getId()), getSelf());
   }
 
   private void handleSendConfigRetrievedEvent(final Object msg)
@@ -94,6 +96,11 @@ public class ComposeMessageActor extends UntypedActor {
         .asSubclass(SendPlugin.class).newInstance();
 
     final boolean sent = plugin.send(evt.getBody(), evt.getEndpoint());
+    if (sent) {
+      getDBPersistenceActor().tell(new UpdateMessageStateCommand(evt.getId(), MessageState.SENT),
+          getSelf());
+      processEngineClient.markAsSent(evt.getTransferId());
+    }
   }
 
   private ActorRef getDBPersistenceActor() {

@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import at.fhjoanneum.ippr.communicator.persistence.entities.basic.rest.RestOutboundConfigurationBuilder;
+import at.fhjoanneum.ippr.communicator.persistence.entities.config.OutboundConfigurationMap;
+import at.fhjoanneum.ippr.communicator.persistence.entities.config.OutboundConfigurationMapBuilder;
 import at.fhjoanneum.ippr.communicator.persistence.entities.datatypecomposer.DataTypeComposerBuilder;
 import at.fhjoanneum.ippr.communicator.persistence.entities.protocol.MessageProtocolBuilder;
 import at.fhjoanneum.ippr.communicator.persistence.entities.protocol.field.MessageProtocolFieldBuilder;
@@ -44,21 +46,25 @@ public class EasyRestOutboundExample extends AbstractExample {
         .composerClass("at.fhjoanneum.ippr.communicator.composer.datatype.StringComposer").build();
     basicBuilder.addComposer(stringComposer);
 
-    final MessageProtocol outboundProtocol =
-        new MessageProtocolBuilder().internalName("zeitraum").externalName("timeframe").build();
+    final MessageProtocol outboundProtocol = new MessageProtocolBuilder()
+        .internalName("Vacation request form").externalName("zeitraum").build();
     basicBuilder.messageProtocol(outboundProtocol);
-    final MessageProtocolField fieldA = new MessageProtocolFieldBuilder().internalName("von")
-        .externalName("from").dataType(DataType.STRING).messageProtocol(outboundProtocol).build();
-    final MessageProtocolField fieldB = new MessageProtocolFieldBuilder().internalName("bis")
-        .externalName("to").dataType(DataType.STRING).messageProtocol(outboundProtocol).build();
+    final MessageProtocolField fieldA = new MessageProtocolFieldBuilder().internalName("From")
+        .externalName("von").dataType(DataType.STRING).messageProtocol(outboundProtocol).build();
+    final MessageProtocolField fieldB = new MessageProtocolFieldBuilder().internalName("To")
+        .externalName("bis").dataType(DataType.STRING).messageProtocol(outboundProtocol).build();
 
     final BasicOutboundConfiguration basicConfig = basicBuilder.build();
+
+    final OutboundConfigurationMap map = new OutboundConfigurationMapBuilder().messageFlowId(7L)
+        .outboundConfiguration(basicConfig).build();
 
     entityManager.persist(stringComposer);
     entityManager.persist(outboundProtocol);
     entityManager.persist(fieldA);
     entityManager.persist(fieldB);
     entityManager.persist(basicConfig);
+    entityManager.persist(map);
   }
 
   @Override

@@ -22,6 +22,8 @@ public class JsonSendPlugin implements SendPlugin {
       con.setRequestProperty("Content-Type", "application/json");
       con.setDoOutput(true);
 
+      LOG.debug("Send [{}] to [{}]", body, endpoint);
+
       final DataOutputStream wr = new DataOutputStream(con.getOutputStream());
       wr.writeBytes(body);
       wr.flush();

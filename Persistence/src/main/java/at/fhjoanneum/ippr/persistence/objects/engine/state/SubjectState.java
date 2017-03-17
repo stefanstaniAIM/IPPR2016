@@ -24,6 +24,8 @@ public interface SubjectState {
 
   void setToSent();
 
+  void setToNotifiedEC();
+
   void setToReceived(MessageFlow messageFlow);
 
   MessageFlow getCurrentMessageFlow();

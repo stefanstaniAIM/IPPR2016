@@ -191,7 +191,8 @@ public class VacationRequestWithoutChild extends AbstractExample {
 
     final ProcessModel pm = new ProcessModelBuilder().name("Vacation request without childs")
         .description("Request for vacation").state(ProcessModelState.ACTIVE).addSubjectModel(boss)
-        .addSubjectModel(employee).starterSubject(employee).version(1.1F).build();
+        .addSubjectModel(employee).addSubjectModel(travelMgt).starterSubject(employee).version(1.1F)
+        .build();
 
     final MessageFlow mf1 = new MessageFlowBuilder().sender(employee).receiver(boss)
         .state(empState2).assignBusinessObjectModel(vacationRequestForm).build();

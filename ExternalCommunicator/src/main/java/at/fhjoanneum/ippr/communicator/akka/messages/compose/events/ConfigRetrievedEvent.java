@@ -1,6 +1,6 @@
 package at.fhjoanneum.ippr.communicator.akka.messages.compose.events;
 
-import at.fhjoanneum.ippr.communicator.persistence.entities.basic.AbstractBasicOutboundConfiguration;
+import at.fhjoanneum.ippr.communicator.persistence.objects.basic.BasicOutboundConfiguration;
 import at.fhjoanneum.ippr.communicator.persistence.objects.internal.InternalData;
 
 public class ConfigRetrievedEvent {
@@ -8,10 +8,10 @@ public class ConfigRetrievedEvent {
   private final Long id;
   private final String transferId;
   private final InternalData data;
-  private final AbstractBasicOutboundConfiguration basicConfiguration;
+  private final BasicOutboundConfiguration basicConfiguration;
 
   public ConfigRetrievedEvent(final Long id, final String transferId, final InternalData data,
-      final AbstractBasicOutboundConfiguration basicConfiguration) {
+      final BasicOutboundConfiguration basicConfiguration) {
     this.id = id;
     this.transferId = transferId;
     this.data = data;
@@ -26,7 +26,7 @@ public class ConfigRetrievedEvent {
     return data;
   }
 
-  public AbstractBasicOutboundConfiguration getBasicConfiguration() {
+  public BasicOutboundConfiguration getBasicConfiguration() {
     return basicConfiguration;
   }
 
