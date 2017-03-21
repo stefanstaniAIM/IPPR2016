@@ -1,15 +1,15 @@
-package at.fhjoanneum.ippr.communicator.persistence.entities.basic.rest;
+package at.fhjoanneum.ippr.communicator.persistence.entities.basic.outbound.rest;
 
 import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
-import at.fhjoanneum.ippr.communicator.persistence.entities.basic.AbstractBasicOutboundConfiguration;
+import at.fhjoanneum.ippr.communicator.persistence.entities.basic.outbound.AbstractBasicOutboundConfiguration;
 import at.fhjoanneum.ippr.communicator.persistence.entities.datatypecomposer.DataTypeComposerImpl;
 import at.fhjoanneum.ippr.communicator.persistence.entities.protocol.MessageProtocolImpl;
 import at.fhjoanneum.ippr.communicator.persistence.objects.DataType;
-import at.fhjoanneum.ippr.communicator.persistence.objects.basic.RestOutboundConfiguration;
+import at.fhjoanneum.ippr.communicator.persistence.objects.basic.outbound.RestOutboundConfiguration;
 
 @Entity(name = "REST_OUTBOUND_CONFIGURATION")
 public class RestOutboundConfigurationImpl extends AbstractBasicOutboundConfiguration

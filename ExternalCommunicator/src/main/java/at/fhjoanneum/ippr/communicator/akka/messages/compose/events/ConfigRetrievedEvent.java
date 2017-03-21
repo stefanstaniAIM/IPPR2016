@@ -1,6 +1,6 @@
 package at.fhjoanneum.ippr.communicator.akka.messages.compose.events;
 
-import at.fhjoanneum.ippr.communicator.persistence.objects.basic.BasicOutboundConfiguration;
+import at.fhjoanneum.ippr.communicator.persistence.objects.basic.outbound.BasicOutboundConfiguration;
 import at.fhjoanneum.ippr.communicator.persistence.objects.internal.InternalData;
 
 public class ConfigRetrievedEvent {

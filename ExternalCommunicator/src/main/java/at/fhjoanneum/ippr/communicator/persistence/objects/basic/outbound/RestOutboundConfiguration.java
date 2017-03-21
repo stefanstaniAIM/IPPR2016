@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.communicator.persistence.objects.basic;
+package at.fhjoanneum.ippr.communicator.persistence.objects.basic.outbound;
 
 public interface RestOutboundConfiguration extends BasicOutboundConfiguration {
 

@@ -29,12 +29,12 @@ import at.fhjoanneum.ippr.communicator.akka.messages.compose.events.ConfigRetrie
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.events.SendConfigRetrievedEvent;
 import at.fhjoanneum.ippr.communicator.persistence.entities.messageflow.MessageBuilder;
 import at.fhjoanneum.ippr.communicator.persistence.entities.messageflow.MessageImpl;
-import at.fhjoanneum.ippr.communicator.persistence.objects.basic.BasicOutboundConfiguration;
-import at.fhjoanneum.ippr.communicator.persistence.objects.basic.RestOutboundConfiguration;
+import at.fhjoanneum.ippr.communicator.persistence.objects.basic.outbound.BasicOutboundConfiguration;
+import at.fhjoanneum.ippr.communicator.persistence.objects.basic.outbound.RestOutboundConfiguration;
 import at.fhjoanneum.ippr.communicator.persistence.objects.internal.InternalData;
 import at.fhjoanneum.ippr.communicator.persistence.objects.messageflow.Message;
 import at.fhjoanneum.ippr.communicator.persistence.objects.messageflow.MessageState;
-import at.fhjoanneum.ippr.communicator.repositories.BasicConfigurationRepository;
+import at.fhjoanneum.ippr.communicator.repositories.BasicOutboundConfigurationRepository;
 import at.fhjoanneum.ippr.communicator.repositories.MessageRepository;
 
 @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -48,7 +48,7 @@ public class ComposePersistenceActor extends UntypedActor {
   private MessageRepository messageRepository;
 
   @Autowired
-  private BasicConfigurationRepository basicConfigurationRepository;
+  private BasicOutboundConfigurationRepository basicConfigurationRepository;
 
   @Override
   public void onReceive(final Object msg) throws Throwable {

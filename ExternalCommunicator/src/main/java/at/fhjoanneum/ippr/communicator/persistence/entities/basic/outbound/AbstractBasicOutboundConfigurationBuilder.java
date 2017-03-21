@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.communicator.persistence.entities.basic;
+package at.fhjoanneum.ippr.communicator.persistence.entities.basic.outbound;
 
 import java.util.HashMap;
 import java.util.Map;

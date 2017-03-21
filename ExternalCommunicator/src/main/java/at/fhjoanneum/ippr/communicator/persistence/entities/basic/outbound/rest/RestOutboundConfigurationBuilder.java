@@ -1,12 +1,12 @@
-package at.fhjoanneum.ippr.communicator.persistence.entities.basic.rest;
+package at.fhjoanneum.ippr.communicator.persistence.entities.basic.outbound.rest;
 
 import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
 import at.fhjoanneum.ippr.communicator.persistence.entities.Builder;
-import at.fhjoanneum.ippr.communicator.persistence.entities.basic.AbstractBasicOutboundConfigurationBuilder;
-import at.fhjoanneum.ippr.communicator.persistence.objects.basic.RestOutboundConfiguration;
+import at.fhjoanneum.ippr.communicator.persistence.entities.basic.outbound.AbstractBasicOutboundConfigurationBuilder;
+import at.fhjoanneum.ippr.communicator.persistence.objects.basic.outbound.RestOutboundConfiguration;
 
 public class RestOutboundConfigurationBuilder extends AbstractBasicOutboundConfigurationBuilder
     implements Builder<RestOutboundConfiguration> {

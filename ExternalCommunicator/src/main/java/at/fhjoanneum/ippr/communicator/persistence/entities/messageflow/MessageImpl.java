@@ -16,8 +16,8 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import com.google.common.base.Preconditions;
 
-import at.fhjoanneum.ippr.communicator.persistence.entities.basic.AbstractBasicOutboundConfiguration;
-import at.fhjoanneum.ippr.communicator.persistence.objects.basic.BasicOutboundConfiguration;
+import at.fhjoanneum.ippr.communicator.persistence.entities.basic.outbound.AbstractBasicOutboundConfiguration;
+import at.fhjoanneum.ippr.communicator.persistence.objects.basic.outbound.BasicOutboundConfiguration;
 import at.fhjoanneum.ippr.communicator.persistence.objects.messageflow.Message;
 import at.fhjoanneum.ippr.communicator.persistence.objects.messageflow.MessageState;
 

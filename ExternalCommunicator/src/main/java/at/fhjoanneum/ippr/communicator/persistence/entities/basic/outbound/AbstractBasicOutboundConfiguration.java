@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.communicator.persistence.entities.basic;
+package at.fhjoanneum.ippr.communicator.persistence.entities.basic.outbound;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -23,7 +23,7 @@ import com.google.common.collect.Maps;
 import at.fhjoanneum.ippr.communicator.persistence.entities.datatypecomposer.DataTypeComposerImpl;
 import at.fhjoanneum.ippr.communicator.persistence.entities.protocol.MessageProtocolImpl;
 import at.fhjoanneum.ippr.communicator.persistence.objects.DataType;
-import at.fhjoanneum.ippr.communicator.persistence.objects.basic.BasicOutboundConfiguration;
+import at.fhjoanneum.ippr.communicator.persistence.objects.basic.outbound.BasicOutboundConfiguration;
 import at.fhjoanneum.ippr.communicator.persistence.objects.datatypecomposer.DataTypeComposer;
 import at.fhjoanneum.ippr.communicator.persistence.objects.protocol.MessageProtocol;
 

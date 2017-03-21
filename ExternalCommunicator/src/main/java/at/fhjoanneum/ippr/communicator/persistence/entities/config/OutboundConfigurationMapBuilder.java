@@ -5,8 +5,8 @@ import java.util.Objects;
 import com.google.common.base.Preconditions;
 
 import at.fhjoanneum.ippr.communicator.persistence.entities.Builder;
-import at.fhjoanneum.ippr.communicator.persistence.entities.basic.AbstractBasicOutboundConfiguration;
-import at.fhjoanneum.ippr.communicator.persistence.objects.basic.BasicOutboundConfiguration;
+import at.fhjoanneum.ippr.communicator.persistence.entities.basic.outbound.AbstractBasicOutboundConfiguration;
+import at.fhjoanneum.ippr.communicator.persistence.objects.basic.outbound.BasicOutboundConfiguration;
 
 public class OutboundConfigurationMapBuilder implements Builder<OutboundConfigurationMap> {
 

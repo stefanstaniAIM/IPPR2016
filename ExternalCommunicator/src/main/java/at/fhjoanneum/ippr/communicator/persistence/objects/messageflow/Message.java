@@ -1,6 +1,6 @@
 package at.fhjoanneum.ippr.communicator.persistence.objects.messageflow;
 
-import at.fhjoanneum.ippr.communicator.persistence.objects.basic.BasicOutboundConfiguration;
+import at.fhjoanneum.ippr.communicator.persistence.objects.basic.outbound.BasicOutboundConfiguration;
 
 public interface Message {
 

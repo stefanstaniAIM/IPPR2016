@@ -7,14 +7,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import at.fhjoanneum.ippr.communicator.persistence.entities.basic.rest.RestOutboundConfigurationBuilder;
+import at.fhjoanneum.ippr.communicator.persistence.entities.basic.outbound.rest.RestOutboundConfigurationBuilder;
 import at.fhjoanneum.ippr.communicator.persistence.entities.config.OutboundConfigurationMap;
 import at.fhjoanneum.ippr.communicator.persistence.entities.config.OutboundConfigurationMapBuilder;
 import at.fhjoanneum.ippr.communicator.persistence.entities.datatypecomposer.DataTypeComposerBuilder;
 import at.fhjoanneum.ippr.communicator.persistence.entities.protocol.MessageProtocolBuilder;
 import at.fhjoanneum.ippr.communicator.persistence.entities.protocol.field.MessageProtocolFieldBuilder;
 import at.fhjoanneum.ippr.communicator.persistence.objects.DataType;
-import at.fhjoanneum.ippr.communicator.persistence.objects.basic.BasicOutboundConfiguration;
+import at.fhjoanneum.ippr.communicator.persistence.objects.basic.outbound.BasicOutboundConfiguration;
 import at.fhjoanneum.ippr.communicator.persistence.objects.datatypecomposer.DataTypeComposer;
 import at.fhjoanneum.ippr.communicator.persistence.objects.protocol.MessageProtocol;
 import at.fhjoanneum.ippr.communicator.persistence.objects.protocol.MessageProtocolField;
