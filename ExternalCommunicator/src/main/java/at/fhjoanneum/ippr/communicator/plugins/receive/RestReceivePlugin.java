@@ -1,7 +1,5 @@
 package at.fhjoanneum.ippr.communicator.plugins.receive;
 
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +21,7 @@ public class RestReceivePlugin {
 
   @RequestMapping(value = "${rest.inbound.json}/{endpoint}", method = RequestMethod.POST,
       consumes = "application/json")
-  public void post(@PathVariable final String endpoint, @RequestBody final String body)
-      throws JSONException {
-
-    final JSONObject object = new JSONObject(body);
-
-    LOG.debug("Received [{}]", object);
-
+  public void post(@PathVariable final String endpoint, @RequestBody final String body) {
     externalCommunicatorService.handleExternalInputMessage(body, endpoint);
   }
 }

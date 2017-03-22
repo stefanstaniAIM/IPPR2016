@@ -13,6 +13,7 @@ import akka.actor.ActorRef;
 import akka.japi.pf.ReceiveBuilder;
 import at.fhjoanneum.ippr.communicator.akka.messages.commands.ConfigRetrievalCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.parse.commands.ParseMessageCreateCommand;
+import at.fhjoanneum.ippr.communicator.akka.messages.parse.events.ConfigRetrievedEvent;
 import at.fhjoanneum.ippr.communicator.akka.messages.parse.events.ParseMessageCreatedEvent;
 import at.fhjoanneum.ippr.communicator.persistence.entities.messageflow.MessageBuilder;
 import at.fhjoanneum.ippr.communicator.persistence.entities.messageflow.MessageImpl;
@@ -61,7 +62,9 @@ public class ParsePersistenceActor extends AbstractActor {
 
   private void handleConfigRetrievalCommand(final ConfigRetrievalCommand cmd) {
     final Message msg = messageRepository.findOne(cmd.getId());
-    LOG.debug("+++++++++++++++{}", msg);
+    sender().tell(
+        new ConfigRetrievedEvent(cmd.getId(), msg.getInboundConfiguration(), msg.getExternalData()),
+        self());
   }
 
   private void stop() {

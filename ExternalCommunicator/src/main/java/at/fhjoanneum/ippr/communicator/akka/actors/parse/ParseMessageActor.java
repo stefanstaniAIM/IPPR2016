@@ -17,6 +17,8 @@ import at.fhjoanneum.ippr.communicator.akka.config.SpringExtension;
 import at.fhjoanneum.ippr.communicator.akka.messages.commands.ConfigRetrievalCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.parse.commands.ParseMessageCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.parse.commands.ParseMessageCreateCommand;
+import at.fhjoanneum.ippr.communicator.akka.messages.parse.events.ConfigRetrievedEvent;
+import at.fhjoanneum.ippr.communicator.parser.Parser;
 
 @Transactional(isolation = Isolation.READ_COMMITTED)
 @Component("ParseMessageActor")
@@ -33,11 +35,21 @@ public class ParseMessageActor extends AbstractActor {
         .match(ParseMessageCreateCommand.class,
             cmd -> getDBPersistenceActor().tell(cmd, getContext().parent()))
         .match(ParseMessageCommand.class, this::handleParseMessageCommand)
+        .match(ConfigRetrievedEvent.class, this::handleConfigRetrievedEvent)
         .matchAny(o -> LOG.warn("Unhandled message [{}]", o)).build());
   }
 
   private void handleParseMessageCommand(final ParseMessageCommand cmd) {
     getDBPersistenceActor().tell(new ConfigRetrievalCommand(cmd.getId()), self());
+  }
+
+  private void handleConfigRetrievedEvent(final ConfigRetrievedEvent evt) throws Exception {
+    final Parser parser =
+        getClass().getClassLoader().loadClass(evt.getBasicConfiguration().getParserClass())
+            .asSubclass(Parser.class).newInstance();
+
+    parser.parse(evt.getData(), evt.getBasicConfiguration().getMessageProtocol(),
+        evt.getBasicConfiguration().getDataTypeParser());
   }
 
   private ActorRef getDBPersistenceActor() {
