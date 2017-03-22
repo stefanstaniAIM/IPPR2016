@@ -34,6 +34,12 @@ public class AkkaApplicationConfiguration {
   }
 
   @Bean
+  public ActorRef parseSupervisorActor() {
+    return actorSystem().actorOf(springExtension.props("ParseSupervisorActor"),
+        "ParseSupervisorActor");
+  }
+
+  @Bean
   public Config akkaConfiguration() {
     return ConfigFactory.load();
   }

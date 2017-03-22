@@ -18,10 +18,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
+import at.fhjoanneum.ippr.communicator.akka.messages.commands.ConfigRetrievalCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.commands.StoreExternalDataCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.commands.UpdateMessageStateCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.ComposeMessageCreateCommand;
-import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.ConfigRetrievalCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.SendConfigRetrieveCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.events.ComposeMessageCreatedEvent;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.events.ComposedMessageEvent;
@@ -122,10 +122,8 @@ public class ComposePersistenceActor extends UntypedActor {
     final ObjectMapper mapper = new ObjectMapper();
     final InternalData data = mapper.readValue(msg.getInternalData(), InternalData.class);
 
-
     final BasicOutboundConfiguration config = msg.getOutboundConfiguration();
     LOG.debug("Retrieved config [{}]", config);
-
 
     getContext().parent()
         .tell(new ConfigRetrievedEvent(cmd.getId(), msg.getTransferId(), data, config), getSelf());

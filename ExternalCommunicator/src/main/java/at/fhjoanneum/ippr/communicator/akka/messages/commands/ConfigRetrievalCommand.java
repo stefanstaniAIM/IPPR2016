@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.communicator.akka.messages.compose.commands;
+package at.fhjoanneum.ippr.communicator.akka.messages.commands;
 
 public class ConfigRetrievalCommand {
 

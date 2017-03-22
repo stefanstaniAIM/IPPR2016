@@ -12,11 +12,11 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
-import org.hibernate.validator.constraints.NotBlank;
-
 import com.google.common.base.Preconditions;
 
+import at.fhjoanneum.ippr.communicator.persistence.entities.basic.inbound.AbstractBasicInboundConfiguration;
 import at.fhjoanneum.ippr.communicator.persistence.entities.basic.outbound.AbstractBasicOutboundConfiguration;
+import at.fhjoanneum.ippr.communicator.persistence.objects.basic.inbound.BasicInboundConfiguration;
 import at.fhjoanneum.ippr.communicator.persistence.objects.basic.outbound.BasicOutboundConfiguration;
 import at.fhjoanneum.ippr.communicator.persistence.objects.messageflow.Message;
 import at.fhjoanneum.ippr.communicator.persistence.objects.messageflow.MessageState;
@@ -30,7 +30,6 @@ public class MessageImpl implements Serializable, Message {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
-  @NotBlank
   @Column
   private String transferId;
 
@@ -48,6 +47,9 @@ public class MessageImpl implements Serializable, Message {
 
   @ManyToOne
   private AbstractBasicOutboundConfiguration outboundConfiguration;
+
+  @ManyToOne
+  private AbstractBasicInboundConfiguration inboundConfiguration;
 
   MessageImpl() {}
 
@@ -74,6 +76,13 @@ public class MessageImpl implements Serializable, Message {
     Preconditions
         .checkArgument(outboundConfiguration instanceof AbstractBasicOutboundConfiguration);
     this.outboundConfiguration = (AbstractBasicOutboundConfiguration) outboundConfiguration;
+  }
+
+  @Override
+  public void setInboundConfiguration(final BasicInboundConfiguration inboundConfiguration) {
+    Preconditions.checkNotNull(inboundConfiguration);
+    Preconditions.checkArgument(inboundConfiguration instanceof AbstractBasicInboundConfiguration);
+    this.inboundConfiguration = (AbstractBasicInboundConfiguration) inboundConfiguration;
   }
 
   @Override
@@ -109,6 +118,11 @@ public class MessageImpl implements Serializable, Message {
   @Override
   public BasicOutboundConfiguration getOutboundConfiguration() {
     return outboundConfiguration;
+  }
+
+  @Override
+  public BasicInboundConfiguration getInboundConfiguration() {
+    return inboundConfiguration;
   }
 
   @Override

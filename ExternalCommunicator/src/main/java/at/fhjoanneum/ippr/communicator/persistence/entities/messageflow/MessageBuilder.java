@@ -25,7 +25,6 @@ public class MessageBuilder implements Builder<Message> {
 
   @Override
   public Message build() {
-    Preconditions.checkNotNull(transferid);
     Preconditions.checkNotNull(messageState);
     return new MessageImpl(transferid, messageState);
   }

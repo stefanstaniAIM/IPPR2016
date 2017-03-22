@@ -5,4 +5,6 @@ import at.fhjoanneum.ippr.commons.dto.communicator.ExternalOutputMessage;
 public interface ExternalCommunicatorService {
 
   void handleExternalOutputMessage(ExternalOutputMessage message);
+
+  void handleExternalInputMessage(String body, String endpoint);
 }

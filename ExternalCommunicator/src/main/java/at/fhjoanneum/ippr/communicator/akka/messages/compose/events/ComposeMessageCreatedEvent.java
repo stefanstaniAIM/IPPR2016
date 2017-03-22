@@ -1,6 +1,8 @@
 package at.fhjoanneum.ippr.communicator.akka.messages.compose.events;
 
-public class ComposeMessageCreatedEvent extends AbstracComposeEvent {
+import at.fhjoanneum.ippr.communicator.akka.messages.AbstractEvent;
+
+public class ComposeMessageCreatedEvent extends AbstractEvent {
 
   private final Long id;
 
