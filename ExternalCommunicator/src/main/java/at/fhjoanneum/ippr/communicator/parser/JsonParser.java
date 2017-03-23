@@ -1,8 +1,10 @@
 package at.fhjoanneum.ippr.communicator.parser;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
@@ -12,9 +14,12 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
 import at.fhjoanneum.ippr.communicator.global.GlobalKey;
+import at.fhjoanneum.ippr.communicator.parser.datatype.ParserUtils;
 import at.fhjoanneum.ippr.communicator.persistence.objects.DataType;
 import at.fhjoanneum.ippr.communicator.persistence.objects.datatypeparser.DataTypeParser;
 import at.fhjoanneum.ippr.communicator.persistence.objects.internal.InternalData;
+import at.fhjoanneum.ippr.communicator.persistence.objects.internal.InternalField;
+import at.fhjoanneum.ippr.communicator.persistence.objects.internal.InternalObject;
 import at.fhjoanneum.ippr.communicator.persistence.objects.protocol.MessageProtocol;
 
 public class JsonParser implements Parser {
@@ -24,6 +29,7 @@ public class JsonParser implements Parser {
   private String typeName = "TYPE";
 
   private final Table<String, String, String> cache = HashBasedTable.create();
+  private final Map<String, InternalObject> objects = new HashMap<>();
 
   @Override
   public InternalData parse(final String input, final MessageProtocol messageProtocol,
@@ -34,10 +40,9 @@ public class JsonParser implements Parser {
     typeName = configuration.get(GlobalKey.TYPE);
 
     getValues(object, null);
+    convertToInternalObject(messageProtocol);
 
-    LOG.debug("{}", cache);
-
-    return null;
+    return new InternalData(objects);
   }
 
   private void getValues(final JSONObject object, String type) throws JSONException {
@@ -60,9 +65,30 @@ public class JsonParser implements Parser {
     }
   }
 
-  private InternalData convert() {
-    return null;
+  private void convertToInternalObject(final MessageProtocol protocol) {
+    final Map<String, String> row = cache.row(protocol.getExternalName());
+    final Map<String, InternalField> fields = new HashMap<>();
+
+    protocol.getFields().stream().forEachOrdered(field -> {
+
+      if (field.isMandatory()
+          && (row == null || StringUtils.isBlank(row.get(field.getExternalName())))) {
+        throw new IllegalArgumentException("Missing field [" + field + "]");
+      }
+
+      String value = row.get(field.getExternalName());
+      value = StringUtils.isBlank(value) ? field.getDefaultValue() : value;
+      value = ParserUtils.parse(value, field.getDataType());
+
+      fields.put(field.getInternalName(),
+          new InternalField(field.getInternalName(), field.getDataType(), value));
+    });
+
+    objects.put(protocol.getInternalName(), new InternalObject(protocol.getInternalName(), fields));
+
+    protocol.getChildren().forEach(this::convertToInternalObject);
   }
+
 
   @Override
   public String getDescription() {

@@ -13,6 +13,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
@@ -38,11 +41,12 @@ public class MessageProtocolImpl implements MessageProtocol, Serializable {
   @OneToMany(mappedBy = "messageProtocol", fetch = FetchType.EAGER)
   private final List<MessageProtocolFieldImpl> fields = Lists.newArrayList();
 
-  @ManyToOne
+  @ManyToOne()
   @JoinColumn(name = "parent_bom_id")
   private MessageProtocolImpl parent;
 
   @OneToMany(mappedBy = "parent")
+  @LazyCollection(LazyCollectionOption.FALSE)
   private final List<MessageProtocolImpl> children = Lists.newArrayList();
 
   MessageProtocolImpl() {}

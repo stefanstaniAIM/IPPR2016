@@ -16,9 +16,12 @@ import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import akka.japi.pf.ReceiveBuilder;
 import at.fhjoanneum.ippr.communicator.akka.config.SpringExtension;
+import at.fhjoanneum.ippr.communicator.akka.messages.events.WorkflowFinishedEvent;
+import at.fhjoanneum.ippr.communicator.akka.messages.parse.commands.NotifyProcessEngineCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.parse.commands.ParseMessageCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.parse.commands.ParseMessageCreateCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.parse.events.ParseMessageCreatedEvent;
+import at.fhjoanneum.ippr.communicator.akka.messages.parse.events.ParsedMessageEvent;
 
 @Transactional(isolation = Isolation.READ_COMMITTED)
 @Component("ParseSupervisorActor")
@@ -36,6 +39,8 @@ public class ParseSupervisorActor extends AbstractActor {
     receive(
         ReceiveBuilder.match(ParseMessageCreateCommand.class, this::handleParseMessageCreateCommand)
             .match(ParseMessageCreatedEvent.class, this::handleParseMessageCreatedEvent)
+            .match(ParsedMessageEvent.class, this::handleParsedMessageEvent)
+            .match(WorkflowFinishedEvent.class, this::handleWorkflowFinishedEvent)
             .matchAny(o -> LOG.warn("Unhandled message [{}]", o)).build());
   }
 
@@ -49,5 +54,16 @@ public class ParseSupervisorActor extends AbstractActor {
   private void handleParseMessageCreatedEvent(final ParseMessageCreatedEvent evt) {
     final ActorRef actor = actors.get(evt.getActorId());
     actor.tell(new ParseMessageCommand(evt.getId()), self());
+  }
+
+  private void handleParsedMessageEvent(final ParsedMessageEvent evt) {
+    final ActorRef actor = actors.get(evt.getActorId());
+    actor.tell(new NotifyProcessEngineCommand(evt.getId()), self());
+  }
+
+  private void handleWorkflowFinishedEvent(final WorkflowFinishedEvent evt) {
+    final ActorRef actor = actors.get(evt.getActorId());
+    getContext().stop(actor);
+    actors.remove(evt.getActorId());
   }
 }

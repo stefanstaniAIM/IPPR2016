@@ -14,19 +14,19 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import at.fhjoanneum.ippr.communicator.akka.messages.commands.ConfigRetrievalCommand;
-import at.fhjoanneum.ippr.communicator.akka.messages.commands.StoreExternalDataCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.commands.UpdateMessageStateCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.ComposeMessageCreateCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.SendConfigRetrieveCommand;
+import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.StoreExternalDataCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.events.ComposeMessageCreatedEvent;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.events.ComposedMessageEvent;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.events.ConfigRetrievedEvent;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.events.SendConfigRetrievedEvent;
+import at.fhjoanneum.ippr.communicator.akka.messages.events.WorkflowFinishedEvent;
 import at.fhjoanneum.ippr.communicator.persistence.entities.messageflow.MessageBuilder;
 import at.fhjoanneum.ippr.communicator.persistence.entities.messageflow.MessageImpl;
 import at.fhjoanneum.ippr.communicator.persistence.objects.basic.outbound.BasicOutboundConfiguration;
@@ -35,6 +35,7 @@ import at.fhjoanneum.ippr.communicator.persistence.objects.messageflow.Message;
 import at.fhjoanneum.ippr.communicator.persistence.objects.messageflow.MessageState;
 import at.fhjoanneum.ippr.communicator.repositories.BasicOutboundConfigurationRepository;
 import at.fhjoanneum.ippr.communicator.repositories.MessageRepository;
+import at.fhjoanneum.ippr.communicator.utils.InternalDataUtils;
 
 @Transactional(isolation = Isolation.READ_COMMITTED)
 @Component("ComposePersistenceActor")
@@ -72,9 +73,8 @@ public class ComposePersistenceActor extends UntypedActor {
     final Message message = new MessageBuilder().transferId(cmd.getTransferId())
         .messageState(MessageState.TO_COMPOSE).build();
 
-    final ObjectMapper mapper = new ObjectMapper();
-    final String value = mapper.writeValueAsString(cmd.getData());
-    message.setInternalData(value);
+
+    message.setInternalData(InternalDataUtils.convertInternalDataToJson(cmd.getData()));
 
     final BasicOutboundConfiguration configuration =
         basicConfigurationRepository.findOne(cmd.getConfigId());
@@ -118,8 +118,7 @@ public class ComposePersistenceActor extends UntypedActor {
     final ConfigRetrievalCommand cmd = (ConfigRetrievalCommand) obj;
 
     final Message msg = messageRepository.findOne(cmd.getId());
-    final ObjectMapper mapper = new ObjectMapper();
-    final InternalData data = mapper.readValue(msg.getInternalData(), InternalData.class);
+    final InternalData data = InternalDataUtils.convertJsonToInternalData(msg.getInternalData());
 
     final BasicOutboundConfiguration config = msg.getOutboundConfiguration();
     LOG.debug("Retrieved config [{}]", config);
@@ -138,6 +137,7 @@ public class ComposePersistenceActor extends UntypedActor {
 
     getContext().parent().tell(new SendConfigRetrievedEvent(cmd.getId(), msg.getTransferId(),
         config.getSendPlugin(), msg.getExternalData(), config.getConfiguration()), getSelf());
+    stop();
   }
 
   private void handleUpdateMessageStateCommand(final Object obj) {
@@ -146,6 +146,10 @@ public class ComposePersistenceActor extends UntypedActor {
     final Message message = messageRepository.findOne(cmd.getId());
     message.setMessageState(cmd.getMessageState());
     messageRepository.save((MessageImpl) message);
+
+    final String actorId = getContext().parent().path().name();
+    sender().tell(new WorkflowFinishedEvent(actorId), self());
+    stop();
   }
 
   private void stop() {

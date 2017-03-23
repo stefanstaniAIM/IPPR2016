@@ -1,6 +1,6 @@
 package at.fhjoanneum.ippr.communicator.composer.datatype;
 
-public interface DataTypeComposer<T> {
+public interface DataTypeComposer {
 
-  String compose(T input);
+  String compose(String input);
 }

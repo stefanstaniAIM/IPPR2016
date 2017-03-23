@@ -6,9 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import at.fhjoanneum.ippr.commons.dto.communicator.ExternalOutputMessage;
 import at.fhjoanneum.ippr.persistence.entities.engine.state.SubjectStateImpl;
 import at.fhjoanneum.ippr.persistence.objects.engine.subject.Subject;
 import at.fhjoanneum.ippr.processengine.repositories.SubjectRepository;
@@ -37,5 +40,10 @@ public class ProcessEngineFeignController {
     LOG.info("Marked as 'SENT' [{}]", subject.getSubjectState());
 
     subjectStateRepository.save((SubjectStateImpl) subject.getSubjectState());
+  }
+
+  @RequestMapping(value = "pe/receive", method = RequestMethod.POST)
+  public void receive(@RequestBody final ExternalOutputMessage msg) {
+    LOG.debug("Received [{}]", msg);
   }
 }

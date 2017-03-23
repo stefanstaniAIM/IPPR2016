@@ -14,12 +14,12 @@ import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import at.fhjoanneum.ippr.communicator.akka.config.SpringExtension;
 import at.fhjoanneum.ippr.communicator.akka.messages.commands.ConfigRetrievalCommand;
-import at.fhjoanneum.ippr.communicator.akka.messages.commands.StoreExternalDataCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.commands.UpdateMessageStateCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.ComposeMessageCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.ComposeMessageCreateCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.SendConfigRetrieveCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.SendMessageCommand;
+import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.StoreExternalDataCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.events.ConfigRetrievedEvent;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.events.SendConfigRetrievedEvent;
 import at.fhjoanneum.ippr.communicator.composer.Composer;
@@ -97,9 +97,9 @@ public class ComposeMessageActor extends UntypedActor {
 
     final boolean sent = plugin.send(evt.getBody(), evt.getConfiguration());
     if (sent) {
-      getDBPersistenceActor().tell(new UpdateMessageStateCommand(evt.getId(), MessageState.SENT),
-          getSelf());
       processEngineClient.markAsSent(evt.getTransferId());
+      getDBPersistenceActor().tell(new UpdateMessageStateCommand(evt.getId(), MessageState.SENT),
+          getContext().parent());
     }
   }
 

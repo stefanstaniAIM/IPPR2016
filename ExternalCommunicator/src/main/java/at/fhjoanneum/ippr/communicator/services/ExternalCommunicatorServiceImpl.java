@@ -70,7 +70,6 @@ public class ExternalCommunicatorServiceImpl implements ExternalCommunicatorServ
     return outboundConfigurationAssignementRepository.findByMessageFlowId(messageFlowId).getId();
   }
 
-  @Async
   @Override
   public void handleExternalInputMessage(final String body, final String endpoint) {
     final Optional<BasicInboundConfiguration> configOpt = Optional

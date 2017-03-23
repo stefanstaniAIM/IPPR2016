@@ -20,6 +20,7 @@ import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.ComposeMes
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.SendMessageCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.events.ComposeMessageCreatedEvent;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.events.ComposedMessageEvent;
+import at.fhjoanneum.ippr.communicator.akka.messages.events.WorkflowFinishedEvent;
 
 @Transactional(isolation = Isolation.READ_COMMITTED)
 @Component("ComposeSupervisorActor")
@@ -41,6 +42,8 @@ public class ComposeSupervisorActor extends UntypedActor {
       handleComposeMessageCreatedEvent(msg);
     } else if (msg instanceof ComposedMessageEvent) {
       handleComposedMessagenEvent(msg);
+    } else if (msg instanceof WorkflowFinishedEvent) {
+      handleWorkflowFinishedEvent(msg);
     } else {
       LOG.warn("Unhandled message [{}]", msg);
       unhandled(msg);
@@ -64,5 +67,12 @@ public class ComposeSupervisorActor extends UntypedActor {
     final ComposedMessageEvent evt = (ComposedMessageEvent) msg;
     final ActorRef actor = actors.get(evt.getActorId());
     actor.tell(new SendMessageCommand(evt.getId()), getSelf());
+  }
+
+  private void handleWorkflowFinishedEvent(final Object msg) {
+    final WorkflowFinishedEvent evt = (WorkflowFinishedEvent) msg;
+    final ActorRef actor = actors.get(evt.getActorId());
+    getContext().stop(actor);
+    actors.remove(evt.getActorId());
   }
 }

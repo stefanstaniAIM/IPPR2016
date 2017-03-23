@@ -98,9 +98,8 @@ public class MessageProtocolFieldImpl implements MessageProtocolField, Serializa
 
   @Override
   public String toString() {
-    return "MessageProtocolField [id=" + id + ", messageProtocol=" + messageProtocol
-        + ", externalName=" + externalName + ", internalName=" + internalName + ", dataType="
-        + dataType + ", mandatory=" + mandatory + ", defaultValue=" + defaultValue + "]";
+    return "MessageProtocolField [id=" + id + ", externalName=" + externalName + ", internalName="
+        + internalName + ", dataType=" + dataType + ", mandatory=" + mandatory + "]";
   }
 
   @Override

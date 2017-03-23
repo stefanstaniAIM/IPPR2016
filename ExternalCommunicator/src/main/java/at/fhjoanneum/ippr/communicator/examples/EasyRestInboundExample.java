@@ -43,8 +43,9 @@ public class EasyRestInboundExample extends AbstractExample {
     final MessageProtocol inboundProtocol = new MessageProtocolBuilder()
         .internalName("Hotel Reservation").externalName("Hotel Reservierung").build();
     basic.messageProtocol(inboundProtocol);
-    final MessageProtocolField fieldA = new MessageProtocolFieldBuilder().internalName("Name")
-        .externalName("Name").dataType(DataType.STRING).messageProtocol(inboundProtocol).build();
+    final MessageProtocolField fieldA =
+        new MessageProtocolFieldBuilder().internalName("Name").externalName("Name")
+            .dataType(DataType.STRING).messageProtocol(inboundProtocol).mandatory(true).build();
     final MessageProtocolField fieldB = new MessageProtocolFieldBuilder().internalName("Stars")
         .externalName("Sterne").dataType(DataType.STRING).messageProtocol(inboundProtocol).build();
 
