@@ -2,6 +2,7 @@ package at.fhjoanneum.ippr.communicator.services;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,11 +14,14 @@ import akka.actor.ActorRef;
 import at.fhjoanneum.ippr.commons.dto.communicator.ExternalOutputMessage;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.ComposeMessageCreateCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.parse.commands.ParseMessageCreateCommand;
+import at.fhjoanneum.ippr.communicator.global.GlobalKey;
 import at.fhjoanneum.ippr.communicator.persistence.objects.DataType;
+import at.fhjoanneum.ippr.communicator.persistence.objects.basic.inbound.BasicInboundConfiguration;
 import at.fhjoanneum.ippr.communicator.persistence.objects.internal.InternalData;
 import at.fhjoanneum.ippr.communicator.persistence.objects.internal.InternalField;
 import at.fhjoanneum.ippr.communicator.persistence.objects.internal.InternalObject;
-import at.fhjoanneum.ippr.communicator.repositories.OutboundConfigurationMapRepository;
+import at.fhjoanneum.ippr.communicator.repositories.BasicInboundConfigurationRepository;
+import at.fhjoanneum.ippr.communicator.repositories.OutboundConfigurationAssignementRepository;
 
 @Service
 public class ExternalCommunicatorServiceImpl implements ExternalCommunicatorService {
@@ -31,7 +35,10 @@ public class ExternalCommunicatorServiceImpl implements ExternalCommunicatorServ
   private ActorRef parseSupervisorActor;
 
   @Autowired
-  private OutboundConfigurationMapRepository outboundConfigurationMapRepository;
+  private OutboundConfigurationAssignementRepository outboundConfigurationAssignementRepository;
+
+  @Autowired
+  private BasicInboundConfigurationRepository basicInboundCongurationRepository;
 
   @Async
   @Override
@@ -60,16 +67,18 @@ public class ExternalCommunicatorServiceImpl implements ExternalCommunicatorServ
   }
 
   private Long getActiveOutboundConfig(final Long messageFlowId) {
-    return outboundConfigurationMapRepository.findByMessageFlowId(messageFlowId).getId();
+    return outboundConfigurationAssignementRepository.findByMessageFlowId(messageFlowId).getId();
   }
 
   @Async
   @Override
   public void handleExternalInputMessage(final String body, final String endpoint) {
-    // final RestInboundConfiguration config =
-    // restInboundConfigurationRepository.findByEndpoint(endpoint)
-    // .orElseThrow(() -> new IllegalArgumentException("No config found!"));
+    final Optional<BasicInboundConfiguration> configOpt = Optional
+        .ofNullable(basicInboundCongurationRepository.findByEndpoint(GlobalKey.ENDPOINT, endpoint));
 
-    parseSupervisorActor.tell(new ParseMessageCreateCommand(body, 1L), ActorRef.noSender());
+    final BasicInboundConfiguration config =
+        configOpt.orElseThrow(() -> new IllegalArgumentException("No config found!"));
+    parseSupervisorActor.tell(new ParseMessageCreateCommand(body, config.getId()),
+        ActorRef.noSender());
   }
 }

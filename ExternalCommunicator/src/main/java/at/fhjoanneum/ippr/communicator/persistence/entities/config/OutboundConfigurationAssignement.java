@@ -14,8 +14,8 @@ import javax.validation.constraints.NotNull;
 import at.fhjoanneum.ippr.communicator.persistence.entities.basic.outbound.BasicOutboundConfigurationImpl;
 import at.fhjoanneum.ippr.communicator.persistence.objects.basic.outbound.BasicOutboundConfiguration;
 
-@Entity(name = "OUTBOUND_CONFIGURATION_MAP")
-public class OutboundConfigurationMap implements Serializable {
+@Entity(name = "OUTBOUND_CONFIGURATION_ASSIGNMENT")
+public class OutboundConfigurationAssignement implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
@@ -32,9 +32,9 @@ public class OutboundConfigurationMap implements Serializable {
   @JoinColumn(name = "CONFIG_ID")
   private BasicOutboundConfigurationImpl outboundConfiguration;
 
-  OutboundConfigurationMap() {}
+  OutboundConfigurationAssignement() {}
 
-  OutboundConfigurationMap(final Long messageFlowId,
+  OutboundConfigurationAssignement(final Long messageFlowId,
       final BasicOutboundConfigurationImpl outboundConfiguration) {
     this.messageFlowId = messageFlowId;
     this.outboundConfiguration = outboundConfiguration;
@@ -77,7 +77,7 @@ public class OutboundConfigurationMap implements Serializable {
     if (getClass() != obj.getClass()) {
       return false;
     }
-    final OutboundConfigurationMap other = (OutboundConfigurationMap) obj;
+    final OutboundConfigurationAssignement other = (OutboundConfigurationAssignement) obj;
     if (id == null) {
       if (other.id != null) {
         return false;

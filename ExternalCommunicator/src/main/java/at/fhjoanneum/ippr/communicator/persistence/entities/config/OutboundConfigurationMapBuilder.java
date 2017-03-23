@@ -8,7 +8,7 @@ import at.fhjoanneum.ippr.communicator.persistence.entities.Builder;
 import at.fhjoanneum.ippr.communicator.persistence.entities.basic.outbound.BasicOutboundConfigurationImpl;
 import at.fhjoanneum.ippr.communicator.persistence.objects.basic.outbound.BasicOutboundConfiguration;
 
-public class OutboundConfigurationMapBuilder implements Builder<OutboundConfigurationMap> {
+public class OutboundConfigurationMapBuilder implements Builder<OutboundConfigurationAssignement> {
 
   private Long messageFlowId;
   private BasicOutboundConfigurationImpl outboundConfiguration;
@@ -28,10 +28,10 @@ public class OutboundConfigurationMapBuilder implements Builder<OutboundConfigur
   }
 
   @Override
-  public OutboundConfigurationMap build() {
+  public OutboundConfigurationAssignement build() {
     Objects.requireNonNull(messageFlowId);
     Objects.requireNonNull(outboundConfiguration);
-    return new OutboundConfigurationMap(messageFlowId, outboundConfiguration);
+    return new OutboundConfigurationAssignement(messageFlowId, outboundConfiguration);
   }
 
 }
