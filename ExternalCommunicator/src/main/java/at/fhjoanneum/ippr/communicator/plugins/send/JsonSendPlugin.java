@@ -3,6 +3,7 @@ package at.fhjoanneum.ippr.communicator.plugins.send;
 import java.io.DataOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,8 +14,9 @@ public class JsonSendPlugin implements SendPlugin {
   private static final Logger LOG = LoggerFactory.getLogger(JsonSendPlugin.class);
 
   @Override
-  public boolean send(final String body, final String endpoint) {
+  public boolean send(final String body, final Map<String, String> configuration) {
     try {
+      final String endpoint = configuration.get("ENDPOINT");
       final URL obj = new URL(endpoint);
       final HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 

@@ -95,7 +95,7 @@ public class ComposeMessageActor extends UntypedActor {
     final SendPlugin plugin = getClass().getClassLoader().loadClass(evt.getSendPlugin())
         .asSubclass(SendPlugin.class).newInstance();
 
-    final boolean sent = plugin.send(evt.getBody(), evt.getEndpoint());
+    final boolean sent = plugin.send(evt.getBody(), evt.getConfiguration());
     if (sent) {
       getDBPersistenceActor().tell(new UpdateMessageStateCommand(evt.getId(), MessageState.SENT),
           getSelf());

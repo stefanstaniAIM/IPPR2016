@@ -30,7 +30,6 @@ import at.fhjoanneum.ippr.communicator.akka.messages.compose.events.SendConfigRe
 import at.fhjoanneum.ippr.communicator.persistence.entities.messageflow.MessageBuilder;
 import at.fhjoanneum.ippr.communicator.persistence.entities.messageflow.MessageImpl;
 import at.fhjoanneum.ippr.communicator.persistence.objects.basic.outbound.BasicOutboundConfiguration;
-import at.fhjoanneum.ippr.communicator.persistence.objects.basic.outbound.RestOutboundConfiguration;
 import at.fhjoanneum.ippr.communicator.persistence.objects.internal.InternalData;
 import at.fhjoanneum.ippr.communicator.persistence.objects.messageflow.Message;
 import at.fhjoanneum.ippr.communicator.persistence.objects.messageflow.MessageState;
@@ -137,14 +136,8 @@ public class ComposePersistenceActor extends UntypedActor {
     final BasicOutboundConfiguration config = msg.getOutboundConfiguration();
     LOG.debug("Retrieved config [{}]", config);
 
-    String endpoint = null;
-    if (config instanceof RestOutboundConfiguration) {
-      final RestOutboundConfiguration restConfig = (RestOutboundConfiguration) config;
-      endpoint = restConfig.getEndpoint();
-    }
-
     getContext().parent().tell(new SendConfigRetrievedEvent(cmd.getId(), msg.getTransferId(),
-        config.getSendPlugin(), endpoint, msg.getExternalData()), getSelf());
+        config.getSendPlugin(), msg.getExternalData(), config.getConfiguration()), getSelf());
   }
 
   private void handleUpdateMessageStateCommand(final Object obj) {

@@ -14,12 +14,10 @@ import at.fhjoanneum.ippr.commons.dto.communicator.ExternalOutputMessage;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.ComposeMessageCreateCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.parse.commands.ParseMessageCreateCommand;
 import at.fhjoanneum.ippr.communicator.persistence.objects.DataType;
-import at.fhjoanneum.ippr.communicator.persistence.objects.basic.inbound.RestInboundConfiguration;
 import at.fhjoanneum.ippr.communicator.persistence.objects.internal.InternalData;
 import at.fhjoanneum.ippr.communicator.persistence.objects.internal.InternalField;
 import at.fhjoanneum.ippr.communicator.persistence.objects.internal.InternalObject;
 import at.fhjoanneum.ippr.communicator.repositories.OutboundConfigurationMapRepository;
-import at.fhjoanneum.ippr.communicator.repositories.RestInboundConfigurationRepository;
 
 @Service
 public class ExternalCommunicatorServiceImpl implements ExternalCommunicatorService {
@@ -34,9 +32,6 @@ public class ExternalCommunicatorServiceImpl implements ExternalCommunicatorServ
 
   @Autowired
   private OutboundConfigurationMapRepository outboundConfigurationMapRepository;
-
-  @Autowired
-  private RestInboundConfigurationRepository restInboundConfigurationRepository;
 
   @Async
   @Override
@@ -71,11 +66,10 @@ public class ExternalCommunicatorServiceImpl implements ExternalCommunicatorServ
   @Async
   @Override
   public void handleExternalInputMessage(final String body, final String endpoint) {
-    final RestInboundConfiguration config =
-        restInboundConfigurationRepository.findByEndpoint(endpoint)
-            .orElseThrow(() -> new IllegalArgumentException("No config found!"));
+    // final RestInboundConfiguration config =
+    // restInboundConfigurationRepository.findByEndpoint(endpoint)
+    // .orElseThrow(() -> new IllegalArgumentException("No config found!"));
 
-    parseSupervisorActor.tell(new ParseMessageCreateCommand(body, config.getId()),
-        ActorRef.noSender());
+    parseSupervisorActor.tell(new ParseMessageCreateCommand(body, 1L), ActorRef.noSender());
   }
 }

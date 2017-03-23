@@ -49,7 +49,8 @@ public class ParseMessageActor extends AbstractActor {
             .asSubclass(Parser.class).newInstance();
 
     parser.parse(evt.getData(), evt.getBasicConfiguration().getMessageProtocol(),
-        evt.getBasicConfiguration().getDataTypeParser());
+        evt.getBasicConfiguration().getDataTypeParser(),
+        evt.getBasicConfiguration().getConfiguration());
   }
 
   private ActorRef getDBPersistenceActor() {

@@ -3,8 +3,11 @@ package at.fhjoanneum.ippr.communicator.persistence.entities.basic.inbound;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -17,6 +20,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
+import javax.persistence.MapKeyColumn;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -27,9 +31,9 @@ import at.fhjoanneum.ippr.communicator.persistence.objects.basic.inbound.BasicIn
 import at.fhjoanneum.ippr.communicator.persistence.objects.datatypeparser.DataTypeParser;
 import at.fhjoanneum.ippr.communicator.persistence.objects.protocol.MessageProtocol;
 
-@Entity
+@Entity(name = "BASIC_INBOUND_CONFIGURATION")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class AbstractBasicInboundConfiguration implements BasicInboundConfiguration, Serializable {
+public class BasicInboundConfigurationImpl implements BasicInboundConfiguration, Serializable {
 
   private static final long serialVersionUID = 1L;
 
@@ -48,19 +52,30 @@ public class AbstractBasicInboundConfiguration implements BasicInboundConfigurat
 
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(name = "basic_configuration_parser_map",
-      joinColumns = {@JoinColumn(name = "abstract_basic_configuration_id")},
+      joinColumns = {@JoinColumn(name = "basic_configuration_id")},
       inverseJoinColumns = {@JoinColumn(name = "parser_id")})
   @MapKey
-  private final Map<DataType, DataTypeParserImpl> parser = new HashMap<>();
+  private Map<DataType, DataTypeParserImpl> parser = new HashMap<>();
 
-  protected AbstractBasicInboundConfiguration() {}
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "BASIC_INBOUND_CONFIGURATION_MAP",
+      joinColumns = @JoinColumn(name = "basic_configuration_id"))
+  @MapKeyColumn(name = "CONFIG_KEY")
+  @Column(name = "VALUE")
+  private Map<String, String> configuration = new HashMap<>();
 
-  protected AbstractBasicInboundConfiguration(final String name,
-      final MessageProtocolImpl messageProtocol, final String parserClass) {
+  BasicInboundConfigurationImpl() {}
+
+  BasicInboundConfigurationImpl(final String name, final MessageProtocolImpl messageProtocol,
+      final String parserClass, final Map<DataType, DataTypeParserImpl> parser,
+      final Map<String, String> configuration) {
     this.name = name;
     this.messageProtocol = messageProtocol;
     this.parserClass = parserClass;
+    this.parser = parser;
+    this.configuration = configuration;
   }
+
 
   @Override
   public Long getId() {
@@ -88,6 +103,16 @@ public class AbstractBasicInboundConfiguration implements BasicInboundConfigurat
   }
 
   @Override
+  public Map<String, String> getConfiguration() {
+    return ImmutableMap.copyOf(configuration);
+  }
+
+  @Override
+  public Optional<String> getConfigurationEntry(final String key) {
+    return Optional.ofNullable(configuration.get(key));
+  }
+
+  @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
@@ -97,18 +122,23 @@ public class AbstractBasicInboundConfiguration implements BasicInboundConfigurat
 
   @Override
   public boolean equals(final Object obj) {
-    if (this == obj)
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
-    final AbstractBasicInboundConfiguration other = (AbstractBasicInboundConfiguration) obj;
+    }
+    final BasicInboundConfigurationImpl other = (BasicInboundConfigurationImpl) obj;
     if (id == null) {
-      if (other.id != null)
+      if (other.id != null) {
         return false;
-    } else if (!id.equals(other.id))
+      }
+    } else if (!id.equals(other.id)) {
       return false;
+    }
     return true;
   }
 

@@ -10,7 +10,7 @@ import at.fhjoanneum.ippr.communicator.persistence.objects.protocol.MessageProto
 public interface Parser {
 
   InternalData parse(String input, MessageProtocol messageProtocol,
-      Map<DataType, DataTypeParser> parser) throws Exception;
+      Map<DataType, DataTypeParser> parser, Map<String, String> configuration) throws Exception;
 
   String getDescription();
 }

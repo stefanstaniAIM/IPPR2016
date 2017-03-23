@@ -5,13 +5,13 @@ import java.util.Objects;
 import com.google.common.base.Preconditions;
 
 import at.fhjoanneum.ippr.communicator.persistence.entities.Builder;
-import at.fhjoanneum.ippr.communicator.persistence.entities.basic.outbound.AbstractBasicOutboundConfiguration;
+import at.fhjoanneum.ippr.communicator.persistence.entities.basic.outbound.BasicOutboundConfigurationImpl;
 import at.fhjoanneum.ippr.communicator.persistence.objects.basic.outbound.BasicOutboundConfiguration;
 
 public class OutboundConfigurationMapBuilder implements Builder<OutboundConfigurationMap> {
 
   private Long messageFlowId;
-  private AbstractBasicOutboundConfiguration outboundConfiguration;
+  private BasicOutboundConfigurationImpl outboundConfiguration;
 
   public OutboundConfigurationMapBuilder messageFlowId(final Long messageFlowId) {
     Objects.requireNonNull(messageFlowId);
@@ -22,8 +22,8 @@ public class OutboundConfigurationMapBuilder implements Builder<OutboundConfigur
   public OutboundConfigurationMapBuilder outboundConfiguration(
       final BasicOutboundConfiguration config) {
     Objects.requireNonNull(config);
-    Preconditions.checkArgument(config instanceof AbstractBasicOutboundConfiguration);
-    this.outboundConfiguration = (AbstractBasicOutboundConfiguration) config;
+    Preconditions.checkArgument(config instanceof BasicOutboundConfigurationImpl);
+    this.outboundConfiguration = (BasicOutboundConfigurationImpl) config;
     return this;
   }
 

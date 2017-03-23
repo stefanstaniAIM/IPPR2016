@@ -1,6 +1,7 @@
 package at.fhjoanneum.ippr.communicator.persistence.objects.basic.outbound;
 
 import java.util.Map;
+import java.util.Optional;
 
 import at.fhjoanneum.ippr.communicator.persistence.objects.DataType;
 import at.fhjoanneum.ippr.communicator.persistence.objects.datatypecomposer.DataTypeComposer;
@@ -19,4 +20,8 @@ public interface BasicOutboundConfiguration {
   String getSendPlugin();
 
   Map<DataType, DataTypeComposer> getDataTypeComposer();
+
+  Map<String, String> getConfiguration();
+
+  Optional<String> getConfigurationEntry(String key);
 }

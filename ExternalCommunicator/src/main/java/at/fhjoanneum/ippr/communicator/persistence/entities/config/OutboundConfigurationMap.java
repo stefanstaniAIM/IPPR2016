@@ -11,7 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
-import at.fhjoanneum.ippr.communicator.persistence.entities.basic.outbound.AbstractBasicOutboundConfiguration;
+import at.fhjoanneum.ippr.communicator.persistence.entities.basic.outbound.BasicOutboundConfigurationImpl;
 import at.fhjoanneum.ippr.communicator.persistence.objects.basic.outbound.BasicOutboundConfiguration;
 
 @Entity(name = "OUTBOUND_CONFIGURATION_MAP")
@@ -30,12 +30,12 @@ public class OutboundConfigurationMap implements Serializable {
   @NotNull
   @ManyToOne
   @JoinColumn(name = "CONFIG_ID")
-  private AbstractBasicOutboundConfiguration outboundConfiguration;
+  private BasicOutboundConfigurationImpl outboundConfiguration;
 
   OutboundConfigurationMap() {}
 
   OutboundConfigurationMap(final Long messageFlowId,
-      final AbstractBasicOutboundConfiguration outboundConfiguration) {
+      final BasicOutboundConfigurationImpl outboundConfiguration) {
     this.messageFlowId = messageFlowId;
     this.outboundConfiguration = outboundConfiguration;
   }

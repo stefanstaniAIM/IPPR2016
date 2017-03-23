@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
+import at.fhjoanneum.ippr.communicator.global.GlobalKey;
 import at.fhjoanneum.ippr.communicator.persistence.objects.DataType;
 import at.fhjoanneum.ippr.communicator.persistence.objects.datatypeparser.DataTypeParser;
 import at.fhjoanneum.ippr.communicator.persistence.objects.internal.InternalData;
@@ -20,14 +21,17 @@ public class JsonParser implements Parser {
 
   private final static Logger LOG = LoggerFactory.getLogger(JsonParser.class);
 
-  private static final String TYPE = "TYPE";
+  private String typeName = "TYPE";
 
   private final Table<String, String, String> cache = HashBasedTable.create();
 
   @Override
   public InternalData parse(final String input, final MessageProtocol messageProtocol,
-      final Map<DataType, DataTypeParser> parser) throws Exception {
+      final Map<DataType, DataTypeParser> parser, final Map<String, String> configuration)
+      throws Exception {
     final JSONObject object = new JSONObject(input);
+
+    typeName = configuration.get(GlobalKey.TYPE);
 
     getValues(object, null);
 
@@ -38,7 +42,7 @@ public class JsonParser implements Parser {
 
   private void getValues(final JSONObject object, String type) throws JSONException {
     if (type == null) {
-      type = object.getString(TYPE);
+      type = object.getString(typeName);
     }
 
     final Iterator<String> keys = object.keys();
@@ -48,7 +52,7 @@ public class JsonParser implements Parser {
         final JSONObject child = object.getJSONObject(key);
         getValues(child, key);
       } catch (final JSONException e) {
-        if (!key.equals(TYPE)) {
+        if (!key.equals(typeName)) {
           final String value = object.getString(key);
           cache.put(type, key, value);
         }

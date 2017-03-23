@@ -1,9 +1,13 @@
 package at.fhjoanneum.ippr.communicator.persistence.entities.basic.outbound;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -16,6 +20,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
+import javax.persistence.MapKeyColumn;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -27,9 +32,9 @@ import at.fhjoanneum.ippr.communicator.persistence.objects.basic.outbound.BasicO
 import at.fhjoanneum.ippr.communicator.persistence.objects.datatypecomposer.DataTypeComposer;
 import at.fhjoanneum.ippr.communicator.persistence.objects.protocol.MessageProtocol;
 
-@Entity
+@Entity(name = "BASIC_OUTBOUND_CONFIGURATION")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class AbstractBasicOutboundConfiguration implements BasicOutboundConfiguration, Serializable {
+public class BasicOutboundConfigurationImpl implements BasicOutboundConfiguration, Serializable {
 
   private static final long serialVersionUID = -7550233823589354342L;
 
@@ -51,21 +56,29 @@ public abstract class AbstractBasicOutboundConfiguration implements BasicOutboun
 
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(name = "basic_configuration_composer_map",
-      joinColumns = {@JoinColumn(name = "abstract_basic_configuration_id")},
+      joinColumns = {@JoinColumn(name = "basic_configuration_id")},
       inverseJoinColumns = {@JoinColumn(name = "composer_id")})
   @MapKey
   private Map<DataType, DataTypeComposerImpl> composer = Maps.newHashMap();
 
-  protected AbstractBasicOutboundConfiguration() {}
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "BASIC_OUTBOUND_CONFIGURATION_MAP",
+      joinColumns = @JoinColumn(name = "basic_configuration_id"))
+  @MapKeyColumn(name = "CONFIG_KEY")
+  @Column(name = "VALUE")
+  private Map<String, String> configuration = new HashMap<>();
 
-  protected AbstractBasicOutboundConfiguration(final String name,
-      final Map<DataType, DataTypeComposerImpl> composer, final MessageProtocolImpl messageProtocol,
-      final String composerClass, final String sendPlugin) {
+  BasicOutboundConfigurationImpl() {}
+
+  BasicOutboundConfigurationImpl(final String name, final MessageProtocolImpl messageProtocol,
+      final String composerClass, final String sendPlugin,
+      final Map<DataType, DataTypeComposerImpl> composer, final Map<String, String> configuration) {
     this.name = name;
-    this.composer = composer;
     this.messageProtocol = messageProtocol;
     this.composerClass = composerClass;
     this.sendPlugin = sendPlugin;
+    this.composer = composer;
+    this.configuration = configuration;
   }
 
   @Override
@@ -91,6 +104,16 @@ public abstract class AbstractBasicOutboundConfiguration implements BasicOutboun
   @Override
   public Map<DataType, DataTypeComposer> getDataTypeComposer() {
     return ImmutableMap.copyOf(composer);
+  }
+
+  @Override
+  public Map<String, String> getConfiguration() {
+    return ImmutableMap.copyOf(configuration);
+  }
+
+  @Override
+  public Optional<String> getConfigurationEntry(final String key) {
+    return Optional.ofNullable(configuration.get(key));
   }
 
   @Override
@@ -122,7 +145,7 @@ public abstract class AbstractBasicOutboundConfiguration implements BasicOutboun
     if (getClass() != obj.getClass()) {
       return false;
     }
-    final AbstractBasicOutboundConfiguration other = (AbstractBasicOutboundConfiguration) obj;
+    final BasicOutboundConfigurationImpl other = (BasicOutboundConfigurationImpl) obj;
     if (id == null) {
       if (other.id != null) {
         return false;

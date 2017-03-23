@@ -14,8 +14,8 @@ import javax.persistence.ManyToOne;
 
 import com.google.common.base.Preconditions;
 
-import at.fhjoanneum.ippr.communicator.persistence.entities.basic.inbound.AbstractBasicInboundConfiguration;
-import at.fhjoanneum.ippr.communicator.persistence.entities.basic.outbound.AbstractBasicOutboundConfiguration;
+import at.fhjoanneum.ippr.communicator.persistence.entities.basic.inbound.BasicInboundConfigurationImpl;
+import at.fhjoanneum.ippr.communicator.persistence.entities.basic.outbound.BasicOutboundConfigurationImpl;
 import at.fhjoanneum.ippr.communicator.persistence.objects.basic.inbound.BasicInboundConfiguration;
 import at.fhjoanneum.ippr.communicator.persistence.objects.basic.outbound.BasicOutboundConfiguration;
 import at.fhjoanneum.ippr.communicator.persistence.objects.messageflow.Message;
@@ -46,10 +46,10 @@ public class MessageImpl implements Serializable, Message {
   private MessageState messageState;
 
   @ManyToOne
-  private AbstractBasicOutboundConfiguration outboundConfiguration;
+  private BasicOutboundConfigurationImpl outboundConfiguration;
 
   @ManyToOne
-  private AbstractBasicInboundConfiguration inboundConfiguration;
+  private BasicInboundConfigurationImpl inboundConfiguration;
 
   MessageImpl() {}
 
@@ -74,15 +74,15 @@ public class MessageImpl implements Serializable, Message {
   public void setOutboundConfiguration(final BasicOutboundConfiguration outboundConfiguration) {
     Preconditions.checkNotNull(outboundConfiguration);
     Preconditions
-        .checkArgument(outboundConfiguration instanceof AbstractBasicOutboundConfiguration);
-    this.outboundConfiguration = (AbstractBasicOutboundConfiguration) outboundConfiguration;
+        .checkArgument(outboundConfiguration instanceof BasicOutboundConfigurationImpl);
+    this.outboundConfiguration = (BasicOutboundConfigurationImpl) outboundConfiguration;
   }
 
   @Override
   public void setInboundConfiguration(final BasicInboundConfiguration inboundConfiguration) {
     Preconditions.checkNotNull(inboundConfiguration);
-    Preconditions.checkArgument(inboundConfiguration instanceof AbstractBasicInboundConfiguration);
-    this.inboundConfiguration = (AbstractBasicInboundConfiguration) inboundConfiguration;
+    Preconditions.checkArgument(inboundConfiguration instanceof BasicInboundConfigurationImpl);
+    this.inboundConfiguration = (BasicInboundConfigurationImpl) inboundConfiguration;
   }
 
   @Override
