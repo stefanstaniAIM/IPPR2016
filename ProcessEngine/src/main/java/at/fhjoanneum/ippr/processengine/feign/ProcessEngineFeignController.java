@@ -29,7 +29,7 @@ public class ProcessEngineFeignController {
   @Autowired
   private SubjectStateRepository subjectStateRepository;
 
-  @RequestMapping(value = "pe/markAsSent/{transferId}")
+  @RequestMapping(value = "markAsSent/{transferId}")
   public void markAsSent(@PathVariable("transferId") final String transferId) {
     final String[] split = transferId.split("-");
     final Long piID = Long.valueOf(split[0]);
@@ -42,7 +42,7 @@ public class ProcessEngineFeignController {
     subjectStateRepository.save((SubjectStateImpl) subject.getSubjectState());
   }
 
-  @RequestMapping(value = "pe/receive", method = RequestMethod.POST)
+  @RequestMapping(value = "receive", method = RequestMethod.POST)
   public void receive(@RequestBody final ExternalOutputMessage msg) {
     LOG.debug("Received [{}]", msg);
   }

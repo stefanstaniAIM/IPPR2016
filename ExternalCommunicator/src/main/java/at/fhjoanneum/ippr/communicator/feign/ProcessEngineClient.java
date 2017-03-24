@@ -11,9 +11,9 @@ import at.fhjoanneum.ippr.commons.dto.communicator.ExternalOutputMessage;
 @FeignClient("process-engine")
 public interface ProcessEngineClient {
 
-  @RequestMapping(value = "pe/markAsSent/{transferId}")
+  @RequestMapping(value = "markAsSent/{transferId}")
   void markAsSent(@PathVariable("transferId") final String transferId);
 
-  @RequestMapping(value = "pe/receive", method = RequestMethod.POST)
+  @RequestMapping(value = "receive", method = RequestMethod.POST)
   void notify(@RequestBody ExternalOutputMessage msg);
 }
