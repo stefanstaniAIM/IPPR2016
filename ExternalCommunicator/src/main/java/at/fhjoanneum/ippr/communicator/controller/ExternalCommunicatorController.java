@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import at.fhjoanneum.ippr.commons.dto.communicator.ExternalOutputMessage;
+import at.fhjoanneum.ippr.commons.dto.communicator.ReceiveSubmissionDTO;
 import at.fhjoanneum.ippr.communicator.services.ExternalCommunicatorService;
 
 @RestController
@@ -18,5 +19,10 @@ public class ExternalCommunicatorController {
   @RequestMapping(method = RequestMethod.POST, value = "outputmessage")
   public void handleExternalOutputMessage(@RequestBody final ExternalOutputMessage message) {
     externalCommunicatorService.handleExternalOutputMessage(message);
+  }
+
+  @RequestMapping(method = RequestMethod.POST, value = "receivesubmission")
+  public void handleReceiveSubmission(@RequestBody final ReceiveSubmissionDTO receiveSubmission) {
+    externalCommunicatorService.handleReceiveSubmission(receiveSubmission);
   }
 }

@@ -317,7 +317,7 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
         .map(mf -> getExternalOutputMessage(request.getPiId(), mf, subjectState.getSubject()))
         .forEachOrdered(output -> {
           LOG.debug("Send message to external-communicator [{}]", output);
-          externalCommunicatorClient.handleExternalOutputMessage(output);
+          externalCommunicatorClient.sendExternalOutputMessage(output);
           subjectState.setToNotifiedEC();
         });
 

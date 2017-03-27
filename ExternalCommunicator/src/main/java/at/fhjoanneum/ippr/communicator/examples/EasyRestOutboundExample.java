@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import at.fhjoanneum.ippr.communicator.persistence.entities.basic.outbound.BasicOutboundConfigurationBuilder;
-import at.fhjoanneum.ippr.communicator.persistence.entities.config.OutboundConfigurationAssignement;
-import at.fhjoanneum.ippr.communicator.persistence.entities.config.OutboundConfigurationMapBuilder;
+import at.fhjoanneum.ippr.communicator.persistence.entities.config.ConfigurationAssignement;
+import at.fhjoanneum.ippr.communicator.persistence.entities.config.ConfigurationAssignmentBuilder;
 import at.fhjoanneum.ippr.communicator.persistence.entities.datatypecomposer.DataTypeComposerBuilder;
 import at.fhjoanneum.ippr.communicator.persistence.entities.protocol.MessageProtocolBuilder;
 import at.fhjoanneum.ippr.communicator.persistence.entities.protocol.field.MessageProtocolFieldBuilder;
@@ -55,7 +55,7 @@ public class EasyRestOutboundExample extends AbstractExample {
 
     final BasicOutboundConfiguration basicConfig = basicBuilder.build();
 
-    final OutboundConfigurationAssignement map = new OutboundConfigurationMapBuilder().messageFlowId(7L)
+    final ConfigurationAssignement map = new ConfigurationAssignmentBuilder().messageFlowId(7L)
         .outboundConfiguration(basicConfig).build();
 
     entityManager.persist(stringComposer);

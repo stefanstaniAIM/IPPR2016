@@ -6,10 +6,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import at.fhjoanneum.ippr.commons.dto.communicator.ExternalOutputMessage;
+import at.fhjoanneum.ippr.commons.dto.communicator.ReceiveSubmissionDTO;
 
 @FeignClient("external-communicator")
 public interface ExternalCommunicatorClient {
 
   @RequestMapping(method = RequestMethod.POST, value = "outputmessage")
-  void handleExternalOutputMessage(@RequestBody final ExternalOutputMessage message);
+  void sendExternalOutputMessage(@RequestBody final ExternalOutputMessage message);
+
+  @RequestMapping(method = RequestMethod.POST, value = "receivesubmission")
+  public void sendReceiveSubmission(@RequestBody final ReceiveSubmissionDTO receiveSubmission);
+
 }

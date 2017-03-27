@@ -12,16 +12,20 @@ import org.springframework.stereotype.Service;
 
 import akka.actor.ActorRef;
 import at.fhjoanneum.ippr.commons.dto.communicator.ExternalOutputMessage;
+import at.fhjoanneum.ippr.commons.dto.communicator.ReceiveSubmissionDTO;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.ComposeMessageCreateCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.parse.commands.ParseMessageCreateCommand;
 import at.fhjoanneum.ippr.communicator.global.GlobalKey;
+import at.fhjoanneum.ippr.communicator.persistence.entities.submission.ReceiveSubmission;
+import at.fhjoanneum.ippr.communicator.persistence.entities.submission.ReceiveSubmissionBuilder;
 import at.fhjoanneum.ippr.communicator.persistence.objects.DataType;
 import at.fhjoanneum.ippr.communicator.persistence.objects.basic.inbound.BasicInboundConfiguration;
 import at.fhjoanneum.ippr.communicator.persistence.objects.internal.InternalData;
 import at.fhjoanneum.ippr.communicator.persistence.objects.internal.InternalField;
 import at.fhjoanneum.ippr.communicator.persistence.objects.internal.InternalObject;
 import at.fhjoanneum.ippr.communicator.repositories.BasicInboundConfigurationRepository;
-import at.fhjoanneum.ippr.communicator.repositories.OutboundConfigurationAssignementRepository;
+import at.fhjoanneum.ippr.communicator.repositories.ConfigurationAssignementRepository;
+import at.fhjoanneum.ippr.communicator.repositories.ReceiveSubmissionRepository;
 
 @Service
 public class ExternalCommunicatorServiceImpl implements ExternalCommunicatorService {
@@ -35,10 +39,13 @@ public class ExternalCommunicatorServiceImpl implements ExternalCommunicatorServ
   private ActorRef parseSupervisorActor;
 
   @Autowired
-  private OutboundConfigurationAssignementRepository outboundConfigurationAssignementRepository;
+  private ConfigurationAssignementRepository configurationAssignmentRepository;
 
   @Autowired
   private BasicInboundConfigurationRepository basicInboundCongurationRepository;
+
+  @Autowired
+  private ReceiveSubmissionRepository receiveSubmissionRepository;
 
   @Async
   @Override
@@ -67,7 +74,7 @@ public class ExternalCommunicatorServiceImpl implements ExternalCommunicatorServ
   }
 
   private Long getActiveOutboundConfig(final Long messageFlowId) {
-    return outboundConfigurationAssignementRepository.findByMessageFlowId(messageFlowId).getId();
+    return configurationAssignmentRepository.findByMessageFlowId(messageFlowId).getId();
   }
 
   @Override
@@ -79,5 +86,20 @@ public class ExternalCommunicatorServiceImpl implements ExternalCommunicatorServ
         configOpt.orElseThrow(() -> new IllegalArgumentException("No config found!"));
     parseSupervisorActor.tell(new ParseMessageCreateCommand(body, config.getId()),
         ActorRef.noSender());
+  }
+
+  @Override
+  public void handleReceiveSubmission(final ReceiveSubmissionDTO receiveSubmission) {
+    // TODO get from transferId
+
+    final Optional<BasicInboundConfiguration> configOpt =
+        Optional.ofNullable(basicInboundCongurationRepository.findOne(1L));
+
+    final BasicInboundConfiguration config =
+        configOpt.orElseThrow(() -> new IllegalArgumentException("No config found!"));
+
+    final ReceiveSubmission entry = new ReceiveSubmissionBuilder()
+        .transferId(receiveSubmission.getTransferId()).basicInboundConfiguration(config).build();
+    receiveSubmissionRepository.save(entry);
   }
 }

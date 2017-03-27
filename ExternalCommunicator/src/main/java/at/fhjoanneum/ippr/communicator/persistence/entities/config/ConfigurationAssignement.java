@@ -11,11 +11,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
+import at.fhjoanneum.ippr.communicator.persistence.entities.basic.inbound.BasicInboundConfigurationImpl;
 import at.fhjoanneum.ippr.communicator.persistence.entities.basic.outbound.BasicOutboundConfigurationImpl;
 import at.fhjoanneum.ippr.communicator.persistence.objects.basic.outbound.BasicOutboundConfiguration;
 
-@Entity(name = "OUTBOUND_CONFIGURATION_ASSIGNMENT")
-public class OutboundConfigurationAssignement implements Serializable {
+@Entity(name = "CONFIGURATION_ASSIGNMENT")
+public class ConfigurationAssignement implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
@@ -27,17 +28,26 @@ public class OutboundConfigurationAssignement implements Serializable {
   @Column(unique = true)
   private Long messageFlowId;
 
-  @NotNull
   @ManyToOne
-  @JoinColumn(name = "CONFIG_ID")
+  @JoinColumn(name = "OUTBOUND_CONFIG_ID")
   private BasicOutboundConfigurationImpl outboundConfiguration;
 
-  OutboundConfigurationAssignement() {}
+  @ManyToOne
+  @JoinColumn(name = "INBOUND_CONFIG_ID")
+  private BasicInboundConfigurationImpl inboundConfiguration;
 
-  OutboundConfigurationAssignement(final Long messageFlowId,
+  ConfigurationAssignement() {}
+
+  ConfigurationAssignement(final Long messageFlowId,
       final BasicOutboundConfigurationImpl outboundConfiguration) {
     this.messageFlowId = messageFlowId;
     this.outboundConfiguration = outboundConfiguration;
+  }
+
+  ConfigurationAssignement(final Long messageFlowId,
+      final BasicInboundConfigurationImpl inboundConfiguration) {
+    this.messageFlowId = messageFlowId;
+    this.inboundConfiguration = inboundConfiguration;
   }
 
   public Long getId() {
@@ -50,6 +60,10 @@ public class OutboundConfigurationAssignement implements Serializable {
 
   public BasicOutboundConfiguration getOutboundConfiguration() {
     return outboundConfiguration;
+  }
+
+  public BasicInboundConfigurationImpl getInboundConfiguration() {
+    return inboundConfiguration;
   }
 
   @Override
@@ -77,7 +91,7 @@ public class OutboundConfigurationAssignement implements Serializable {
     if (getClass() != obj.getClass()) {
       return false;
     }
-    final OutboundConfigurationAssignement other = (OutboundConfigurationAssignement) obj;
+    final ConfigurationAssignement other = (ConfigurationAssignement) obj;
     if (id == null) {
       if (other.id != null) {
         return false;
