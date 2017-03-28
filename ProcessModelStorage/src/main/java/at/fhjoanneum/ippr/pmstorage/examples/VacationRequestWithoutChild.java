@@ -134,8 +134,6 @@ public class VacationRequestWithoutChild extends AbstractExample {
     final State empState5 = new StateBuilder().subjectModel(employee).name("Received NOK")
         .functionType(StateFunctionType.FUNCTION).build();
 
-
-
     final Transition if1 = new TransitionBuilder().fromState(empState3).toState(empState4)
         .transitionType(TransitionType.NORMAL).build();
     final Transition if2 = new TransitionBuilder().fromState(empState3).toState(empState5)
@@ -146,14 +144,33 @@ public class VacationRequestWithoutChild extends AbstractExample {
     final Transition empT3 =
         new TransitionBuilder().fromState(empState4).toState(empState6).build();
 
+    final State empState7 = new StateBuilder().subjectModel(employee)
+        .name("Receive response travel management").functionType(StateFunctionType.RECEIVE).build();
+    final Transition empT6 =
+        new TransitionBuilder().fromState(empState6).toState(empState7).build();
+
+    final BusinessObjectModel hotel =
+        new BusinessObjectModelBuilder().name("Hotel Reservation").addToState(empState7).build();
+    final BusinessObjectFieldModel hotelF1 =
+        new BusinessObjectFieldModelBuilder().businessObjectModel(hotel).fieldName("Name")
+            .fieldType(FieldType.STRING).position(0).build();
+    final BusinessObjectFieldModel hotelF2 =
+        new BusinessObjectFieldModelBuilder().businessObjectModel(hotel).fieldName("Stars")
+            .fieldType(FieldType.STRING).position(1).build();
+
+    final BusinessObjectFieldPermission hotelP1 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(hotelF1)
+            .permission(FieldPermission.READ).state(empState7).build();
+    final BusinessObjectFieldPermission hotelP2 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(hotelF2)
+            .permission(FieldPermission.READ).state(empState7).build();
 
     // finish the employee
     final State empState8 = new StateBuilder().subjectModel(employee).name("END")
         .eventType(StateEventType.END).functionType(StateFunctionType.FUNCTION).build();
 
-    final Transition empT5 =
+    final Transition empt8 =
         new TransitionBuilder().fromState(empState6).toState(empState8).build();
-
     final Transition empT4 =
         new TransitionBuilder().fromState(empState5).toState(empState8).build();
 
@@ -212,22 +229,26 @@ public class VacationRequestWithoutChild extends AbstractExample {
     final MessageFlow mf7 = new MessageFlowBuilder().sender(employee).receiver(travelMgt)
         .state(empState6).assignBusinessObjectModel(vacationRequestForm).build();
 
+    final MessageFlow mf8 = new MessageFlowBuilder().sender(travelMgt).receiver(employee)
+        .state(empState7).assignBusinessObjectModel(hotel).build();
+
     saveSubjectModels(boss, employee, travelMgt);
     saveProcessModel(pm);
 
     saveStates(empState1, empState2, empState3, empState4, empState5, empState8, bossState1,
-        bossState2, bossState3, bossState4, bossState5, empState6);
+        bossState2, bossState3, bossState4, bossState5, empState6, empState7);
     saveTransitions(empT1, empT2, empT3, empT4, bossT1, bossT2, bossT3, bossT4, bossT5, if1, if2,
-        empT5);
+        empt8, empT6);
 
-    saveBusinessObjectModels(vacationRequestForm, okForm, nokForm);
-    saveBusinessObjectFieldModels(boFrom, boTo, nokFormFieldInformation, okFormFieldInformation);
+    saveBusinessObjectModels(vacationRequestForm, okForm, nokForm, hotel);
+    saveBusinessObjectFieldModels(boFrom, boTo, nokFormFieldInformation, okFormFieldInformation,
+        hotelF1, hotelF2);
     saveBusinessObjectFieldPermissions(boFromPermissionEmp1, boFromPermissionEmp2,
         boFromPermissionBoss1, boFromPermissionBoss2, okFormFieldInformationPermission1,
         okFormFieldInformationPermission2, nokFormFieldInformationPermission1,
         nokFormFieldInformationPermission2, boFromPermissionEmp3, boFromPermissionEmp4,
-        okFormFieldInformationPermission3, nokFormFieldInformationPermission3);
-    saveMessageFlows(mf1, mf2, mf3, mf4, mf5, mf6, mf7);
+        okFormFieldInformationPermission3, nokFormFieldInformationPermission3, hotelP1, hotelP2);
+    saveMessageFlows(mf1, mf2, mf3, mf4, mf5, mf6, mf7, mf8);
   }
 
   @Override
