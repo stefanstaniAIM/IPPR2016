@@ -170,7 +170,7 @@ public class VacationRequestWithoutChild extends AbstractExample {
         .eventType(StateEventType.END).functionType(StateFunctionType.FUNCTION).build();
 
     final Transition empt8 =
-        new TransitionBuilder().fromState(empState6).toState(empState8).build();
+        new TransitionBuilder().fromState(empState7).toState(empState8).build();
     final Transition empT4 =
         new TransitionBuilder().fromState(empState5).toState(empState8).build();
 

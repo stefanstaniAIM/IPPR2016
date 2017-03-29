@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import at.fhjoanneum.ippr.communicator.composer.datatype.ComposerUtils;
+import at.fhjoanneum.ippr.communicator.global.GlobalKey;
 import at.fhjoanneum.ippr.communicator.persistence.objects.DataType;
 import at.fhjoanneum.ippr.communicator.persistence.objects.datatypecomposer.DataTypeComposer;
 import at.fhjoanneum.ippr.communicator.persistence.objects.internal.InternalData;
@@ -20,18 +21,22 @@ import at.fhjoanneum.ippr.communicator.persistence.objects.protocol.MessageProto
 @Transactional(isolation = Isolation.READ_COMMITTED)
 public class JsonComposer implements Composer {
 
-  private static final String TYPE = "TYPE";
-  private static final String TRANSFER_ID = "TRANSFER_ID";
+  private String typeKey = "TYPE";
+  private String transferIdKey = "TRANSFER_ID";
 
   private static final Logger LOG = LoggerFactory.getLogger(JsonComposer.class);
 
   @Override
   public String compose(final String transferId, final InternalData data,
-      final MessageProtocol messageProtocol, final Map<DataType, DataTypeComposer> composer) {
+      final MessageProtocol messageProtocol, final Map<DataType, DataTypeComposer> composer,
+      final Map<String, String> configuration) {
     try {
+      typeKey = configuration.get(GlobalKey.TYPE);
+      transferIdKey = configuration.get(GlobalKey.TRANSFER_ID);
+
       final JSONObject json = new JSONObject();
-      json.put(TRANSFER_ID, transferId);
-      json.put(TYPE, messageProtocol.getExternalName());
+      json.put(transferIdKey, transferId);
+      json.put(typeKey, messageProtocol.getExternalName());
 
       final String currentMessage = messageProtocol.getInternalName();
       final InternalObject internalObject = data.getObjects().get(currentMessage);

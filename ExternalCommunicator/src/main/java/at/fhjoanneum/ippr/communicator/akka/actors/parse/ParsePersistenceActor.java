@@ -2,6 +2,7 @@ package at.fhjoanneum.ippr.communicator.akka.actors.parse;
 
 import java.io.IOException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +30,13 @@ import at.fhjoanneum.ippr.communicator.akka.messages.parse.events.ParseMessageCr
 import at.fhjoanneum.ippr.communicator.akka.messages.parse.events.ParsedMessageEvent;
 import at.fhjoanneum.ippr.communicator.persistence.entities.messageflow.MessageBuilder;
 import at.fhjoanneum.ippr.communicator.persistence.entities.messageflow.MessageImpl;
+import at.fhjoanneum.ippr.communicator.persistence.entities.submission.ReceiveSubmission;
 import at.fhjoanneum.ippr.communicator.persistence.objects.basic.inbound.BasicInboundConfiguration;
 import at.fhjoanneum.ippr.communicator.persistence.objects.messageflow.Message;
 import at.fhjoanneum.ippr.communicator.persistence.objects.messageflow.MessageState;
 import at.fhjoanneum.ippr.communicator.repositories.BasicInboundConfigurationRepository;
 import at.fhjoanneum.ippr.communicator.repositories.MessageRepository;
+import at.fhjoanneum.ippr.communicator.repositories.ReceiveSubmissionRepository;
 import at.fhjoanneum.ippr.communicator.utils.InternalDataUtils;
 
 @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -48,6 +51,9 @@ public class ParsePersistenceActor extends AbstractActor {
 
   @Autowired
   private BasicInboundConfigurationRepository basicInboundConfigurationRepository;
+
+  @Autowired
+  private ReceiveSubmissionRepository receiveSubmissionRepository;
 
   public ParsePersistenceActor() {
     receive(
@@ -86,7 +92,17 @@ public class ParsePersistenceActor extends AbstractActor {
   private void handleStoreInternalDataCommand(final StoreInternalDataCommand cmd)
       throws JsonProcessingException {
     final Message msg = messageRepository.findOne(cmd.getId());
-    msg.setInternalData(InternalDataUtils.convertInternalDataToJson(cmd.getData()));
+
+    final String transferId = getTransferId(cmd);
+    if (StringUtils.isBlank(transferId)) {
+      msg.setMessageState(MessageState.NO_RECEIVE_SUBMISSION);
+      messageRepository.save((MessageImpl) msg);
+      throw new IllegalArgumentException("Could not find receive submission");
+    }
+
+    msg.setTransferId(transferId);
+    msg.setInternalData(
+        InternalDataUtils.convertInternalDataToJson(cmd.getParseResult().getData()));
     msg.setMessageState(MessageState.PARSED);
     LOG.debug("Updated message [{}]", msg);
 
@@ -94,6 +110,27 @@ public class ParsePersistenceActor extends AbstractActor {
     final String actorId = getContext().parent().path().name();
     sender().tell(new ParsedMessageEvent(actorId, cmd.getId()), self());
     stop();
+  }
+
+  private String getTransferId(final StoreInternalDataCommand cmd) {
+    final String transferId = cmd.getParseResult().getTransferId();
+    ReceiveSubmission submission;
+    if (StringUtils.isNotBlank(transferId)) {
+      submission =
+          receiveSubmissionRepository.findByTransferId(cmd.getParseResult().getTransferId());
+    } else {
+      submission = receiveSubmissionRepository.findByConfigId(cmd.getConfigId());
+    }
+
+    if (submission != null) {
+      receiveSubmissionRepository.findAllOfProcessInstance(transferId.split("-")[0]).forEach(s -> {
+        s.setToReceived();
+        receiveSubmissionRepository.save(s);
+      });
+      return submission.getTransferId();
+    } else {
+      return null;
+    }
   }
 
   private void handleNotifyProcessEngineCommand(final NotifyProcessEngineCommand cmd)

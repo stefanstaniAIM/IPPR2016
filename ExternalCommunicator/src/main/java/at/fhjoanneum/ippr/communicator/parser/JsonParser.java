@@ -26,28 +26,32 @@ public class JsonParser implements Parser {
 
   private final static Logger LOG = LoggerFactory.getLogger(JsonParser.class);
 
-  private String typeName = "TYPE";
+  private String typeKey = "TYPE";
+  private String transferIdKey = "TRANSFER-ID";
+  private String transferId;
 
   private final Table<String, String, String> cache = HashBasedTable.create();
   private final Map<String, InternalObject> objects = new HashMap<>();
 
   @Override
-  public InternalData parse(final String input, final MessageProtocol messageProtocol,
+  public ParseResult parse(final String input, final MessageProtocol messageProtocol,
       final Map<DataType, DataTypeParser> parser, final Map<String, String> configuration)
       throws Exception {
     final JSONObject object = new JSONObject(input);
 
-    typeName = configuration.get(GlobalKey.TYPE);
+    typeKey = configuration.get(GlobalKey.TYPE);
+    transferIdKey = configuration.get(GlobalKey.TRANSFER_ID);
 
     getValues(object, null);
     convertToInternalObject(messageProtocol);
 
-    return new InternalData(objects);
+    return new ParseResult(transferId, new InternalData(objects));
   }
 
   private void getValues(final JSONObject object, String type) throws JSONException {
     if (type == null) {
-      type = object.getString(typeName);
+      type = object.getString(typeKey);
+      transferId = object.getString(transferIdKey);
     }
 
     final Iterator<String> keys = object.keys();
@@ -57,7 +61,7 @@ public class JsonParser implements Parser {
         final JSONObject child = object.getJSONObject(key);
         getValues(child, key);
       } catch (final JSONException e) {
-        if (!key.equals(typeName)) {
+        if (!key.equals(typeKey) && !key.equals(transferIdKey)) {
           final String value = object.getString(key);
           cache.put(type, key, value);
         }

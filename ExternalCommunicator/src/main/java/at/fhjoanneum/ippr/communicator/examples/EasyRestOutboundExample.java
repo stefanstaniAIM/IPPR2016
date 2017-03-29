@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import at.fhjoanneum.ippr.communicator.global.GlobalKey;
 import at.fhjoanneum.ippr.communicator.persistence.entities.basic.outbound.BasicOutboundConfigurationBuilder;
 import at.fhjoanneum.ippr.communicator.persistence.entities.config.ConfigurationAssignement;
 import at.fhjoanneum.ippr.communicator.persistence.entities.config.ConfigurationAssignmentBuilder;
@@ -39,7 +40,9 @@ public class EasyRestOutboundExample extends AbstractExample {
 
     basicBuilder.composerClass("at.fhjoanneum.ippr.communicator.composer.JsonComposer");
     basicBuilder.sendPlugin("at.fhjoanneum.ippr.communicator.plugins.send.JsonSendPlugin");
-    basicBuilder.addConfigurationEntry("ENDPOINT", "http://localhost:22222/testpost");
+    basicBuilder.addConfigurationEntry(GlobalKey.ENDPOINT, "http://localhost:22222/testpost");
+    basicBuilder.addConfigurationEntry(GlobalKey.TYPE, "TYPE");
+    basicBuilder.addConfigurationEntry(GlobalKey.TRANSFER_ID, "TRANSFER-ID");
 
     final DataTypeComposer stringComposer = new DataTypeComposerBuilder().dataType(DataType.STRING)
         .composerClass("at.fhjoanneum.ippr.communicator.composer.datatype.StringComposer").build();

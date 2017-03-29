@@ -9,6 +9,8 @@ public interface Message {
 
   String getTransferId();
 
+  void setTransferId(String transferId);
+
   void setInternalData(String data);
 
   String getInternalData();

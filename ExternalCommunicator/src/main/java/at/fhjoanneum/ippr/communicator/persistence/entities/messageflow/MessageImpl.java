@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.common.base.Preconditions;
 
 import at.fhjoanneum.ippr.communicator.persistence.entities.basic.inbound.BasicInboundConfigurationImpl;
@@ -59,6 +61,12 @@ public class MessageImpl implements Serializable, Message {
   }
 
   @Override
+  public void setTransferId(final String transferId) {
+    Preconditions.checkArgument(StringUtils.isNotBlank(transferId));
+    this.transferId = transferId;
+  }
+
+  @Override
   public void setInternalData(final String data) {
     Preconditions.checkNotNull(data);
     this.internalData = data;
@@ -73,8 +81,7 @@ public class MessageImpl implements Serializable, Message {
   @Override
   public void setOutboundConfiguration(final BasicOutboundConfiguration outboundConfiguration) {
     Preconditions.checkNotNull(outboundConfiguration);
-    Preconditions
-        .checkArgument(outboundConfiguration instanceof BasicOutboundConfigurationImpl);
+    Preconditions.checkArgument(outboundConfiguration instanceof BasicOutboundConfigurationImpl);
     this.outboundConfiguration = (BasicOutboundConfigurationImpl) outboundConfiguration;
   }
 

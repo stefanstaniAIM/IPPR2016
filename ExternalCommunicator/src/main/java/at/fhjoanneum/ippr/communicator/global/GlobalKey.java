@@ -6,6 +6,8 @@ public final class GlobalKey {
 
   public final static String ENDPOINT = "ENDPOINT";
 
+  public final static String TRANSFER_ID = "TRANSFER-ID";
+
   public final static String TYPE = "TYPE";
 
 }

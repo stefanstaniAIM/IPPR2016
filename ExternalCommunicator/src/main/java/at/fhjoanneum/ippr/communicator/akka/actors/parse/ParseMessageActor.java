@@ -29,8 +29,8 @@ import at.fhjoanneum.ippr.communicator.akka.messages.parse.commands.StoreInterna
 import at.fhjoanneum.ippr.communicator.akka.messages.parse.events.ConfigRetrievedEvent;
 import at.fhjoanneum.ippr.communicator.akka.messages.parse.events.NotifyConfigRetrievedEvent;
 import at.fhjoanneum.ippr.communicator.feign.ProcessEngineClient;
+import at.fhjoanneum.ippr.communicator.parser.ParseResult;
 import at.fhjoanneum.ippr.communicator.parser.Parser;
-import at.fhjoanneum.ippr.communicator.persistence.objects.internal.InternalData;
 import at.fhjoanneum.ippr.communicator.persistence.objects.messageflow.MessageState;
 
 @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -66,12 +66,13 @@ public class ParseMessageActor extends AbstractActor {
         getClass().getClassLoader().loadClass(evt.getBasicConfiguration().getParserClass())
             .asSubclass(Parser.class).newInstance();
 
-    final InternalData data =
+    final ParseResult result =
         parser.parse(evt.getData(), evt.getBasicConfiguration().getMessageProtocol(),
             evt.getBasicConfiguration().getDataTypeParser(),
             evt.getBasicConfiguration().getConfiguration());
 
-    getDBPersistenceActor().tell(new StoreInternalDataCommand(evt.getId(), data),
+    getDBPersistenceActor().tell(
+        new StoreInternalDataCommand(evt.getId(), evt.getBasicConfiguration().getId(), result),
         getContext().parent());
   }
 

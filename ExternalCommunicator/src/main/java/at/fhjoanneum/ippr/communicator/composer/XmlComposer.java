@@ -10,6 +10,7 @@ import org.xembly.ImpossibleModificationException;
 import org.xembly.Xembler;
 
 import at.fhjoanneum.ippr.communicator.composer.datatype.ComposerUtils;
+import at.fhjoanneum.ippr.communicator.global.GlobalKey;
 import at.fhjoanneum.ippr.communicator.persistence.objects.DataType;
 import at.fhjoanneum.ippr.communicator.persistence.objects.datatypecomposer.DataTypeComposer;
 import at.fhjoanneum.ippr.communicator.persistence.objects.internal.InternalData;
@@ -21,14 +22,17 @@ public class XmlComposer implements Composer {
 
   private static final Logger LOG = LoggerFactory.getLogger(XmlComposer.class);
 
-  private static final String TRANSFER_ID = "TRANSFER_ID";
+  private String transferIdKey = "TRANSFER_ID";
 
 
   @Override
   public String compose(final String transferId, final InternalData data,
-      final MessageProtocol messageProtocol, final Map<DataType, DataTypeComposer> composer) {
+      final MessageProtocol messageProtocol, final Map<DataType, DataTypeComposer> composer,
+      final Map<String, String> configuration) {
+    transferIdKey = configuration.get(GlobalKey.TRANSFER_ID);
+
     final Directives root = new Directives().add(messageProtocol.getExternalName());
-    root.attr(TRANSFER_ID, transferId);
+    root.attr(transferIdKey, transferId);
 
     final String currentMessage = messageProtocol.getInternalName();
     final InternalObject internalObject = data.getObjects().get(currentMessage);

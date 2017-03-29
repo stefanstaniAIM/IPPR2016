@@ -77,7 +77,8 @@ public class ComposeMessageActor extends UntypedActor {
 
     final String composedValue = composer.compose(evt.getTransferId(), evt.getData(),
         evt.getBasicConfiguration().getMessageProtocol(),
-        evt.getBasicConfiguration().getDataTypeComposer());
+        evt.getBasicConfiguration().getDataTypeComposer(),
+        evt.getBasicConfiguration().getConfiguration());
 
     getDBPersistenceActor().tell(new StoreExternalDataCommand(evt.getId(), composedValue),
         getContext().parent());

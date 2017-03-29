@@ -28,6 +28,7 @@ import akka.pattern.Patterns;
 import akka.pattern.PatternsCS;
 import at.fhjoanneum.ippr.commons.dto.communicator.BusinessObject;
 import at.fhjoanneum.ippr.commons.dto.communicator.ExternalOutputMessage;
+import at.fhjoanneum.ippr.commons.dto.communicator.ReceiveSubmissionDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.BusinessObjectInstanceDTO;
 import at.fhjoanneum.ippr.persistence.entities.engine.businessobject.BusinessObjectInstanceBuilder;
 import at.fhjoanneum.ippr.persistence.entities.engine.businessobject.BusinessObjectInstanceImpl;
@@ -350,7 +351,7 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
       businessObjects.add(new BusinessObject(bom.getName(), fields));
     });
 
-    return new ExternalOutputMessage(piId + "-" + sender.getSId() + "-" + messageFlow.getMfId(),
+    return new ExternalOutputMessage(getTransferId(piId, sender.getSId(), messageFlow.getMfId()),
         businessObjects);
   }
 
@@ -390,6 +391,13 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
       startTimeout(subjectState);
     }
 
+    if (StateFunctionType.RECEIVE.equals(currentState.getFunctionType())
+        && currentState.getMessageFlow().stream()
+            .filter(mf -> mf.getSender().getSubjectModelType().equals(SubjectModelType.EXTERNAL))
+            .count() >= 1) {
+      notifyExternalCommunicator(subjectState);
+    }
+
     if (StateFunctionType.REFINEMENT.equals(currentState.getFunctionType())) {
       handleRefinement(subjectState);
     }
@@ -402,10 +410,25 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
         getSelf());
   }
 
+  private void notifyExternalCommunicator(final SubjectState subjectState) {
+    subjectState.getCurrentState().getMessageFlow().stream()
+        .filter(mf -> mf.getSender().getSubjectModelType().equals(SubjectModelType.EXTERNAL))
+        .forEachOrdered(mf -> {
+          final String transferId = getTransferId(subjectState.getProcessInstance().getPiId(),
+              subjectState.getSubject().getSId(), mf.getMfId());
+          externalCommunicatorClient.sendReceiveSubmission(new ReceiveSubmissionDTO(transferId));
+          LOG.info("Notified external communicator with transferId: {}", transferId);
+        });
+  }
+
   private void startTimeout(final SubjectState subjectState) {
     LOG.info("Start timeout for [{}]", subjectState);
 
     getContext().parent().tell(new TimeoutScheduleStartMessage(subjectState.getSubject().getUser(),
         subjectState.getSsId()), getSelf());
+  }
+
+  private static String getTransferId(final Long piId, final Long sId, final Long mfId) {
+    return piId + "-" + sId + "-" + mfId;
   }
 }

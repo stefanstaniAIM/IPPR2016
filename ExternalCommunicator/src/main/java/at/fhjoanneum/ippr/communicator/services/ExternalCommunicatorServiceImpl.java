@@ -16,6 +16,7 @@ import at.fhjoanneum.ippr.commons.dto.communicator.ReceiveSubmissionDTO;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.ComposeMessageCreateCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.parse.commands.ParseMessageCreateCommand;
 import at.fhjoanneum.ippr.communicator.global.GlobalKey;
+import at.fhjoanneum.ippr.communicator.persistence.entities.config.ConfigurationAssignement;
 import at.fhjoanneum.ippr.communicator.persistence.entities.submission.ReceiveSubmission;
 import at.fhjoanneum.ippr.communicator.persistence.entities.submission.ReceiveSubmissionBuilder;
 import at.fhjoanneum.ippr.communicator.persistence.objects.DataType;
@@ -53,7 +54,7 @@ public class ExternalCommunicatorServiceImpl implements ExternalCommunicatorServ
     LOG.debug("Received request for external out message [{}]", message);
 
     final Long messageFlowId = getMessageFlowId(message.getTransferId());
-    final Long configId = getActiveOutboundConfig(messageFlowId);
+    final Long configId = getActiveConfig(messageFlowId);
 
     final Map<String, InternalObject> businessObjects = new HashMap<>();
     message.getBusinessObjects().stream().forEachOrdered(bo -> {
@@ -73,8 +74,14 @@ public class ExternalCommunicatorServiceImpl implements ExternalCommunicatorServ
     return Long.valueOf(transferId.split("-")[2]);
   }
 
-  private Long getActiveOutboundConfig(final Long messageFlowId) {
-    return configurationAssignmentRepository.findByMessageFlowId(messageFlowId).getId();
+  private Long getActiveConfig(final Long messageFlowId) {
+    final ConfigurationAssignement assignement =
+        configurationAssignmentRepository.findByMessageFlowId(messageFlowId);
+    if (assignement.getOutboundConfiguration() != null) {
+      return assignement.getOutboundConfiguration().getId();
+    } else {
+      return assignement.getInboundConfiguration().getId();
+    }
   }
 
   @Override
@@ -90,10 +97,10 @@ public class ExternalCommunicatorServiceImpl implements ExternalCommunicatorServ
 
   @Override
   public void handleReceiveSubmission(final ReceiveSubmissionDTO receiveSubmission) {
-    // TODO get from transferId
+    final Long configId = getActiveConfig(getMessageFlowId(receiveSubmission.getTransferId()));
 
     final Optional<BasicInboundConfiguration> configOpt =
-        Optional.ofNullable(basicInboundCongurationRepository.findOne(1L));
+        Optional.ofNullable(basicInboundCongurationRepository.findOne(configId));
 
     final BasicInboundConfiguration config =
         configOpt.orElseThrow(() -> new IllegalArgumentException("No config found!"));
@@ -101,5 +108,6 @@ public class ExternalCommunicatorServiceImpl implements ExternalCommunicatorServ
     final ReceiveSubmission entry = new ReceiveSubmissionBuilder()
         .transferId(receiveSubmission.getTransferId()).basicInboundConfiguration(config).build();
     receiveSubmissionRepository.save(entry);
+    LOG.debug("New receive submission [{}]", receiveSubmission);
   }
 }

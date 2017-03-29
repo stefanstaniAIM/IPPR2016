@@ -68,4 +68,10 @@ public class ReceiveSubmission implements Serializable {
   public void setToReceived() {
     this.submissionState = SubmissionState.RECEIVED;
   }
+
+  @Override
+  public String toString() {
+    return "ReceiveSubmission [id=" + id + ", transferId=" + transferId + ", submissionState="
+        + submissionState + "]";
+  }
 }

@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 
 import at.fhjoanneum.ippr.communicator.global.GlobalKey;
 import at.fhjoanneum.ippr.communicator.persistence.entities.basic.inbound.BasicInboundConfigurationBuilder;
+import at.fhjoanneum.ippr.communicator.persistence.entities.config.ConfigurationAssignement;
+import at.fhjoanneum.ippr.communicator.persistence.entities.config.ConfigurationAssignmentBuilder;
 import at.fhjoanneum.ippr.communicator.persistence.entities.datatypeparser.DataTypeParserBuilder;
 import at.fhjoanneum.ippr.communicator.persistence.entities.protocol.MessageProtocolBuilder;
 import at.fhjoanneum.ippr.communicator.persistence.entities.protocol.field.MessageProtocolFieldBuilder;
@@ -33,6 +35,7 @@ public class EasyRestInboundExample extends AbstractExample {
     basic.name("json rest").parserClass("at.fhjoanneum.ippr.communicator.parser.JsonParser");
     basic.addConfigurationEntry(GlobalKey.ENDPOINT, "wuhu");
     basic.addConfigurationEntry(GlobalKey.TYPE, "TYPE");
+    basic.addConfigurationEntry(GlobalKey.TRANSFER_ID, "TRANSFER-ID");
 
     final DataTypeParser stringParser = new DataTypeParserBuilder().dataType(DataType.STRING)
         .parserClass("at.fhjoanneum.ippr.communicator.parser.datatype.StringParser")
@@ -51,10 +54,14 @@ public class EasyRestInboundExample extends AbstractExample {
 
     final BasicInboundConfiguration basicConfig = basic.build();
 
+    final ConfigurationAssignement map = new ConfigurationAssignmentBuilder().messageFlowId(8L)
+        .inboundConfiguration(basicConfig).build();
+
     entityManager.persist(stringParser);
     entityManager.persist(inboundProtocol);
     entityManager.persist(fieldA);
     entityManager.persist(fieldB);
+    entityManager.persist(map);
     entityManager.persist(basicConfig);
   }
 

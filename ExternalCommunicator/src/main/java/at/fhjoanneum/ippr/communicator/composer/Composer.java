@@ -10,7 +10,7 @@ import at.fhjoanneum.ippr.communicator.persistence.objects.protocol.MessageProto
 public interface Composer {
 
   String compose(String transferId, InternalData data, MessageProtocol messageProtocol,
-      Map<DataType, DataTypeComposer> composer);
+      Map<DataType, DataTypeComposer> composer, final Map<String, String> configuration);
 
   String getDescription();
 }
