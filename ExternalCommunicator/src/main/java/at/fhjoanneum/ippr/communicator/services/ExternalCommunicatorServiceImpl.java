@@ -108,6 +108,6 @@ public class ExternalCommunicatorServiceImpl implements ExternalCommunicatorServ
     final ReceiveSubmission entry = new ReceiveSubmissionBuilder()
         .transferId(receiveSubmission.getTransferId()).basicInboundConfiguration(config).build();
     receiveSubmissionRepository.save(entry);
-    LOG.debug("New receive submission [{}]", receiveSubmission);
+    LOG.debug("New receive submission [{}]", entry);
   }
 }

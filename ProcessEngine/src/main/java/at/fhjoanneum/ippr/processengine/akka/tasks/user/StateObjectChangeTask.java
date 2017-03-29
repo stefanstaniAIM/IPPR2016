@@ -413,12 +413,13 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
   private void notifyExternalCommunicator(final SubjectState subjectState) {
     subjectState.getCurrentState().getMessageFlow().stream()
         .filter(mf -> mf.getSender().getSubjectModelType().equals(SubjectModelType.EXTERNAL))
-        .forEachOrdered(mf -> {
-          final String transferId = getTransferId(subjectState.getProcessInstance().getPiId(),
-              subjectState.getSubject().getSId(), mf.getMfId());
+        .map(mf -> getTransferId(subjectState.getProcessInstance().getPiId(),
+            subjectState.getSubject().getSId(), mf.getMfId()))
+        .collect(Collectors.toSet()).stream().forEachOrdered(transferId -> {
           externalCommunicatorClient.sendReceiveSubmission(new ReceiveSubmissionDTO(transferId));
           LOG.info("Notified external communicator with transferId: {}", transferId);
         });
+
   }
 
   private void startTimeout(final SubjectState subjectState) {
@@ -429,6 +430,7 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
   }
 
   private static String getTransferId(final Long piId, final Long sId, final Long mfId) {
-    return piId + "-" + sId + "-" + mfId;
+    final String transferId = piId + "-" + sId + (mfId != null ? "-" + mfId : "");
+    return transferId;
   }
 }

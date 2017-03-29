@@ -13,7 +13,7 @@ import at.fhjoanneum.ippr.communicator.persistence.entities.submission.ReceiveSu
 public interface ReceiveSubmissionRepository extends CrudRepository<ReceiveSubmission, Long> {
 
   @Query(
-      value = "select * from receive_submission where submission_state = 'TO_RECEIVE' and transfer_id = :transferId ",
+      value = "select * from receive_submission where submission_state = 'TO_RECEIVE' and SUBSTRING_INDEX(transfer_id, '-', 2) = :transferId ",
       nativeQuery = true)
   ReceiveSubmission findByTransferId(@Param("transferId") String transferId);
 

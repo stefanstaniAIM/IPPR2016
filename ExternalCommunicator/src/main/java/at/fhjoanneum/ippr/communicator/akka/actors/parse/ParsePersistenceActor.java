@@ -35,6 +35,7 @@ import at.fhjoanneum.ippr.communicator.persistence.objects.basic.inbound.BasicIn
 import at.fhjoanneum.ippr.communicator.persistence.objects.messageflow.Message;
 import at.fhjoanneum.ippr.communicator.persistence.objects.messageflow.MessageState;
 import at.fhjoanneum.ippr.communicator.repositories.BasicInboundConfigurationRepository;
+import at.fhjoanneum.ippr.communicator.repositories.ConfigurationAssignementRepository;
 import at.fhjoanneum.ippr.communicator.repositories.MessageRepository;
 import at.fhjoanneum.ippr.communicator.repositories.ReceiveSubmissionRepository;
 import at.fhjoanneum.ippr.communicator.utils.InternalDataUtils;
@@ -48,12 +49,13 @@ public class ParsePersistenceActor extends AbstractActor {
 
   @Autowired
   private MessageRepository messageRepository;
-
   @Autowired
   private BasicInboundConfigurationRepository basicInboundConfigurationRepository;
-
   @Autowired
   private ReceiveSubmissionRepository receiveSubmissionRepository;
+  @Autowired
+  private ConfigurationAssignementRepository configurationAssignementRepository;
+
 
   public ParsePersistenceActor() {
     receive(
@@ -100,7 +102,8 @@ public class ParsePersistenceActor extends AbstractActor {
       throw new IllegalArgumentException("Could not find receive submission");
     }
 
-    msg.setTransferId(transferId);
+    msg.setTransferId(transferId + "-" + configurationAssignementRepository
+        .findByInboundConfiguration(msg.getInboundConfiguration().getId()).getMessageFlowId());
     msg.setInternalData(
         InternalDataUtils.convertInternalDataToJson(cmd.getParseResult().getData()));
     msg.setMessageState(MessageState.PARSED);
@@ -113,13 +116,16 @@ public class ParsePersistenceActor extends AbstractActor {
   }
 
   private String getTransferId(final StoreInternalDataCommand cmd) {
-    final String transferId = cmd.getParseResult().getTransferId();
+    String transferId = cmd.getParseResult().getTransferId();
     ReceiveSubmission submission;
     if (StringUtils.isNotBlank(transferId)) {
-      submission =
-          receiveSubmissionRepository.findByTransferId(cmd.getParseResult().getTransferId());
+      final String[] split = cmd.getParseResult().getTransferId().split("-");
+      transferId = split[0] + "-" + split[1];
+      submission = receiveSubmissionRepository.findByTransferId(transferId);
     } else {
       submission = receiveSubmissionRepository.findByConfigId(cmd.getConfigId());
+      final String[] split = submission.getTransferId().split("-");
+      transferId = split[0] + "-" + split[1];
     }
 
     if (submission != null) {
@@ -127,7 +133,7 @@ public class ParsePersistenceActor extends AbstractActor {
         s.setToReceived();
         receiveSubmissionRepository.save(s);
       });
-      return submission.getTransferId();
+      return transferId;
     } else {
       return null;
     }
