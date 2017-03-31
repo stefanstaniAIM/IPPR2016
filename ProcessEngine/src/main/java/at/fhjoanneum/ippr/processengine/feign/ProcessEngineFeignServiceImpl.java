@@ -25,6 +25,7 @@ import at.fhjoanneum.ippr.persistence.entities.engine.businessobject.BusinessObj
 import at.fhjoanneum.ippr.persistence.entities.engine.businessobject.field.BusinessObjectFieldInstanceBuilder;
 import at.fhjoanneum.ippr.persistence.entities.engine.businessobject.field.BusinessObjectFieldInstanceImpl;
 import at.fhjoanneum.ippr.persistence.entities.engine.state.SubjectStateImpl;
+import at.fhjoanneum.ippr.persistence.entities.engine.subject.SubjectImpl;
 import at.fhjoanneum.ippr.persistence.objects.engine.businessobject.BusinessObjectFieldInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.businessobject.BusinessObjectInstance;
 import at.fhjoanneum.ippr.persistence.objects.engine.process.ProcessInstance;
@@ -78,6 +79,7 @@ public class ProcessEngineFeignServiceImpl implements ProcessEngineFeignService 
     final String[] split = message.getTransferId().split("-");
     final Long piID = Long.valueOf(split[PI_ID_INDEX]);
     final Long mfId = Long.valueOf(split[MF_ID_INDEX]);
+    final Long sId = Long.valueOf(split[S_ID_INDEX]);
 
     final ProcessInstance processInstance = processInstanceRepository.findOne(piID);
     final MessageFlow messageFlow = Optional.ofNullable(messageFlowRepository.findOne(mfId))
@@ -92,6 +94,10 @@ public class ProcessEngineFeignServiceImpl implements ProcessEngineFeignService 
 
     businessObjectInstances.stream()
         .forEachOrdered(objectInstance -> storeValues(records, objectInstance));
+
+    final Subject subject = subjectRepository.findOne(sId);
+    subject.getSubjectState().setToReceived(messageFlow);
+    subjectRepository.save((SubjectImpl) subject);
   }
 
   private Set<BusinessObjectInstance> getBusinessObjectInstances(
