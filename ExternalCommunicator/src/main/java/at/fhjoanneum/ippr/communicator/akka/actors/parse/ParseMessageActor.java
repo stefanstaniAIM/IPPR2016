@@ -18,7 +18,7 @@ import akka.actor.ActorRef;
 import akka.japi.pf.ReceiveBuilder;
 import at.fhjoanneum.ippr.commons.dto.communicator.BusinessObject;
 import at.fhjoanneum.ippr.commons.dto.communicator.BusinessObjectField;
-import at.fhjoanneum.ippr.commons.dto.communicator.ExternalOutputMessage;
+import at.fhjoanneum.ippr.commons.dto.communicator.ExternalCommunicatorMessage;
 import at.fhjoanneum.ippr.communicator.akka.config.SpringExtension;
 import at.fhjoanneum.ippr.communicator.akka.messages.commands.ConfigRetrievalCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.commands.UpdateMessageStateCommand;
@@ -89,7 +89,7 @@ public class ParseMessageActor extends AbstractActor {
       objects.add(new BusinessObject(obj.getName(), fields));
     });
 
-    processEngineClient.notify(new ExternalOutputMessage("test", objects));
+    processEngineClient.notify(new ExternalCommunicatorMessage("test", objects));
 
     getDBPersistenceActor().tell(new UpdateMessageStateCommand(evt.getId(), MessageState.RECEIVED),
         getContext().parent());

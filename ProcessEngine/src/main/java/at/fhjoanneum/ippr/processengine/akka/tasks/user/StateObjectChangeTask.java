@@ -27,7 +27,7 @@ import akka.actor.Status;
 import akka.pattern.Patterns;
 import akka.pattern.PatternsCS;
 import at.fhjoanneum.ippr.commons.dto.communicator.BusinessObject;
-import at.fhjoanneum.ippr.commons.dto.communicator.ExternalOutputMessage;
+import at.fhjoanneum.ippr.commons.dto.communicator.ExternalCommunicatorMessage;
 import at.fhjoanneum.ippr.commons.dto.communicator.ReceiveSubmissionDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.BusinessObjectInstanceDTO;
 import at.fhjoanneum.ippr.persistence.entities.engine.businessobject.BusinessObjectInstanceBuilder;
@@ -333,7 +333,7 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
     }
   }
 
-  private ExternalOutputMessage getExternalOutputMessage(final Long piId,
+  private ExternalCommunicatorMessage getExternalOutputMessage(final Long piId,
       final MessageFlow messageFlow, final Subject sender) {
     final Set<BusinessObject> businessObjects = new HashSet<>();
 
@@ -351,7 +351,7 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
       businessObjects.add(new BusinessObject(bom.getName(), fields));
     });
 
-    return new ExternalOutputMessage(getTransferId(piId, sender.getSId(), messageFlow.getMfId()),
+    return new ExternalCommunicatorMessage(getTransferId(piId, sender.getSId(), messageFlow.getMfId()),
         businessObjects);
   }
 

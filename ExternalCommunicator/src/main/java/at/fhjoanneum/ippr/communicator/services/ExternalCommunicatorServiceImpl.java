@@ -11,7 +11,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import akka.actor.ActorRef;
-import at.fhjoanneum.ippr.commons.dto.communicator.ExternalOutputMessage;
+import at.fhjoanneum.ippr.commons.dto.communicator.ExternalCommunicatorMessage;
 import at.fhjoanneum.ippr.commons.dto.communicator.ReceiveSubmissionDTO;
 import at.fhjoanneum.ippr.communicator.akka.messages.compose.commands.ComposeMessageCreateCommand;
 import at.fhjoanneum.ippr.communicator.akka.messages.parse.commands.ParseMessageCreateCommand;
@@ -50,7 +50,7 @@ public class ExternalCommunicatorServiceImpl implements ExternalCommunicatorServ
 
   @Async
   @Override
-  public void handleExternalOutputMessage(final ExternalOutputMessage message) {
+  public void handleExternalOutputMessage(final ExternalCommunicatorMessage message) {
     LOG.debug("Received request for external out message [{}]", message);
 
     final Long messageFlowId = getMessageFlowId(message.getTransferId());

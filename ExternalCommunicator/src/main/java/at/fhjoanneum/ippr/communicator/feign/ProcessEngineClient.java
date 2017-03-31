@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import at.fhjoanneum.ippr.commons.dto.communicator.ExternalOutputMessage;
+import at.fhjoanneum.ippr.commons.dto.communicator.ExternalCommunicatorMessage;
 
 @FeignClient("process-engine")
 public interface ProcessEngineClient {
@@ -15,5 +15,5 @@ public interface ProcessEngineClient {
   void markAsSent(@PathVariable("transferId") final String transferId);
 
   @RequestMapping(value = "receive", method = RequestMethod.POST)
-  void notify(@RequestBody ExternalOutputMessage msg);
+  void notify(@RequestBody ExternalCommunicatorMessage msg);
 }

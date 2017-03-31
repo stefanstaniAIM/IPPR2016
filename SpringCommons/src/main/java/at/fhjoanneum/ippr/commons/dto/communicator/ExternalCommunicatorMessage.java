@@ -6,7 +6,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class ExternalOutputMessage implements Serializable {
+public class ExternalCommunicatorMessage implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
@@ -14,9 +14,9 @@ public class ExternalOutputMessage implements Serializable {
 
   private Set<BusinessObject> businessObjects;
 
-  public ExternalOutputMessage() {}
+  public ExternalCommunicatorMessage() {}
 
-  public ExternalOutputMessage(final String transferId, final Set<BusinessObject> businessObjects) {
+  public ExternalCommunicatorMessage(final String transferId, final Set<BusinessObject> businessObjects) {
     this.transferId = transferId;
     this.businessObjects = businessObjects;
   }
@@ -27,5 +27,11 @@ public class ExternalOutputMessage implements Serializable {
 
   public Set<BusinessObject> getBusinessObjects() {
     return businessObjects;
+  }
+
+  @Override
+  public String toString() {
+    return "ExternalOutputMessage [transferId=" + transferId + ", businessObjects="
+        + businessObjects + "]";
   }
 }

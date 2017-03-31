@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import at.fhjoanneum.ippr.commons.dto.communicator.ExternalOutputMessage;
+import at.fhjoanneum.ippr.commons.dto.communicator.ExternalCommunicatorMessage;
 
 @RestController
 public class ProcessEngineFeignController {
@@ -25,7 +25,8 @@ public class ProcessEngineFeignController {
   }
 
   @RequestMapping(value = "receive", method = RequestMethod.POST)
-  public void receive(@RequestBody final ExternalOutputMessage msg) {
+  public void receive(@RequestBody final ExternalCommunicatorMessage msg) {
     LOG.debug("Received [{}]", msg);
+    processEngineFeignService.storeExternalCommunicatorMessage(msg);
   }
 }

@@ -1,11 +1,11 @@
 package at.fhjoanneum.ippr.communicator.services;
 
-import at.fhjoanneum.ippr.commons.dto.communicator.ExternalOutputMessage;
+import at.fhjoanneum.ippr.commons.dto.communicator.ExternalCommunicatorMessage;
 import at.fhjoanneum.ippr.commons.dto.communicator.ReceiveSubmissionDTO;
 
 public interface ExternalCommunicatorService {
 
-  void handleExternalOutputMessage(ExternalOutputMessage message);
+  void handleExternalOutputMessage(ExternalCommunicatorMessage message);
 
   void handleExternalInputMessage(String body, String endpoint);
 

@@ -26,11 +26,17 @@ public class BusinessObject implements Serializable {
     return fields;
   }
 
+
+  @Override
+  public String toString() {
+    return "BusinessObject [name=" + name + ", fields=" + fields + "]";
+  }
+
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((name == null) ? 0 : name.hashCode());
+    result = (prime * result) + ((name == null) ? 0 : name.hashCode());
     return result;
   }
 
