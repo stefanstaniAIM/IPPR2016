@@ -7,6 +7,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +64,8 @@ public class ProcessEngineFeignServiceImpl implements ProcessEngineFeignService 
   private BusinessObjectInstanceRepository businessObjectInstanceRepository;
   @Autowired
   private BusinessObjectFieldInstanceRepository businessObjectFieldInstanceRepository;
+  @PersistenceContext
+  private EntityManager entityManager;
 
   @Override
   public void markAsSent(final String transferId) {
@@ -125,6 +130,7 @@ public class ProcessEngineFeignServiceImpl implements ProcessEngineFeignService 
 
       businessObjectInstanceRepository.save((BusinessObjectInstanceImpl) businessObjectInstance);
       businessObjectFieldInstanceRepository.save(fields);
+      entityManager.refresh(businessObjectInstance);
       instances.add(businessObjectInstance);
     }
 
@@ -146,18 +152,17 @@ public class ProcessEngineFeignServiceImpl implements ProcessEngineFeignService 
 
   private void storeValues(final Table<String, String, BusinessObjectField> records,
       final BusinessObjectInstance objectInstance) {
-    final Map<String, BusinessObjectField> column =
-        records.column(objectInstance.getBusinessObjectModel().getName());
-    if (column != null) {
+    final Map<String, BusinessObjectField> row =
+        records.row(objectInstance.getBusinessObjectModel().getName());
+    if (!row.isEmpty()) {
       objectInstance.getBusinessObjectFieldInstances().stream()
-          .forEachOrdered(field -> storeValue(column, field));
+          .forEachOrdered(field -> storeValue(row, field));
     }
   }
 
-  private void storeValue(final Map<String, BusinessObjectField> column,
+  private void storeValue(final Map<String, BusinessObjectField> row,
       final BusinessObjectFieldInstance field) {
-    final BusinessObjectField ecField =
-        column.get(field.getBusinessObjectFieldModel().getFieldName());
+    final BusinessObjectField ecField = row.get(field.getBusinessObjectFieldModel().getFieldName());
     if (ecField != null) {
       field.setValue(ecField.getValue());
       businessObjectFieldInstanceRepository.save((BusinessObjectFieldInstanceImpl) field);

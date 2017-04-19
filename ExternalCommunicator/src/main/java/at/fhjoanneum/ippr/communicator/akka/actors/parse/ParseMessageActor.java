@@ -89,7 +89,7 @@ public class ParseMessageActor extends AbstractActor {
       objects.add(new BusinessObject(obj.getName(), fields));
     });
 
-    processEngineClient.notify(new ExternalCommunicatorMessage("test", objects));
+    processEngineClient.notify(new ExternalCommunicatorMessage(evt.getTransferId(), objects));
 
     getDBPersistenceActor().tell(new UpdateMessageStateCommand(evt.getId(), MessageState.RECEIVED),
         getContext().parent());

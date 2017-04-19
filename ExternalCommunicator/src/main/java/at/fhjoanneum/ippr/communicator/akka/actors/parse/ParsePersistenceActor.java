@@ -142,7 +142,7 @@ public class ParsePersistenceActor extends AbstractActor {
   private void handleNotifyProcessEngineCommand(final NotifyProcessEngineCommand cmd)
       throws JsonParseException, JsonMappingException, IOException {
     final Message msg = messageRepository.findOne(cmd.getId());
-    sender().tell(new NotifyConfigRetrievedEvent(cmd.getId(),
+    sender().tell(new NotifyConfigRetrievedEvent(cmd.getId(), msg.getTransferId(),
         InternalDataUtils.convertJsonToInternalData(msg.getInternalData())), self());
   }
 
