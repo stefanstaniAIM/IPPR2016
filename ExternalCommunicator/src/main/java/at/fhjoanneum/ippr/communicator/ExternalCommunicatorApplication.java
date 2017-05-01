@@ -40,10 +40,15 @@ public class ExternalCommunicatorApplication {
     }
 
     @RequestMapping(value = "testpost", method = RequestMethod.POST, consumes = "application/json")
-    public void post(@RequestBody final String body) throws JSONException {
+    public void postJson(@RequestBody final String body) throws JSONException {
       final JSONObject object = new JSONObject(body);
 
       LOG.debug("Received [{}]", object);
+    }
+
+    @RequestMapping(value = "testpost", method = RequestMethod.POST, consumes = "application/xml")
+    public void postXml(@RequestBody final String body) throws JSONException {
+      LOG.debug("Received [{}]", body);
     }
   }
 }

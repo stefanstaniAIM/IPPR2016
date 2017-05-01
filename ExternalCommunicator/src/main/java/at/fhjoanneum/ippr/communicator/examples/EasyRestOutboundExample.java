@@ -38,8 +38,8 @@ public class EasyRestOutboundExample extends AbstractExample {
     final BasicOutboundConfigurationBuilder basicBuilder =
         new BasicOutboundConfigurationBuilder().name("easy rest outbound");
 
-    basicBuilder.composerClass("at.fhjoanneum.ippr.communicator.composer.JsonComposer");
-    basicBuilder.sendPlugin("at.fhjoanneum.ippr.communicator.plugins.send.JsonSendPlugin");
+    basicBuilder.composerClass("at.fhjoanneum.ippr.communicator.composer.XmlComposer");
+    basicBuilder.sendPlugin("at.fhjoanneum.ippr.communicator.plugins.send.XmlSendPlugin");
     basicBuilder.addConfigurationEntry(GlobalKey.ENDPOINT, "http://localhost:22222/testpost");
     basicBuilder.addConfigurationEntry(GlobalKey.TYPE, "TYPE");
     basicBuilder.addConfigurationEntry(GlobalKey.TRANSFER_ID, "TRANSFER-ID");

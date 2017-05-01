@@ -37,8 +37,8 @@ public class XmlComposer implements Composer {
     final String currentMessage = messageProtocol.getInternalName();
     final InternalObject internalObject = data.getObjects().get(currentMessage);
     for (final MessageProtocolField protocolField : messageProtocol.getFields()) {
-      if (protocolField.isMandatory() && (internalObject == null
-          || internalObject.getFields().get(protocolField.getInternalName()) == null)) {
+      if (protocolField.isMandatory() && ((internalObject == null)
+          || (internalObject.getFields().get(protocolField.getInternalName()) == null))) {
         throw new IllegalArgumentException("Could not find protocol field for internal name ["
             + protocolField.getInternalName() + "]");
       }

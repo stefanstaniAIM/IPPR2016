@@ -11,9 +11,9 @@ import org.springframework.http.HttpStatus;
 
 import at.fhjoanneum.ippr.communicator.global.GlobalKey;
 
-public class JsonSendPlugin implements SendPlugin {
+public class XmlSendPlugin implements SendPlugin {
 
-  private static final Logger LOG = LoggerFactory.getLogger(JsonSendPlugin.class);
+  private static final Logger LOG = LoggerFactory.getLogger(XmlSendPlugin.class);
 
   @Override
   public boolean send(final String body, final Map<String, String> configuration) {
@@ -23,7 +23,7 @@ public class JsonSendPlugin implements SendPlugin {
       final HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
       con.setRequestMethod("POST");
-      con.setRequestProperty("Content-Type", "application/json");
+      con.setRequestProperty("Content-Type", "application/xml");
       con.setDoOutput(true);
 
       LOG.debug("Send [{}] to [{}]", body, endpoint);
