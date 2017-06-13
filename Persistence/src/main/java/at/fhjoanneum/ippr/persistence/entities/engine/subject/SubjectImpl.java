@@ -2,6 +2,7 @@ package at.fhjoanneum.ippr.persistence.entities.engine.subject;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -46,6 +47,9 @@ public class SubjectImpl implements Subject, Serializable {
   @OneToOne(mappedBy = "subject")
   private SubjectStateImpl subjectState;
 
+  @ManyToOne
+  private SubjectImpl processPartner;
+
   SubjectImpl() {}
 
   SubjectImpl(final Long userId, final Long groupId, final SubjectModelImpl subjectModel) {
@@ -83,6 +87,16 @@ public class SubjectImpl implements Subject, Serializable {
   @Override
   public SubjectState getSubjectState() {
     return subjectState;
+  }
+
+  @Override
+  public Optional<Subject> getProcessPartner() {
+    return Optional.ofNullable(processPartner);
+  }
+
+  @Override
+  public void setProcessPartner(final Subject subject) {
+    this.processPartner = (SubjectImpl) subject;
   }
 
   @Override

@@ -10,7 +10,8 @@ import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +32,7 @@ import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 import at.fhjoanneum.ippr.processengine.repositories.SubjectStateRepository;
 
 @Service
-public class StartUpRunner implements CommandLineRunner {
+public class StartUpRunner implements ApplicationRunner {
 
   private final static Logger LOG = LoggerFactory.getLogger(StartUpRunner.class);
 
@@ -52,7 +53,7 @@ public class StartUpRunner implements CommandLineRunner {
   @Async
   @Transactional
   @Override
-  public void run(final String... args) throws Exception {
+  public void run(final ApplicationArguments args) throws Exception {
     LOG.info(
         "##################################################################################################################");
     LOG.info("Start up of already running processes and users");

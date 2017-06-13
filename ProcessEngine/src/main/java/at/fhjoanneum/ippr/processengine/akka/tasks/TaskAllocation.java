@@ -18,7 +18,8 @@ public enum TaskAllocation {
   EXECUTE_REFINEMENT_TASK("User.ExecuteRefinement"),
   START_TIMEOUT_TASK("User.StartTimeoutTask"),
   EXECUTE_TIMEOUT_TASK("User.ExecuteTimeoutTask"),
-  CANCEL_TIMEOUT_TASK("User.CancelTimeoutTask");
+  CANCEL_TIMEOUT_TASK("User.CancelTimeoutTask"),
+  SEND_PROCESS_MESSAGE_TASK("User.SendProcessMessageTask");
   // @formatter:on
 
   private final String actorName;

@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import akka.actor.UntypedActor;
 import akka.actor.UntypedActorContext;
 
-@Transactional(isolation = Isolation.READ_COMMITTED)
+@Transactional(isolation = Isolation.READ_UNCOMMITTED)
 public abstract class AbstractTask<I> extends UntypedActor implements Task<I> {
 
   private final static Logger LOG = LoggerFactory.getLogger(AbstractTask.class);

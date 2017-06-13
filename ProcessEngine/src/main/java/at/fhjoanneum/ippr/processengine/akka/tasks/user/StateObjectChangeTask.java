@@ -29,6 +29,7 @@ import akka.pattern.PatternsCS;
 import at.fhjoanneum.ippr.commons.dto.communicator.BusinessObject;
 import at.fhjoanneum.ippr.commons.dto.communicator.ExternalCommunicatorMessage;
 import at.fhjoanneum.ippr.commons.dto.communicator.ReceiveSubmissionDTO;
+import at.fhjoanneum.ippr.commons.dto.processengine.SendProcessMessage;
 import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.BusinessObjectInstanceDTO;
 import at.fhjoanneum.ippr.persistence.entities.engine.businessobject.BusinessObjectInstanceBuilder;
 import at.fhjoanneum.ippr.persistence.entities.engine.businessobject.BusinessObjectInstanceImpl;
@@ -57,6 +58,7 @@ import at.fhjoanneum.ippr.processengine.akka.messages.process.timeout.TimeoutSch
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.AssignUsersMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.MessagesSendMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObjectChangeMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObjectChangeMessage.Request;
 import at.fhjoanneum.ippr.processengine.akka.tasks.AbstractTask;
 import at.fhjoanneum.ippr.processengine.feign.ExternalCommunicatorClient;
 import at.fhjoanneum.ippr.processengine.parser.DbValueParser;
@@ -257,14 +259,45 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
 
       triggerSendInternal(subjectState, request);
       triggerSendExternal(subjectState, request);
+      triggerSendProcess(subjectState, request);
 
     } catch (final Exception e) {
       LOG.error(e.getMessage());
-      sender.tell(
-          new Status.Failure(new IllegalStateException(
-              "Error when assign users to subject in PI_ID [" + request.getPiId() + "]")),
+      sender.tell(new Status.Failure(new IllegalStateException("Error: " + e.getMessage())),
           getSelf());
     }
+  }
+
+  private void triggerSendProcess(final SubjectState subjectState, final Request request) {
+    subjectState.getCurrentState().getMessageFlow().stream()
+        .filter(mf -> SubjectModelType.PROCESS.equals(mf.getReceiver().getSubjectModelType()))
+        .forEachOrdered(mf -> {
+          final BusinessObjectInstance boInstance =
+              businessObjectInstanceRepository.getBusinessObjectInstanceOfModelInProcess(
+                  request.getPiId(), mf.getBusinessObjectModels().get(0).getBomId());
+
+          try {
+            PatternsCS
+                .ask(getContext().parent(),
+                    new SendProcessMessage.Request(request.getPiId(),
+                        subjectState.getSubject().getSId(),
+                        request.getStateObjectChangeDTO().getUserAssignments() == null
+                            || request.getStateObjectChangeDTO().getUserAssignments().isEmpty()
+                                ? null
+                                : request.getStateObjectChangeDTO().getUserAssignments().get(0)
+                                    .getUserId(),
+                        mf.getMfId(), boInstance != null ? boInstance.getBoiId() : null),
+                    Global.TIMEOUT)
+                .toCompletableFuture().get();
+
+            subjectState.setToSent();
+            changeToNextState(subjectState, request);
+          } catch (final Exception e) {
+            LOG.error(e.getMessage());
+            sender.tell(new Status.Failure(new IllegalStateException("Error: " + e.getMessage())),
+                getSelf());
+          }
+        });
   }
 
   private void triggerSendInternal(final SubjectState subjectState,
@@ -351,8 +384,8 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
       businessObjects.add(new BusinessObject(bom.getName(), fields));
     });
 
-    return new ExternalCommunicatorMessage(getTransferId(piId, sender.getSId(), messageFlow.getMfId()),
-        businessObjects);
+    return new ExternalCommunicatorMessage(
+        getTransferId(piId, sender.getSId(), messageFlow.getMfId()), businessObjects);
   }
 
 

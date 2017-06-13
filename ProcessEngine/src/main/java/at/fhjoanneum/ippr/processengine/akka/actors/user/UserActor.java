@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import akka.actor.UntypedActor;
+import at.fhjoanneum.ippr.commons.dto.processengine.SendProcessMessage;
 import at.fhjoanneum.ippr.commons.dto.processengine.TaskDTO;
 import at.fhjoanneum.ippr.persistence.objects.engine.enums.ProcessInstanceState;
 import at.fhjoanneum.ippr.processengine.akka.config.Global;
@@ -80,6 +81,8 @@ public class UserActor extends UntypedActor {
       handleTimeoutExecuteMessage(obj);
     } else if (obj instanceof TimeoutScheduleCancelMessage) {
       handleTimeoutCancelMessage(obj);
+    } else if (obj instanceof SendProcessMessage.Request) {
+      handleSendProcessMessage(obj);
     } else {
       LOG.warn("Unhandled message: {}", obj);
       unhandled(obj);
@@ -152,5 +155,9 @@ public class UserActor extends UntypedActor {
 
   private void handleTimeoutCancelMessage(final Object obj) {
     taskManager.executeTaskInContext(TaskAllocation.CANCEL_TIMEOUT_TASK, getContext(), obj);
+  }
+
+  private void handleSendProcessMessage(final Object obj) {
+    taskManager.executeTask(TaskAllocation.SEND_PROCESS_MESSAGE_TASK, getContext(), obj);
   }
 }

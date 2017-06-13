@@ -35,9 +35,11 @@ public class UserAssignmentsTask extends AbstractTask<AssignUsersMessage.Request
     request.getUserAssignments().forEach(assignment -> {
       final Subject subject = subjectRepository
           .getSubjectForSubjectModelInProcess(request.getPiId(), assignment.getSmId());
-      subject.setUser(assignment.getUserId());
-      subjectRepository.save((SubjectImpl) subject);
-      LOG.info("New user for subject: {}", subject);
+      if (subject != null) {
+        subject.setUser(assignment.getUserId());
+        subjectRepository.save((SubjectImpl) subject);
+        LOG.info("New user for subject: {}", subject);
+      }
     });
 
     final ActorRef sender = getSender();

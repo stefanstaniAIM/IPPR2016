@@ -34,6 +34,7 @@ import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.SubjectModelType;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.TransitionType;
 import at.fhjoanneum.ippr.persistence.objects.model.messageflow.MessageFlow;
+import at.fhjoanneum.ippr.persistence.objects.model.process.ProcessModel;
 import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
 import at.fhjoanneum.ippr.persistence.objects.model.transition.Transition;
@@ -89,11 +90,21 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
 
     StateObjectDTO stateObjectDTO = null;
     if (StateFunctionType.SEND.equals(subjectState.getCurrentState().getFunctionType())) {
-      final List<SubjectDTO> subjects = subjectState.getCurrentState().getMessageFlow().stream()
+      final List<SubjectDTO> subjects = Lists.newArrayList();
+
+      // internal
+      subjects.addAll(subjectState.getCurrentState().getMessageFlow().stream()
           .filter(messageFlow -> messageFlow.getReceiver().getSubjectModelType()
               .equals(SubjectModelType.INTERNAL))
           .map(messageFlow -> getAssignedUser(messageFlow, request.getPiId()))
-          .collect(Collectors.toList());
+          .collect(Collectors.toList()));
+
+      // process
+      subjects.addAll(subjectState.getCurrentState().getMessageFlow().stream()
+          .filter(messageFlow -> messageFlow.getReceiver().getSubjectModelType()
+              .equals(SubjectModelType.PROCESS))
+          .map(mf -> getAssignedProcessUser(mf, request.getPiId())).collect(Collectors.toList()));
+
       stateObjectDTO = new StateObjectDTO(request.getPiId(), subjectState.getSsId(),
           businessObjects, nextStates, subjects);
     } else {
@@ -216,6 +227,16 @@ public class StateObjectRetrieveTask extends AbstractTask<StateObjectMessage.Req
         subjectRepository.getSubjectForSubjectModelInProcess(piId, subjectModel.getSmId());
     return new SubjectDTO(subjectModel.getSmId(), subject.getUser(), subjectModel.getName(),
         subjectModel.getAssignedRules());
+  }
+
+  private SubjectDTO getAssignedProcessUser(final MessageFlow mf, final Long piID) {
+    if (mf.getAssignedProcessModel().isPresent()) {
+      final ProcessModel pm = mf.getAssignedProcessModel().get();
+      final SubjectModel sm = pm.getStarterSubjectModel();
+      return new SubjectDTO(sm.getSmId(), null, sm.getName(), sm.getAssignedRules());
+    }
+
+    return null;
   }
 
   private Set<StateDTO> getNextStates(final SubjectState subjectState) {

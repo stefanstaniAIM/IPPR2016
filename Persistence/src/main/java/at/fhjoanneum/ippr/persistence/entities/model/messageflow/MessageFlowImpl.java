@@ -2,6 +2,7 @@ package at.fhjoanneum.ippr.persistence.entities.model.messageflow;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,10 +21,12 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import at.fhjoanneum.ippr.persistence.entities.model.businessobject.BusinessObjectModelImpl;
+import at.fhjoanneum.ippr.persistence.entities.model.process.ProcessModelImpl;
 import at.fhjoanneum.ippr.persistence.entities.model.state.StateImpl;
 import at.fhjoanneum.ippr.persistence.entities.model.subject.SubjectModelImpl;
 import at.fhjoanneum.ippr.persistence.objects.model.businessobject.BusinessObjectModel;
 import at.fhjoanneum.ippr.persistence.objects.model.messageflow.MessageFlow;
+import at.fhjoanneum.ippr.persistence.objects.model.process.ProcessModel;
 import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
 
 @Entity(name = "MESSAGE_FLOW")
@@ -53,6 +56,10 @@ public class MessageFlowImpl implements MessageFlow, Serializable {
       inverseJoinColumns = {@JoinColumn(name = "bom_id")})
   private List<BusinessObjectModelImpl> businessObjectModels = Lists.newArrayList();
 
+  @ManyToOne
+  @JoinColumn(name = "pm_id")
+  private ProcessModelImpl assignedProcessModel;
+
   MessageFlowImpl() {}
 
   MessageFlowImpl(final SubjectModelImpl sender, final SubjectModelImpl receiver,
@@ -61,6 +68,13 @@ public class MessageFlowImpl implements MessageFlow, Serializable {
     this.receiver = receiver;
     this.state = state;
     this.businessObjectModels = businessObjectModels;
+  }
+
+  MessageFlowImpl(final SubjectModelImpl sender, final SubjectModelImpl receiver,
+      final StateImpl state, final List<BusinessObjectModelImpl> businessObjectModels,
+      final ProcessModelImpl assignedProcessModel) {
+    this(sender, receiver, state, businessObjectModels);
+    this.assignedProcessModel = assignedProcessModel;
   }
 
   @Override
@@ -81,6 +95,11 @@ public class MessageFlowImpl implements MessageFlow, Serializable {
   @Override
   public List<BusinessObjectModel> getBusinessObjectModels() {
     return ImmutableList.copyOf(businessObjectModels);
+  }
+
+  @Override
+  public Optional<ProcessModel> getAssignedProcessModel() {
+    return Optional.ofNullable(assignedProcessModel);
   }
 
   @Override

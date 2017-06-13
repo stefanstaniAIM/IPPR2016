@@ -9,10 +9,12 @@ import com.google.common.collect.Lists;
 
 import at.fhjoanneum.ippr.persistence.builder.Builder;
 import at.fhjoanneum.ippr.persistence.entities.model.businessobject.BusinessObjectModelImpl;
+import at.fhjoanneum.ippr.persistence.entities.model.process.ProcessModelImpl;
 import at.fhjoanneum.ippr.persistence.entities.model.state.StateImpl;
 import at.fhjoanneum.ippr.persistence.entities.model.subject.SubjectModelImpl;
 import at.fhjoanneum.ippr.persistence.objects.model.businessobject.BusinessObjectModel;
 import at.fhjoanneum.ippr.persistence.objects.model.messageflow.MessageFlow;
+import at.fhjoanneum.ippr.persistence.objects.model.process.ProcessModel;
 import at.fhjoanneum.ippr.persistence.objects.model.state.State;
 import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
 
@@ -22,6 +24,7 @@ public class MessageFlowBuilder implements Builder<MessageFlow> {
   private SubjectModelImpl receiver;
   private StateImpl state;
   private final List<BusinessObjectModelImpl> businessObjectModels = Lists.newArrayList();
+  private ProcessModelImpl assignedProcessModel;
 
   public MessageFlowBuilder sender(final SubjectModel sender) {
     checkNotNull(sender);
@@ -52,6 +55,13 @@ public class MessageFlowBuilder implements Builder<MessageFlow> {
     return this;
   }
 
+  public MessageFlowBuilder assignProcessModel(final ProcessModel pm) {
+    checkNotNull(pm);
+    checkArgument(pm instanceof ProcessModelImpl);
+    assignedProcessModel = (ProcessModelImpl) pm;
+    return this;
+  }
+
   @Override
   public MessageFlow build() {
     checkNotNull(sender);
@@ -59,7 +69,7 @@ public class MessageFlowBuilder implements Builder<MessageFlow> {
     checkNotNull(state);
     checkArgument(!businessObjectModels.isEmpty());
 
-    return new MessageFlowImpl(sender, receiver, state, businessObjectModels);
+    return new MessageFlowImpl(sender, receiver, state, businessObjectModels, assignedProcessModel);
   }
 
 }

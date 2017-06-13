@@ -6,6 +6,7 @@ import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import at.fhjoanneum.ippr.persistence.entities.model.businessobject.BusinessObjectModelBuilder;
@@ -34,9 +35,10 @@ import at.fhjoanneum.ippr.persistence.objects.model.transition.Transition;
 
 @Component
 @Transactional
-public class VacationRequestWithoutChild extends AbstractExample {
+@Order(0)
+public class TravelRequestExternalSystem extends AbstractExample {
 
-  private static final Logger LOG = LoggerFactory.getLogger(VacationRequestWithoutChild.class);
+  private static final Logger LOG = LoggerFactory.getLogger(TravelRequestExternalSystem.class);
 
   @PersistenceContext
   private EntityManager entityManager;
@@ -57,28 +59,102 @@ public class VacationRequestWithoutChild extends AbstractExample {
         new SubjectModelBuilder().name("Travel Management").type(SubjectModelType.EXTERNAL).build();
 
     // create vacation request
-    final State empState1 =
-        new StateBuilder().subjectModel(employee).name("Create vacation request")
-            .eventType(StateEventType.START).functionType(StateFunctionType.FUNCTION).build();
+    final State empState1 = new StateBuilder().subjectModel(employee).name("Reiseantrag anlegen")
+        .eventType(StateEventType.START).functionType(StateFunctionType.FUNCTION).build();
 
     // send vacation request
-    final State empState2 = new StateBuilder().subjectModel(employee).name("Send vacation request")
+    final State empState2 = new StateBuilder().subjectModel(employee).name("Reiseantrag senden")
         .functionType(StateFunctionType.SEND).build();
     final Transition empT1 =
         new TransitionBuilder().fromState(empState1).toState(empState2).build();
 
     // receive vacation request
-    final State bossState1 = new StateBuilder().subjectModel(boss).name("Receive vacation request")
+    final State bossState1 = new StateBuilder().subjectModel(boss).name("Reiseantrag empfangen")
         .eventType(StateEventType.START).functionType(StateFunctionType.RECEIVE).build();
 
-    final BusinessObjectModel vacationRequestForm =
-        new BusinessObjectModelBuilder().name("Vacation request form").addToState(empState1)
-            .addToState(empState2).addToState(bossState1).build();
-    final BusinessObjectFieldModel boFrom =
-        new BusinessObjectFieldModelBuilder().fieldName("From").fieldType(FieldType.STRING)
-            .businessObjectModel(vacationRequestForm).position(1).defaultValue("hohoho").build();
-    final BusinessObjectFieldModel boTo = new BusinessObjectFieldModelBuilder().fieldName("To")
+
+
+    // accept or do not accept vacation request
+    final State bossState2 =
+        new StateBuilder().subjectModel(boss).name("Reiseantrag annehmen oder ablehnen")
+            .functionType(StateFunctionType.FUNCTION).build();
+
+    final Transition bossT1 =
+        new TransitionBuilder().fromState(bossState1).toState(bossState2).build();
+    final State bossState3 = new StateBuilder().subjectModel(boss).name("Reiseantrag annehmen")
+        .functionType(StateFunctionType.SEND).build();
+    final Transition bossT2 =
+        new TransitionBuilder().fromState(bossState2).toState(bossState3).build();
+    final State bossState4 = new StateBuilder().subjectModel(boss).name("Reiseantrag ablehnen")
+        .functionType(StateFunctionType.SEND).build();
+    final Transition bossT3 =
+        new TransitionBuilder().fromState(bossState2).toState(bossState4).build();
+
+    // finish the boss
+    final State bossState5 = new StateBuilder().subjectModel(boss).name("ENDE")
+        .functionType(StateFunctionType.FUNCTION).eventType(StateEventType.END).build();
+    final Transition bossT4 =
+        new TransitionBuilder().fromState(bossState3).toState(bossState5).build();
+    final Transition bossT5 =
+        new TransitionBuilder().fromState(bossState4).toState(bossState5).build();
+
+    // receive the response from the boss
+    final State empState3 = new StateBuilder().subjectModel(employee)
+        .name("Empfange Reiseantrag Antwort").functionType(StateFunctionType.RECEIVE).build();
+    final Transition empT2 =
+        new TransitionBuilder().fromState(empState2).toState(empState3).build();
+
+    final State empState4 = new StateBuilder().subjectModel(employee).name("Reiseantrag angenommen")
+        .functionType(StateFunctionType.FUNCTION).build();
+    final State empState5 = new StateBuilder().subjectModel(employee)
+        .name("Reiseantrag nicht angenommen").functionType(StateFunctionType.FUNCTION).build();
+
+    final Transition if1 = new TransitionBuilder().fromState(empState3).toState(empState4)
+        .transitionType(TransitionType.NORMAL).build();
+    final Transition if2 = new TransitionBuilder().fromState(empState3).toState(empState5)
+        .transitionType(TransitionType.NORMAL).build();
+
+    final State empState6 = new StateBuilder().subjectModel(employee)
+        .name("Sende an das Travel Management").functionType(StateFunctionType.SEND).build();
+    final Transition empT3 =
+        new TransitionBuilder().fromState(empState4).toState(empState6).build();
+
+    final State empState7 = new StateBuilder().subjectModel(employee)
+        .name("Receive response travel management").functionType(StateFunctionType.RECEIVE).build();
+    final Transition empT6 =
+        new TransitionBuilder().fromState(empState6).toState(empState7).build();
+
+    final BusinessObjectModel hotel =
+        new BusinessObjectModelBuilder().name("Hotel Buchung").addToState(empState7).build();
+    final BusinessObjectFieldModel hotelF1 =
+        new BusinessObjectFieldModelBuilder().businessObjectModel(hotel).fieldName("Name")
+            .fieldType(FieldType.STRING).position(0).build();
+    final BusinessObjectFieldModel hotelF2 =
+        new BusinessObjectFieldModelBuilder().businessObjectModel(hotel).fieldName("Sterne")
+            .fieldType(FieldType.STRING).position(1).build();
+
+    final BusinessObjectFieldPermission hotelP1 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(hotelF1)
+            .permission(FieldPermission.READ).state(empState7).build();
+    final BusinessObjectFieldPermission hotelP2 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(hotelF2)
+            .permission(FieldPermission.READ).state(empState7).build();
+
+    // finish the employee
+    final State empState8 = new StateBuilder().subjectModel(employee).name("END")
+        .eventType(StateEventType.END).functionType(StateFunctionType.FUNCTION).build();
+
+    final BusinessObjectModel vacationRequestForm = new BusinessObjectModelBuilder()
+        .name("Reiseantrag").addToState(empState1).addToState(empState2).addToState(bossState1)
+        .addToState(bossState2).addToState(empState3).addToState(empState4).build();
+
+    final BusinessObjectFieldModel boFrom = new BusinessObjectFieldModelBuilder().fieldName("Von")
         .fieldType(FieldType.STRING).businessObjectModel(vacationRequestForm).position(0).build();
+    final BusinessObjectFieldModel boTo = new BusinessObjectFieldModelBuilder().fieldName("Bis")
+        .fieldType(FieldType.STRING).businessObjectModel(vacationRequestForm).position(1).build();
+    final BusinessObjectFieldModel boLocation =
+        new BusinessObjectFieldModelBuilder().fieldName("Ort").fieldType(FieldType.STRING)
+            .businessObjectModel(vacationRequestForm).position(2).build();
 
     final BusinessObjectFieldPermission boFromPermissionEmp1 =
         new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boFrom).state(empState1)
@@ -94,89 +170,40 @@ public class VacationRequestWithoutChild extends AbstractExample {
         new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boTo).state(empState2)
             .permission(FieldPermission.READ).mandatory(true).build();
 
+    final BusinessObjectFieldPermission boFromPermissionEmp5 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boLocation)
+            .state(empState1).permission(FieldPermission.READ_WRITE).mandatory(true).build();
+    final BusinessObjectFieldPermission boFromPermissionEmp6 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boLocation)
+            .state(empState2).permission(FieldPermission.READ).mandatory(true).build();
+
     final BusinessObjectFieldPermission boFromPermissionBoss1 =
         new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boFrom)
             .state(bossState1).permission(FieldPermission.READ).mandatory(true).build();
     final BusinessObjectFieldPermission boFromPermissionBoss2 =
         new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boTo).state(bossState1)
             .permission(FieldPermission.READ).mandatory(true).build();
+    final BusinessObjectFieldPermission boFromPermissionBoss3 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boLocation)
+            .state(bossState1).permission(FieldPermission.READ).mandatory(true).build();
 
-    // accept or do not accept vacation request
-    final State bossState2 = new StateBuilder().subjectModel(boss)
-        .name("Vacation request OK or NOK").functionType(StateFunctionType.FUNCTION).build();
-    final Transition bossT1 =
-        new TransitionBuilder().fromState(bossState1).toState(bossState2).build();
-    final State bossState3 = new StateBuilder().subjectModel(boss).name("Vacation request OK")
-        .functionType(StateFunctionType.SEND).build();
-    final Transition bossT2 =
-        new TransitionBuilder().fromState(bossState2).toState(bossState3).build();
-    final State bossState4 = new StateBuilder().subjectModel(boss).name("Vacation request NOK")
-        .functionType(StateFunctionType.SEND).build();
-    final Transition bossT3 =
-        new TransitionBuilder().fromState(bossState2).toState(bossState4).build();
-
-    // finish the boss
-    final State bossState5 = new StateBuilder().subjectModel(boss).name("END")
-        .functionType(StateFunctionType.FUNCTION).eventType(StateEventType.END).build();
-    final Transition bossT4 =
-        new TransitionBuilder().fromState(bossState3).toState(bossState5).build();
-    final Transition bossT5 =
-        new TransitionBuilder().fromState(bossState4).toState(bossState5).build();
-
-    // receive the response from the boss
-    final State empState3 = new StateBuilder().subjectModel(employee)
-        .name("Receive vacation request response").functionType(StateFunctionType.RECEIVE).build();
-    final Transition empT2 =
-        new TransitionBuilder().fromState(empState2).toState(empState3).build();
-
-    final State empState4 = new StateBuilder().subjectModel(employee).name("Received OK")
-        .functionType(StateFunctionType.FUNCTION).build();
-    final State empState5 = new StateBuilder().subjectModel(employee).name("Received NOK")
-        .functionType(StateFunctionType.FUNCTION).build();
-
-    final Transition if1 = new TransitionBuilder().fromState(empState3).toState(empState4)
-        .transitionType(TransitionType.NORMAL).build();
-    final Transition if2 = new TransitionBuilder().fromState(empState3).toState(empState5)
-        .transitionType(TransitionType.NORMAL).build();
-
-    final State empState6 = new StateBuilder().subjectModel(employee)
-        .name("Send to travel management").functionType(StateFunctionType.SEND).build();
-    final Transition empT3 =
-        new TransitionBuilder().fromState(empState4).toState(empState6).build();
-
-    final State empState7 = new StateBuilder().subjectModel(employee)
-        .name("Receive response travel management").functionType(StateFunctionType.RECEIVE).build();
-    final Transition empT6 =
-        new TransitionBuilder().fromState(empState6).toState(empState7).build();
-
-    final BusinessObjectModel hotel =
-        new BusinessObjectModelBuilder().name("Hotel Reservation").addToState(empState7).build();
-    final BusinessObjectFieldModel hotelF1 =
-        new BusinessObjectFieldModelBuilder().businessObjectModel(hotel).fieldName("Name")
-            .fieldType(FieldType.STRING).position(0).build();
-    final BusinessObjectFieldModel hotelF2 =
-        new BusinessObjectFieldModelBuilder().businessObjectModel(hotel).fieldName("Stars")
-            .fieldType(FieldType.STRING).position(1).build();
-
-    final BusinessObjectFieldPermission hotelP1 =
-        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(hotelF1)
-            .permission(FieldPermission.READ).state(empState7).build();
-    final BusinessObjectFieldPermission hotelP2 =
-        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(hotelF2)
-            .permission(FieldPermission.READ).state(empState7).build();
-
-    // finish the employee
-    final State empState8 = new StateBuilder().subjectModel(employee).name("END")
-        .eventType(StateEventType.END).functionType(StateFunctionType.FUNCTION).build();
+    final BusinessObjectFieldPermission boFromPermissionBoss4 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boFrom)
+            .state(bossState2).permission(FieldPermission.READ).mandatory(true).build();
+    final BusinessObjectFieldPermission boFromPermissionBoss5 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boTo).state(bossState2)
+            .permission(FieldPermission.READ).mandatory(true).build();
+    final BusinessObjectFieldPermission boFromPermissionBoss6 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boLocation)
+            .state(bossState2).permission(FieldPermission.READ).mandatory(true).build();
 
     final Transition empt8 =
         new TransitionBuilder().fromState(empState7).toState(empState8).build();
     final Transition empT4 =
         new TransitionBuilder().fromState(empState5).toState(empState8).build();
 
-    final BusinessObjectModel okForm =
-        new BusinessObjectModelBuilder().name("Vacation request accept").addToState(bossState3)
-            .addToState(empState3).addToState(empState4).build();
+    final BusinessObjectModel okForm = new BusinessObjectModelBuilder().name("Reiseantragannahme")
+        .addToState(bossState3).addToState(empState3).addToState(empState4).build();
     final BusinessObjectFieldModel okFormFieldInformation =
         new BusinessObjectFieldModelBuilder().businessObjectModel(okForm).fieldName("Information")
             .fieldType(FieldType.STRING).position(0).build();
@@ -190,8 +217,27 @@ public class VacationRequestWithoutChild extends AbstractExample {
         new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(okFormFieldInformation)
             .state(empState4).mandatory(false).permission(FieldPermission.READ).build();
 
+    final BusinessObjectFieldPermission boFromPermissionBoss7 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boFrom).state(empState3)
+            .permission(FieldPermission.READ).mandatory(true).build();
+    final BusinessObjectFieldPermission boFromPermissionBoss8 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boTo).state(empState3)
+            .permission(FieldPermission.READ).mandatory(true).build();
+    final BusinessObjectFieldPermission boFromPermissionBoss9 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boLocation)
+            .state(empState3).permission(FieldPermission.READ).mandatory(true).build();
+    final BusinessObjectFieldPermission boFromPermissionBoss10 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boFrom).state(empState4)
+            .permission(FieldPermission.READ).mandatory(true).build();
+    final BusinessObjectFieldPermission boFromPermissionBoss11 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boTo).state(empState4)
+            .permission(FieldPermission.READ).mandatory(true).build();
+    final BusinessObjectFieldPermission boFromPermissionBoss12 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boLocation)
+            .state(empState4).permission(FieldPermission.READ).mandatory(true).build();
+
     final BusinessObjectModel nokForm =
-        new BusinessObjectModelBuilder().name("Vacation request not accept").addToState(bossState4)
+        new BusinessObjectModelBuilder().name("Reiseantragablehnung").addToState(bossState4)
             .addToState(empState3).addToState(empState5).build();
     final BusinessObjectFieldModel nokFormFieldInformation =
         new BusinessObjectFieldModelBuilder().businessObjectModel(nokForm).fieldName("Information")
@@ -206,8 +252,18 @@ public class VacationRequestWithoutChild extends AbstractExample {
         new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(nokFormFieldInformation)
             .state(empState5).mandatory(false).permission(FieldPermission.READ).build();
 
-    final ProcessModel pm = new ProcessModelBuilder().name("Vacation request without childs")
-        .description("Request for vacation").state(ProcessModelState.ACTIVE).addSubjectModel(boss)
+    final BusinessObjectFieldPermission boFromPermissionBoss13 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boFrom).state(empState5)
+            .permission(FieldPermission.READ).mandatory(true).build();
+    final BusinessObjectFieldPermission boFromPermissionBoss14 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boTo).state(empState5)
+            .permission(FieldPermission.READ).mandatory(true).build();
+    final BusinessObjectFieldPermission boFromPermissionBoss15 =
+        new BusinessObjectFieldPermissionBuilder().businessObjectFieldModel(boLocation)
+            .state(empState5).permission(FieldPermission.READ).mandatory(true).build();
+
+    final ProcessModel pm = new ProcessModelBuilder().name("Reiseantrag mit externem IT-System")
+        .description("Beispielprozess 2").state(ProcessModelState.ACTIVE).addSubjectModel(boss)
         .addSubjectModel(employee).addSubjectModel(travelMgt).starterSubject(employee).version(1.1F)
         .build();
 
@@ -242,17 +298,22 @@ public class VacationRequestWithoutChild extends AbstractExample {
 
     saveBusinessObjectModels(vacationRequestForm, okForm, nokForm, hotel);
     saveBusinessObjectFieldModels(boFrom, boTo, nokFormFieldInformation, okFormFieldInformation,
-        hotelF1, hotelF2);
+        hotelF1, hotelF2, boLocation);
     saveBusinessObjectFieldPermissions(boFromPermissionEmp1, boFromPermissionEmp2,
         boFromPermissionBoss1, boFromPermissionBoss2, okFormFieldInformationPermission1,
         okFormFieldInformationPermission2, nokFormFieldInformationPermission1,
         nokFormFieldInformationPermission2, boFromPermissionEmp3, boFromPermissionEmp4,
-        okFormFieldInformationPermission3, nokFormFieldInformationPermission3, hotelP1, hotelP2);
+        okFormFieldInformationPermission3, nokFormFieldInformationPermission3, hotelP1, hotelP2,
+        boFromPermissionEmp5, boFromPermissionEmp6, boFromPermissionBoss3, boFromPermissionBoss4,
+        boFromPermissionBoss5, boFromPermissionBoss6, boFromPermissionBoss7, boFromPermissionBoss8,
+        boFromPermissionBoss9, boFromPermissionBoss10, boFromPermissionBoss11,
+        boFromPermissionBoss12, boFromPermissionBoss13, boFromPermissionBoss14,
+        boFromPermissionBoss15);
     saveMessageFlows(mf1, mf2, mf3, mf4, mf5, mf6, mf7, mf8);
   }
 
   @Override
   protected String getName() {
-    return "Vacation Request";
+    return "Travel request with external system";
   }
 }
