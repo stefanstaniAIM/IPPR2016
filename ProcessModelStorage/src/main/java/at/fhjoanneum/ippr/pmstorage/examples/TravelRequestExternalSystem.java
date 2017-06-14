@@ -51,9 +51,9 @@ public class TravelRequestExternalSystem extends AbstractExample {
   @Override
   protected void createData() {
     final SubjectModel employee =
-        new SubjectModelBuilder().name("Employee").addAssignedRule("EMPLOYEE_RULE").build();
+        new SubjectModelBuilder().name("MitarbeiterIn").addAssignedRule("EMPLOYEE_RULE").build();
     final SubjectModel boss =
-        new SubjectModelBuilder().name("Boss").addAssignedRule("BOSS_RULE").build();
+        new SubjectModelBuilder().name("TeamleiterIn").addAssignedRule("BOSS_RULE").build();
 
     final SubjectModel travelMgt =
         new SubjectModelBuilder().name("Travel Management").type(SubjectModelType.EXTERNAL).build();
