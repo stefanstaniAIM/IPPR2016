@@ -49,9 +49,9 @@ public class TravelRequestProcess extends AbstractExample {
     final ProcessModel tm = createTravelManagement();
 
     final SubjectModel employee =
-        new SubjectModelBuilder().name("Employee").addAssignedRule("EMPLOYEE_RULE").build();
+        new SubjectModelBuilder().name("MitarbeiterIn").addAssignedRule("EMPLOYEE_RULE").build();
     final SubjectModel boss =
-        new SubjectModelBuilder().name("Boss").addAssignedRule("BOSS_RULE").build();
+        new SubjectModelBuilder().name("TeamleiterIn").addAssignedRule("BOSS_RULE").build();
     final SubjectModel travelMgt =
         new SubjectModelBuilder().name("Travel Management").type(SubjectModelType.PROCESS).build();
 
@@ -313,7 +313,7 @@ public class TravelRequestProcess extends AbstractExample {
 
   private ProcessModel createTravelManagement() {
     final SubjectModel employee =
-        new SubjectModelBuilder().name("Employee").type(SubjectModelType.PROCESS).build();
+        new SubjectModelBuilder().name("MitarbeiterIn").type(SubjectModelType.PROCESS).build();
     final SubjectModel travelMgt =
         new SubjectModelBuilder().name("Travel Management").addAssignedRule("TRAVEL_RULE").build();
 
@@ -348,7 +348,7 @@ public class TravelRequestProcess extends AbstractExample {
 
     // enter hotel information
     final State enterHotelInfo = new StateBuilder().subjectModel(travelMgt)
-        .name("Hotel Buchung durchführen").functionType(StateFunctionType.SEND).build();
+        .name("Hotel Buchung durchfÃ¼hren").functionType(StateFunctionType.SEND).build();
 
     final BusinessObjectModel hotel =
         new BusinessObjectModelBuilder().name("Hotel Buchung").addToState(enterHotelInfo).build();
