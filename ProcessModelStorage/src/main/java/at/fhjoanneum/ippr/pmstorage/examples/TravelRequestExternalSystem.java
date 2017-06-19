@@ -75,9 +75,8 @@ public class TravelRequestExternalSystem extends AbstractExample {
 
 
     // accept or do not accept vacation request
-    final State bossState2 =
-        new StateBuilder().subjectModel(boss).name("Reiseantrag annehmen oder ablehnen")
-            .functionType(StateFunctionType.FUNCTION).build();
+    final State bossState2 = new StateBuilder().subjectModel(boss).name("Reiseantrag prüfen")
+        .functionType(StateFunctionType.FUNCTION).build();
 
     final Transition bossT1 =
         new TransitionBuilder().fromState(bossState1).toState(bossState2).build();
@@ -115,7 +114,7 @@ public class TravelRequestExternalSystem extends AbstractExample {
         .transitionType(TransitionType.NORMAL).build();
 
     final State empState6 = new StateBuilder().subjectModel(employee)
-        .name("Sende an das Travel Management").functionType(StateFunctionType.SEND).build();
+        .name("Sende an Travel Management").functionType(StateFunctionType.SEND).build();
     final Transition empT3 =
         new TransitionBuilder().fromState(empState4).toState(empState6).build();
 
