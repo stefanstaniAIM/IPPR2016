@@ -95,18 +95,6 @@ Please execute following statements to create the schema and the db user in your
  ```gradlew bootRun```
  9. Go to ```http://localhost:3000```
  
-#### Alternative ####
-If you prefer to run the jar files, without using gradlew:
- 1. Start the MySQL Service
- 2. Go to [builds](builds)
- 3. run in cmd: ```java -jar Gateway-0.0.1-SNAPSHOT.jar```
- 4. run in cmd: ```java -jar pmstorage-0.0.1-SNAPSHOT.jar```
- 5. run in cmd: ```java -jar processengine-0.0.1-SNAPSHOT.jar```
- 6. run in cmd: ```java -jar gui-0.0.1-SNAPSHOT.jar```
- 7. Go to ```http://localhost:3000```
-
-**Note:** If you do any changes to a module, you have to rebuild it with ```gradlew build``` and use the *.jar that is generated in ```(name of module)/build/libs/```
- 
 ### Modelling Platform ###
  1. Go to ModellingPlatform and run in cmd: 
  ```gradlew bootRun```
@@ -170,6 +158,7 @@ The current *.csv files for the user configuration:
 |  matthias  |  ADMIN, EMPLOYEE  |  1234  |
 |  stefan  |  EMPLOYEE  |  1234  |
 |  maksym  |  EMPLOYEE  |  1234  |
+|  marlene |  TRAVEL MANAGEMENT | 1234 |
 
 ## Development ##
 ### Spring Boot Modules ###
