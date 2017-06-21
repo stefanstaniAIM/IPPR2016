@@ -93,6 +93,8 @@ public class ProcessStartTask extends AbstractTask<ProcessStartMessage.Request> 
           .registerSynchronization(new TransactionSynchronizationAdapter() {
             @Override
             public void afterCommit() {
+              // start process
+
               sender.tell(new ProcessStartMessage.Response(processInstance.getPiId()), getSelf());
             }
           });

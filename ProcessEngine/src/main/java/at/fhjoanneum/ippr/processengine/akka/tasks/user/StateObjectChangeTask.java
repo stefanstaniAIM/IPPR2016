@@ -408,6 +408,18 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
 
   private void changeToNextState(final SubjectState subjectState,
       final StateObjectChangeMessage.Request request) {
+    // change state
+    // subject model name subjectState.getSubject().getSubjectModel().getName()
+    // state name subjectState.getCurrentState().getName()
+
+    // state function type name subjectState.getCurrentState().getFunctionType().name()
+
+    // received message type name
+    // subjectState.getCurrentMessageFlow().getBusinessObjectModels().get(0).getName()
+
+    // send message type name
+    // subjectState.getCurrentState().getMessageFlow().get(0).getBusinessObjectModels();
+
     final Long nextStateId = request.getStateObjectChangeDTO().getNextStateId();
     final State nextState = stateRepository.findOne(nextStateId);
     subjectState.setCurrentState(nextState);

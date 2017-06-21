@@ -69,6 +69,7 @@ public class ProcessStateChangeTask extends AbstractTask<StateObjectChangeMessag
         }
       }
 
+      // set to finished
       process.setState(ProcessInstanceState.FINISHED);
       processInstanceRepository.save((ProcessInstanceImpl) process);
       LOG.info("All subject states are in 'END' state, set process instance to 'FINISHED'");
