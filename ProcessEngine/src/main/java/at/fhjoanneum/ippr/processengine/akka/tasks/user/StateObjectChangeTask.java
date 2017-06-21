@@ -391,7 +391,7 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
 
   private boolean waitForECResponse(final SubjectState subjectState) {
     try {
-      for (int i = 0; i < 3; i++) {
+      for (int i = 0; i < 5; i++) {
         TimeUnit.SECONDS.sleep(1);
         entityManager.refresh(subjectState);
         if (SubjectSubState.SENT.equals(subjectState.getSubState())) {

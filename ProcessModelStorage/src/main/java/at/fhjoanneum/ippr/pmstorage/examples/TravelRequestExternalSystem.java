@@ -69,7 +69,7 @@ public class TravelRequestExternalSystem extends AbstractExample {
         new TransitionBuilder().fromState(empState1).toState(empState2).build();
 
     // receive vacation request
-    final State bossState1 = new StateBuilder().subjectModel(boss).name("Reiseantrag empfangen")
+    final State bossState1 = new StateBuilder().subjectModel(boss).name("Empfange Reiseantrag")
         .eventType(StateEventType.START).functionType(StateFunctionType.RECEIVE).build();
 
 
@@ -118,13 +118,13 @@ public class TravelRequestExternalSystem extends AbstractExample {
     final Transition empT3 =
         new TransitionBuilder().fromState(empState4).toState(empState6).build();
 
-    final State empState7 = new StateBuilder().subjectModel(employee)
-        .name("Receive response travel management").functionType(StateFunctionType.RECEIVE).build();
+    final State empState7 = new StateBuilder().subjectModel(employee).name("Empfange Hotelbuchung")
+        .functionType(StateFunctionType.RECEIVE).build();
     final Transition empT6 =
         new TransitionBuilder().fromState(empState6).toState(empState7).build();
 
     final BusinessObjectModel hotel =
-        new BusinessObjectModelBuilder().name("Hotel Buchung").addToState(empState7).build();
+        new BusinessObjectModelBuilder().name("Hotelbuchung").addToState(empState7).build();
     final BusinessObjectFieldModel hotelF1 =
         new BusinessObjectFieldModelBuilder().businessObjectModel(hotel).fieldName("Name")
             .fieldType(FieldType.STRING).position(0).build();
@@ -140,7 +140,7 @@ public class TravelRequestExternalSystem extends AbstractExample {
             .permission(FieldPermission.READ).state(empState7).build();
 
     // finish the employee
-    final State empState8 = new StateBuilder().subjectModel(employee).name("END")
+    final State empState8 = new StateBuilder().subjectModel(employee).name("Ende")
         .eventType(StateEventType.END).functionType(StateFunctionType.FUNCTION).build();
 
     final BusinessObjectModel vacationRequestForm = new BusinessObjectModelBuilder()

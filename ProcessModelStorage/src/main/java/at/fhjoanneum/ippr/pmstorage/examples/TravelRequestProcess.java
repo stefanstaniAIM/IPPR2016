@@ -66,7 +66,7 @@ public class TravelRequestProcess extends AbstractExample {
         new TransitionBuilder().fromState(empState1).toState(empState2).build();
 
     // receive vacation request
-    final State bossState1 = new StateBuilder().subjectModel(boss).name("Reiseantrag empfangen")
+    final State bossState1 = new StateBuilder().subjectModel(boss).name("Empfange Reiseantrag")
         .eventType(StateEventType.START).functionType(StateFunctionType.RECEIVE).build();
 
 
@@ -115,13 +115,13 @@ public class TravelRequestProcess extends AbstractExample {
     final Transition empT3 =
         new TransitionBuilder().fromState(empState4).toState(empState6).build();
 
-    final State empState7 = new StateBuilder().subjectModel(employee)
-        .name("Empfangene Hotelbuchung").functionType(StateFunctionType.RECEIVE).build();
+    final State empState7 = new StateBuilder().subjectModel(employee).name("Empfange Hotelbuchung")
+        .functionType(StateFunctionType.RECEIVE).build();
     final Transition empT6 =
         new TransitionBuilder().fromState(empState6).toState(empState7).build();
 
     final BusinessObjectModel hotel =
-        new BusinessObjectModelBuilder().name("Hotel Buchung").addToState(empState7).build();
+        new BusinessObjectModelBuilder().name("Hotelbuchung").addToState(empState7).build();
     final BusinessObjectFieldModel hotelF1 =
         new BusinessObjectFieldModelBuilder().businessObjectModel(hotel).fieldName("Name")
             .fieldType(FieldType.STRING).position(0).build();
@@ -259,7 +259,7 @@ public class TravelRequestProcess extends AbstractExample {
             .state(empState5).permission(FieldPermission.READ).mandatory(true).build();
 
 
-    final ProcessModel pm = new ProcessModelBuilder().name("Reiseantrag mit externem Prozess")
+    final ProcessModel pm = new ProcessModelBuilder().name("Reiseantrag mit Prozesskommunikation")
         .description("Beispielprozess 1").state(ProcessModelState.ACTIVE).addSubjectModel(boss)
         .addSubjectModel(employee).addSubjectModel(travelMgt).starterSubject(employee).version(1.1F)
         .build();
@@ -347,10 +347,10 @@ public class TravelRequestProcess extends AbstractExample {
 
     // enter hotel information
     final State enterHotelInfo = new StateBuilder().subjectModel(travelMgt)
-        .name("Hotel Buchung durchfÃ¼hren").functionType(StateFunctionType.SEND).build();
+        .name("Hotelbuchung durchführen").functionType(StateFunctionType.SEND).build();
 
     final BusinessObjectModel hotel =
-        new BusinessObjectModelBuilder().name("Hotel Buchung").addToState(enterHotelInfo).build();
+        new BusinessObjectModelBuilder().name("Hotelbuchung").addToState(enterHotelInfo).build();
     final BusinessObjectFieldModel hotelF1 =
         new BusinessObjectFieldModelBuilder().businessObjectModel(hotel).fieldName("Name")
             .fieldType(FieldType.STRING).position(0).build();
@@ -369,7 +369,7 @@ public class TravelRequestProcess extends AbstractExample {
         .state(enterHotelInfo).assignBusinessObjectModel(hotel).build();
 
     // end
-    final State end = new StateBuilder().subjectModel(travelMgt).name("END")
+    final State end = new StateBuilder().subjectModel(travelMgt).name("Ende")
         .eventType(StateEventType.END).functionType(StateFunctionType.FUNCTION).build();
 
     final Transition t1 =

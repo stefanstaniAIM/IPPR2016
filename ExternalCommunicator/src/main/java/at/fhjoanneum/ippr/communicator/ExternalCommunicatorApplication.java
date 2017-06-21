@@ -39,14 +39,14 @@ public class ExternalCommunicatorApplication {
       return this.discoveryClient.getServices();
     }
 
-    @RequestMapping(value = "testpost", method = RequestMethod.POST, consumes = "application/json")
+    @RequestMapping(value = "test", method = RequestMethod.POST, consumes = "application/json")
     public void postJson(@RequestBody final String body) throws JSONException {
       final JSONObject object = new JSONObject(body);
 
       LOG.debug("Received [{}]", object);
     }
 
-    @RequestMapping(value = "testpost", method = RequestMethod.POST, consumes = "application/xml")
+    @RequestMapping(value = "test", method = RequestMethod.POST, consumes = "application/xml")
     public void postXml(@RequestBody final String body) throws JSONException {
       LOG.debug("Received [{}]", body);
     }

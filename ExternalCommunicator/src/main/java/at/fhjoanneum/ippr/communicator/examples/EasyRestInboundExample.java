@@ -33,7 +33,7 @@ public class EasyRestInboundExample extends AbstractExample {
   protected void createData() {
     final BasicInboundConfigurationBuilder basic = new BasicInboundConfigurationBuilder();
     basic.name("json rest").parserClass("at.fhjoanneum.ippr.communicator.parser.JsonParser");
-    basic.addConfigurationEntry(GlobalKey.ENDPOINT, "wuhu");
+    basic.addConfigurationEntry(GlobalKey.ENDPOINT, "booking");
     basic.addConfigurationEntry(GlobalKey.TYPE, "TYPE");
     basic.addConfigurationEntry(GlobalKey.TRANSFER_ID, "TRANSFER-ID");
 
@@ -44,13 +44,13 @@ public class EasyRestInboundExample extends AbstractExample {
     basic.addParser(stringParser);
 
     final MessageProtocol inboundProtocol = new MessageProtocolBuilder()
-        .internalName("Hotel Reservation").externalName("Hotel Reservierung").build();
+        .internalName("Hotelbuchung").externalName("HotelBooking").build();
     basic.messageProtocol(inboundProtocol);
     final MessageProtocolField fieldA =
         new MessageProtocolFieldBuilder().internalName("Name").externalName("Name")
             .dataType(DataType.STRING).messageProtocol(inboundProtocol).mandatory(true).build();
-    final MessageProtocolField fieldB = new MessageProtocolFieldBuilder().internalName("Stars")
-        .externalName("Sterne").dataType(DataType.STRING).messageProtocol(inboundProtocol).build();
+    final MessageProtocolField fieldB = new MessageProtocolFieldBuilder().internalName("Sterne")
+        .externalName("Stars").dataType(DataType.STRING).messageProtocol(inboundProtocol).build();
 
     final BasicInboundConfiguration basicConfig = basic.build();
 

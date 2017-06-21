@@ -40,7 +40,7 @@ public class EasyRestOutboundExample extends AbstractExample {
 
     basicBuilder.composerClass("at.fhjoanneum.ippr.communicator.composer.XmlComposer");
     basicBuilder.sendPlugin("at.fhjoanneum.ippr.communicator.plugins.send.XmlSendPlugin");
-    basicBuilder.addConfigurationEntry(GlobalKey.ENDPOINT, "http://localhost:22222/testpost");
+    basicBuilder.addConfigurationEntry(GlobalKey.ENDPOINT, "http://localhost:10000/ec/test");
     basicBuilder.addConfigurationEntry(GlobalKey.TYPE, "TYPE");
     basicBuilder.addConfigurationEntry(GlobalKey.TRANSFER_ID, "TRANSFER-ID");
 
@@ -49,12 +49,15 @@ public class EasyRestOutboundExample extends AbstractExample {
     basicBuilder.addComposer(stringComposer);
 
     final MessageProtocol outboundProtocol = new MessageProtocolBuilder()
-        .internalName("Vacation request form").externalName("zeitraum").build();
+        .internalName("Reiseantrag").externalName("TravelRequest").build();
     basicBuilder.messageProtocol(outboundProtocol);
-    final MessageProtocolField fieldA = new MessageProtocolFieldBuilder().internalName("From")
-        .externalName("von").dataType(DataType.STRING).messageProtocol(outboundProtocol).build();
-    final MessageProtocolField fieldB = new MessageProtocolFieldBuilder().internalName("To")
-        .externalName("bis").dataType(DataType.STRING).messageProtocol(outboundProtocol).build();
+    final MessageProtocolField fieldA = new MessageProtocolFieldBuilder().internalName("Von")
+        .externalName("From").dataType(DataType.STRING).messageProtocol(outboundProtocol).build();
+    final MessageProtocolField fieldB = new MessageProtocolFieldBuilder().internalName("Bis")
+        .externalName("To").dataType(DataType.STRING).messageProtocol(outboundProtocol).build();
+    final MessageProtocolField fieldC =
+        new MessageProtocolFieldBuilder().internalName("Ort").externalName("Location")
+            .dataType(DataType.STRING).messageProtocol(outboundProtocol).build();
 
     final BasicOutboundConfiguration basicConfig = basicBuilder.build();
 
@@ -65,6 +68,7 @@ public class EasyRestOutboundExample extends AbstractExample {
     entityManager.persist(outboundProtocol);
     entityManager.persist(fieldA);
     entityManager.persist(fieldB);
+    entityManager.persist(fieldC);
     entityManager.persist(basicConfig);
     entityManager.persist(map);
   }
