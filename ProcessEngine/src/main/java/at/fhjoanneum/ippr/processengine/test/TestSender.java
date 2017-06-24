@@ -2,11 +2,10 @@ package at.fhjoanneum.ippr.processengine.test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
 
 import at.fhjoanneum.ippr.processengine.services.EventLoggerSender;
 
-@Component
+// @Component
 public class TestSender implements CommandLineRunner {
 
   @Autowired
