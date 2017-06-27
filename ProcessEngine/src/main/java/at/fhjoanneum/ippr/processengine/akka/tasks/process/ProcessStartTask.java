@@ -1,20 +1,7 @@
 package at.fhjoanneum.ippr.processengine.akka.tasks.process;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.support.TransactionSynchronizationAdapter;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
-
-import com.google.common.collect.Lists;
-
 import akka.actor.ActorRef;
+import at.fhjoanneum.ippr.commons.dto.processengine.EventLoggerDTO;
 import at.fhjoanneum.ippr.persistence.entities.engine.process.ProcessInstanceBuilder;
 import at.fhjoanneum.ippr.persistence.entities.engine.process.ProcessInstanceImpl;
 import at.fhjoanneum.ippr.persistence.entities.engine.subject.SubjectBuilder;
@@ -31,6 +18,20 @@ import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessModelRepository;
 import at.fhjoanneum.ippr.processengine.repositories.SubjectModelRepository;
 import at.fhjoanneum.ippr.processengine.repositories.SubjectRepository;
+import at.fhjoanneum.ippr.processengine.services.EventLoggerSender;
+import com.google.common.collect.Lists;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component("ProcessSupervisor.ProcessStartTask")
 @Scope("prototype")
@@ -46,6 +47,8 @@ public class ProcessStartTask extends AbstractTask<ProcessStartMessage.Request> 
   private SubjectModelRepository subjectModelRepository;
   @Autowired
   private ProcessInstanceRepository processInstanceRepository;
+  @Autowired
+  private EventLoggerSender eventLoggerSender;
 
   public <T> ProcessStartTask(final TaskCallback<T> callback) {
     super(callback);
@@ -94,8 +97,13 @@ public class ProcessStartTask extends AbstractTask<ProcessStartMessage.Request> 
             @Override
             public void afterCommit() {
               // start process
-
               sender.tell(new ProcessStartMessage.Response(processInstance.getPiId()), getSelf());
+              long caseId = processInstance.getPiId();
+              long processModelId = processInstance.getProcessModel().getPmId();
+              String activity = "Process Start";
+              String timestamp = DateTime.now().toString("dd.MM.yyyy HH:mm");
+              EventLoggerDTO event = new EventLoggerDTO(caseId, processModelId, timestamp, activity, "", "", "");
+              eventLoggerSender.send(event);
             }
           });
     } catch (final Exception e) {

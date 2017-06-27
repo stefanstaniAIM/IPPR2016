@@ -1,19 +1,7 @@
 package at.fhjoanneum.ippr.processengine.akka.tasks.process;
 
-import java.util.Optional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.support.TransactionSynchronizationAdapter;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
-
 import akka.actor.ActorRef;
+import at.fhjoanneum.ippr.commons.dto.processengine.EventLoggerDTO;
 import at.fhjoanneum.ippr.persistence.entities.engine.process.ProcessInstanceImpl;
 import at.fhjoanneum.ippr.persistence.objects.engine.enums.ProcessInstanceState;
 import at.fhjoanneum.ippr.persistence.objects.engine.process.ProcessInstance;
@@ -24,6 +12,19 @@ import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObje
 import at.fhjoanneum.ippr.processengine.akka.tasks.AbstractTask;
 import at.fhjoanneum.ippr.processengine.akka.tasks.TaskCallback;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
+import at.fhjoanneum.ippr.processengine.services.EventLoggerSender;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Optional;
 
 @Component("Process.ProcessStateChangeTask")
 @Scope("prototype")
@@ -36,6 +37,9 @@ public class ProcessStateChangeTask extends AbstractTask<StateObjectChangeMessag
 
   @PersistenceContext
   private EntityManager entityManager;
+
+  @Autowired
+  private EventLoggerSender eventLoggerSender;
 
   public <T> ProcessStateChangeTask(final TaskCallback<T> callback) {
     super(callback);
@@ -73,6 +77,13 @@ public class ProcessStateChangeTask extends AbstractTask<StateObjectChangeMessag
       process.setState(ProcessInstanceState.FINISHED);
       processInstanceRepository.save((ProcessInstanceImpl) process);
       LOG.info("All subject states are in 'END' state, set process instance to 'FINISHED'");
+
+      long caseId = process.getPiId();
+      long processModelId = process.getProcessModel().getPmId();
+      String activity = "Process End";
+      String timestamp = DateTime.now().toString("dd.MM.yyyy HH:mm");
+      EventLoggerDTO event = new EventLoggerDTO(caseId, processModelId, timestamp, activity, "", "", "");
+      eventLoggerSender.send(event);
 
       final ActorRef sender = getSender();
       TransactionSynchronizationManager

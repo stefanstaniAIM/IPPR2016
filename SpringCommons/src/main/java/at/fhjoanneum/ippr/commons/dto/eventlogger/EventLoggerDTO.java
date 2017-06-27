@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class EventLoggerDTO implements Serializable {
 
     private Long caseId;
+    private Long processModelId;
     private String timestamp;
     private String activity;
     private String resource;
@@ -17,12 +18,30 @@ public class EventLoggerDTO implements Serializable {
     public EventLoggerDTO() {
     }
 
+    public EventLoggerDTO(Long caseId, Long processModelId, String timestamp, String activity, String resource, String state, String messageType) {
+        this.caseId = caseId;
+        this.processModelId = processModelId;
+        this.timestamp = timestamp;
+        this.activity = activity;
+        this.resource = resource;
+        this.state = state;
+        this.messageType = messageType;
+    }
+
     public Long getCaseId() {
         return caseId;
     }
 
     public void setCaseId(Long caseId) {
         this.caseId = caseId;
+    }
+
+    public Long getProcessModelId() {
+        return processModelId;
+    }
+
+    public void setProcessModelId(Long processModelId) {
+        this.processModelId = processModelId;
     }
 
     public String getTimestamp() {

@@ -1,5 +1,6 @@
 package at.fhjoanneum.ippr.processengine.services;
 
+import at.fhjoanneum.ippr.commons.dto.processengine.EventLoggerDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -16,9 +17,9 @@ public class EventLoggerSenderImpl implements EventLoggerSender {
   private EventLoggerFeignClient client;
 
   @Override
-  public String send() {
+  public String send(EventLoggerDTO event) {
     if (sendEventLog) {
-      return client.serviceInstancesByApplicationName();
+      return client.newEvent(event);
     }
     return null;
   }

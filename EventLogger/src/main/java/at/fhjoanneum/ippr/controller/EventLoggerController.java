@@ -23,13 +23,14 @@ public class EventLoggerController {
     @RequestMapping(value = "newevent",  method = RequestMethod.POST)
     public String newEvent(@RequestBody final EventLoggerDTO eventLoggerDTO) {
         final Long caseId = eventLoggerDTO.getCaseId();
+        final Long processModelId = eventLoggerDTO.getProcessModelId();
         final String timestamp = eventLoggerDTO.getTimestamp();
         final String activity = eventLoggerDTO.getActivity();
         final String resource = eventLoggerDTO.getResource();
         final String state = eventLoggerDTO.getState();
         final String messageType = eventLoggerDTO.getMessageType();
 
-        final EventLog eventLog = new EventLog(caseId, timestamp, activity, resource, state, messageType);
+        final EventLog eventLog = new EventLog(caseId, processModelId, timestamp, activity, resource, state, messageType);
         eventLogRepository.save(eventLog);
         return eventLog.toString();
     }
