@@ -85,7 +85,8 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
   private StateRepository stateRepository;
   @Autowired
   private SubjectRepository subjectRepository;
-
+  @Autowired
+  private MessageFlowRepository messageFlowRepository;
   @Autowired
   private EventLoggerSender eventLoggerSender;
 
@@ -303,6 +304,18 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
             .filter(mf -> SubjectModelType.INTERNAL.equals(mf.getReceiver().getSubjectModelType()))
             .map(messageFlow -> getUserMessageFlowIds(request.getPiId(), messageFlow))
             .collect(Collectors.toList());
+
+    //Log Send Event
+    long caseId = subjectState.getProcessInstance().getPiId();
+    long processModelId = subjectState.getProcessInstance().getProcessModel().getPmId();
+    String activity = subjectState.getCurrentState().getName();
+    String state = StateFunctionType.SEND.name();
+    String resource = subjectState.getSubject().getSubjectModel().getName();
+    String timestamp = DateTime.now().toString("dd.MM.yyyy HH:mm");
+    String messageType = subjectState.getCurrentState().getBusinessObjectModels().get(0).getName();
+    EventLoggerDTO event = new EventLoggerDTO(caseId, processModelId, timestamp, activity, resource, state, messageType);
+    eventLoggerSender.send(event);
+
     if (!userMessageFlowIds.isEmpty()) {
       try {
         PatternsCS
@@ -311,6 +324,7 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
             .toCompletableFuture().get();
         LOG.info("All users [{}] received the message in PI_ID [{}]", userMessageFlowIds,
             request.getPiId());
+
         entityManager.refresh(subjectState);
         if (SubjectSubState.SENT.equals(subjectState.getSubState())) {
           changeToNextState(subjectState, request);
@@ -410,20 +424,19 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
     LOG.info("Changed subject S_ID [{}] to state: {}", subjectState.getSubject().getSId(),
         nextState);
 
-    long caseId = subjectState.getProcessInstance().getPiId();
-    long processModelId = subjectState.getProcessInstance().getProcessModel().getPmId();
-    String activity = subjectState.getCurrentState().getName();
-    String timestamp = DateTime.now().toString("dd.MM.yyyy HH:mm");
-    String resource = subjectState.getSubject().getSubjectModel().getName();
-    String state = subjectState.getCurrentState().getFunctionType().name();
-    List<MessageFlow> mfs = subjectState.getCurrentState().getMessageFlow();
-    String messageType = "";
-    if(mfs.size() == 1) {
-      messageType = subjectState.getCurrentState().getMessageFlow().get(0).getBusinessObjectModels().get(0).getName();
+    if(subjectState.getCurrentState().getFunctionType() == StateFunctionType.FUNCTION){
+      long caseId = subjectState.getProcessInstance().getPiId();
+      long processModelId = subjectState.getProcessInstance().getProcessModel().getPmId();
+      String activity = subjectState.getCurrentState().getName();
+      String timestamp = DateTime.now().toString("dd.MM.yyyy HH:mm");
+      String resource = subjectState.getSubject().getSubjectModel().getName();
+      String state = StateFunctionType.FUNCTION.name();
+      String messageType = "";
+      EventLoggerDTO event = new EventLoggerDTO(caseId, processModelId, timestamp, activity, resource, state, messageType);
+      eventLoggerSender.send(event);
     }
-    EventLoggerDTO event = new EventLoggerDTO(caseId, processModelId, timestamp, activity, resource, state, messageType);
-    eventLoggerSender.send(event);
   }
+
 
   private void handleAdditionalActions(final SubjectState subjectState) {
     final State currentState = subjectState.getCurrentState();

@@ -70,8 +70,7 @@ public class EventLoggerController {
     }
 
     private void downloadCSV(HttpServletResponse response, List<EventLoggerDTO> events) throws IOException {
-
-        String date = DateTime.now().toString("ddMMYYY-mmHH");
+        String date = DateTime.now().toString("ddMMyyyy-HHmm");
         String csvFileName = "Eventlog_"+ date +".csv";
 
         response.setContentType("text/csv");

@@ -1,7 +1,19 @@
 package at.fhjoanneum.ippr.processengine.akka.tasks.user;
 
-import java.util.Optional;
-
+import akka.actor.ActorRef;
+import akka.actor.Status;
+import at.fhjoanneum.ippr.commons.dto.processengine.EventLoggerDTO;
+import at.fhjoanneum.ippr.persistence.entities.engine.enums.SubjectSubState;
+import at.fhjoanneum.ippr.persistence.entities.engine.state.SubjectStateImpl;
+import at.fhjoanneum.ippr.persistence.objects.engine.state.SubjectState;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.timeout.TimeoutScheduleCancelMessage;
+import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.MessageReceiveMessage;
+import at.fhjoanneum.ippr.processengine.akka.tasks.AbstractTask;
+import at.fhjoanneum.ippr.processengine.repositories.MessageFlowRepository;
+import at.fhjoanneum.ippr.processengine.repositories.SubjectStateRepository;
+import at.fhjoanneum.ippr.processengine.services.EventLoggerSender;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,16 +22,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import akka.actor.ActorRef;
-import akka.actor.Status;
-import at.fhjoanneum.ippr.persistence.entities.engine.enums.SubjectSubState;
-import at.fhjoanneum.ippr.persistence.entities.engine.state.SubjectStateImpl;
-import at.fhjoanneum.ippr.persistence.objects.engine.state.SubjectState;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.timeout.TimeoutScheduleCancelMessage;
-import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.MessageReceiveMessage;
-import at.fhjoanneum.ippr.processengine.akka.tasks.AbstractTask;
-import at.fhjoanneum.ippr.processengine.repositories.MessageFlowRepository;
-import at.fhjoanneum.ippr.processengine.repositories.SubjectStateRepository;
+import java.util.Optional;
 
 @Component("User.MessageReceivedTask")
 @Scope("prototype")
@@ -31,6 +34,8 @@ public class MessageReceivedTask extends AbstractTask<MessageReceiveMessage.Requ
   private SubjectStateRepository subjectStateRepository;
   @Autowired
   private MessageFlowRepository messageFlowRepository;
+  @Autowired
+  private EventLoggerSender eventLoggerSender;
 
   @Override
   public boolean canHandle(final Object obj) {
@@ -63,6 +68,18 @@ public class MessageReceivedTask extends AbstractTask<MessageReceiveMessage.Requ
         getContext().parent().tell(new TimeoutScheduleCancelMessage(subjectState.getSsId()),
             getSelf());
       }
+
+      //Log Receive Event
+      long caseId = subjectState.getProcessInstance().getPiId();
+      long processModelId = subjectState.getProcessInstance().getProcessModel().getPmId();
+      String activity = subjectState.getCurrentState().getName();
+      String state = StateFunctionType.RECEIVE.name();
+      String resource = subjectState.getSubject().getSubjectModel().getName();
+      String timestamp = DateTime.now().toString("dd.MM.yyyy HH:mm");
+      String messageType = messageFlowRepository.findOne(request.getMfId()).getBusinessObjectModels().get(0).getName();
+      EventLoggerDTO event = new EventLoggerDTO(caseId, processModelId, timestamp, activity, resource, state, messageType);
+      eventLoggerSender.send(event);
+
       subjectStateRepository.save((SubjectStateImpl) subjectState);
       LOG.info("New received sub state: {}", subjectState);
     }
