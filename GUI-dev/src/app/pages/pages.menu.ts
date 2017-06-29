@@ -105,6 +105,14 @@ export const PAGES_MENU = [
                 title: 'Beendete Prozesse'
               }
             }
+          },
+          {
+            path: 'eventLogger',
+            data: {
+              menu: {
+                title: 'Event-Logger'
+              }
+            }
           }
         ]
       }

@@ -6,6 +6,7 @@ import { ActiveProcesses } from './components/activeProcesses/activeProcesses.co
 import { TerminatedProcesses } from './components/terminatedProcesses/terminatedProcesses.component';
 import { ProcessModels } from './components/processModels/processModels.component';
 import { ImportProcessModel } from './components/importProcessModel/importProcessModel.component';
+import { EventLogger } from './components/eventLogger/eventLogger.component';
 
 // noinspection TypeScriptValidateTypes
 const routes: Routes = [
@@ -17,7 +18,8 @@ const routes: Routes = [
       { path: 'active', component: ActiveProcesses },
       { path: 'terminated', component: TerminatedProcesses },
       { path: 'models', component: ProcessModels },
-      { path: 'import', component: ImportProcessModel }
+      { path: 'import', component: ImportProcessModel },
+      { path: 'eventLogger', component: EventLogger },
     ]
   }
 ];
