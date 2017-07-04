@@ -17,7 +17,12 @@ export class EventLoggerService {
      return this.restApi+'/eventlogCSV/'+pmId;
    }
 
-   uploadOWLModel(owlModel){
-     return this._authHttp.post(this.restApi+'/owlprocessmodel/', owlModel);
+   manipulatePNML(pnmlFile){
+     let data = {
+      "pnmlContent": pnmlFile,
+      "csvLog": pnmlFile
+    };
+    let body = JSON.stringify(data);
+     return this._authHttp.post(this.restApi+'/manipulatePNML/', body);
    }
 }

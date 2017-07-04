@@ -16,8 +16,11 @@ import org.supercsv.prefs.CsvPreference;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 @RestController
@@ -67,6 +70,32 @@ public class EventLoggerController {
             e.printStackTrace();
         }
 
+    }
+
+    @RequestMapping(value = "manipulatePNML", method = RequestMethod.POST)
+    public @ResponseBody void manipulatePNML(
+            @RequestBody final Map<String, String> fileContents, final HttpServletRequest request,
+            final HttpServletResponse response) throws IOException {
+        String pnmlContent = fileContents.get("pnmlContent");
+        String csvLog = fileContents.get("csvLog");
+        StreamResult result = eventLogService.manipulatePNML(pnmlContent, csvLog);
+        downloadPNML(response, result);
+    }
+
+    private void downloadPNML(HttpServletResponse response, StreamResult result) throws IOException {
+        String pnmlFileName = "Eventlog.pnml";
+        String headerKey = "Content-Disposition";
+        String headerValue = String.format("attachment; filename=\"%s\"",
+                pnmlFileName);
+
+        response.setContentType("application/xml");
+        response.setHeader(headerKey, headerValue);
+
+        byte[] res = result.getWriter().toString().getBytes(Charset.forName("UTF-8"));
+
+        response.setCharacterEncoding("UTF-8");
+        response.getOutputStream().write(res);
+        response.flushBuffer();
     }
 
     private void downloadCSV(HttpServletResponse response, List<EventLoggerDTO> events) throws IOException {

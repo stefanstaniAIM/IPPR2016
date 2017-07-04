@@ -1,0 +1,25 @@
+<div class="alert alert-danger alert-dismissible fade in" role="alert" *ngIf="error">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+  <strong>Error!</strong> {{error}}
+</div>
+<div class="alert alert-success alert-dismissible fade in" role="alert" *ngIf="success">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+  {{success}}
+</div>
+<div class="row">
+  <div class="alert alert-info fade in" role="alert">
+    Es ist möglich ein PNML-File gemeinsam mit dem zugehörigen Event-Log in CSV Format hochzuladen. Dadurch wird ein neues PNML-File generiert, das über Kommunikations-Schnittstellen verfügt, um ein oWFN in ProM 5.2. darstellen zu können.
+  </div>
+   <ba-card class="col-xlg-12 col-xl-12 col-lg-12 col-sm-12 col-xs-12">
+       <form #pnmlForm="ngForm" (ngSubmit)="uploadPNMLFile(pnmlForm)">
+       <label class="control-label">PNML-File: </label>
+       <input type="file" name="fileUpload" id="fileUpload" class="form-control" accept=".pnml," (change)="onFileChange($event)">
+       <br />
+       <button class="btn btn-primary" type="submit" [disabled]="!pnmlFile">Upload</button>
+     </form>
+   </ba-card>
+</div>

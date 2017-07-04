@@ -7,6 +7,7 @@ import { TerminatedProcesses } from './components/terminatedProcesses/terminated
 import { ProcessModels } from './components/processModels/processModels.component';
 import { ImportProcessModel } from './components/importProcessModel/importProcessModel.component';
 import { EventLogger } from './components/eventLogger/eventLogger.component';
+import { ManipulatePNML } from './components/manipulatePNML/manipulatePNML.component';
 
 // noinspection TypeScriptValidateTypes
 const routes: Routes = [
@@ -20,6 +21,7 @@ const routes: Routes = [
       { path: 'models', component: ProcessModels },
       { path: 'import', component: ImportProcessModel },
       { path: 'eventLogger', component: EventLogger },
+      { path: 'manipulatePNML', component: ManipulatePNML },
     ]
   }
 ];

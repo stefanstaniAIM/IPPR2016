@@ -113,6 +113,14 @@ export const PAGES_MENU = [
                 title: 'Event-Logger'
               }
             }
+          },
+          {
+            path: 'manipulatePNML',
+            data: {
+              menu: {
+                title: 'PNML manipulieren'
+              }
+            }
           }
         ]
       }
