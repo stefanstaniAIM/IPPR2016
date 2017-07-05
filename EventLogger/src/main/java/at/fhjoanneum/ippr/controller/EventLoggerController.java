@@ -2,7 +2,7 @@ package at.fhjoanneum.ippr.controller;
 
 import at.fhjoanneum.ippr.EventLoggerApplication;
 import at.fhjoanneum.ippr.commons.dto.processengine.EventLoggerDTO;
-import at.fhjoanneum.ippr.persistence.EventLog;
+import at.fhjoanneum.ippr.persistence.EventLogEntry;
 import at.fhjoanneum.ippr.persistence.EventLogRepository;
 import at.fhjoanneum.ippr.pmstorage.services.EventLogService;
 import org.joda.time.DateTime;
@@ -44,9 +44,9 @@ public class EventLoggerController {
         final String state = eventLoggerDTO.getState();
         final String messageType = eventLoggerDTO.getMessageType();
 
-        final EventLog eventLog = new EventLog(caseId, processModelId, timestamp, activity, resource, state, messageType);
-        eventLogRepository.save(eventLog);
-        return eventLog.toString();
+        final EventLogEntry eventLogEntry = new EventLogEntry(caseId, processModelId, timestamp, activity, resource, state, messageType);
+        eventLogRepository.save(eventLogEntry);
+        return eventLogEntry.toString();
     }
 
     @RequestMapping(value = "eventlog/{processModelId}", method = RequestMethod.GET)
