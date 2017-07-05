@@ -10,13 +10,14 @@ import { EventLoggerService } from '../../../../EventLogger.service';
 export class ManipulatePNML implements OnInit {
    error = undefined;
    pnmlFile;
+   csvFile;
 
   constructor(protected service:EventLoggerService) {}
 
   ngOnInit(): void {
   }
 
-  onFileChange(event) {
+  onPNMLFileChange(event) {
     var that = this;
     this.pnmlFile = event.srcElement.files[0];
     var split = this.pnmlFile.name.split(".");
@@ -26,22 +27,32 @@ export class ManipulatePNML implements OnInit {
     }
   }
 
-  uploadPNMLFile(form):void {
+  onCSVFileChange(event) {
     var that = this;
-    var reader = new FileReader();
+    this.csvFile = event.srcElement.files[0];
+    var split = this.csvFile.name.split(".");
+    if(split[split.length-1] !== "csv") {
+      this.csvFile = undefined;
+      event.target.value = "";
+    }
+  }
+
+  uploadFiles(form):void {
+    var that = this;
+    var pnmlReader = new FileReader();
+    var csvReader = new FileReader();
     if(this.pnmlFile) {
-      reader.onload = function(e) {
-        that.service.manipulatePNML(reader.result)
+      pnmlReader.onload = (e) => csvReader.readAsText(this.csvFile);
+      csvReader.onload = (e) => {
+        that.service.manipulatePNML(pnmlReader.result, csvReader.result)
         .subscribe(
             data => {
               that.saveData(data, "test.pnml");
             },
-            err => that.error = "Die PNML Datei konnte nicht richtig interpretiert werden!",
-            () => {
-            }
+            err => that.error = "Die PNML Datei konnte nicht richtig interpretiert werden!"
           );
       }
-      reader.readAsText(this.pnmlFile);
+      pnmlReader.readAsText(this.pnmlFile);
     }
   }
 

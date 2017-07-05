@@ -17,10 +17,10 @@ export class EventLoggerService {
      return this.restApi+'/eventlogCSV/'+pmId;
    }
 
-   manipulatePNML(pnmlFile){
+   manipulatePNML(pnmlFile, csvFile){
      let data = {
       "pnmlContent": pnmlFile,
-      "csvLog": pnmlFile
+      "csvLog": csvFile
     };
     let body = JSON.stringify(data);
      return this._authHttp.post(this.restApi+'/manipulatePNML/', body);
