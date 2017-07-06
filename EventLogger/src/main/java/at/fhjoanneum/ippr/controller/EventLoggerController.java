@@ -49,23 +49,25 @@ public class EventLoggerController {
         return eventLogEntry.toString();
     }
 
-    @RequestMapping(value = "eventlog/{processModelId}", method = RequestMethod.GET)
+    @RequestMapping(value = "eventlog/{processModelId}/{subject}", method = RequestMethod.GET)
     public @ResponseBody
-    Callable<List<EventLoggerDTO>> getEventLogForCase(final HttpServletRequest request,
-                                                      @PathVariable("processModelId") final int processModelId) {
-        return () -> eventLogService.getEventLogForProcessModel(processModelId).get();
+    Callable<List<EventLoggerDTO>> getEventLogForProcessModelAndSubject(
+            final HttpServletRequest request, @PathVariable("processModelId") final int processModelId,
+            @PathVariable("subject") final String subject){
+        return () -> eventLogService.getEventLogForProcessModelAndSubject(processModelId, subject).get();
     }
 
-    @RequestMapping(value = "eventlogCSV/{processModelId}", method = RequestMethod.GET)
+    @RequestMapping(value = "eventlogCSV/{processModelId}/{subject}", method = RequestMethod.GET)
     public @ResponseBody
     void getEventLogForCase(final HttpServletRequest request,
-                                                      @PathVariable("processModelId") final int processModelId,
-                                                      final HttpServletResponse response) throws IOException {
+                            @PathVariable("processModelId") final int processModelId,
+                            @PathVariable("subject") final String subject,
+                            final HttpServletResponse response) throws IOException {
         List<EventLoggerDTO> events;
 
         try {
-            events = eventLogService.getEventLogForProcessModel(processModelId).get();
-            this.downloadCSV(response, events);
+            events = eventLogService.getEventLogForProcessModelAndSubject(processModelId, subject).get();
+            this.downloadCSV(response, events, processModelId, subject);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -78,8 +80,12 @@ public class EventLoggerController {
             final HttpServletResponse response) throws IOException {
         String pnmlContent = fileContents.get("pnmlContent");
         String csvLog = fileContents.get("csvLog");
-        StreamResult result = eventLogService.manipulatePNML(pnmlContent, csvLog);
-        downloadPNML(response, result);
+        try {
+            StreamResult result = eventLogService.manipulatePNML(pnmlContent, csvLog);
+            downloadPNML(response, result);
+        } catch (Exception e) {
+            response.sendError(400, e.getMessage());
+        }
     }
 
     private void downloadPNML(HttpServletResponse response, StreamResult result) throws IOException {
@@ -98,9 +104,9 @@ public class EventLoggerController {
         response.flushBuffer();
     }
 
-    private void downloadCSV(HttpServletResponse response, List<EventLoggerDTO> events) throws IOException {
+    private void downloadCSV(HttpServletResponse response, List<EventLoggerDTO> events, int processModelId, String subject) throws IOException {
         String date = DateTime.now().toString("ddMMyyyy-HHmm");
-        String csvFileName = "Eventlog_"+ date +".csv";
+        String csvFileName = "Eventlog_" + processModelId + "_" + subject + "_" + date +".csv";
 
         response.setContentType("text/csv");
 
@@ -113,7 +119,7 @@ public class EventLoggerController {
         ICsvBeanWriter csvWriter = new CsvBeanWriter(response.getWriter(),
                 CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE);
 
-        String[] header = {"CaseId", "Timestamp", "Activity", "Resource", "State",
+        String[] header = {"EventId", "CaseId", "Timestamp", "Activity", "Resource", "State",
                 "MessageType"};
 
         csvWriter.writeHeader(header);

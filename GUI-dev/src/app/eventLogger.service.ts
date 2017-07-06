@@ -9,12 +9,12 @@ export class EventLoggerService {
 
   constructor(private _authHttp:AuthHttp, private _user:User){}
 
-   getEventLog(pmId){
-    return this._authHttp.get(this.restApi+'/eventlog/'+pmId);
+   getEventLog(pmId, subject){
+    return this._authHttp.get(this.restApi+'/eventlog/'+pmId+'/'+subject);
    }
 
-   getEventLogDownloadLink(pmId){
-     return this.restApi+'/eventlogCSV/'+pmId;
+   getEventLogDownloadLink(pmId, subject){
+     return this.restApi+'/eventlogCSV/'+pmId+'/'+subject;
    }
 
    manipulatePNML(pnmlFile, csvFile){

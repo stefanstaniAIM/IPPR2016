@@ -17,11 +17,16 @@
           <option *ngFor="let processModel of processModels" [ngValue]="processModel">{{processModel.name}} (Erstellt: {{ processModel.createdAt | commaDate | date:'dd.MM.yyyy HH:mm:ss' }})</option>
         </select>
         <br/>
-        <button class="btn btn-primary btn-lg" type="submit" (click)="getEventLog(selectedProcessModel)" [disabled]="selectedProcessModel === undefined">Event-Log laden</button>
-        <button class="btn btn-primary btn-lg" type="submit" (click)="downloadEventLog(selectedProcessModel)" [disabled]="selectedProcessModel === undefined">Event-Log CSV herunterladen</button>
+        <label>Subjekt</label>
+        <select class="form-control" [(ngModel)]="selectedSubject" style="width:50%;" [disabled]="selectedProcessModel === undefined">
+          <option *ngFor="let subjectModel of selectedProcessModel.subjectModels" [ngValue]="subjectModel">{{subjectModel.name}}</option>
+        </select>
+        <br/>
+        <button class="btn btn-primary btn-lg" type="submit" (click)="getEventLog(selectedProcessModel, selectedSubject)" [disabled]="selectedSubject === undefined">Event-Log laden</button>
+        <button class="btn btn-primary btn-lg" type="submit" (click)="downloadEventLog(selectedProcessModel, selectedSubject)" [disabled]="selectedSubject === undefined">Event-Log CSV herunterladen</button>
       </div>
       <div *ngIf="eventLog.length > 0">
-        <h4>Event-Log für {{ loadedEventLogForProcessModel.name }} (Erstellt: {{ loadedEventLogForProcessModel.createdAt | commaDate | date:'dd.MM.yyyy HH:mm:ss' }}</h4>
+        <h4>Event-Log für {{ loadedEventLogForProcessModel.name }} (Erstellt: {{ loadedEventLogForProcessModel.createdAt | commaDate | date:'dd.MM.yyyy HH:mm:ss' }} - {{loadedEventLogForSubject}}</h4>
         <table class="table table-striped">
            <thead>
               <tr>

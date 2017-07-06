@@ -10,7 +10,7 @@ public class EventLogEntry implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  private Long eId;
+  private Long eventId;
 
   @Column
   private Long caseId;
@@ -45,12 +45,23 @@ public class EventLogEntry implements Serializable {
     this.messageType = messageType;
   }
 
+    public EventLogEntry(Long eventId, Long caseId, Long processModelId, String timestamp, String activity, String resource, String state, String messageType) {
+        this.eventId = eventId;
+        this.caseId = caseId;
+        this.processModelId = processModelId;
+        this.timestamp = timestamp;
+        this.activity = activity;
+        this.resource = resource;
+        this.state = state;
+        this.messageType = messageType;
+    }
+
   public static long getSerialversionuid() {
     return serialVersionUID;
   }
 
-  public Long getEId() {
-    return eId;
+  public Long getEventId() {
+    return eventId;
   }
 
   public Long getCaseId() {
@@ -79,6 +90,10 @@ public class EventLogEntry implements Serializable {
 
     public String getMessageType() {
     return messageType;
+    }
+
+    public void setEventId(Long eventId) {
+        this.eventId = eventId;
     }
 
     public void setCaseId(Long caseId) {
@@ -112,7 +127,7 @@ public class EventLogEntry implements Serializable {
     @Override
     public String toString() {
         return "EventLogEntry{" +
-                "eId=" + eId +
+                "eventId=" + eventId +
                 ", caseId=" + caseId +
                 ", processModelId=" + processModelId +
                 ", timestamp='" + timestamp + '\'' +
@@ -130,7 +145,7 @@ public class EventLogEntry implements Serializable {
 
         EventLogEntry eventLogEntry = (EventLogEntry) o;
 
-        if (eId != null ? !eId.equals(eventLogEntry.eId) : eventLogEntry.eId != null) return false;
+        if (eventId != null ? !eventId.equals(eventLogEntry.eventId) : eventLogEntry.eventId != null) return false;
         if (caseId != null ? !caseId.equals(eventLogEntry.caseId) : eventLogEntry.caseId != null) return false;
         if (processModelId != null ? !processModelId.equals(eventLogEntry.processModelId) : eventLogEntry.processModelId != null)
             return false;
@@ -143,7 +158,7 @@ public class EventLogEntry implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = eId != null ? eId.hashCode() : 0;
+        int result = eventId != null ? eventId.hashCode() : 0;
         result = 31 * result + (caseId != null ? caseId.hashCode() : 0);
         result = 31 * result + (processModelId != null ? processModelId.hashCode() : 0);
         result = 31 * result + (timestamp != null ? timestamp.hashCode() : 0);

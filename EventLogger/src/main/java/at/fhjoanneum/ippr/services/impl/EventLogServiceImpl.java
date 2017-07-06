@@ -5,6 +5,7 @@ import at.fhjoanneum.ippr.Helpers.LogKey;
 import at.fhjoanneum.ippr.commons.dto.processengine.EventLoggerDTO;
 import at.fhjoanneum.ippr.persistence.EventLogEntry;
 import at.fhjoanneum.ippr.persistence.EventLogRepository;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
 import at.fhjoanneum.ippr.pmstorage.services.EventLogService;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringUtils;
@@ -36,9 +37,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Future;
 
 
@@ -53,8 +52,8 @@ public class EventLogServiceImpl implements EventLogService {
 
     @Async
     @Override
-    public Future<List<EventLoggerDTO>> getEventLogForProcessModel(int processModelId) {
-        final List<EventLogEntry> results = eventLogRepository.getEventLogForProcessModel(processModelId);
+    public Future<List<EventLoggerDTO>> getEventLogForProcessModelAndSubject(int processModelId, String subject) {
+        final List<EventLogEntry> results = eventLogRepository.getEventLogForProcessModelAndSubject(processModelId, subject);
         final List<EventLoggerDTO> eventLog = createEventLoggerDTO(results);
         return new AsyncResult<List<EventLoggerDTO>>(eventLog);
     }
@@ -64,7 +63,7 @@ public class EventLogServiceImpl implements EventLogService {
 
         results.forEach(event -> {
             final EventLoggerDTO dto =
-                    new EventLoggerDTO(event.getCaseId(), event.getProcessModelId(), event.getTimestamp(), event.getActivity(), event.getResource(), event.getState(), event.getMessageType());
+                    new EventLoggerDTO(event.getEventId(), event.getCaseId(), event.getProcessModelId(), event.getTimestamp(), event.getActivity(), event.getResource(), event.getState(), event.getMessageType());
             eventLog.add(dto);
         });
 
@@ -72,10 +71,10 @@ public class EventLogServiceImpl implements EventLogService {
     }
 
     @Override
-    public StreamResult manipulatePNML(String pnmlContent, String csvLog) {
+    public StreamResult manipulatePNML(String pnmlContent, String csvLog) throws Exception{
         StreamResult result = new StreamResult();
         try {
-            HashMap<LogKey, EventLogEntry> logTriplets = parseCSV(csvLog);
+            LinkedHashMap<LogKey, EventLogEntry> logTriplets = parseCSV(csvLog);
             /*https://stackoverflow.com/questions/6445828/how-do-i-append-a-node-to-an-existing-xml-file-in-java*/
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
             InputSource input = new InputSource(new StringReader(pnmlContent));
@@ -91,7 +90,74 @@ public class EventLogServiceImpl implements EventLogService {
                     NodeList transitions = net.getElementsByTagName("transition");
                     NodeList arcs = net.getElementsByTagName("arc");
 
-                    createPlace(document, net);
+                    int numOfCustomPlaces = 1;
+                    Iterator<Map.Entry<LogKey, EventLogEntry>> it = logTriplets.entrySet().iterator();
+                    Map.Entry<LogKey, EventLogEntry> afterReceiveStateEntry = null;
+                    while (it.hasNext() || afterReceiveStateEntry != null) {
+                        Map.Entry<LogKey, EventLogEntry> entry;
+                        if (afterReceiveStateEntry != null) {
+                            entry = afterReceiveStateEntry;
+                        } else {
+                            entry = it.next();
+                        }
+                        EventLogEntry eventLogEntry = entry.getValue();
+
+                        String state = eventLogEntry.getState();
+                        String activity = eventLogEntry.getActivity();
+                        String messageType = eventLogEntry.getMessageType();
+
+                        System.out.println(activity + " " + state);
+
+                        if (state.equals(StateFunctionType.SEND.name())) {
+                            afterReceiveStateEntry = null;
+                            String placeId = addPlace(document, net, numOfCustomPlaces++, messageType);
+                            //find transition where name = activity and get id
+                            //addArc(source: transitionId, target: placeId, name: messageType)
+                        } else if (state.equals(StateFunctionType.RECEIVE.name())) {
+                            if (!it.hasNext()) {
+                                throw(new Exception("Letzter Log-Eintrag darf kein Receive State sein!"));
+                            }
+                            Map.Entry<LogKey, EventLogEntry> nextEntry = it.next();
+                            EventLogEntry nextEventLogEntry = nextEntry.getValue();
+
+                            String nextState = eventLogEntry.getState();
+                            String nextActivity = eventLogEntry.getActivity();
+                            String nextMessageType = eventLogEntry.getMessageType();
+
+                            afterReceiveStateEntry = nextEntry;
+                        } else {
+                            afterReceiveStateEntry = null;
+                        }
+                    }
+                    /*for (HashMap.Entry<LogKey, EventLogEntry> entry: logTriplets.entrySet()) {
+                        EventLogEntry eventLogEntry = entry.getValue();
+
+                        String state = eventLogEntry.getState();
+                        String activity = eventLogEntry.getActivity();
+                        String messageType = eventLogEntry.getMessageType();
+
+                        if (state == StateFunctionType.SEND.name()) {
+                            String placeId = addPlace(document, net, numOfCustomPlaces++, messageType);
+                            //find transition where name = activity and get id
+                            //addArc(source: transitionId, target: placeId, name: messageType)
+                        } else if (state == StateFunctionType.RECEIVE.name()) {
+                            //1. log muss e_id enhalten
+                            //linked hash map, werte müssen sortiert nach e_id in CSV eingefügt werden!!
+                            //dann auf linked hash map next
+                            //statt for while:
+
+                                Iterator it = map.entrySet().iterator();
+                                while (it.hasNext()) {
+                                    Map.Entry entry = (Map.Entry)it.next();
+                                    String key = entry.getKey();
+                                    String value = entry.getValue();
+                                    // do something
+                                    // an event occurred
+                                    if (it.hasNext()) entry = (Map.Entry)it.next();
+                                }
+
+                        }
+                    }*/
                 }
 
                 DOMSource source = new DOMSource(document);
@@ -104,14 +170,15 @@ public class EventLogServiceImpl implements EventLogService {
         } catch (Exception e) {
             LOG.error(e.getMessage());
             LOG.error("Exception while manipulating PNML");
+            throw(e);
         }
 
         return result;
     }
 
-    private HashMap<LogKey, EventLogEntry> parseCSV(String csvLog) throws Exception {
+    private LinkedHashMap<LogKey, EventLogEntry> parseCSV(String csvLog) throws Exception {
 
-        HashMap<LogKey, EventLogEntry> result = new HashMap<>();
+        LinkedHashMap<LogKey, EventLogEntry> result = new LinkedHashMap<>();
         ICsvBeanReader beanReader = null;
         try {
             beanReader = new CsvBeanReader(new StringReader(csvLog), CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE);
@@ -149,6 +216,7 @@ public class EventLogServiceImpl implements EventLogService {
 
     private static CellProcessor[] getProcessors() {
         final CellProcessor[] processors = new CellProcessor[] {
+                new NotNull(new ParseLong()), // EventId
                 new NotNull(new ParseLong()), // CaseId
                 new NotNull(), // Timestamp
                 new NotNull(), // Activity
@@ -160,22 +228,23 @@ public class EventLogServiceImpl implements EventLogService {
         return processors;
     }
 
-    private void createPlace(Document document, Element net) {
+    private String addPlace(Document document, Element net, int id, String name) {
         //Custom Place
         Element newPlace = document.createElement("place");
         net.appendChild(newPlace);
 
         //Id
-        newPlace.setAttribute("id", "cp1");
+        String placeId = "cp"+id;
+        newPlace.setAttribute("id", placeId);
 
         //Name
-        Element name = document.createElement("name");
-        newPlace.appendChild(name);
+        Element nameElement = document.createElement("name");
+        newPlace.appendChild(nameElement);
 
         //Name Text
         Element text = document.createElement("text");
-        text.appendChild(document.createTextNode("Custom Place 1"));
-        name.appendChild(text);
+        text.appendChild(document.createTextNode(name));
+        nameElement.appendChild(text);
 
         //Graphics
         Element graphics = document.createElement("graphics");
@@ -192,5 +261,7 @@ public class EventLogServiceImpl implements EventLogService {
         dimension.setAttribute("x", "12.5");
         dimension.setAttribute("y", "12.5");
         graphics.appendChild(position);
+
+        return placeId;
     }
 }

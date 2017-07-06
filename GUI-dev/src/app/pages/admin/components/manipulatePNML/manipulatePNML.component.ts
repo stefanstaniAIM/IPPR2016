@@ -48,8 +48,11 @@ export class ManipulatePNML implements OnInit {
         .subscribe(
             data => {
               that.saveData(data, "test.pnml");
+              that.error = undefined;
             },
-            err => that.error = "Die PNML Datei konnte nicht richtig interpretiert werden!"
+            err => {
+              that.error = "Die PNML Datei konnte nicht richtig interpretiert werden! " + JSON.parse(err._body).message;
+            }
           );
       }
       pnmlReader.readAsText(this.pnmlFile);

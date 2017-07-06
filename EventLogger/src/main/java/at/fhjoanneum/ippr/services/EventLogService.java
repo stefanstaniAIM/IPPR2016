@@ -8,6 +8,6 @@ import java.util.concurrent.Future;
 
 public interface EventLogService {
 
-    Future<List<EventLoggerDTO>> getEventLogForProcessModel(final int processModelId);
-    StreamResult manipulatePNML(final String pnmlContent, final String csvLog);
+    Future<List<EventLoggerDTO>> getEventLogForProcessModelAndSubject(final int processModelId, final String subject);
+    StreamResult manipulatePNML(final String pnmlContent, final String csvLog) throws Exception;
 }

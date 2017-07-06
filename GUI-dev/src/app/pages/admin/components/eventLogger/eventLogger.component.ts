@@ -11,8 +11,10 @@ import { EventLoggerService } from '../../../../EventLogger.service';
 export class EventLogger implements OnInit {
    processModels = [];
    error = undefined;
-   selectedProcessModel = undefined;
+   selectedProcessModel = {subjectModels: undefined};
+   selectedSubject = undefined;
    loadedEventLogForProcessModel = undefined;
+   loadedEventLogForSubject = undefined;
    eventLog = [];
 
   constructor(protected processService:ProcessesService, protected eventLoggerService:EventLoggerService) {}
@@ -28,12 +30,13 @@ export class EventLogger implements OnInit {
        );
   }
 
-  getEventLog(processModel):void {
+  getEventLog(processModel, subject):void {
     var that = this;
-    this.eventLoggerService.getEventLog(processModel.pmId)
+    this.eventLoggerService.getEventLog(processModel.pmId, subject.name)
       .subscribe(
          data => {
            that.loadedEventLogForProcessModel = processModel;
+           that.loadedEventLogForSubject = subject.name;
            var result = JSON.parse(data['_body']);
            if(result.length === 0){
              that.error = "Für dieses Prozessmodell gibt es keinen (vollständigen) Event-Log!";
@@ -44,12 +47,13 @@ export class EventLogger implements OnInit {
          err => {
            that.error = err;
            that.loadedEventLogForProcessModel = undefined;
+           that.loadedEventLogForSubject = undefined;
            that.eventLog = [];
          }
        );
   }
 
-  downloadEventLog(processModel){
-    window.open(this.eventLoggerService.getEventLogDownloadLink(processModel.pmId));
+  downloadEventLog(processModel, subject){
+    window.open(this.eventLoggerService.getEventLogDownloadLink(processModel.pmId, subject.name));
   }
 }
