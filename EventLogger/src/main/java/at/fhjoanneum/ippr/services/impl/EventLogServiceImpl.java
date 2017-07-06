@@ -1,6 +1,7 @@
 package at.fhjoanneum.ippr.pmstorage.services.impl;
 
 
+import at.fhjoanneum.ippr.Helpers.LogKey;
 import at.fhjoanneum.ippr.commons.dto.processengine.EventLoggerDTO;
 import at.fhjoanneum.ippr.persistence.EventLogEntry;
 import at.fhjoanneum.ippr.persistence.EventLogRepository;
@@ -27,20 +28,17 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Future;
 
 
@@ -77,7 +75,7 @@ public class EventLogServiceImpl implements EventLogService {
     public StreamResult manipulatePNML(String pnmlContent, String csvLog) {
         StreamResult result = new StreamResult();
         try {
-            parseCSV(csvLog);
+            HashMap<LogKey, EventLogEntry> logTriplets = parseCSV(csvLog);
             /*https://stackoverflow.com/questions/6445828/how-do-i-append-a-node-to-an-existing-xml-file-in-java*/
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
             InputSource input = new InputSource(new StringReader(pnmlContent));
@@ -111,24 +109,9 @@ public class EventLogServiceImpl implements EventLogService {
         return result;
     }
 
-    /*private void parseCSV(String csvLog) {
-        BufferedReader br = null;
-        String line = "";
-        String cvsSplitBy = ";";
+    private HashMap<LogKey, EventLogEntry> parseCSV(String csvLog) throws Exception {
 
-        try (BufferedReader br = new BufferedReader(new StringReader(csvLog))) {
-            while ((line = br.readLine()) != null) {
-                String[] country = line.split(cvsSplitBy);
-
-                System.out.println("Country [code= " + country[4] + " , name=" + country[5] + "]");
-
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }*/
-
-    private void parseCSV(String csvLog) throws Exception {
+        HashMap<LogKey, EventLogEntry> result = new HashMap<>();
         ICsvBeanReader beanReader = null;
         try {
             beanReader = new CsvBeanReader(new StringReader(csvLog), CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE);
@@ -144,17 +127,23 @@ public class EventLogServiceImpl implements EventLogService {
             final CellProcessor[] processors = getProcessors();
 
             EventLogEntry eventLogEntry;
-            while( (eventLogEntry = beanReader.read(EventLogEntry.class, uncapitalizedHeader, processors)) != null ) {
+            while((eventLogEntry = beanReader.read(EventLogEntry.class, uncapitalizedHeader, processors)) != null) {
                 System.out.println(String.format("%s, %s, %s, %s, %s, %s",
                         eventLogEntry.getCaseId(), eventLogEntry.getTimestamp(), eventLogEntry.getActivity(),
                         eventLogEntry.getResource(), eventLogEntry.getState(), eventLogEntry.getMessageType()));
-                //https://stackoverflow.com/questions/14148331/how-to-get-a-hashmap-value-with-three-values
+
+                LogKey key = new LogKey(eventLogEntry.getActivity(), eventLogEntry.getState(), eventLogEntry.getMessageType());
+                if(!result.containsKey(key)) {
+                    result.put(key, eventLogEntry);
+                }
             }
         }
         finally {
-            if( beanReader != null ) {
+            if(beanReader != null) {
                 beanReader.close();
             }
+
+            return result;
         }
     }
 
