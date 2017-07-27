@@ -1,16 +1,5 @@
 package at.fhjoanneum.ippr.processengine.akka.tasks.user;
 
-import java.util.Optional;
-
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.support.TransactionSynchronizationAdapter;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
-
 import akka.actor.ActorRef;
 import akka.actor.Status;
 import at.fhjoanneum.ippr.commons.dto.eventlogger.EventLoggerDTO;
@@ -24,6 +13,16 @@ import at.fhjoanneum.ippr.processengine.akka.tasks.AbstractTask;
 import at.fhjoanneum.ippr.processengine.repositories.MessageFlowRepository;
 import at.fhjoanneum.ippr.processengine.repositories.SubjectStateRepository;
 import at.fhjoanneum.ippr.processengine.services.EventLoggerSender;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+
+import java.util.Optional;
 
 @Component("User.MessageReceivedTask")
 @Scope("prototype")
@@ -79,8 +78,11 @@ public class MessageReceivedTask extends AbstractTask<MessageReceiveMessage.Requ
       final String timestamp = DateTime.now().toString("dd.MM.yyyy HH:mm");
       final String messageType = messageFlowRepository.findOne(request.getMfId())
           .getBusinessObjectModels().get(0).getName();
+      final String to = resource;
+      final String from = "";
+
       final EventLoggerDTO event = new EventLoggerDTO(caseId, processModelId, timestamp, activity,
-          resource, state, messageType);
+          resource, state, messageType, to, from);
       eventLoggerSender.send(event);
 
       subjectStateRepository.save((SubjectStateImpl) subjectState);

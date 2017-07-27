@@ -1,20 +1,5 @@
 package at.fhjoanneum.ippr.processengine.akka.tasks.process;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.support.TransactionSynchronizationAdapter;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
-
-import com.google.common.collect.Lists;
-
 import akka.actor.ActorRef;
 import at.fhjoanneum.ippr.commons.dto.eventlogger.EventLoggerDTO;
 import at.fhjoanneum.ippr.persistence.entities.engine.process.ProcessInstanceBuilder;
@@ -34,6 +19,19 @@ import at.fhjoanneum.ippr.processengine.repositories.ProcessModelRepository;
 import at.fhjoanneum.ippr.processengine.repositories.SubjectModelRepository;
 import at.fhjoanneum.ippr.processengine.repositories.SubjectRepository;
 import at.fhjoanneum.ippr.processengine.services.EventLoggerSender;
+import com.google.common.collect.Lists;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component("ProcessSupervisor.ProcessStartTask")
 @Scope("prototype")
@@ -105,7 +103,7 @@ public class ProcessStartTask extends AbstractTask<ProcessStartMessage.Request> 
               final String activity = "Process Start";
               final String timestamp = DateTime.now().toString("dd.MM.yyyy HH:mm");
               final EventLoggerDTO event =
-                  new EventLoggerDTO(caseId, processModelId, timestamp, activity, "", "", "");
+                  new EventLoggerDTO(caseId, processModelId, timestamp, activity, "", "", "", "", "");
               eventLoggerSender.send(event);
             }
           });

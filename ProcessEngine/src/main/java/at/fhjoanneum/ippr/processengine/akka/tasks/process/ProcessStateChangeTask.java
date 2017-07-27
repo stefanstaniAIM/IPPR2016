@@ -1,19 +1,5 @@
 package at.fhjoanneum.ippr.processengine.akka.tasks.process;
 
-import java.util.Optional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.support.TransactionSynchronizationAdapter;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
-
 import akka.actor.ActorRef;
 import at.fhjoanneum.ippr.commons.dto.eventlogger.EventLoggerDTO;
 import at.fhjoanneum.ippr.persistence.entities.engine.process.ProcessInstanceImpl;
@@ -27,6 +13,18 @@ import at.fhjoanneum.ippr.processengine.akka.tasks.AbstractTask;
 import at.fhjoanneum.ippr.processengine.akka.tasks.TaskCallback;
 import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
 import at.fhjoanneum.ippr.processengine.services.EventLoggerSender;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Optional;
 
 @Component("Process.ProcessStateChangeTask")
 @Scope("prototype")
@@ -85,7 +83,7 @@ public class ProcessStateChangeTask extends AbstractTask<StateObjectChangeMessag
       final String activity = "Process End";
       final String timestamp = DateTime.now().toString("dd.MM.yyyy HH:mm");
       final EventLoggerDTO event =
-          new EventLoggerDTO(caseId, processModelId, timestamp, activity, "", "", "");
+          new EventLoggerDTO(caseId, processModelId, timestamp, activity, "", "", "", "", "");
       eventLoggerSender.send(event);
 
       final ActorRef sender = getSender();

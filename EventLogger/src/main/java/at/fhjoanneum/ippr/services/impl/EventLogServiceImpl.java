@@ -1,21 +1,13 @@
 package at.fhjoanneum.ippr.services.impl;
 
 
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Future;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
+import at.fhjoanneum.ippr.Helpers.LogKey;
+import at.fhjoanneum.ippr.commons.dto.eventlogger.EventLoggerDTO;
+import at.fhjoanneum.ippr.persistence.EventLogEntry;
+import at.fhjoanneum.ippr.persistence.EventLogRepository;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
+import at.fhjoanneum.ippr.services.EventLogService;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,14 +30,15 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import com.google.common.collect.Lists;
-
-import at.fhjoanneum.ippr.Helpers.LogKey;
-import at.fhjoanneum.ippr.commons.dto.eventlogger.EventLoggerDTO;
-import at.fhjoanneum.ippr.persistence.EventLogEntry;
-import at.fhjoanneum.ippr.persistence.EventLogRepository;
-import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
-import at.fhjoanneum.ippr.services.EventLogService;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.*;
+import java.util.concurrent.Future;
 
 
 @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -73,7 +66,7 @@ public class EventLogServiceImpl implements EventLogService {
     results.forEach(event -> {
       final EventLoggerDTO dto = new EventLoggerDTO(event.getEventId(), event.getCaseId(),
           event.getProcessModelId(), event.getTimestamp(), event.getActivity(), event.getResource(),
-          event.getState(), event.getMessageType());
+          event.getState(), event.getMessageType(), event.getTo(), event.getFrom());
       eventLog.add(dto);
     });
 
@@ -86,7 +79,7 @@ public class EventLogServiceImpl implements EventLogService {
     StreamResult result = new StreamResult();
 
     try {
-      final LinkedHashMap<LogKey, EventLogEntry> logTriplets = parseCSV(csvLog);
+      final LinkedHashMap<LogKey, EventLogEntry> logQuintuplets = parseCSV(csvLog);
       final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
       final InputSource input = new InputSource(new StringReader(pnmlContent));
       final Document document = documentBuilderFactory.newDocumentBuilder().parse(input);
@@ -101,7 +94,7 @@ public class EventLogServiceImpl implements EventLogService {
 
           int numOfCustomPlaces = 1;
           int numOfCustomArcs = 1;
-          final Iterator<Map.Entry<LogKey, EventLogEntry>> it = logTriplets.entrySet().iterator();
+          final Iterator<Map.Entry<LogKey, EventLogEntry>> it = logQuintuplets.entrySet().iterator();
           Map.Entry<LogKey, EventLogEntry> afterReceiveStateEntry = null;
           while (it.hasNext() || afterReceiveStateEntry != null) {
             Map.Entry<LogKey, EventLogEntry> entry;
@@ -116,10 +109,12 @@ public class EventLogServiceImpl implements EventLogService {
             final String state = eventLogEntry.getState();
             final String activity = eventLogEntry.getActivity();
             final String messageType = eventLogEntry.getMessageType();
+            final String to = eventLogEntry.getTo();
+            final String from = eventLogEntry.getFrom();
 
             if (state.equals(StateFunctionType.SEND.name())) {
               afterReceiveStateEntry = null;
-              final String placeId = addPlace(document, net, numOfCustomPlaces++, messageType);
+              final String placeId = addPlace(document, net, numOfCustomPlaces++, messageType, to, from);
               addArc(document, net, numOfCustomArcs++, transitions.get(activity), placeId,
                   messageType);
             } else if (state.equals(StateFunctionType.RECEIVE.name())) {
@@ -133,7 +128,7 @@ public class EventLogServiceImpl implements EventLogService {
               final String nextActivity = nextEventLogEntry.getActivity();
               final String nextMessageType = nextEventLogEntry.getMessageType();
 
-              final String placeId = addPlace(document, net, numOfCustomPlaces++, nextMessageType);
+              final String placeId = addPlace(document, net, numOfCustomPlaces++, nextMessageType, to, from);
               addArc(document, net, numOfCustomArcs++, placeId, transitions.get(nextActivity),
                   nextMessageType);
 
@@ -182,7 +177,7 @@ public class EventLogServiceImpl implements EventLogService {
           beanReader.read(EventLogEntry.class, uncapitalizedHeader, processors)) != null) {
 
         final LogKey key = new LogKey(eventLogEntry.getActivity(), eventLogEntry.getState(),
-            eventLogEntry.getMessageType());
+            eventLogEntry.getMessageType(), eventLogEntry.getTo(), eventLogEntry.getFrom());
         if (!result.containsKey(key)) {
           result.put(key, eventLogEntry);
         }
@@ -203,7 +198,9 @@ public class EventLogServiceImpl implements EventLogService {
         new NotNull(), // Activity
         new NotNull(), // Resource
         new NotNull(), // State
-        new Optional() // MessageType
+        new Optional(), // MessageType
+        new Optional(), // To
+        new Optional() // From
     };
 
     return processors;
@@ -247,7 +244,7 @@ public class EventLogServiceImpl implements EventLogService {
   }
 
   private String addPlace(final Document document, final Element net, final int id,
-      final String name) {
+      final String name, final String to, final String from) {
     // Custom Place
     final Element newPlace = document.createElement("place");
     net.appendChild(newPlace);
@@ -262,7 +259,7 @@ public class EventLogServiceImpl implements EventLogService {
 
     // Name Text
     final Element text = document.createElement("text");
-    text.appendChild(document.createTextNode(name));
+    text.appendChild(document.createTextNode(name + " To: " + to + " From: " + from));
     nameElement.appendChild(text);
 
     // Graphics

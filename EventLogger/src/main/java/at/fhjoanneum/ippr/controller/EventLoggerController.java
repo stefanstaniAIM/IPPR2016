@@ -1,34 +1,27 @@
 package at.fhjoanneum.ippr.controller;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.transform.stream.StreamResult;
-
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.supercsv.io.CsvBeanWriter;
-import org.supercsv.io.ICsvBeanWriter;
-import org.supercsv.prefs.CsvPreference;
-
 import at.fhjoanneum.ippr.EventLoggerApplication;
 import at.fhjoanneum.ippr.commons.dto.eventlogger.EventLoggerDTO;
 import at.fhjoanneum.ippr.persistence.EventLogEntry;
 import at.fhjoanneum.ippr.persistence.EventLogRepository;
 import at.fhjoanneum.ippr.services.EventLogService;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import org.supercsv.io.CsvBeanWriter;
+import org.supercsv.io.ICsvBeanWriter;
+import org.supercsv.prefs.CsvPreference;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.transform.stream.StreamResult;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
 
 @RestController
 public class EventLoggerController {
@@ -50,9 +43,11 @@ public class EventLoggerController {
     final String resource = eventLoggerDTO.getResource();
     final String state = eventLoggerDTO.getState();
     final String messageType = eventLoggerDTO.getMessageType();
+    final String to = eventLoggerDTO.getTo();
+    final String from = eventLoggerDTO.getFrom();
 
     final EventLogEntry eventLogEntry = new EventLogEntry(caseId, processModelId, timestamp,
-        activity, resource, state, messageType);
+        activity, resource, state, messageType, to, from);
     eventLogRepository.save(eventLogEntry);
     return eventLogEntry.toString();
   }
@@ -126,7 +121,7 @@ public class EventLoggerController {
         new CsvBeanWriter(response.getWriter(), CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE);
 
     final String[] header =
-        {"EventId", "CaseId", "Timestamp", "Activity", "Resource", "State", "MessageType"};
+        {"EventId", "CaseId", "Timestamp", "Activity", "Resource", "State", "MessageType", "To", "From"};
 
     csvWriter.writeHeader(header);
     events.forEach(event -> {

@@ -33,9 +33,15 @@ public class EventLogEntry implements Serializable {
   @Column
   private String messageType;
 
+    @Column
+    private String to;
+
+    @Column
+    private String from;
+
   public EventLogEntry() {}
 
-  public EventLogEntry(Long caseId, Long processModelId, String timestamp, String activity, String resource, String state, String messageType) {
+  public EventLogEntry(Long caseId, Long processModelId, String timestamp, String activity, String resource, String state, String messageType, String to, String from) {
     this.caseId = caseId;
     this.processModelId = processModelId;
     this.timestamp = timestamp;
@@ -43,9 +49,11 @@ public class EventLogEntry implements Serializable {
     this.resource = resource;
     this.state = state;
     this.messageType = messageType;
+    this.to = to;
+    this.from = from;
   }
 
-    public EventLogEntry(Long eventId, Long caseId, Long processModelId, String timestamp, String activity, String resource, String state, String messageType) {
+    public EventLogEntry(Long eventId, Long caseId, Long processModelId, String timestamp, String activity, String resource, String state, String messageType, String to, String from) {
         this.eventId = eventId;
         this.caseId = caseId;
         this.processModelId = processModelId;
@@ -54,6 +62,8 @@ public class EventLogEntry implements Serializable {
         this.resource = resource;
         this.state = state;
         this.messageType = messageType;
+        this.to = to;
+        this.from = from;
     }
 
   public static long getSerialversionuid() {
@@ -124,6 +134,22 @@ public class EventLogEntry implements Serializable {
         this.messageType = messageType;
     }
 
+    public String getTo() {
+        return to;
+    }
+
+    public void setTo(String to) {
+        this.to = to;
+    }
+
+    public String getFrom() {
+        return from;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
+    }
+
     @Override
     public String toString() {
         return "EventLogEntry{" +
@@ -135,6 +161,8 @@ public class EventLogEntry implements Serializable {
                 ", resource='" + resource + '\'' +
                 ", state='" + state + '\'' +
                 ", messageType='" + messageType + '\'' +
+                ", to='" + to + '\'' +
+                ", from='" + from + '\'' +
                 '}';
     }
 
@@ -143,17 +171,19 @@ public class EventLogEntry implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        EventLogEntry eventLogEntry = (EventLogEntry) o;
+        EventLogEntry that = (EventLogEntry) o;
 
-        if (eventId != null ? !eventId.equals(eventLogEntry.eventId) : eventLogEntry.eventId != null) return false;
-        if (caseId != null ? !caseId.equals(eventLogEntry.caseId) : eventLogEntry.caseId != null) return false;
-        if (processModelId != null ? !processModelId.equals(eventLogEntry.processModelId) : eventLogEntry.processModelId != null)
+        if (eventId != null ? !eventId.equals(that.eventId) : that.eventId != null) return false;
+        if (caseId != null ? !caseId.equals(that.caseId) : that.caseId != null) return false;
+        if (processModelId != null ? !processModelId.equals(that.processModelId) : that.processModelId != null)
             return false;
-        if (timestamp != null ? !timestamp.equals(eventLogEntry.timestamp) : eventLogEntry.timestamp != null) return false;
-        if (activity != null ? !activity.equals(eventLogEntry.activity) : eventLogEntry.activity != null) return false;
-        if (resource != null ? !resource.equals(eventLogEntry.resource) : eventLogEntry.resource != null) return false;
-        if (state != null ? !state.equals(eventLogEntry.state) : eventLogEntry.state != null) return false;
-        return messageType != null ? messageType.equals(eventLogEntry.messageType) : eventLogEntry.messageType == null;
+        if (timestamp != null ? !timestamp.equals(that.timestamp) : that.timestamp != null) return false;
+        if (activity != null ? !activity.equals(that.activity) : that.activity != null) return false;
+        if (resource != null ? !resource.equals(that.resource) : that.resource != null) return false;
+        if (state != null ? !state.equals(that.state) : that.state != null) return false;
+        if (messageType != null ? !messageType.equals(that.messageType) : that.messageType != null) return false;
+        if (to != null ? !to.equals(that.to) : that.to != null) return false;
+        return from != null ? from.equals(that.from) : that.from == null;
     }
 
     @Override
@@ -166,6 +196,8 @@ public class EventLogEntry implements Serializable {
         result = 31 * result + (resource != null ? resource.hashCode() : 0);
         result = 31 * result + (state != null ? state.hashCode() : 0);
         result = 31 * result + (messageType != null ? messageType.hashCode() : 0);
+        result = 31 * result + (to != null ? to.hashCode() : 0);
+        result = 31 * result + (from != null ? from.hashCode() : 0);
         return result;
     }
 }

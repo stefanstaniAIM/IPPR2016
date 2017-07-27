@@ -5,11 +5,15 @@ public class LogKey {
     private String activity;
     private String state;
     private String messageType;
+    private String to;
+    private String from;
 
-    public LogKey(String activity, String state, String messageType) {
+    public LogKey(String activity, String state, String messageType, String to, String from) {
         this.activity = activity;
         this.state = state;
         this.messageType = messageType;
+        this.to = to;
+        this.from = from;
     }
 
     public String getActivity() {
@@ -36,6 +40,22 @@ public class LogKey {
         this.messageType = messageType;
     }
 
+    public String getTo() {
+        return to;
+    }
+
+    public void setTo(String to) {
+        this.to = to;
+    }
+
+    public String getFrom() {
+        return from;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -45,7 +65,9 @@ public class LogKey {
 
         if (activity != null ? !activity.equals(logKey.activity) : logKey.activity != null) return false;
         if (state != null ? !state.equals(logKey.state) : logKey.state != null) return false;
-        return messageType != null ? messageType.equals(logKey.messageType) : logKey.messageType == null;
+        if (messageType != null ? !messageType.equals(logKey.messageType) : logKey.messageType != null) return false;
+        if (to != null ? !to.equals(logKey.to) : logKey.to != null) return false;
+        return from != null ? from.equals(logKey.from) : logKey.from == null;
     }
 
     @Override
@@ -53,6 +75,8 @@ public class LogKey {
         int result = activity != null ? activity.hashCode() : 0;
         result = 31 * result + (state != null ? state.hashCode() : 0);
         result = 31 * result + (messageType != null ? messageType.hashCode() : 0);
+        result = 31 * result + (to != null ? to.hashCode() : 0);
+        result = 31 * result + (from != null ? from.hashCode() : 0);
         return result;
     }
 }

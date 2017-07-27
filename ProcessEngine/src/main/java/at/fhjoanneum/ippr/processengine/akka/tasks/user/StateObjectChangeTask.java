@@ -1,28 +1,5 @@
 package at.fhjoanneum.ippr.processengine.akka.tasks.user;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.support.TransactionSynchronizationAdapter;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
-
 import akka.actor.ActorRef;
 import akka.actor.Status;
 import akka.pattern.Patterns;
@@ -64,17 +41,27 @@ import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObje
 import at.fhjoanneum.ippr.processengine.akka.tasks.AbstractTask;
 import at.fhjoanneum.ippr.processengine.feign.ExternalCommunicatorClient;
 import at.fhjoanneum.ippr.processengine.parser.DbValueParser;
-import at.fhjoanneum.ippr.processengine.repositories.BusinessObjectFieldInstanceRepository;
-import at.fhjoanneum.ippr.processengine.repositories.BusinessObjectFieldPermissionRepository;
-import at.fhjoanneum.ippr.processengine.repositories.BusinessObjectInstanceRepository;
-import at.fhjoanneum.ippr.processengine.repositories.MessageFlowRepository;
-import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
-import at.fhjoanneum.ippr.processengine.repositories.StateRepository;
-import at.fhjoanneum.ippr.processengine.repositories.SubjectRepository;
-import at.fhjoanneum.ippr.processengine.repositories.SubjectStateRepository;
+import at.fhjoanneum.ippr.processengine.repositories.*;
 import at.fhjoanneum.ippr.processengine.services.EventLoggerSender;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import scala.concurrent.Await;
 import scala.concurrent.Future;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component("User.StateObjectChangeTask")
 @Scope("prototype")
@@ -327,8 +314,11 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
     final String timestamp = DateTime.now().toString("dd.MM.yyyy HH:mm");
     final String messageType =
         subjectState.getCurrentState().getBusinessObjectModels().get(0).getName();
+    final String to = "";
+    final String from = resource;
+
     final EventLoggerDTO event = new EventLoggerDTO(caseId, processModelId, timestamp, activity,
-        resource, state, messageType);
+        resource, state, messageType, to, from);
     eventLoggerSender.send(event);
 
     if (!userMessageFlowIds.isEmpty()) {
@@ -447,8 +437,11 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
       final String resource = subjectState.getSubject().getSubjectModel().getName();
       final String state = StateFunctionType.FUNCTION.name();
       final String messageType = "";
+      final String to = "";
+      final String from = "";
+
       final EventLoggerDTO event = new EventLoggerDTO(caseId, processModelId, timestamp, activity,
-          resource, state, messageType);
+          resource, state, messageType, to, from);
       eventLoggerSender.send(event);
     }
   }
