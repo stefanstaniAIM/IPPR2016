@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.services;
+package at.fhjoanneum.ippr.eventlogger.services;
 
 import java.util.List;
 import java.util.concurrent.Future;

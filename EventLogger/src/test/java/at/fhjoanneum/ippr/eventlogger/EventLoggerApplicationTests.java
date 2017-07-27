@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr;
+package at.fhjoanneum.ippr.eventlogger;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
