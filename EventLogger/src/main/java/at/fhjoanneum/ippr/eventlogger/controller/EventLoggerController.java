@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.controller;
+package at.fhjoanneum.ippr.eventlogger.controller;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -24,11 +24,11 @@ import org.supercsv.io.CsvBeanWriter;
 import org.supercsv.io.ICsvBeanWriter;
 import org.supercsv.prefs.CsvPreference;
 
-import at.fhjoanneum.ippr.EventLoggerApplication;
 import at.fhjoanneum.ippr.commons.dto.eventlogger.EventLoggerDTO;
-import at.fhjoanneum.ippr.persistence.EventLogEntry;
-import at.fhjoanneum.ippr.persistence.EventLogRepository;
-import at.fhjoanneum.ippr.services.EventLogService;
+import at.fhjoanneum.ippr.eventlogger.EventLoggerApplication;
+import at.fhjoanneum.ippr.eventlogger.persistence.EventLogEntry;
+import at.fhjoanneum.ippr.eventlogger.persistence.EventLogRepository;
+import at.fhjoanneum.ippr.eventlogger.services.EventLogService;
 
 @RestController
 public class EventLoggerController {

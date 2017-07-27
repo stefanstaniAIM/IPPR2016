@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.persistence;
+package at.fhjoanneum.ippr.eventlogger.persistence;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.services.impl;
+package at.fhjoanneum.ippr.eventlogger.services;
 
 
 import java.io.StringReader;
@@ -40,12 +40,11 @@ import org.xml.sax.InputSource;
 
 import com.google.common.collect.Lists;
 
-import at.fhjoanneum.ippr.Helpers.LogKey;
 import at.fhjoanneum.ippr.commons.dto.eventlogger.EventLoggerDTO;
-import at.fhjoanneum.ippr.persistence.EventLogEntry;
-import at.fhjoanneum.ippr.persistence.EventLogRepository;
+import at.fhjoanneum.ippr.eventlogger.helper.LogKey;
+import at.fhjoanneum.ippr.eventlogger.persistence.EventLogEntry;
+import at.fhjoanneum.ippr.eventlogger.persistence.EventLogRepository;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
-import at.fhjoanneum.ippr.services.EventLogService;
 
 
 @Transactional(isolation = Isolation.READ_COMMITTED)

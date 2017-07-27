@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.test;
+package at.fhjoanneum.ippr.eventlogger.test;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;

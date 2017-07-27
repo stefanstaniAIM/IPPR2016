@@ -1,4 +1,4 @@
-package at.fhjoanneum.ippr.Helpers;
+package at.fhjoanneum.ippr.eventlogger.helper;
 
 public class LogKey {
 
