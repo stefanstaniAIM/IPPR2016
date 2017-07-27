@@ -78,11 +78,11 @@ public class MessageReceivedTask extends AbstractTask<MessageReceiveMessage.Requ
       final String timestamp = DateTime.now().toString("dd.MM.yyyy HH:mm");
       final String messageType = messageFlowRepository.findOne(request.getMfId())
           .getBusinessObjectModels().get(0).getName();
-      final String to = resource;
-      final String from = "";
+      final String recipient = resource;
+      final String msgSender = messageFlowRepository.findOne(request.getMfId()).getSender().getName();
 
       final EventLoggerDTO event = new EventLoggerDTO(caseId, processModelId, timestamp, activity,
-          resource, state, messageType, to, from);
+          resource, state, messageType, recipient, msgSender);
       eventLoggerSender.send(event);
 
       subjectStateRepository.save((SubjectStateImpl) subjectState);

@@ -34,14 +34,14 @@ public class EventLogEntry implements Serializable {
   private String messageType;
 
     @Column
-    private String to;
+    private String recipient;
 
     @Column
-    private String from;
+    private String sender;
 
   public EventLogEntry() {}
 
-  public EventLogEntry(Long caseId, Long processModelId, String timestamp, String activity, String resource, String state, String messageType, String to, String from) {
+  public EventLogEntry(Long caseId, Long processModelId, String timestamp, String activity, String resource, String state, String messageType, String recipient, String sender) {
     this.caseId = caseId;
     this.processModelId = processModelId;
     this.timestamp = timestamp;
@@ -49,11 +49,11 @@ public class EventLogEntry implements Serializable {
     this.resource = resource;
     this.state = state;
     this.messageType = messageType;
-    this.to = to;
-    this.from = from;
+    this.recipient = recipient;
+    this.sender = sender;
   }
 
-    public EventLogEntry(Long eventId, Long caseId, Long processModelId, String timestamp, String activity, String resource, String state, String messageType, String to, String from) {
+    public EventLogEntry(Long eventId, Long caseId, Long processModelId, String timestamp, String activity, String resource, String state, String messageType, String recipient, String sender) {
         this.eventId = eventId;
         this.caseId = caseId;
         this.processModelId = processModelId;
@@ -62,8 +62,8 @@ public class EventLogEntry implements Serializable {
         this.resource = resource;
         this.state = state;
         this.messageType = messageType;
-        this.to = to;
-        this.from = from;
+        this.recipient = recipient;
+        this.sender = sender;
     }
 
   public static long getSerialversionuid() {
@@ -134,36 +134,20 @@ public class EventLogEntry implements Serializable {
         this.messageType = messageType;
     }
 
-    public String getTo() {
-        return to;
+    public String getRecipient() {
+        return recipient;
     }
 
-    public void setTo(String to) {
-        this.to = to;
+    public void setRecipient(String recipient) {
+        this.recipient = recipient;
     }
 
-    public String getFrom() {
-        return from;
+    public String getSender() {
+        return sender;
     }
 
-    public void setFrom(String from) {
-        this.from = from;
-    }
-
-    @Override
-    public String toString() {
-        return "EventLogEntry{" +
-                "eventId=" + eventId +
-                ", caseId=" + caseId +
-                ", processModelId=" + processModelId +
-                ", timestamp='" + timestamp + '\'' +
-                ", activity='" + activity + '\'' +
-                ", resource='" + resource + '\'' +
-                ", state='" + state + '\'' +
-                ", messageType='" + messageType + '\'' +
-                ", to='" + to + '\'' +
-                ", from='" + from + '\'' +
-                '}';
+    public void setSender(String sender) {
+        this.sender = sender;
     }
 
     @Override
@@ -182,8 +166,8 @@ public class EventLogEntry implements Serializable {
         if (resource != null ? !resource.equals(that.resource) : that.resource != null) return false;
         if (state != null ? !state.equals(that.state) : that.state != null) return false;
         if (messageType != null ? !messageType.equals(that.messageType) : that.messageType != null) return false;
-        if (to != null ? !to.equals(that.to) : that.to != null) return false;
-        return from != null ? from.equals(that.from) : that.from == null;
+        if (recipient != null ? !recipient.equals(that.recipient) : that.recipient != null) return false;
+        return sender != null ? sender.equals(that.sender) : that.sender == null;
     }
 
     @Override
@@ -196,8 +180,24 @@ public class EventLogEntry implements Serializable {
         result = 31 * result + (resource != null ? resource.hashCode() : 0);
         result = 31 * result + (state != null ? state.hashCode() : 0);
         result = 31 * result + (messageType != null ? messageType.hashCode() : 0);
-        result = 31 * result + (to != null ? to.hashCode() : 0);
-        result = 31 * result + (from != null ? from.hashCode() : 0);
+        result = 31 * result + (recipient != null ? recipient.hashCode() : 0);
+        result = 31 * result + (sender != null ? sender.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "EventLogEntry{" +
+                "eventId=" + eventId +
+                ", caseId=" + caseId +
+                ", processModelId=" + processModelId +
+                ", timestamp='" + timestamp + '\'' +
+                ", activity='" + activity + '\'' +
+                ", resource='" + resource + '\'' +
+                ", state='" + state + '\'' +
+                ", messageType='" + messageType + '\'' +
+                ", recipient='" + recipient + '\'' +
+                ", sender='" + sender + '\'' +
+                '}';
     }
 }

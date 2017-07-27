@@ -81,11 +81,11 @@ public class UserActorInitializeTask extends AbstractTask<UserActorInitializeMes
         final String resource = subject.getSubjectModel().getName();
         final String stateType = StateFunctionType.FUNCTION.name();
         final String messageType = "";
-        final String to = "";
-        final String from = "";
+        final String recipient = "";
+        final String sender = "";
 
         final EventLoggerDTO event = new EventLoggerDTO(caseId, processModelId, timestamp, activity,
-            resource, stateType, messageType, to, from);
+            resource, stateType, messageType, recipient, sender);
         eventLoggerSender.send(event);
       }
     } else {

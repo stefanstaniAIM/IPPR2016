@@ -314,11 +314,11 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
     final String timestamp = DateTime.now().toString("dd.MM.yyyy HH:mm");
     final String messageType =
         subjectState.getCurrentState().getBusinessObjectModels().get(0).getName();
-    final String to = "";
-    final String from = resource;
+    final String recipient = subjectState.getCurrentState().getMessageFlow().get(0).getReceiver().getName();
+    final String msgSender = resource;
 
     final EventLoggerDTO event = new EventLoggerDTO(caseId, processModelId, timestamp, activity,
-        resource, state, messageType, to, from);
+        resource, state, messageType, recipient, msgSender);
     eventLoggerSender.send(event);
 
     if (!userMessageFlowIds.isEmpty()) {
@@ -437,11 +437,11 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
       final String resource = subjectState.getSubject().getSubjectModel().getName();
       final String state = StateFunctionType.FUNCTION.name();
       final String messageType = "";
-      final String to = "";
-      final String from = "";
+      final String recipient = "";
+      final String sender = "";
 
       final EventLoggerDTO event = new EventLoggerDTO(caseId, processModelId, timestamp, activity,
-          resource, state, messageType, to, from);
+          resource, state, messageType, recipient, sender);
       eventLoggerSender.send(event);
     }
   }

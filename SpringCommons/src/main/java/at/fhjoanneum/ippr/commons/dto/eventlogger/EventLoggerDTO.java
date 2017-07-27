@@ -14,27 +14,12 @@ public class EventLoggerDTO implements Serializable {
   private String resource;
   private String state;
   private String messageType;
-  private String to;
-  private String from;
+  private String recipient;
+  private String sender;
 
   public EventLoggerDTO() {}
 
-  public EventLoggerDTO(final Long caseId, final Long processModelId, final String timestamp,
-      final String activity, final String resource, final String state, final String messageType, final String to, final String from) {
-    this.caseId = caseId;
-    this.processModelId = processModelId;
-    this.timestamp = timestamp;
-    this.activity = activity;
-    this.resource = resource;
-    this.state = state;
-    this.messageType = messageType;
-    this.to = to;
-    this.from = from;
-  }
-
-  public EventLoggerDTO(final Long eventId, final Long caseId, final Long processModelId,
-      final String timestamp, final String activity, final String resource, final String state,
-      final String messageType, final String to, final String from) {
+  public EventLoggerDTO(Long eventId, Long caseId, Long processModelId, String timestamp, String activity, String resource, String state, String messageType, String recipient, String sender) {
     this.eventId = eventId;
     this.caseId = caseId;
     this.processModelId = processModelId;
@@ -43,8 +28,20 @@ public class EventLoggerDTO implements Serializable {
     this.resource = resource;
     this.state = state;
     this.messageType = messageType;
-    this.to = to;
-    this.from = from;
+    this.recipient = recipient;
+    this.sender = sender;
+  }
+
+  public EventLoggerDTO(Long caseId, Long processModelId, String timestamp, String activity, String resource, String state, String messageType, String recipient, String sender) {
+    this.caseId = caseId;
+    this.processModelId = processModelId;
+    this.timestamp = timestamp;
+    this.activity = activity;
+    this.resource = resource;
+    this.state = state;
+    this.messageType = messageType;
+    this.recipient = recipient;
+    this.sender = sender;
   }
 
   public Long getEventId() {
@@ -111,19 +108,19 @@ public class EventLoggerDTO implements Serializable {
     this.messageType = messageType;
   }
 
-  public String getTo() {
-    return to;
+  public String getRecipient() {
+    return recipient;
   }
 
-  public void setTo(String to) {
-    this.to = to;
+  public void setRecipient(String recipient) {
+    this.recipient = recipient;
   }
 
-  public String getFrom() {
-    return from;
+  public String getSender() {
+    return sender;
   }
 
-  public void setFrom(String from) {
-    this.from = from;
+  public void setSender(String sender) {
+    this.sender = sender;
   }
 }
