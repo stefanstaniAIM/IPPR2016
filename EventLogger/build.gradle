@@ -30,6 +30,7 @@ repositories {
 
 dependencies {
 	compile project(':SpringCommons')
+	compile project(':Persistence')
 
 	compile'org.springframework.cloud:spring-cloud-starter-eureka'
 	compile 'org.springframework.cloud:spring-cloud-starter-config'
@@ -45,6 +46,9 @@ dependencies {
 	runtime 'mysql:mysql-connector-java'
     
     compile group: 'javax.mail', name: 'mail', version: '1.5.0-b01'
+    
+   	// tests	
+	testCompile 'org.springframework.boot:spring-boot-starter-test'
 }
 
 dependencyManagement {

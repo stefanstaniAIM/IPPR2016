@@ -1,5 +1,28 @@
 package at.fhjoanneum.ippr.processengine.akka.tasks.user;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+
 import akka.actor.ActorRef;
 import akka.actor.Status;
 import akka.pattern.Patterns;
@@ -7,7 +30,7 @@ import akka.pattern.PatternsCS;
 import at.fhjoanneum.ippr.commons.dto.communicator.BusinessObject;
 import at.fhjoanneum.ippr.commons.dto.communicator.ExternalCommunicatorMessage;
 import at.fhjoanneum.ippr.commons.dto.communicator.ReceiveSubmissionDTO;
-import at.fhjoanneum.ippr.commons.dto.processengine.EventLoggerDTO;
+import at.fhjoanneum.ippr.commons.dto.eventlogger.EventLoggerDTO;
 import at.fhjoanneum.ippr.commons.dto.processengine.SendProcessMessage;
 import at.fhjoanneum.ippr.commons.dto.processengine.stateobject.BusinessObjectInstanceDTO;
 import at.fhjoanneum.ippr.persistence.entities.engine.businessobject.BusinessObjectInstanceBuilder;
@@ -41,27 +64,17 @@ import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.StateObje
 import at.fhjoanneum.ippr.processengine.akka.tasks.AbstractTask;
 import at.fhjoanneum.ippr.processengine.feign.ExternalCommunicatorClient;
 import at.fhjoanneum.ippr.processengine.parser.DbValueParser;
-import at.fhjoanneum.ippr.processengine.repositories.*;
+import at.fhjoanneum.ippr.processengine.repositories.BusinessObjectFieldInstanceRepository;
+import at.fhjoanneum.ippr.processengine.repositories.BusinessObjectFieldPermissionRepository;
+import at.fhjoanneum.ippr.processengine.repositories.BusinessObjectInstanceRepository;
+import at.fhjoanneum.ippr.processengine.repositories.MessageFlowRepository;
+import at.fhjoanneum.ippr.processengine.repositories.ProcessInstanceRepository;
+import at.fhjoanneum.ippr.processengine.repositories.StateRepository;
+import at.fhjoanneum.ippr.processengine.repositories.SubjectRepository;
+import at.fhjoanneum.ippr.processengine.repositories.SubjectStateRepository;
 import at.fhjoanneum.ippr.processengine.services.EventLoggerSender;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.support.TransactionSynchronizationAdapter;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import scala.concurrent.Await;
 import scala.concurrent.Future;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Component("User.StateObjectChangeTask")
 @Scope("prototype")
@@ -305,15 +318,17 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
             .map(messageFlow -> getUserMessageFlowIds(request.getPiId(), messageFlow))
             .collect(Collectors.toList());
 
-    //Log Send Event
-    long caseId = subjectState.getProcessInstance().getPiId();
-    long processModelId = subjectState.getProcessInstance().getProcessModel().getPmId();
-    String activity = subjectState.getCurrentState().getName();
-    String state = StateFunctionType.SEND.name();
-    String resource = subjectState.getSubject().getSubjectModel().getName();
-    String timestamp = DateTime.now().toString("dd.MM.yyyy HH:mm");
-    String messageType = subjectState.getCurrentState().getBusinessObjectModels().get(0).getName();
-    EventLoggerDTO event = new EventLoggerDTO(caseId, processModelId, timestamp, activity, resource, state, messageType);
+    // Log Send Event
+    final long caseId = subjectState.getProcessInstance().getPiId();
+    final long processModelId = subjectState.getProcessInstance().getProcessModel().getPmId();
+    final String activity = subjectState.getCurrentState().getName();
+    final String state = StateFunctionType.SEND.name();
+    final String resource = subjectState.getSubject().getSubjectModel().getName();
+    final String timestamp = DateTime.now().toString("dd.MM.yyyy HH:mm");
+    final String messageType =
+        subjectState.getCurrentState().getBusinessObjectModels().get(0).getName();
+    final EventLoggerDTO event = new EventLoggerDTO(caseId, processModelId, timestamp, activity,
+        resource, state, messageType);
     eventLoggerSender.send(event);
 
     if (!userMessageFlowIds.isEmpty()) {
@@ -424,15 +439,16 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
     LOG.info("Changed subject S_ID [{}] to state: {}", subjectState.getSubject().getSId(),
         nextState);
 
-    if(subjectState.getCurrentState().getFunctionType() == StateFunctionType.FUNCTION){
-      long caseId = subjectState.getProcessInstance().getPiId();
-      long processModelId = subjectState.getProcessInstance().getProcessModel().getPmId();
-      String activity = subjectState.getCurrentState().getName();
-      String timestamp = DateTime.now().toString("dd.MM.yyyy HH:mm");
-      String resource = subjectState.getSubject().getSubjectModel().getName();
-      String state = StateFunctionType.FUNCTION.name();
-      String messageType = "";
-      EventLoggerDTO event = new EventLoggerDTO(caseId, processModelId, timestamp, activity, resource, state, messageType);
+    if (subjectState.getCurrentState().getFunctionType() == StateFunctionType.FUNCTION) {
+      final long caseId = subjectState.getProcessInstance().getPiId();
+      final long processModelId = subjectState.getProcessInstance().getProcessModel().getPmId();
+      final String activity = subjectState.getCurrentState().getName();
+      final String timestamp = DateTime.now().toString("dd.MM.yyyy HH:mm");
+      final String resource = subjectState.getSubject().getSubjectModel().getName();
+      final String state = StateFunctionType.FUNCTION.name();
+      final String messageType = "";
+      final EventLoggerDTO event = new EventLoggerDTO(caseId, processModelId, timestamp, activity,
+          resource, state, messageType);
       eventLoggerSender.send(event);
     }
   }

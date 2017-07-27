@@ -1,6 +1,6 @@
 package at.fhjoanneum.ippr.processengine.services;
 
-import at.fhjoanneum.ippr.commons.dto.processengine.EventLoggerDTO;
+import at.fhjoanneum.ippr.commons.dto.eventlogger.EventLoggerDTO;
 
 public interface EventLoggerSender {
 

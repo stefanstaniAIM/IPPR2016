@@ -1,13 +1,21 @@
-package at.fhjoanneum.ippr.pmstorage.services.impl;
+package at.fhjoanneum.ippr.services.impl;
 
 
-import at.fhjoanneum.ippr.Helpers.LogKey;
-import at.fhjoanneum.ippr.commons.dto.processengine.EventLoggerDTO;
-import at.fhjoanneum.ippr.persistence.EventLogEntry;
-import at.fhjoanneum.ippr.persistence.EventLogRepository;
-import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
-import at.fhjoanneum.ippr.pmstorage.services.EventLogService;
-import com.google.common.collect.Lists;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Future;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,259 +38,267 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.*;
-import java.util.concurrent.Future;
+import com.google.common.collect.Lists;
+
+import at.fhjoanneum.ippr.Helpers.LogKey;
+import at.fhjoanneum.ippr.commons.dto.eventlogger.EventLoggerDTO;
+import at.fhjoanneum.ippr.persistence.EventLogEntry;
+import at.fhjoanneum.ippr.persistence.EventLogRepository;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
+import at.fhjoanneum.ippr.services.EventLogService;
 
 
 @Transactional(isolation = Isolation.READ_COMMITTED)
 @Service
 public class EventLogServiceImpl implements EventLogService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EventLogServiceImpl.class);
+  private static final Logger LOG = LoggerFactory.getLogger(EventLogServiceImpl.class);
 
-    @Autowired
-    private EventLogRepository eventLogRepository;
+  @Autowired
+  private EventLogRepository eventLogRepository;
 
-    @Async
-    @Override
-    public Future<List<EventLoggerDTO>> getEventLogForProcessModelAndSubject(int processModelId, String subject) {
-        final List<EventLogEntry> results = eventLogRepository.getEventLogForProcessModelAndSubject(processModelId, subject);
-        final List<EventLoggerDTO> eventLog = createEventLoggerDTO(results);
-        return new AsyncResult<List<EventLoggerDTO>>(eventLog);
-    }
+  @Async
+  @Override
+  public Future<List<EventLoggerDTO>> getEventLogForProcessModelAndSubject(final int processModelId,
+      final String subject) {
+    final List<EventLogEntry> results =
+        eventLogRepository.getEventLogForProcessModelAndSubject(processModelId, subject);
+    final List<EventLoggerDTO> eventLog = createEventLoggerDTO(results);
+    return new AsyncResult<List<EventLoggerDTO>>(eventLog);
+  }
 
-    private static List<EventLoggerDTO> createEventLoggerDTO(final List<EventLogEntry> results) {
-        final List<EventLoggerDTO> eventLog = Lists.newArrayList();
+  private static List<EventLoggerDTO> createEventLoggerDTO(final List<EventLogEntry> results) {
+    final List<EventLoggerDTO> eventLog = Lists.newArrayList();
 
-        results.forEach(event -> {
-            final EventLoggerDTO dto =
-                    new EventLoggerDTO(event.getEventId(), event.getCaseId(), event.getProcessModelId(), event.getTimestamp(), event.getActivity(), event.getResource(), event.getState(), event.getMessageType());
-            eventLog.add(dto);
-        });
+    results.forEach(event -> {
+      final EventLoggerDTO dto = new EventLoggerDTO(event.getEventId(), event.getCaseId(),
+          event.getProcessModelId(), event.getTimestamp(), event.getActivity(), event.getResource(),
+          event.getState(), event.getMessageType());
+      eventLog.add(dto);
+    });
 
-        return eventLog;
-    }
+    return eventLog;
+  }
 
-    @Override
-    public StreamResult manipulatePNML(String pnmlContent, String csvLog) throws Exception{
-        StreamResult result = new StreamResult();
+  @Override
+  public StreamResult manipulatePNML(final String pnmlContent, final String csvLog)
+      throws Exception {
+    StreamResult result = new StreamResult();
 
-        try {
-            LinkedHashMap<LogKey, EventLogEntry> logTriplets = parseCSV(csvLog);
-            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            InputSource input = new InputSource(new StringReader(pnmlContent));
-            Document document = documentBuilderFactory.newDocumentBuilder().parse(input);
-            Element root = document.getDocumentElement();
-            NodeList nets = root.getElementsByTagName("net");
+    try {
+      final LinkedHashMap<LogKey, EventLogEntry> logTriplets = parseCSV(csvLog);
+      final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+      final InputSource input = new InputSource(new StringReader(pnmlContent));
+      final Document document = documentBuilderFactory.newDocumentBuilder().parse(input);
+      final Element root = document.getDocumentElement();
+      final NodeList nets = root.getElementsByTagName("net");
 
-            for (int temp = 0; temp < nets.getLength(); temp++) {
-                Node netNode = nets.item(temp);
-                if (netNode.getNodeType() == Node.ELEMENT_NODE) {
-                    Element net = (Element) netNode;
-                    HashMap<String, String> transitions = getTransitions(net);
+      for (int temp = 0; temp < nets.getLength(); temp++) {
+        final Node netNode = nets.item(temp);
+        if (netNode.getNodeType() == Node.ELEMENT_NODE) {
+          final Element net = (Element) netNode;
+          final HashMap<String, String> transitions = getTransitions(net);
 
-                    int numOfCustomPlaces = 1;
-                    int numOfCustomArcs= 1;
-                    Iterator<Map.Entry<LogKey, EventLogEntry>> it = logTriplets.entrySet().iterator();
-                    Map.Entry<LogKey, EventLogEntry> afterReceiveStateEntry = null;
-                    while (it.hasNext() || afterReceiveStateEntry != null) {
-                        Map.Entry<LogKey, EventLogEntry> entry;
-                        if (afterReceiveStateEntry != null) {
-                            entry = afterReceiveStateEntry;
-                        } else {
-                            entry = it.next();
-                        }
-
-                        EventLogEntry eventLogEntry = entry.getValue();
-
-                        String state = eventLogEntry.getState();
-                        String activity = eventLogEntry.getActivity();
-                        String messageType = eventLogEntry.getMessageType();
-
-                        if (state.equals(StateFunctionType.SEND.name())) {
-                            afterReceiveStateEntry = null;
-                            String placeId = addPlace(document, net, numOfCustomPlaces++, messageType);
-                            addArc(document, net, numOfCustomArcs++, transitions.get(activity), placeId, messageType) ;
-                        } else if (state.equals(StateFunctionType.RECEIVE.name())) {
-                            if (!it.hasNext()) {
-                                throw(new Exception("Letzter Log-Eintrag darf kein Receive State sein!"));
-                            }
-
-                            Map.Entry<LogKey, EventLogEntry> nextEntry = it.next();
-                            EventLogEntry nextEventLogEntry = nextEntry.getValue();
-
-                            String nextActivity = nextEventLogEntry.getActivity();
-                            String nextMessageType = nextEventLogEntry.getMessageType();
-
-                            String placeId = addPlace(document, net, numOfCustomPlaces++, nextMessageType);
-                            addArc(document, net, numOfCustomArcs++, placeId, transitions.get(nextActivity), nextMessageType) ;
-
-                            afterReceiveStateEntry = nextEntry;
-                        } else {
-                            afterReceiveStateEntry = null;
-                        }
-                    }
-                }
-
-                DOMSource source = new DOMSource(document);
-
-                result = new StreamResult(new StringWriter());
-                TransformerFactory transformerFactory = TransformerFactory.newInstance();
-                Transformer transformer = transformerFactory.newTransformer();
-                transformer.transform(source, result);
+          int numOfCustomPlaces = 1;
+          int numOfCustomArcs = 1;
+          final Iterator<Map.Entry<LogKey, EventLogEntry>> it = logTriplets.entrySet().iterator();
+          Map.Entry<LogKey, EventLogEntry> afterReceiveStateEntry = null;
+          while (it.hasNext() || afterReceiveStateEntry != null) {
+            Map.Entry<LogKey, EventLogEntry> entry;
+            if (afterReceiveStateEntry != null) {
+              entry = afterReceiveStateEntry;
+            } else {
+              entry = it.next();
             }
-        } catch (Exception e) {
-            LOG.error(e.getMessage());
-            LOG.error("Exception while manipulating PNML");
-            throw(e);
+
+            final EventLogEntry eventLogEntry = entry.getValue();
+
+            final String state = eventLogEntry.getState();
+            final String activity = eventLogEntry.getActivity();
+            final String messageType = eventLogEntry.getMessageType();
+
+            if (state.equals(StateFunctionType.SEND.name())) {
+              afterReceiveStateEntry = null;
+              final String placeId = addPlace(document, net, numOfCustomPlaces++, messageType);
+              addArc(document, net, numOfCustomArcs++, transitions.get(activity), placeId,
+                  messageType);
+            } else if (state.equals(StateFunctionType.RECEIVE.name())) {
+              if (!it.hasNext()) {
+                throw (new Exception("Letzter Log-Eintrag darf kein Receive State sein!"));
+              }
+
+              final Map.Entry<LogKey, EventLogEntry> nextEntry = it.next();
+              final EventLogEntry nextEventLogEntry = nextEntry.getValue();
+
+              final String nextActivity = nextEventLogEntry.getActivity();
+              final String nextMessageType = nextEventLogEntry.getMessageType();
+
+              final String placeId = addPlace(document, net, numOfCustomPlaces++, nextMessageType);
+              addArc(document, net, numOfCustomArcs++, placeId, transitions.get(nextActivity),
+                  nextMessageType);
+
+              afterReceiveStateEntry = nextEntry;
+            } else {
+              afterReceiveStateEntry = null;
+            }
+          }
         }
 
-        return result;
+        final DOMSource source = new DOMSource(document);
+
+        result = new StreamResult(new StringWriter());
+        final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        final Transformer transformer = transformerFactory.newTransformer();
+        transformer.transform(source, result);
+      }
+    } catch (final Exception e) {
+      LOG.error(e.getMessage());
+      LOG.error("Exception while manipulating PNML");
+      throw (e);
     }
 
-    private LinkedHashMap<LogKey, EventLogEntry> parseCSV(String csvLog) throws Exception {
+    return result;
+  }
 
-        LinkedHashMap<LogKey, EventLogEntry> result = new LinkedHashMap<>();
-        ICsvBeanReader beanReader = null;
-        try {
-            beanReader = new CsvBeanReader(new StringReader(csvLog), CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE);
+  private LinkedHashMap<LogKey, EventLogEntry> parseCSV(final String csvLog) throws Exception {
 
-            // the header elements are used to map the values to the bean (names must match)
-            final String[] header = beanReader.getHeader(true);
-            final String[] uncapitalizedHeader = new String[header.length];
-            for(int i = 0; i < header.length; i++)
-            {
-                uncapitalizedHeader[i] = StringUtils.uncapitalize(header[i]);
-            }
+    final LinkedHashMap<LogKey, EventLogEntry> result = new LinkedHashMap<>();
+    ICsvBeanReader beanReader = null;
+    try {
+      beanReader =
+          new CsvBeanReader(new StringReader(csvLog), CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE);
 
-            final CellProcessor[] processors = getProcessors();
+      // the header elements are used to map the values to the bean (names must match)
+      final String[] header = beanReader.getHeader(true);
+      final String[] uncapitalizedHeader = new String[header.length];
+      for (int i = 0; i < header.length; i++) {
+        uncapitalizedHeader[i] = StringUtils.uncapitalize(header[i]);
+      }
 
-            EventLogEntry eventLogEntry;
-            while((eventLogEntry = beanReader.read(EventLogEntry.class, uncapitalizedHeader, processors)) != null) {
+      final CellProcessor[] processors = getProcessors();
 
-                LogKey key = new LogKey(eventLogEntry.getActivity(), eventLogEntry.getState(), eventLogEntry.getMessageType());
-                if(!result.containsKey(key)) {
-                    result.put(key, eventLogEntry);
-                }
-            }
+      EventLogEntry eventLogEntry;
+      while ((eventLogEntry =
+          beanReader.read(EventLogEntry.class, uncapitalizedHeader, processors)) != null) {
+
+        final LogKey key = new LogKey(eventLogEntry.getActivity(), eventLogEntry.getState(),
+            eventLogEntry.getMessageType());
+        if (!result.containsKey(key)) {
+          result.put(key, eventLogEntry);
         }
-        finally {
-            if(beanReader != null) {
-                beanReader.close();
-            }
+      }
+    } finally {
+      if (beanReader != null) {
+        beanReader.close();
+      }
 
-            return result;
-        }
+      return result;
+    }
+  }
+
+  private static CellProcessor[] getProcessors() {
+    final CellProcessor[] processors = new CellProcessor[] {new NotNull(new ParseLong()), // EventId
+        new NotNull(new ParseLong()), // CaseId
+        new NotNull(), // Timestamp
+        new NotNull(), // Activity
+        new NotNull(), // Resource
+        new NotNull(), // State
+        new Optional() // MessageType
+    };
+
+    return processors;
+  }
+
+  private String addArc(final Document document, final Element net, final int id,
+      final String sourceId, final String targetId, final String name) {
+    // Custom Arc
+    final Element newArc = document.createElement("arc");
+    net.appendChild(newArc);
+
+    // Id
+    final String arcId = "ca" + id;
+    newArc.setAttribute("id", arcId);
+
+    // Source Id
+    newArc.setAttribute("source", sourceId);
+
+    // Target Id
+    newArc.setAttribute("target", targetId);
+
+    // Name
+    final Element nameElement = document.createElement("name");
+    newArc.appendChild(nameElement);
+
+    // Name Text
+    final Element nameText = document.createElement("text");
+    nameText.appendChild(document.createTextNode(name));
+    nameElement.appendChild(nameText);
+
+    // Arctype
+    final Element arcTypeElement = document.createElement("arcType");
+    newArc.appendChild(arcTypeElement);
+
+    // Arctype Text
+    final Element arcTypeText = document.createElement("text");
+    arcTypeText.appendChild(document.createTextNode("normal"));
+    arcTypeElement.appendChild(arcTypeText);
+
+    return arcId;
+  }
+
+  private String addPlace(final Document document, final Element net, final int id,
+      final String name) {
+    // Custom Place
+    final Element newPlace = document.createElement("place");
+    net.appendChild(newPlace);
+
+    // Id
+    final String placeId = "cp" + id;
+    newPlace.setAttribute("id", placeId);
+
+    // Name
+    final Element nameElement = document.createElement("name");
+    newPlace.appendChild(nameElement);
+
+    // Name Text
+    final Element text = document.createElement("text");
+    text.appendChild(document.createTextNode(name));
+    nameElement.appendChild(text);
+
+    // Graphics
+    final Element graphics = document.createElement("graphics");
+    newPlace.appendChild(graphics);
+
+    // Graphics Position
+    final Element position = document.createElement("position");
+    position.setAttribute("x", "0");
+    position.setAttribute("y", "0");
+    graphics.appendChild(position);
+
+    // Graphics Dimension
+    final Element dimension = document.createElement("dimension");
+    dimension.setAttribute("x", "12.5");
+    dimension.setAttribute("y", "12.5");
+    graphics.appendChild(position);
+
+    return placeId;
+  }
+
+  private HashMap<String, String> getTransitions(final Element net) {
+    final HashMap<String, String> transitions = new HashMap<>();
+    final NodeList transitionNodes = net.getElementsByTagName("transition");
+    for (int i = 0; i < transitionNodes.getLength(); i++) {
+      final Element transitionNode = (Element) transitionNodes.item(i);
+      final String id = transitionNode.getAttributes().getNamedItem("id").getNodeValue();
+      final NodeList nameNodes = transitionNode.getElementsByTagName("name");
+
+      if (nameNodes.getLength() > 0) {
+        final Node nameNode = nameNodes.item(0);
+        final String name = nameNode.getChildNodes().item(0).getTextContent();
+        transitions.put(name, id);
+      }
     }
 
-    private static CellProcessor[] getProcessors() {
-        final CellProcessor[] processors = new CellProcessor[] {
-                new NotNull(new ParseLong()), // EventId
-                new NotNull(new ParseLong()), // CaseId
-                new NotNull(), // Timestamp
-                new NotNull(), // Activity
-                new NotNull(), // Resource
-                new NotNull(), // State
-                new Optional() // MessageType
-        };
-
-        return processors;
-    }
-    private String addArc(Document document, Element net, int id, String sourceId, String targetId, String name) {
-        //Custom Arc
-        Element newArc = document.createElement("arc");
-        net.appendChild(newArc);
-
-        //Id
-        String arcId = "ca"+id;
-        newArc.setAttribute("id", arcId);
-
-        //Source Id
-        newArc.setAttribute("source", sourceId);
-
-        //Target Id
-        newArc.setAttribute("target", targetId);
-
-        //Name
-        Element nameElement = document.createElement("name");
-        newArc.appendChild(nameElement);
-
-        //Name Text
-        Element nameText = document.createElement("text");
-        nameText.appendChild(document.createTextNode(name));
-        nameElement.appendChild(nameText);
-
-        //Arctype
-        Element arcTypeElement = document.createElement("arcType");
-        newArc.appendChild(arcTypeElement);
-
-        //Arctype Text
-        Element arcTypeText = document.createElement("text");
-        arcTypeText.appendChild(document.createTextNode("normal"));
-        arcTypeElement.appendChild(arcTypeText);
-
-        return arcId;
-    }
-
-    private String addPlace(Document document, Element net, int id, String name) {
-        //Custom Place
-        Element newPlace = document.createElement("place");
-        net.appendChild(newPlace);
-
-        //Id
-        String placeId = "cp"+id;
-        newPlace.setAttribute("id", placeId);
-
-        //Name
-        Element nameElement = document.createElement("name");
-        newPlace.appendChild(nameElement);
-
-        //Name Text
-        Element text = document.createElement("text");
-        text.appendChild(document.createTextNode(name));
-        nameElement.appendChild(text);
-
-        //Graphics
-        Element graphics = document.createElement("graphics");
-        newPlace.appendChild(graphics);
-
-        //Graphics Position
-        Element position = document.createElement("position");
-        position.setAttribute("x", "0");
-        position.setAttribute("y", "0");
-        graphics.appendChild(position);
-
-        //Graphics Dimension
-        Element dimension = document.createElement("dimension");
-        dimension.setAttribute("x", "12.5");
-        dimension.setAttribute("y", "12.5");
-        graphics.appendChild(position);
-
-        return placeId;
-    }
-
-    private HashMap<String, String> getTransitions(Element net) {
-        HashMap<String, String> transitions = new HashMap<>();
-        NodeList transitionNodes = net.getElementsByTagName("transition");
-        for (int i = 0; i < transitionNodes.getLength(); i++) {
-            Element transitionNode = (Element)transitionNodes.item(i);
-            String id = transitionNode.getAttributes().getNamedItem("id").getNodeValue();
-            NodeList nameNodes = transitionNode.getElementsByTagName("name");
-
-            if(nameNodes.getLength() > 0) {
-                Node nameNode = nameNodes.item(0);
-                String name = nameNode.getChildNodes().item(0).getTextContent();
-                transitions.put(name, id);
-            }
-        }
-
-        return transitions;
-    }
+    return transitions;
+  }
 }
