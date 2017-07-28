@@ -121,7 +121,7 @@ public class EventLoggerController {
         new CsvBeanWriter(response.getWriter(), CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE);
 
     final String[] header =
-        {"EventId", "CaseId", "Timestamp", "Activity", "Resource", "State", "MessageType", "To", "From"};
+        {"EventId", "CaseId", "Timestamp", "Activity", "Resource", "State", "MessageType", "Recipient", "Sender"};
 
     csvWriter.writeHeader(header);
     events.forEach(event -> {

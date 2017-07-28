@@ -26,7 +26,7 @@
         <button class="btn btn-primary btn-lg" type="submit" (click)="downloadEventLog(selectedProcessModel, selectedSubject)" [disabled]="selectedSubject === undefined">Event-Log CSV herunterladen</button>
       </div>
       <div *ngIf="eventLog.length > 0">
-        <h4>Event-Log für {{ loadedEventLogForProcessModel.name }} (Erstellt: {{ loadedEventLogForProcessModel.createdAt | commaDate | date:'dd.MM.yyyy HH:mm:ss' }} - {{loadedEventLogForSubject}}</h4>
+        <h4>Event-Log für {{ loadedEventLogForProcessModel.name }} (Erstellt: {{ loadedEventLogForProcessModel.createdAt | commaDate | date:'dd.MM.yyyy HH:mm:ss' }} - {{loadedEventLogForSubject}})</h4>
         <table class="table table-striped">
            <thead>
               <tr>
@@ -36,6 +36,8 @@
                  <th>Resource</th>
                  <th>State</th>
                  <th>Message Type</th>
+                 <th>Recipient</th>
+                 <th>Sender</th>
               </tr>
            </thead>
            <tbody>
@@ -46,6 +48,8 @@
                  <td>{{ event.resource }}</td>
                  <td>{{ event.state }}</td>
                  <td>{{ event.messageType }}</td>
+                 <td>{{ event.recipient }}</td>
+                 <td>{{ event.sender }}</td>
               </tr>
            </tbody>
         </table>

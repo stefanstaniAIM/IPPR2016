@@ -41,13 +41,14 @@ export class ManipulatePNML implements OnInit {
     var that = this;
     var pnmlReader = new FileReader();
     var csvReader = new FileReader();
+    var newFileName = "";
     if(this.pnmlFile) {
       pnmlReader.onload = (e) => csvReader.readAsText(this.csvFile);
       csvReader.onload = (e) => {
         that.service.manipulatePNML(pnmlReader.result, csvReader.result)
         .subscribe(
             data => {
-              that.saveData(data, "test.pnml");
+              that.saveData(data, newFileName);
               that.error = undefined;
             },
             err => {
@@ -55,6 +56,7 @@ export class ManipulatePNML implements OnInit {
             }
           );
       }
+      newFileName = this.pnmlFile.name.replace(".pnml", "-manipulated.pnml");
       pnmlReader.readAsText(this.pnmlFile);
     }
   }

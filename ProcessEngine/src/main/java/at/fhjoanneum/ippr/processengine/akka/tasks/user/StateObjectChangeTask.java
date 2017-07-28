@@ -317,6 +317,7 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
     final String recipient = subjectState.getCurrentState().getMessageFlow().get(0).getReceiver().getName();
     final String msgSender = resource;
 
+
     final EventLoggerDTO event = new EventLoggerDTO(caseId, processModelId, timestamp, activity,
         resource, state, messageType, recipient, msgSender);
     eventLoggerSender.send(event);

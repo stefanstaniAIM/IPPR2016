@@ -127,9 +127,9 @@ public class EventLogServiceImpl implements EventLogService {
               final String nextActivity = nextEventLogEntry.getActivity();
               final String nextMessageType = nextEventLogEntry.getMessageType();
 
-              final String placeId = addPlace(document, net, numOfCustomPlaces++, nextMessageType, recipient, sender);
+              final String placeId = addPlace(document, net, numOfCustomPlaces++, messageType, recipient, sender);
               addArc(document, net, numOfCustomArcs++, placeId, transitions.get(nextActivity),
-                  nextMessageType);
+                  messageType);
 
               afterReceiveStateEntry = nextEntry;
             } else {
@@ -198,8 +198,8 @@ public class EventLogServiceImpl implements EventLogService {
         new NotNull(), // Resource
         new NotNull(), // State
         new Optional(), // MessageType
-        new Optional(), // To
-        new Optional() // From
+        new Optional(), // Recipient
+        new Optional() // Sender
     };
 
     return processors;
@@ -257,8 +257,12 @@ public class EventLogServiceImpl implements EventLogService {
     newPlace.appendChild(nameElement);
 
     // Name Text
+    String nameText = name;
+    if(name != null){
+      nameText = name +  " Recipient: " + recipient + " Sender: " + sender;
+    }
     final Element text = document.createElement("text");
-    text.appendChild(document.createTextNode(name +  " Recipient: " + recipient + " Sender: " + sender));
+    text.appendChild(document.createTextNode(nameText));
     nameElement.appendChild(text);
 
     // Graphics
@@ -290,7 +294,8 @@ public class EventLogServiceImpl implements EventLogService {
 
       if (nameNodes.getLength() > 0) {
         final Node nameNode = nameNodes.item(0);
-        final String name = nameNode.getChildNodes().item(0).getTextContent();
+        final String name = ((Element)nameNode).getElementsByTagName("text").item(0).getTextContent();
+
         transitions.put(name, id);
       }
     }
