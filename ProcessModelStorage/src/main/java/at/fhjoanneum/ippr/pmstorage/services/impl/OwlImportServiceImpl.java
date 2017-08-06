@@ -1,26 +1,5 @@
 package at.fhjoanneum.ippr.pmstorage.services.impl;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Future;
-import java.util.stream.IntStream;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 import at.fhjoanneum.ippr.commons.dto.owlimport.jsonimport.ImportBusinessObjectFieldsModelDTO;
 import at.fhjoanneum.ippr.commons.dto.owlimport.jsonimport.ImportProcessModelDTO;
 import at.fhjoanneum.ippr.commons.dto.owlimport.reader.OWLProcessModelDTO;
@@ -35,12 +14,7 @@ import at.fhjoanneum.ippr.persistence.entities.model.transition.TransitionBuilde
 import at.fhjoanneum.ippr.persistence.objects.model.businessobject.BusinessObjectModel;
 import at.fhjoanneum.ippr.persistence.objects.model.businessobject.field.BusinessObjectFieldModel;
 import at.fhjoanneum.ippr.persistence.objects.model.businessobject.permission.BusinessObjectFieldPermission;
-import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldPermission;
-import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldType;
-import at.fhjoanneum.ippr.persistence.objects.model.enums.ProcessModelState;
-import at.fhjoanneum.ippr.persistence.objects.model.enums.StateEventType;
-import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
-import at.fhjoanneum.ippr.persistence.objects.model.enums.TransitionType;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.*;
 import at.fhjoanneum.ippr.persistence.objects.model.messageflow.MessageFlow;
 import at.fhjoanneum.ippr.persistence.objects.model.process.ProcessModel;
 import at.fhjoanneum.ippr.persistence.objects.model.state.State;
@@ -48,6 +22,24 @@ import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
 import at.fhjoanneum.ippr.persistence.objects.model.transition.Transition;
 import at.fhjoanneum.ippr.pmstorage.parser.OWLParser;
 import at.fhjoanneum.ippr.pmstorage.services.OwlImportService;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Future;
+import java.util.stream.IntStream;
 
 @Transactional
 @Service
@@ -63,8 +55,8 @@ public class OwlImportServiceImpl implements OwlImportService {
 
   @Async
   @Override
-  public Future<OWLProcessModelDTO> getOwlProcessModelDTO(final String owlContent) {
-    final OWLProcessModelDTO owlProcessModel = owlParser.parseFile(owlContent);
+  public Future<OWLProcessModelDTO> getOwlProcessModelDTO(final String owlContent, final String version) {
+    final OWLProcessModelDTO owlProcessModel = owlParser.parseFile(owlContent, version);
     return new AsyncResult<OWLProcessModelDTO>(owlProcessModel);
   }
 

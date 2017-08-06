@@ -1,19 +1,14 @@
 package at.fhjoanneum.ippr.pmstorage.controller;
 
-import java.util.concurrent.Callable;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
 import at.fhjoanneum.ippr.commons.dto.owlimport.jsonimport.ImportProcessModelDTO;
 import at.fhjoanneum.ippr.commons.dto.owlimport.reader.OWLProcessModelDTO;
 import at.fhjoanneum.ippr.pmstorage.services.OwlImportService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
+import java.util.concurrent.Callable;
 
 @RestController
 @RequestMapping(produces = "application/json; charset=UTF-8")
@@ -24,9 +19,9 @@ public class OwlImportController {
 
   @RequestMapping(value = "owlprocessmodel", method = RequestMethod.POST)
   public @ResponseBody Callable<OWLProcessModelDTO> getOwlProcessModel(
-      @RequestBody final String owlContent, final HttpServletRequest request) {
+          @RequestBody final Map<String, String> requestBody, final HttpServletRequest request) {
     return () -> {
-      return owlImportService.getOwlProcessModelDTO(owlContent).get();
+      return owlImportService.getOwlProcessModelDTO(requestBody.get("owlContent"), requestBody.get("version")).get();
     };
   }
 

@@ -31,24 +31,38 @@ public class OWLParser implements FileParser<String, OWLProcessModelDTO> {
   private Map<String, OWLSubjectModelDTO> subjectModelDTOMap;
 
   @Override
-  public OWLProcessModelDTO parseFile(final String input) {
+  public OWLProcessModelDTO parseFile(final String input, final String version) {
     try {
-      final String URI_STANDARD = "http://www.imi.kit.edu/standard-pass-ont#";
+      final String URI_STANDARD;
+      final String URI_ACTOR;
+      final String URI_BEHAVIOR;
+      final String URI_STATE;
+      final String URI_FUNCTION_STATE;
+      final String URI_HAS_EDGE;
+
+      if (version.equals("0.7.4")){
+        URI_STANDARD = "http://www.i2pm.net/standard-pass-ont#";
+        URI_ACTOR = URI_STANDARD + "FullySpecifiedSingleSubject";
+        URI_BEHAVIOR = URI_STANDARD + "containsBehavior";
+        URI_STATE = URI_STANDARD + "containsState";
+        URI_FUNCTION_STATE = URI_STANDARD + "DoState";
+        URI_HAS_EDGE = URI_STANDARD + "containsTransition";
+      } else {
+        URI_STANDARD = "http://www.imi.kit.edu/standard-pass-ont#";
+        URI_ACTOR = URI_STANDARD + "SingleActor";
+        URI_BEHAVIOR = URI_STANDARD + "hasBehavior";
+        URI_STATE = URI_STANDARD + "hasState";
+        URI_FUNCTION_STATE = URI_STANDARD + "FunctionState";
+        URI_HAS_EDGE = URI_STANDARD + "hasEdge";
+      }
+
       final String URI_PROCESS_MODEL = URI_STANDARD + "PASSProcessModel";
       final String URI_NAME = URI_STANDARD + "hasModelComponentLable";
       final String URI_IDENTIFIER = URI_STANDARD + "hasModelComponentID";
-      final String URI_ACTOR = URI_STANDARD + "SingleActor";
-      final String URI_BEHAVIOR = URI_STANDARD + "hasBehavior";
-      final String URI_STATE = URI_STANDARD + "hasState";
-      final String URI_FUNCTION_STATE = URI_STANDARD + "FunctionState";
       final String URI_SEND_STATE = URI_STANDARD + "SendState";
       final String URI_RECEIVE_STATE = URI_STANDARD + "ReceiveState";
       final String URI_INITIAL_STATE = URI_STANDARD + "InitialState";
       final String URI_END_STATE = URI_STANDARD + "EndState";
-      final String URI_HAS_EDGE = URI_STANDARD + "hasEdge";
-      final String URI_RECEIVE_TRANSITION = URI_STANDARD + "ReceiveTransition";
-      final String URI_STANDARD_TRANSITION = URI_STANDARD + "StandardTransition";
-      final String URI_SEND_TRANSITION = URI_STANDARD + "SendTransition";
       final String URI_SOURCE_STATE = URI_STANDARD + "hasSourceState";
       final String URI_TARGET_STATE = URI_STANDARD + "hasTargetState";
       final String URI_REFERS_TO = URI_STANDARD + "refersTo";
@@ -86,9 +100,6 @@ public class OWLParser implements FileParser<String, OWLProcessModelDTO> {
         final Property typeProperty =
             model.getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
         final Property transitionProperty = model.getProperty(URI_HAS_EDGE);
-        final Property receiveTransitionProperty = model.getProperty(URI_RECEIVE_TRANSITION);
-        final Property standardTransitionProperty = model.getProperty(URI_STANDARD_TRANSITION);
-        final Property sendTransitionProperty = model.getProperty(URI_SEND_TRANSITION);
         final Property sourceStateProperty = model.getProperty(URI_SOURCE_STATE);
         final Property targetStateProperty = model.getProperty(URI_TARGET_STATE);
         final Property refersToProperty = model.getProperty(URI_REFERS_TO);

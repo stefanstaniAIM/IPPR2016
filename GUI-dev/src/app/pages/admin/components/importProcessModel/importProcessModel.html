@@ -20,6 +20,10 @@
          <label class="control-label">OWL-File: </label>
          <input type="file" name="fileUpload" id="fileUpload" class="form-control" accept=".owl," (change)="onFileChange($event)">
          <br />
+         <label class="control-label">Standard-Pass-Ont Version: </label><br />
+         <label class="radio-inline"><input name="version" type="radio" [value]="2"  [(ngModel)]="version"> 0.7.2</label>
+         <label class="radio-inline"><input name="version" type="radio" [value]="4"  [(ngModel)]="version"> 0.7.4</label>
+         <br />
          <button class="btn btn-primary" type="submit" [disabled]="!owlFile">Upload</button>
        </form>
      </ba-card>

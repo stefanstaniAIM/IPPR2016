@@ -20,6 +20,7 @@ export class ImportProcessModel implements OnInit {
    buildedBofps = {};
    success;
    owlFile;
+   version = 4;
 
   constructor(protected service:ProcessesService) {}
 
@@ -41,7 +42,8 @@ export class ImportProcessModel implements OnInit {
     var reader = new FileReader();
     if(this.owlFile) {
       reader.onload = function(e) {
-        that.service.uploadOWLModel(reader.result)
+        var body = {owlContent: reader.result, version: "0.7."+that.version}
+        that.service.uploadOWLModel(body)
         .subscribe(
             data => {
                that.processModel = JSON.parse(data['_body']);
