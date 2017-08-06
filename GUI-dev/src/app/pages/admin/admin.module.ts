@@ -13,6 +13,7 @@ import { TerminatedProcesses } from './components/terminatedProcesses/terminated
 import { ProcessModels } from './components/processModels/processModels.component';
 import { EventLogger } from './components/eventLogger/eventLogger.component';
 import { ManipulatePNML } from './components/manipulatePNML/manipulatePNML.component';
+import { GenerateOWL } from './components/generateOWL/generateOWL.component';
 
 import { AuthGuard } from '../../auth.guard';
 import { AdminGuard } from '../../admin.guard';
@@ -32,7 +33,8 @@ import { AdminGuard } from '../../admin.guard';
     ProcessModels,
     ImportProcessModel,
     EventLogger,
-    ManipulatePNML
+    ManipulatePNML,
+    GenerateOWL
   ],
   providers: [
     AuthGuard,

@@ -121,6 +121,14 @@ export const PAGES_MENU = [
                 title: 'PNML manipulieren'
               }
             }
+          },
+          {
+            path: 'generateOWL',
+            data: {
+              menu: {
+                title: 'OWL generieren'
+              }
+            }
           }
         ]
       }

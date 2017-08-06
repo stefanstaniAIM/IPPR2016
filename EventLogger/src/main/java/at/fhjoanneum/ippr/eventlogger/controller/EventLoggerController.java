@@ -2,6 +2,7 @@ package at.fhjoanneum.ippr.eventlogger.controller;
 
 import at.fhjoanneum.ippr.commons.dto.eventlogger.EventLoggerDTO;
 import at.fhjoanneum.ippr.eventlogger.EventLoggerApplication;
+import at.fhjoanneum.ippr.eventlogger.helper.GenerateOWLPostBodyHelper;
 import at.fhjoanneum.ippr.eventlogger.persistence.EventLogEntry;
 import at.fhjoanneum.ippr.eventlogger.persistence.EventLogRepository;
 import at.fhjoanneum.ippr.eventlogger.services.EventLogService;
@@ -88,6 +89,29 @@ public class EventLoggerController {
       response.sendError(400, e.getMessage());
     }
   }
+
+  @RequestMapping(value = "generateOWL", method = RequestMethod.POST)
+  public @ResponseBody void generateOWL(@RequestBody final GenerateOWLPostBodyHelper requestBody,
+                                        final HttpServletRequest request, final HttpServletResponse response) throws IOException {
+    try {
+      final StreamResult result = eventLogService.generateOWL(requestBody.getProcessModelName(), requestBody.getPnmlFiles());
+      downloadOWL(response, result);
+    } catch (final Exception e) {
+      response.sendError(400, e.getMessage());
+    }
+  }
+
+  private void downloadOWL(final HttpServletResponse response, final StreamResult result)
+          throws IOException {
+    response.setContentType("application/xml");
+
+    final byte[] res = result.getWriter().toString().getBytes(Charset.forName("UTF-8"));
+
+    response.setCharacterEncoding("UTF-8");
+    response.getOutputStream().write(res);
+    response.flushBuffer();
+  }
+
 
   private void downloadPNML(final HttpServletResponse response, final StreamResult result)
       throws IOException {

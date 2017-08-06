@@ -25,4 +25,8 @@ export class EventLoggerService {
     let body = JSON.stringify(data);
      return this._authHttp.post(this.restApi+'/manipulatePNML/', body);
    }
+
+   generateOWL(processModelName, pnmlFiles){
+     return this._authHttp.post(this.restApi+'/generateOWL/', {processModelName, pnmlFiles});
+   }
 }

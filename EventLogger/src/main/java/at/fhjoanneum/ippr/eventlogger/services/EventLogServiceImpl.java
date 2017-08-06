@@ -8,6 +8,7 @@ import at.fhjoanneum.ippr.eventlogger.persistence.EventLogRepository;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +29,16 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.*;
@@ -89,7 +94,7 @@ public class EventLogServiceImpl implements EventLogService {
         final Node netNode = nets.item(temp);
         if (netNode.getNodeType() == Node.ELEMENT_NODE) {
           final Element net = (Element) netNode;
-          final HashMap<String, String> transitions = getTransitions(net);
+          final HashMap<String, String> transitions = getTransitionNameIdMap(net);
 
           int numOfCustomPlaces = 1;
           int numOfCustomArcs = 1;
@@ -152,6 +157,70 @@ public class EventLogServiceImpl implements EventLogService {
     }
 
     return result;
+  }
+
+  @Override
+  public StreamResult generateOWL(String processModelName, Map<String, String> petriNets)
+          throws Exception {
+    final DocumentBuilderFactory resultDocumentBuilderFactory = DocumentBuilderFactory.newInstance();
+    final DocumentBuilder resultDocumentBuilder = resultDocumentBuilderFactory.newDocumentBuilder();
+    final Document resultDocument = resultDocumentBuilder.newDocument();
+    getOWLSkeleton(resultDocument, resultDocumentBuilder);
+
+    /*petriNets.forEach((name, pnmlContent) -> {
+      try {
+        final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        final InputSource input = new InputSource(new StringReader(pnmlContent));
+        final Document document = documentBuilderFactory.newDocumentBuilder().parse(input);
+        final Element root = document.getDocumentElement();
+        final NodeList nets = root.getElementsByTagName("net");
+        for (int temp = 0; temp < nets.getLength(); temp++) {
+          final Node netNode = nets.item(temp);
+          if (netNode.getNodeType() == Node.ELEMENT_NODE) {
+            final Element net = (Element) netNode;
+            final HashMap<String, String> transitions = getTransitionNameIdMap(net);
+
+          }
+        }
+      } catch (final Exception e) {
+        LOG.error(e.getMessage());
+        LOG.error("Exception while generating OWL");
+      }
+    });*/
+
+    StreamResult result;
+    final DOMSource source = new DOMSource(resultDocument);
+
+    result = new StreamResult(new StringWriter());
+    final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+    final Transformer transformer = transformerFactory.newTransformer();
+    transformer.transform(source, result);
+    return result;
+  }
+
+  private void getOWLSkeleton(Document doc, DocumentBuilder builder) throws IOException, SAXException {
+    final String date = DateTime.now().toString("ddMMyyyy-HHmm");
+    String skeleton = "<?xml version=\"1.0\"?>" +
+            "" +
+            "<!DOCTYPE rdf:RDF [ " +
+            "    <!ENTITY owl \"http://www.w3.org/2002/07/owl#\" >" +
+            "    <!ENTITY xsd \"http://www.w3.org/2001/XMLSchema#\" >" +
+            "    <!ENTITY rdfs \"http://www.w3.org/2000/01/rdf-schema#\" >" +
+            "    <!ENTITY abstract-pass-ont \"http://www.imi.kit.edu/abstract-pass-ont#\" >" +
+            "    <!ENTITY standard-pass-ont \"http://www.i2pm.net/standard-pass-ont#\" >" +
+            "    <!ENTITY rdf \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" >" +
+            "]>" +
+            "" +
+            "<rdf:RDF xmlns:abstract-pass-ont=\"http://www.imi.kit.edu/abstract-pass-ont#\" xmlns:standard-pass-ont=\"http://www.i2pm.net/standard-pass-ont#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\" xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\" xmlns=\"http://subjective-me.jimdo.com/s-bpm/processmodels/2017-07-28/Zeichenblatt-1\">" +
+            "	<owl:Ontology rdf:about=\"http://fh-joanneum.at/aim/s-bpm/processmodels/"+date+"/\">" +
+            "		<owl:imports rdf:resource=\"http://www.imi.kit.edu/abstract-pass-ont\"></owl:imports>" +
+            "		<owl:imports rdf:resource=\"http://www.i2pm.net/standard-pass-ont\"></owl:imports>" +
+            "	</owl:Ontology>" +
+            "</rdf:RDF>";
+
+    Document doc2 = builder.parse(new ByteArrayInputStream(skeleton.getBytes()));
+    Node node = doc.importNode(doc2.getDocumentElement(), true);
+    doc.appendChild(node);
   }
 
   private LinkedHashMap<LogKey, EventLogEntry> parseCSV(final String csvLog) throws Exception {
@@ -284,7 +353,7 @@ public class EventLogServiceImpl implements EventLogService {
     return placeId;
   }
 
-  private HashMap<String, String> getTransitions(final Element net) {
+  private HashMap<String, String> getTransitionNameIdMap(final Element net) {
     final HashMap<String, String> transitions = new HashMap<>();
     final NodeList transitionNodes = net.getElementsByTagName("transition");
     for (int i = 0; i < transitionNodes.getLength(); i++) {

@@ -1,11 +1,11 @@
 package at.fhjoanneum.ippr.eventlogger.services;
 
-import java.util.List;
-import java.util.concurrent.Future;
+import at.fhjoanneum.ippr.commons.dto.eventlogger.EventLoggerDTO;
 
 import javax.xml.transform.stream.StreamResult;
-
-import at.fhjoanneum.ippr.commons.dto.eventlogger.EventLoggerDTO;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Future;
 
 public interface EventLogService {
 
@@ -13,4 +13,6 @@ public interface EventLogService {
       final String subject);
 
   StreamResult manipulatePNML(final String pnmlContent, final String csvLog) throws Exception;
+
+  StreamResult generateOWL(final String processModelName, final Map<String, String> petriNets) throws Exception;
 }
