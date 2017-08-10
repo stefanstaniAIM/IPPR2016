@@ -40,13 +40,13 @@ public class OWLParser implements FileParser<String, OWLProcessModelDTO> {
       final String URI_FUNCTION_STATE;
       final String URI_HAS_EDGE;
 
-      if (version.equals("0.7.4")){
+      if (version.equals("0.7.5")){
         URI_STANDARD = "http://www.i2pm.net/standard-pass-ont#";
         URI_ACTOR = URI_STANDARD + "FullySpecifiedSingleSubject";
         URI_BEHAVIOR = URI_STANDARD + "containsBehavior";
-        URI_STATE = URI_STANDARD + "containsState";
+        URI_STATE = URI_STANDARD + "contains";
         URI_FUNCTION_STATE = URI_STANDARD + "DoState";
-        URI_HAS_EDGE = URI_STANDARD + "containsTransition";
+        URI_HAS_EDGE = URI_STANDARD + "contains";
       } else {
         URI_STANDARD = "http://www.imi.kit.edu/standard-pass-ont#";
         URI_ACTOR = URI_STANDARD + "SingleActor";
@@ -69,6 +69,9 @@ public class OWLParser implements FileParser<String, OWLProcessModelDTO> {
       final String URI_SENDER = URI_STANDARD + "hasSender";
       final String URI_RECEIVER = URI_STANDARD + "hasReceiver";
       final String URI_MESSAGE_TYPE = URI_STANDARD + "hasMessageType";
+      final String URI_STANDARD_TRANSITION = URI_STANDARD + "StandardTransition";
+      final String URI_RECEIVE_TRANSITION = URI_STANDARD + "ReceiveTransition";
+      final String URI_SEND_TRANSITION = URI_STANDARD + "SendTransition";
 
       stateDTOs = new ArrayList<>();
       transitionDTOs = new HashSet<>();
@@ -93,6 +96,9 @@ public class OWLParser implements FileParser<String, OWLProcessModelDTO> {
         final Property behaviorProperty = model.getProperty(URI_BEHAVIOR);
         final Property stateProperty = model.getProperty(URI_STATE);
         final Property functionStateProperty = model.getProperty(URI_FUNCTION_STATE);
+        final Property standardTransitionProperty = model.getProperty(URI_STANDARD_TRANSITION);
+        final Property receiveTransitionProperty = model.getProperty(URI_RECEIVE_TRANSITION);
+        final Property sendTransitionProperty = model.getProperty(URI_SEND_TRANSITION);
         final Property sendStateProperty = model.getProperty(URI_SEND_STATE);
         final Property receiveStateProperty = model.getProperty(URI_RECEIVE_STATE);
         final Property initialStateProperty = model.getProperty(URI_INITIAL_STATE);
@@ -129,113 +135,115 @@ public class OWLParser implements FileParser<String, OWLProcessModelDTO> {
           // Find behaviour for actor
           final Resource behavior = actor.getProperty(behaviorProperty).getResource();
 
-          // Find states
-          final List<org.apache.jena.rdf.model.Statement> states =
+          // Find states and transitions
+          final List<org.apache.jena.rdf.model.Statement> statesAndTransitions =
               behavior.listProperties(stateProperty).toList();
-          for (final Statement state : states) {
-            final Resource stateResource = state.getResource();
-            final String stateLabel = stateResource.getProperty(labelProperty).getString();
+          if (version.equals("0.7.2")){
+            statesAndTransitions.addAll(behavior.listProperties(transitionProperty).toList());
+          }
+          for (final Statement stateOrTransition : statesAndTransitions) {
+            final Resource stateOrTransitionResource = stateOrTransition.getResource();
+            final String stateOrTransitionLabel = stateOrTransition.getProperty(labelProperty).getString();
 
-            final String stateIdentifier =
-                stateResource.getProperty(identifierProperty).getString();
+            final String stateOrTransitionIdentifier =
+                    stateOrTransition.getProperty(identifierProperty).getString();
 
             String stateFunctionType = StateFunctionType.FUNCTION.toString();
             String stateEventType = "";
 
-            // Which type of state?
-            if (stateResource.hasProperty(typeProperty, endStateProperty)) {
-              stateEventType = StateEventType.END.toString();
-            } else if (stateResource.hasProperty(typeProperty, initialStateProperty)) {
-              stateEventType = StateEventType.START.toString();
-            }
-            if (stateResource.hasProperty(typeProperty, functionStateProperty)) {
-              stateFunctionType = StateFunctionType.FUNCTION.toString();
-            } else if (stateResource.hasProperty(typeProperty, sendStateProperty)) {
-              stateFunctionType = StateFunctionType.SEND.toString();
-            } else if (stateResource.hasProperty(typeProperty, receiveStateProperty)) {
-              stateFunctionType = StateFunctionType.RECEIVE.toString();
-            }
+            boolean isTransition = stateOrTransitionResource.hasProperty(typeProperty, standardTransitionProperty) ||
+                    stateOrTransitionResource.hasProperty(typeProperty, receiveTransitionProperty) ||
+                    stateOrTransitionResource.hasProperty(typeProperty, sendTransitionProperty);
 
-            final OWLStateDTO stateDTO = new OWLStateDTO(stateIdentifier, stateLabel,
-                subjectModelIdentifier, stateFunctionType, stateEventType);
-            stateDTOMap.put(stateIdentifier, stateDTO);
-            stateDTOs.add(stateDTO);
-          }
+            if(isTransition){
+              //is transition
+
+              final Resource sourceState =
+                      stateOrTransitionResource.getProperty(sourceStateProperty).getResource();
+              final String sourceStateIdentifier =
+                      sourceState.getProperty(identifierProperty).getString();
+
+              final Resource targetState =
+                      stateOrTransitionResource.getProperty(targetStateProperty).getResource();
+              final String targetStateIdentifier =
+                      targetState.getProperty(identifierProperty).getString();
 
 
-          // Find Transitions (edges)
-          final List<org.apache.jena.rdf.model.Statement> transitions =
-              behavior.listProperties(transitionProperty).toList();
-          for (final Statement transition : transitions) {
-            final Resource transitionResource = transition.getResource();
-            final String transitionLabel =
-                transitionResource.getProperty(labelProperty).getString();
+              final OWLTransitionDTO transitionDTO =
+                      new OWLTransitionDTO(sourceStateIdentifier, targetStateIdentifier);
+              transitionDTOs.add(transitionDTO);
 
-            final Resource sourceState =
-                transitionResource.getProperty(sourceStateProperty).getResource();
-            final String sourceStateIdentifier =
-                sourceState.getProperty(identifierProperty).getString();
+              // Which type of transition?
+              if (stateOrTransitionResource.hasProperty(refersToProperty)) {
+                final Resource refersTo =
+                        stateOrTransitionResource.getProperty(refersToProperty).getResource();
+                final String messageFlowIdentifier =
+                        stateOrTransitionResource.getProperty(identifierProperty).getString();
+                final Resource sender = refersTo.getProperty(senderProperty).getResource();
+                final Resource receiver = refersTo.getProperty(receiverProperty).getResource();
+                final String messageFlowLabel = refersTo.getProperty(labelProperty).getString();
 
-            final Resource targetState =
-                transitionResource.getProperty(targetStateProperty).getResource();
-            final String targetStateIdentifier =
-                targetState.getProperty(identifierProperty).getString();
+                final Resource messageType = refersTo.getProperty(messageTypeProperty).getResource();
+                final String messageTypeLabel = messageType.getProperty(labelProperty).getString();
+                final String bomIdentifier = messageType.getProperty(identifierProperty).getString();
 
-
-            final OWLTransitionDTO transitionDTO =
-                new OWLTransitionDTO(sourceStateIdentifier, targetStateIdentifier);
-            transitionDTOs.add(transitionDTO);
-
-            // Which type of transition?
-            if (transitionResource.hasProperty(refersToProperty)) {
-              final Resource refersTo =
-                  transitionResource.getProperty(refersToProperty).getResource();
-              final String messageFlowIdentifier =
-                  transitionResource.getProperty(identifierProperty).getString();
-              final Resource sender = refersTo.getProperty(senderProperty).getResource();
-              final Resource receiver = refersTo.getProperty(receiverProperty).getResource();
-              final String messageFlowLabel = refersTo.getProperty(labelProperty).getString();
-
-              final Resource messageType = refersTo.getProperty(messageTypeProperty).getResource();
-              final String messageTypeLabel = messageType.getProperty(labelProperty).getString();
-              final String bomIdentifier = messageType.getProperty(identifierProperty).getString();
-
-              final List<String> transitionStateIds = new ArrayList<>();
-              transitionStateIds.add(sourceStateIdentifier);
-              transitionStateIds.add(targetStateIdentifier);
-              OWLBomDTO bomDTO = bomDTOMap.get(bomIdentifier);
-              if (bomDTO == null) {
-                bomDTO = new OWLBomDTO(bomIdentifier, messageTypeLabel, transitionStateIds);
-                bomDTOMap.put(bomIdentifier, bomDTO);
-              } else {
-                bomDTO.getStateIds().addAll(transitionStateIds);
-              }
-              bomDTOs.add(bomDTO);
-
-              if (sourceState.hasProperty(typeProperty, sendStateProperty) || sourceState.hasProperty(typeProperty, receiveStateProperty)) {
-
-                final String senderIdentifier = sender.getProperty(identifierProperty).getString();
-                final String receiverIdentifier =
-                    receiver.getProperty(identifierProperty).getString();
-                OWLSubjectModelDTO senderDTO = subjectModelDTOMap.get(senderIdentifier);
-                OWLSubjectModelDTO receiverDTO = subjectModelDTOMap.get(receiverIdentifier);
-                if (senderDTO == null) {
-                  senderDTO = new OWLSubjectModelDTO(senderIdentifier,
-                      sender.getProperty(labelProperty).getString());
-                  subjectModelDTOMap.put(senderIdentifier, senderDTO);
+                final List<String> transitionStateIds = new ArrayList<>();
+                transitionStateIds.add(sourceStateIdentifier);
+                transitionStateIds.add(targetStateIdentifier);
+                OWLBomDTO bomDTO = bomDTOMap.get(bomIdentifier);
+                if (bomDTO == null) {
+                  bomDTO = new OWLBomDTO(bomIdentifier, messageTypeLabel, transitionStateIds);
+                  bomDTOMap.put(bomIdentifier, bomDTO);
+                } else {
+                  bomDTO.getStateIds().addAll(transitionStateIds);
                 }
-                if (receiverDTO == null) {
-                  receiverDTO = new OWLSubjectModelDTO(receiverIdentifier,
-                      receiver.getProperty(labelProperty).getString());
-                  subjectModelDTOMap.put(receiverIdentifier, receiverDTO);
-                }
+                bomDTOs.add(bomDTO);
 
-                // nur wenn source state = sendstate
-                final OWLMessageFlowDTO messageFlowDTO = new OWLMessageFlowDTO(
-                    messageFlowIdentifier, senderIdentifier, receiverIdentifier, bomIdentifier,
-                    sourceStateIdentifier, targetStateIdentifier);
-                messageFlowDTOs.add(messageFlowDTO);
+                if (sourceState.hasProperty(typeProperty, sendStateProperty) || sourceState.hasProperty(typeProperty, receiveStateProperty)) {
+
+                  final String senderIdentifier = sender.getProperty(identifierProperty).getString();
+                  final String receiverIdentifier =
+                          receiver.getProperty(identifierProperty).getString();
+                  OWLSubjectModelDTO senderDTO = subjectModelDTOMap.get(senderIdentifier);
+                  OWLSubjectModelDTO receiverDTO = subjectModelDTOMap.get(receiverIdentifier);
+                  if (senderDTO == null) {
+                    senderDTO = new OWLSubjectModelDTO(senderIdentifier,
+                            sender.getProperty(labelProperty).getString());
+                    subjectModelDTOMap.put(senderIdentifier, senderDTO);
+                  }
+                  if (receiverDTO == null) {
+                    receiverDTO = new OWLSubjectModelDTO(receiverIdentifier,
+                            receiver.getProperty(labelProperty).getString());
+                    subjectModelDTOMap.put(receiverIdentifier, receiverDTO);
+                  }
+
+                  // nur wenn source state = sendstate
+                  final OWLMessageFlowDTO messageFlowDTO = new OWLMessageFlowDTO(
+                          messageFlowIdentifier, senderIdentifier, receiverIdentifier, bomIdentifier,
+                          sourceStateIdentifier, targetStateIdentifier);
+                  messageFlowDTOs.add(messageFlowDTO);
+                }
               }
+            } else {
+              //is state
+              // Which type of state?
+              if (stateOrTransitionResource.hasProperty(typeProperty, endStateProperty)) {
+                stateEventType = StateEventType.END.toString();
+              } else if (stateOrTransitionResource.hasProperty(typeProperty, initialStateProperty)) {
+                stateEventType = StateEventType.START.toString();
+              }
+              if (stateOrTransitionResource.hasProperty(typeProperty, functionStateProperty)) {
+                stateFunctionType = StateFunctionType.FUNCTION.toString();
+              } else if (stateOrTransitionResource.hasProperty(typeProperty, sendStateProperty)) {
+                stateFunctionType = StateFunctionType.SEND.toString();
+              } else if (stateOrTransitionResource.hasProperty(typeProperty, receiveStateProperty)) {
+                stateFunctionType = StateFunctionType.RECEIVE.toString();
+              }
+
+              final OWLStateDTO stateDTO = new OWLStateDTO(stateOrTransitionIdentifier, stateOrTransitionLabel,
+                      subjectModelIdentifier, stateFunctionType, stateEventType);
+              stateDTOMap.put(stateOrTransitionIdentifier, stateDTO);
+              stateDTOs.add(stateDTO);
             }
           }
         }

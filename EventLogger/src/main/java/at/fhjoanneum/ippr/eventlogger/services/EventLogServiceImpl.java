@@ -213,6 +213,7 @@ public class EventLogServiceImpl implements EventLogService {
             "" +
             "<rdf:RDF xmlns:abstract-pass-ont=\"http://www.imi.kit.edu/abstract-pass-ont#\" xmlns:standard-pass-ont=\"http://www.i2pm.net/standard-pass-ont#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\" xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\" xmlns=\"http://subjective-me.jimdo.com/s-bpm/processmodels/2017-07-28/Zeichenblatt-1\">" +
             "	<owl:Ontology rdf:about=\"http://fh-joanneum.at/aim/s-bpm/processmodels/"+date+"/\">" +
+            "       <owl:versionIRI rdf:resource=\"http://fh-joanneum.at/aim/s-bpm/processmodels/"+date+"/\"></owl:versionIRI>" +
             "		<owl:imports rdf:resource=\"http://www.imi.kit.edu/abstract-pass-ont\"></owl:imports>" +
             "		<owl:imports rdf:resource=\"http://www.i2pm.net/standard-pass-ont\"></owl:imports>" +
             "	</owl:Ontology>" +

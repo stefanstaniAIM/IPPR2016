@@ -20,7 +20,7 @@ export class ImportProcessModel implements OnInit {
    buildedBofps = {};
    success;
    owlFile;
-   version = 4;
+   version = 5;
 
   constructor(protected service:ProcessesService) {}
 
