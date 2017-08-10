@@ -6,6 +6,8 @@ import at.fhjoanneum.ippr.eventlogger.helper.GenerateOWLPostBodyHelper;
 import at.fhjoanneum.ippr.eventlogger.persistence.EventLogEntry;
 import at.fhjoanneum.ippr.eventlogger.persistence.EventLogRepository;
 import at.fhjoanneum.ippr.eventlogger.services.EventLogService;
+import at.fhjoanneum.ippr.eventlogger.services.GenerateOWLService;
+import at.fhjoanneum.ippr.eventlogger.services.ManipulatePNMLService;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +36,12 @@ public class EventLoggerController {
 
   @Autowired
   private EventLogService eventLogService;
+
+  @Autowired
+  private ManipulatePNMLService manipulatePNMLService;
+
+  @Autowired
+  private GenerateOWLService generateOWLService;
 
   @RequestMapping(value = "newevent", method = RequestMethod.POST)
   public String newEvent(@RequestBody final EventLoggerDTO eventLoggerDTO) {
@@ -83,7 +91,7 @@ public class EventLoggerController {
     final String pnmlContent = fileContents.get("pnmlContent");
     final String csvLog = fileContents.get("csvLog");
     try {
-      final StreamResult result = eventLogService.manipulatePNML(pnmlContent, csvLog);
+      final StreamResult result = manipulatePNMLService.manipulatePNML(pnmlContent, csvLog);
       downloadPNML(response, result);
     } catch (final Exception e) {
       response.sendError(400, e.getMessage());
@@ -94,7 +102,7 @@ public class EventLoggerController {
   public @ResponseBody void generateOWL(@RequestBody final GenerateOWLPostBodyHelper requestBody,
                                         final HttpServletRequest request, final HttpServletResponse response) throws IOException {
     try {
-      final StreamResult result = eventLogService.generateOWL(requestBody.getProcessModelName(), requestBody.getPnmlFiles());
+      final StreamResult result = generateOWLService.generateOWL(requestBody.getProcessModelName(), requestBody.getPnmlFiles());
       downloadOWL(response, result);
     } catch (final Exception e) {
       response.sendError(400, e.getMessage());
@@ -111,7 +119,6 @@ public class EventLoggerController {
     response.getOutputStream().write(res);
     response.flushBuffer();
   }
-
 
   private void downloadPNML(final HttpServletResponse response, final StreamResult result)
       throws IOException {
