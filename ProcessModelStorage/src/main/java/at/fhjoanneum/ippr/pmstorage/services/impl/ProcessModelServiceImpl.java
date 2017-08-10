@@ -1,12 +1,19 @@
 package at.fhjoanneum.ippr.pmstorage.services.impl;
 
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.Future;
-import java.util.stream.Collectors;
-
+import at.fhjoanneum.ippr.commons.dto.pmstorage.FieldPermissionDTO;
+import at.fhjoanneum.ippr.commons.dto.pmstorage.FieldTypeDTO;
+import at.fhjoanneum.ippr.commons.dto.pmstorage.ProcessModelDTO;
+import at.fhjoanneum.ippr.commons.dto.pmstorage.SubjectModelDTO;
+import at.fhjoanneum.ippr.persistence.entities.model.process.ProcessModelImpl;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldPermission;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldType;
+import at.fhjoanneum.ippr.persistence.objects.model.enums.ProcessModelState;
+import at.fhjoanneum.ippr.persistence.objects.model.process.ProcessModel;
+import at.fhjoanneum.ippr.persistence.objects.model.subject.SubjectModel;
+import at.fhjoanneum.ippr.pmstorage.repositories.ProcessModelRepository;
+import at.fhjoanneum.ippr.pmstorage.services.ProcessModelService;
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,19 +24,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Lists;
-
-import at.fhjoanneum.ippr.commons.dto.pmstorage.FieldPermissionDTO;
-import at.fhjoanneum.ippr.commons.dto.pmstorage.FieldTypeDTO;
-import at.fhjoanneum.ippr.commons.dto.pmstorage.ProcessModelDTO;
-import at.fhjoanneum.ippr.commons.dto.pmstorage.SubjectModelDTO;
-import at.fhjoanneum.ippr.persistence.entities.model.process.ProcessModelImpl;
-import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldPermission;
-import at.fhjoanneum.ippr.persistence.objects.model.enums.FieldType;
-import at.fhjoanneum.ippr.persistence.objects.model.enums.ProcessModelState;
-import at.fhjoanneum.ippr.persistence.objects.model.process.ProcessModel;
-import at.fhjoanneum.ippr.pmstorage.repositories.ProcessModelRepository;
-import at.fhjoanneum.ippr.pmstorage.services.ProcessModelService;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 
 @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -63,20 +62,21 @@ public class ProcessModelServiceImpl implements ProcessModelService {
 
   private static List<ProcessModelDTO> createProcessModelDTO(final List<ProcessModelImpl> results) {
     final List<ProcessModelDTO> processModels = Lists.newArrayList();
-    final List<SubjectModelDTO> subjectModels = Lists.newArrayList();
+    List<SubjectModelDTO> subjectModels;
 
 
-    results.forEach(process -> {
-      process.getSubjectModels().forEach(subject -> {
-        subjectModels.add(
-            new SubjectModelDTO(subject.getSmId(), subject.getName(), subject.getAssignedRules()));
-      });
+    for(ProcessModelImpl process : results ){
+      subjectModels = Lists.newArrayList();
+      for(SubjectModel subject : process.getSubjectModels()) {
+                subjectModels.add(
+                        new SubjectModelDTO(subject.getSmId(), subject.getName(), subject.getAssignedRules()));
+      }
 
       final ProcessModelDTO dto =
-          new ProcessModelDTO(process.getPmId(), process.getName(), process.getDescription(),
-              process.createdAt(), subjectModels, process.getState().name(), process.getVersion());
+              new ProcessModelDTO(process.getPmId(), process.getName(), process.getDescription(),
+                      process.createdAt(), subjectModels, process.getState().name(), process.getVersion());
       processModels.add(dto);
-    });
+    }
 
     return processModels;
   }
