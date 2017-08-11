@@ -1,0 +1,34 @@
+<div class="alert alert-danger alert-dismissible fade in" role="alert" *ngIf="error">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+  <strong>Error!</strong> {{error}}
+</div>
+<div class="alert alert-success alert-dismissible fade in" role="alert" *ngIf="success">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+  {{success}}
+</div>
+<div class="row">
+  <div class="alert alert-info fade in" role="alert">
+    PNML Files die ein oWFN eines Subjekts modellieren können hochgeladen werden um ein OWL File nach der standard-pass-ont v0.7.4 zu generieren, das wiederrum in diese Plattform als Prozessmodell importiert werden kann.
+  </div>
+   <ba-card class="col-xlg-12 col-xl-12 col-lg-12 col-sm-12 col-xs-12">
+       <form #pnmlForm="ngForm" (ngSubmit)="uploadFiles(pnmlForm)">
+       <div *ngFor="let pnml of pnmlFiles" class="row pt">
+         <div class="col col-md-3">
+           <label class="control-label">Subjekt-Name: </label>
+           <input type="text" name="subjectName{{pnml.id}}" id="subjectName{{pnml.id}}" class="form-control"  [(ngModel)]="pnml.name">
+         </div>
+         <div class="col col-md-8">
+           <label class="control-label">PNML-File: </label>
+           <input type="file" name="fileUploadPNML{{pnml.id}}" id="fileUploadPNML{{pnml.id}}" class="form-control" accept=".pnml," (change)="onPNMLFileChange($event, pnml.id)">
+         </div>
+         <br />
+       </div>
+       <button class="btn btn-default" type="button" (click)="addFile()">File hinzufügen</button>
+       <button class="btn btn-primary" type="submit">Upload</button>
+     </form>
+   </ba-card>
+</div>
