@@ -10,14 +10,11 @@ import { EventLoggerService } from '../../../../EventLogger.service';
 export class GenerateOWL implements OnInit {
    error = undefined;
    pnmlFiles = [{id: 1, name: "", file: undefined}, {id: 2, name: "", file: undefined}];
+   processName = "";
 
   constructor(protected service:EventLoggerService) {}
 
   ngOnInit(): void {
-  }
-
-  addFile() {
-    this.pnmlFiles.push({id: this.pnmlFiles.length+1, name: "", file: undefined});
   }
 
   onPNMLFileChange(event, id) {
@@ -33,7 +30,7 @@ export class GenerateOWL implements OnInit {
 
   uploadFiles(form):void {
     var that = this;
-    var newFileName = "test.owl";
+    var newFileName = that.processName+"-generated.owl";
     var fileResults = {}
     var fileReaderPromises = [];
     that.pnmlFiles.forEach(p => {
@@ -51,7 +48,7 @@ export class GenerateOWL implements OnInit {
       fileReaderPromises.push(promise);
     });
     Promise.all(fileReaderPromises).then(result => {
-      that.service.generateOWL("Testinger", fileResults)
+      that.service.generateOWL(that.processName, fileResults)
       .subscribe(
           data => {
             that.saveData(data, newFileName);
@@ -62,28 +59,19 @@ export class GenerateOWL implements OnInit {
           }
         );
     })
+  }
 
-  /*  var that = this;
-    var pnmlReader = new FileReader();
-    var csvReader = new FileReader();
-    var newFileName = "";
-    if(this.pnmlFile) {
-      pnmlReader.onload = (e) => csvReader.readAsText(this.csvFile);
-      csvReader.onload = (e) => {
-        that.service.manipulatePNML(pnmlReader.result, csvReader.result)
-        .subscribe(
-            data => {
-              that.saveData(data, newFileName);
-              that.error = undefined;
-            },
-            err => {
-              that.error = "Die PNML Datei konnte nicht richtig interpretiert werden! " + JSON.parse(err._body).message;
-            }
-          );
-      }
-      newFileName = this.pnmlFile.name.replace(".pnml", "-manipulated.pnml");
-      pnmlReader.readAsText(this.pnmlFile);
-    }*/
+  isUploadDisabled(){
+    var that = this;
+    return that.processName === "" ||
+      that.processName === undefined ||
+      that.pnmlFiles[0].name === "" ||
+      that.pnmlFiles[0].name === undefined ||
+      that.pnmlFiles[0].file === undefined ||
+      that.pnmlFiles[1].name === "" ||
+      that.pnmlFiles[1].name === undefined ||
+      that.pnmlFiles[1].file === undefined ||
+      that.pnmlFiles[0].name === that.pnmlFiles[1].name
   }
 
   saveData(data, fileName) {

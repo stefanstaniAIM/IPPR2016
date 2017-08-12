@@ -88,7 +88,7 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
     int stateId = 1;
     int transitionId = 1;
     int messageConnectorId = 1;
-    //find send messages of subject and create ;MessageSpecification and ;MessageExchangeList and ;PayloadDescription and ;StandardMessageExchange
+
     for (Map.Entry<String, String> entry : petriNets.entrySet()) {
       String name = entry.getKey();
       String pnmlContent = entry.getValue();
@@ -144,7 +144,6 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
             final HashMap<String, Node> transitionIdToActionNodeMap = new HashMap<>();
             final HashMap<String, String> doStatesIdToNameMap = new HashMap<>();
             final HashMap<String, String> sendStatesIdToNameMap = new HashMap<>();
-            final HashMap<String, String> receiveStatesIdToNameMap = new HashMap<>();
             final HashMap<String, Arc> pnmlArcIdMap = getArcIdMap(net);
             final List<Arc> pnmlArcs = new ArrayList<>(pnmlArcIdMap.values());
 
@@ -166,8 +165,6 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
                 doStatesIdToNameMap.put(transitionIdentifier, transitionName);
               } else if (stateType.equals("SendState")){
                 sendStatesIdToNameMap.put(transitionIdentifier, transitionName);
-              } else {
-                receiveStatesIdToNameMap.put(transitionIdentifier, transitionName);
               }
 
               Node stateNode = createNamedIndividual(resultDocument, "SBD_"+name+"_"+stateType+"_"+stateId, stateType, "SBD_"+name+"_"+stateType+"_"+stateId, transitionName);
@@ -268,6 +265,8 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
     final Transformer transformer = transformerFactory.newTransformer();
     transformer.transform(source, documentResult);
 
+
+    //This is necessary since inline doctype is erased by the transformer Source: https://stackoverflow.com/questions/3509860/how-can-i-retain-doctype-info-in-xml-documnet-during-read-write-process
     String docType =  "<!DOCTYPE rdf:RDF [ " +
             "    <!ENTITY owl \"http://www.w3.org/2002/07/owl#\" >" +
             "    <!ENTITY xsd \"http://www.w3.org/2001/XMLSchema#\" >" +
@@ -290,8 +289,6 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
 
   private Node getOWLSkeleton(Document doc, DocumentBuilder builder) throws IOException, SAXException {
     String skeleton = "<?xml version=\"1.0\"?>" +
-            "" +
-            "<!-- DOCTYPE -->"+
             "" +
             "<rdf:RDF xmlns:abstract-pass-ont=\"http://www.imi.kit.edu/abstract-pass-ont#\" xmlns:standard-pass-ont=\"http://www.i2pm.net/standard-pass-ont#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\" xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\" xmlns=\"" + ontologyUri + "\">" +
             "	<owl:Ontology rdf:about=\""+ontologyUri+"\">" +

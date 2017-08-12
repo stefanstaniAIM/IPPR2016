@@ -92,7 +92,7 @@ public class EventLoggerController {
     final String csvLog = fileContents.get("csvLog");
     try {
       final StreamResult result = manipulatePNMLService.manipulatePNML(pnmlContent, csvLog);
-      downloadPNML(response, result);
+      downloadXML(response, result);
     } catch (final Exception e) {
       response.sendError(400, e.getMessage());
     }
@@ -103,31 +103,15 @@ public class EventLoggerController {
                                         final HttpServletRequest request, final HttpServletResponse response) throws IOException {
     try {
       final StreamResult result = generateOWLService.generateOWL(requestBody.getProcessModelName(), requestBody.getPnmlFiles());
-      downloadOWL(response, result);
+      downloadXML(response, result);
     } catch (final Exception e) {
       response.sendError(400, e.getMessage());
     }
   }
 
-  private void downloadOWL(final HttpServletResponse response, final StreamResult result)
+  private void downloadXML(final HttpServletResponse response, final StreamResult result)
           throws IOException {
     response.setContentType("application/xml");
-
-    final byte[] res = result.getWriter().toString().getBytes(Charset.forName("UTF-8"));
-
-    response.setCharacterEncoding("UTF-8");
-    response.getOutputStream().write(res);
-    response.flushBuffer();
-  }
-
-  private void downloadPNML(final HttpServletResponse response, final StreamResult result)
-      throws IOException {
-    final String pnmlFileName = "Eventlog.pnml";
-    final String headerKey = "Content-Disposition";
-    final String headerValue = String.format("attachment; filename=\"%s\"", pnmlFileName);
-
-    response.setContentType("application/xml");
-    response.setHeader(headerKey, headerValue);
 
     final byte[] res = result.getWriter().toString().getBytes(Charset.forName("UTF-8"));
 
