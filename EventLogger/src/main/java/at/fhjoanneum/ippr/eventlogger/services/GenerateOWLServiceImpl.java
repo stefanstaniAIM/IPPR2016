@@ -48,6 +48,8 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
     HashMap<String, Node> subjectNameToSubjectNodeMap = new HashMap<>();
     HashMap<String, Node> subjectNameToMessageExchangeListNodeMap = new HashMap<>();
     HashMap<String, Node> subjectNameToBehaviorNodeMap = new HashMap<>();
+    HashMap<String, Node> messageNameToMessageNodeMap = new HashMap<>();
+    HashMap<String, Node> messageNameToStandardMessageExchangeNodeMap = new HashMap<>();
 
     Node rdfNode = getOWLSkeleton(resultDocument, resultDocumentBuilder);
     Node processModelNode = createNamedIndividual(resultDocument, processModelName, "PASSProcessModel", ontologyUri, processModelName);
@@ -88,6 +90,7 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
     int messageId = 1;
     int stateId = 1;
     int transitionId = 1;
+    int messageConnectorId = 1;
     //find send messages of subject and create ;MessageSpecification and ;MessageExchangeList and ;PayloadDescription and ;StandardMessageExchange
     for (Map.Entry<String, String> entry : petriNets.entrySet()) {
       String name = entry.getKey();
@@ -111,27 +114,38 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
             for (Map.Entry<String, List<Message>> placeToMessageEntry : placeIdToMessagesMap.entrySet()) {
               List<Message> messages = placeToMessageEntry.getValue();
               for(Message message : messages) {
-                Node messageNode = createNamedIndividual(resultDocument, "message_"+messageId, "MessageSpecification", "message_"+messageId, message.getName());
-                rdfNode.appendChild(messageNode);
-                addContainsElement(resultDocument, Arrays.asList(subjectNameToMessageExchangeListNodeMap.get(name), processModelNode, sidNode), messageNode);
+                String messageName = "Message: "+message.getName() + " From: "+message.getSender() + " To: "+message.getRecipient();
+                if(!messageNameToMessageNodeMap.containsKey(messageName)){
+                  Node messageNode = createNamedIndividual(resultDocument, "message_"+messageId, "MessageSpecification", "message_"+messageId, message.getName());
+                  rdfNode.appendChild(messageNode);
+                  addContainsElement(resultDocument, Arrays.asList(processModelNode, sidNode), messageNode);
 
-                Node payloadDescriptionNode = createNamedIndividual(resultDocument, "payload_description_of_message_"+messageId, "PayloadDescription", "payload_description_of_message_"+messageId, "payload_description_of_message_"+messageId);
-                rdfNode.appendChild(payloadDescriptionNode);
-                addResourceElement(resultDocument, messageNode, payloadDescriptionNode, "ContainsPayloadDescription");
+                  Node payloadDescriptionNode = createNamedIndividual(resultDocument, "payload_description_of_message_"+messageId, "PayloadDescription", "payload_description_of_message_"+messageId, "payload_description_of_message_"+messageId);
+                  rdfNode.appendChild(payloadDescriptionNode);
+                  addResourceElement(resultDocument, messageNode, payloadDescriptionNode, "containsPayloadDescription");
 
-                Node standardMessageExchangeNode = createNamedIndividual(resultDocument, "SID_1_StandardMessageConnector_"+name+"_message_"+messageId, "StandardMessageExchange", "SID_1_StandardMessageConnector_"+name+"_message_"+messageId, "Message: "+message.getName() + " From: "+message.getSender() + " To: "+message.getRecipient());
-                rdfNode.appendChild(standardMessageExchangeNode);
-                addResourceElement(resultDocument, standardMessageExchangeNode, subjectNameToSubjectNodeMap.get(message.getSender()), "hasSender");
-                addResourceElement(resultDocument, standardMessageExchangeNode, subjectNameToSubjectNodeMap.get(message.getRecipient()), "hasReceiver");
-                addResourceElement(resultDocument, standardMessageExchangeNode, messageNode, "hasMessageType");
-                addContainsElement(resultDocument, Arrays.asList(processModelNode, sidNode), standardMessageExchangeNode);
+                  Node standardMessageExchangeNode = createNamedIndividual(resultDocument, "SID_1_StandardMessageConnector_"+messageConnectorId+"_message_"+messageId, "StandardMessageExchange", "SID_1_StandardMessageConnector_"+messageConnectorId+"_message_"+messageId, messageName);
+                  rdfNode.appendChild(standardMessageExchangeNode);
+                  addResourceElement(resultDocument, standardMessageExchangeNode, subjectNameToSubjectNodeMap.get(message.getSender()), "hasSender");
+                  addResourceElement(resultDocument, standardMessageExchangeNode, subjectNameToSubjectNodeMap.get(message.getRecipient()), "hasReceiver");
+                  addResourceElement(resultDocument, standardMessageExchangeNode, messageNode, "hasMessageType");
+                  addContainsElement(resultDocument, Arrays.asList(processModelNode, sidNode), standardMessageExchangeNode);
 
-                messageId++;
+                  messageNameToStandardMessageExchangeNodeMap.put(messageName, standardMessageExchangeNode);
+                  messageNameToMessageNodeMap.put(messageName, messageNode);
+                  messageId++;
+                  messageConnectorId++;
+                }
+
+                if(message.getSender().equals(name)){
+                  addContainsElement(resultDocument, subjectNameToMessageExchangeListNodeMap.get(name), messageNameToStandardMessageExchangeNodeMap.get(messageName));
+                }
               }
             }
 
             final HashSet<Node> actionNodes = new HashSet<>();
             final HashMap<String, Node> transitionIdToStateNodeMap = new HashMap<>();
+            final HashMap<String, Node> transitionIdToActionNodeMap = new HashMap<>();
             final HashMap<String, String> doStatesIdToNameMap = new HashMap<>();
             final HashMap<String, String> sendStatesIdToNameMap = new HashMap<>();
             final HashMap<String, String> receiveStatesIdToNameMap = new HashMap<>();
@@ -174,23 +188,25 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
 
               transitionIdToStateNodeMap.put(transitionIdentifier, stateNode);
 
-              String actionIdentifier = "action_of_SBD"+name+"_"+stateType+"_"+stateId;
+              String actionIdentifier = "action_of_SBD_"+name+"_"+stateType+"_"+stateId;
               Node actionNode = createNamedIndividual(resultDocument, actionIdentifier, "Action", actionIdentifier, actionIdentifier);
               rdfNode.appendChild(actionNode);
               addContainsElement(resultDocument, actionNode, stateNode);
+              addContainsElement(resultDocument, subjectNameToBehaviorNodeMap.get(name), actionNode);
               actionNodes.add(actionNode);
+
+              transitionIdToActionNodeMap.put(transitionIdentifier, actionNode);
 
               stateId++;
             }
 
-
             //Then create OWL transitions, that reference the states created before
             for(Arc arc : directLinksBetweenTransitions){
-              List<Node> transitionNodes = new ArrayList<>();
+              HashMap<String, List<Node>> transitionNodes = new HashMap<>();
               if(doStatesIdToNameMap.containsKey(arc.getSource())){
                 String transitionName = doStatesIdToNameMap.get(arc.getSource());
                 Node transitionNode = createNamedIndividual(resultDocument, "SBD_"+name+"_StandardTransition_"+transitionId, "StandardTransition", "SBD_"+name+"_StandardTransition_"+transitionId, transitionName+" done");
-                transitionNodes.add(transitionNode);
+                transitionNodes.put(arc.getSource(), Arrays.asList(transitionNode));
                 transitionId++;
               } else if(sendStatesIdToNameMap.containsKey(arc.getSource())){
                 List<Message> messages = new ArrayList<>();
@@ -199,7 +215,15 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
 
                 for(Message message : messages){
                   transitionNode = createNamedIndividual(resultDocument, "SBD_"+name+"_SendTransition_"+transitionId, "SendTransition", "SBD_"+name+"_SendTransition_"+transitionId, "To: "+message.getRecipient()+" Msg:"+message.getName());
-                  transitionNodes.add(transitionNode);
+                  String transitionConditionLabel = "sendTransitionCondition_"+"SBD_"+name+"_SendTransition_"+transitionId;
+                  Node transitionConditionNode = createNamedIndividual(resultDocument, transitionConditionLabel, "SendTransitionCondition", transitionConditionLabel, transitionConditionLabel);
+                  rdfNode.appendChild(transitionConditionNode);
+                  addResourceElement(resultDocument, transitionNode, transitionConditionNode, "hasTransitionCondition");
+
+                  String messageIdentifier = "Message: "+message.getName() + " From: "+message.getSender() + " To: "+message.getRecipient();
+                  addResourceElement(resultDocument, transitionNode, messageNameToMessageNodeMap.get(messageIdentifier), "refersTo");
+
+                  addToMapList(transitionNodes, arc.getSource(), transitionNode);
                   transitionId++;
                 }
 
@@ -209,21 +233,27 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
                 Node transitionNode;
 
                 for(Message message : messages){
-                  transitionNode = createNamedIndividual(resultDocument, "SBD_"+name+"_ReceiveTransition_"+transitionId, "ReceiveTransition", "SBD_"+name+"_ReceiveTransition_"+transitionId, "From:: "+message.getSender()+" Msg:"+message.getName());
-                  transitionNodes.add(transitionNode);
+                  transitionNode = createNamedIndividual(resultDocument, "SBD_"+name+"_ReceiveTransition_"+transitionId, "ReceiveTransition", "SBD_"+name+"_ReceiveTransition_"+transitionId, "From: "+message.getSender()+" Msg: "+message.getName());
+
+                  String messageIdentifier = "Message: "+message.getName() + " From: "+message.getSender() + " To: "+message.getRecipient();
+                  addResourceElement(resultDocument, transitionNode, messageNameToMessageNodeMap.get(messageIdentifier), "refersTo");
+
+                  addToMapList(transitionNodes, arc.getSource(), transitionNode);
                   transitionId++;
                 }
               }
 
-              transitionNodes.forEach(transitionNode -> {
-                rdfNode.appendChild(transitionNode);
-                addPriorityNumberElement(resultDocument, transitionNode);
-                Node source = transitionIdToStateNodeMap.get(arc.getSource());
-                Node target = transitionIdToStateNodeMap.get(arc.getTarget());
+              transitionNodes.forEach((id, nodes) -> {
+                nodes.forEach(transitionNode -> {
+                  rdfNode.appendChild(transitionNode);
+                  addPriorityNumberElement(resultDocument, transitionNode);
+                  Node source = transitionIdToStateNodeMap.get(arc.getSource());
+                  Node target = transitionIdToStateNodeMap.get(arc.getTarget());
 
-                addResourceElement(resultDocument, transitionNode, source, "hasSourceState");
-                addResourceElement(resultDocument, transitionNode, target, "hasTargetState");
-                addContainsElement(resultDocument, subjectNameToBehaviorNodeMap.get(name), transitionNode);
+                  addResourceElement(resultDocument, transitionNode, source, "hasSourceState");
+                  addResourceElement(resultDocument, transitionNode, target, "hasTargetState");
+                  addContainsElement(resultDocument, Arrays.asList(subjectNameToBehaviorNodeMap.get(name), transitionIdToActionNodeMap.get(id)), transitionNode);
+                });
               });
             }
           }
