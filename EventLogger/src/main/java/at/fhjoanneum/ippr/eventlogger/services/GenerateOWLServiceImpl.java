@@ -20,10 +20,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -143,7 +140,6 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
               }
             }
 
-            final HashSet<Node> actionNodes = new HashSet<>();
             final HashMap<String, Node> transitionIdToStateNodeMap = new HashMap<>();
             final HashMap<String, Node> transitionIdToActionNodeMap = new HashMap<>();
             final HashMap<String, String> doStatesIdToNameMap = new HashMap<>();
@@ -193,7 +189,6 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
               rdfNode.appendChild(actionNode);
               addContainsElement(resultDocument, actionNode, stateNode);
               addContainsElement(resultDocument, subjectNameToBehaviorNodeMap.get(name), actionNode);
-              actionNodes.add(actionNode);
 
               transitionIdToActionNodeMap.put(transitionIdentifier, actionNode);
 
@@ -214,14 +209,14 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
                 Node transitionNode;
 
                 for(Message message : messages){
-                  transitionNode = createNamedIndividual(resultDocument, "SBD_"+name+"_SendTransition_"+transitionId, "SendTransition", "SBD_"+name+"_SendTransition_"+transitionId, "To: "+message.getRecipient()+" Msg:"+message.getName());
+                  transitionNode = createNamedIndividual(resultDocument, "SBD_"+name+"_SendTransition_"+transitionId, "SendTransition", "SBD_"+name+"_SendTransition_"+transitionId, "To: "+message.getRecipient()+" Msg: "+message.getName());
                   String transitionConditionLabel = "sendTransitionCondition_"+"SBD_"+name+"_SendTransition_"+transitionId;
                   Node transitionConditionNode = createNamedIndividual(resultDocument, transitionConditionLabel, "SendTransitionCondition", transitionConditionLabel, transitionConditionLabel);
                   rdfNode.appendChild(transitionConditionNode);
                   addResourceElement(resultDocument, transitionNode, transitionConditionNode, "hasTransitionCondition");
 
                   String messageIdentifier = "Message: "+message.getName() + " From: "+message.getSender() + " To: "+message.getRecipient();
-                  addResourceElement(resultDocument, transitionNode, messageNameToMessageNodeMap.get(messageIdentifier), "refersTo");
+                  addResourceElement(resultDocument, transitionNode, messageNameToStandardMessageExchangeNodeMap.get(messageIdentifier), "refersTo");
 
                   addToMapList(transitionNodes, arc.getSource(), transitionNode);
                   transitionId++;
@@ -236,7 +231,7 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
                   transitionNode = createNamedIndividual(resultDocument, "SBD_"+name+"_ReceiveTransition_"+transitionId, "ReceiveTransition", "SBD_"+name+"_ReceiveTransition_"+transitionId, "From: "+message.getSender()+" Msg: "+message.getName());
 
                   String messageIdentifier = "Message: "+message.getName() + " From: "+message.getSender() + " To: "+message.getRecipient();
-                  addResourceElement(resultDocument, transitionNode, messageNameToMessageNodeMap.get(messageIdentifier), "refersTo");
+                  addResourceElement(resultDocument, transitionNode, messageNameToStandardMessageExchangeNodeMap.get(messageIdentifier), "refersTo");
 
                   addToMapList(transitionNodes, arc.getSource(), transitionNode);
                   transitionId++;
@@ -264,29 +259,41 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
       }
     }
 
-    StreamResult result;
+    StreamResult documentResult;
     final DOMSource source = new DOMSource(resultDocument);
 
-    result = new StreamResult(new StringWriter());
+    Writer writer = new StringWriter();
+    documentResult = new StreamResult(writer);
     final TransformerFactory transformerFactory = TransformerFactory.newInstance();
     final Transformer transformer = transformerFactory.newTransformer();
-    transformer.transform(source, result);
-    return result;
-  }
+    transformer.transform(source, documentResult);
 
-  private Node getOWLSkeleton(Document doc, DocumentBuilder builder) throws IOException, SAXException {
-    String skeleton = "<?xml version=\"1.0\"?>" +
-            "" +
-            "<!DOCTYPE rdf:RDF [ " +
+    String docType =  "<!DOCTYPE rdf:RDF [ " +
             "    <!ENTITY owl \"http://www.w3.org/2002/07/owl#\" >" +
             "    <!ENTITY xsd \"http://www.w3.org/2001/XMLSchema#\" >" +
             "    <!ENTITY rdfs \"http://www.w3.org/2000/01/rdf-schema#\" >" +
             "    <!ENTITY abstract-pass-ont \"http://www.imi.kit.edu/abstract-pass-ont#\" >" +
             "    <!ENTITY standard-pass-ont \"http://www.i2pm.net/standard-pass-ont#\" >" +
             "    <!ENTITY rdf \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" >" +
-            "]>" +
+            "]>";
+
+    String documentString = writer.toString();
+    documentString = documentString.replaceFirst("<rdf:RDF", docType+"<rdf:RDF");
+    documentString = documentString.replaceAll("&amp;", "&");
+
+    Writer resultWriter = new StringWriter();
+    resultWriter.write(documentString);
+    StreamResult result = new StreamResult(resultWriter);
+    return result;
+
+  }
+
+  private Node getOWLSkeleton(Document doc, DocumentBuilder builder) throws IOException, SAXException {
+    String skeleton = "<?xml version=\"1.0\"?>" +
             "" +
-            "<rdf:RDF xmlns:abstract-pass-ont=\"http://www.imi.kit.edu/abstract-pass-ont#\" xmlns:standard-pass-ont=\"http://www.i2pm.net/standard-pass-ont#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\" xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\" xmlns=\"http://subjective-me.jimdo.com/s-bpm/processmodels/2017-07-28/Zeichenblatt-1\">" +
+            "<!-- DOCTYPE -->"+
+            "" +
+            "<rdf:RDF xmlns:abstract-pass-ont=\"http://www.imi.kit.edu/abstract-pass-ont#\" xmlns:standard-pass-ont=\"http://www.i2pm.net/standard-pass-ont#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\" xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\" xmlns=\"" + ontologyUri + "\">" +
             "	<owl:Ontology rdf:about=\""+ontologyUri+"\">" +
             "       <owl:versionIRI rdf:resource=\""+ontologyUri+"\"></owl:versionIRI>" +
             "		<owl:imports rdf:resource=\"http://www.imi.kit.edu/abstract-pass-ont\"></owl:imports>" +
@@ -344,7 +351,7 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
   }
 
   private void addHasFunctionSpecificationElement(Document doc, Node addToNode, String stateType) {
-    final Element specification = doc.createElement("standard-pass-ont:hasFunctionSpecificationn");
+    final Element specification = doc.createElement("standard-pass-ont:hasFunctionSpecification");
 
     String type = "Do1_EnvoironmentChoice";
     if (stateType.equals("SendState")) {
