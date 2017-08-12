@@ -8,6 +8,14 @@ public class Message {
     private String name;
     private String recipient;
     private String sender;
+    private String messagePlaceId;
+
+    public Message(String name, String recipient, String sender, String messagePlaceId) {
+        this.name = name;
+        this.recipient = recipient;
+        this.sender = sender;
+        this.messagePlaceId = messagePlaceId;
+    }
 
     public Message(String name, String recipient, String sender) {
         this.name = name;
@@ -39,6 +47,14 @@ public class Message {
         this.sender = sender;
     }
 
+    public String getMessagePlaceId() {
+        return messagePlaceId;
+    }
+
+    public void setMessagePlaceId(String messagePlaceId) {
+        this.messagePlaceId = messagePlaceId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -48,7 +64,8 @@ public class Message {
 
         if (name != null ? !name.equals(message.name) : message.name != null) return false;
         if (recipient != null ? !recipient.equals(message.recipient) : message.recipient != null) return false;
-        return sender != null ? sender.equals(message.sender) : message.sender == null;
+        if (sender != null ? !sender.equals(message.sender) : message.sender != null) return false;
+        return messagePlaceId != null ? messagePlaceId.equals(message.messagePlaceId) : message.messagePlaceId == null;
     }
 
     @Override
@@ -56,6 +73,7 @@ public class Message {
         int result = name != null ? name.hashCode() : 0;
         result = 31 * result + (recipient != null ? recipient.hashCode() : 0);
         result = 31 * result + (sender != null ? sender.hashCode() : 0);
+        result = 31 * result + (messagePlaceId != null ? messagePlaceId.hashCode() : 0);
         return result;
     }
 
@@ -65,6 +83,7 @@ public class Message {
                 "name='" + name + '\'' +
                 ", recipient='" + recipient + '\'' +
                 ", sender='" + sender + '\'' +
+                ", messagePlaceId='" + messagePlaceId + '\'' +
                 '}';
     }
 }

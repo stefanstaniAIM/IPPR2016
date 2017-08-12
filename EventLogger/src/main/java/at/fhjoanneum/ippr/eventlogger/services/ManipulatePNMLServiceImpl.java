@@ -84,7 +84,7 @@ public class ManipulatePNMLServiceImpl implements ManipulatePNMLService {
 
             if (state.equals(StateFunctionType.SEND.name())) {
               afterReceiveStateEntry = null;
-              final String placeId = addPlace(document, net, numOfCustomPlaces++, messageType, recipient, sender, "send");
+              final String placeId = addPlace(document, net, numOfCustomPlaces++, messageType, recipient, sender, "send", "");
               addArc(document, net, numOfCustomArcs++, transitions.get(activity), placeId,
                   messageType);
             } else if (state.equals(StateFunctionType.RECEIVE.name())) {
@@ -98,7 +98,7 @@ public class ManipulatePNMLServiceImpl implements ManipulatePNMLService {
               final String nextActivity = nextEventLogEntry.getActivity();
               final String nextMessageType = nextEventLogEntry.getMessageType();
 
-              final String placeId = addPlace(document, net, numOfCustomPlaces++, messageType, recipient, sender, "receive");
+              final String placeId = addPlace(document, net, numOfCustomPlaces++, messageType, recipient, sender, "receive", transitions.get(activity));
               addArc(document, net, numOfCustomArcs++, placeId, transitions.get(nextActivity),
                   messageType);
 
@@ -214,7 +214,7 @@ public class ManipulatePNMLServiceImpl implements ManipulatePNMLService {
   }
 
   private String addPlace(final Document document, final Element net, final int id,
-      final String name, final String recipient, final String sender, final String type) {
+      final String name, final String recipient, final String sender, final String type, final String actualTargetId) {
     // Custom Place
     final Element newPlace = document.createElement("place");
     net.appendChild(newPlace);
@@ -244,6 +244,10 @@ public class ManipulatePNMLServiceImpl implements ManipulatePNMLService {
     toolspecificElement.setAttribute("type", type);
     toolspecificElement.setAttribute("recipient", recipient);
     toolspecificElement.setAttribute("sender", sender);
+
+    if(!actualTargetId.isEmpty()){
+      toolspecificElement.setAttribute("actualTargetId", actualTargetId);
+    }
 
     newPlace.appendChild(toolspecificElement);
 

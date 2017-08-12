@@ -1,7 +1,9 @@
 package at.fhjoanneum.ippr.eventlogger.services;
 
 
+import at.fhjoanneum.ippr.eventlogger.helper.Arc;
 import at.fhjoanneum.ippr.eventlogger.helper.Message;
+import at.fhjoanneum.ippr.eventlogger.helper.XMLParserCommons;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +25,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 
 @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -43,6 +47,7 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
     ontologyUri = "http://fh-joanneum.at/aim/s-bpm/processmodels/"+date+"/";
     HashMap<String, Node> subjectNameToSubjectNodeMap = new HashMap<>();
     HashMap<String, Node> subjectNameToMessageExchangeListNodeMap = new HashMap<>();
+    HashMap<String, Node> subjectNameToBehaviorNodeMap = new HashMap<>();
 
     Node rdfNode = getOWLSkeleton(resultDocument, resultDocumentBuilder);
     Node processModelNode = createNamedIndividual(resultDocument, processModelName, "PASSProcessModel", ontologyUri, processModelName);
@@ -59,16 +64,17 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
       String subjectIdentifier = "SID_1_FullySpecifiedSingleSubject_"+name;
       Node subjectNode = createNamedIndividual(resultDocument, subjectIdentifier, "FullySpecifiedSingleSubject", subjectIdentifier, name);
       rdfNode.appendChild(subjectNode);
-      addContainsElements(resultDocument, Arrays.asList(processModelNode, sidNode), subjectNode);
+      addContainsElement(resultDocument, Arrays.asList(processModelNode, sidNode), subjectNode);
       addMaximumSubjectInstanceRestrictionElement(resultDocument, subjectNode);
 
       subjectNameToSubjectNodeMap.put(name, subjectNode);
 
       Node behaviorNode = createNamedIndividual(resultDocument, "SBD_"+subjectIdentifier, "SubjectBehavior", "SBD_"+subjectIdentifier, "SBD: "+name);
       rdfNode.appendChild(behaviorNode);
-      addContainsElements(resultDocument, Arrays.asList(processModelNode, sidNode), behaviorNode);
+      addContainsElement(resultDocument, Arrays.asList(processModelNode, sidNode), behaviorNode);
       addResourceElement(resultDocument, subjectNode, behaviorNode, "containsBehavior");
       addResourceElement(resultDocument, subjectNode, behaviorNode, "containsBaseBehavior");
+      subjectNameToBehaviorNodeMap.put(name, behaviorNode);
 
       String messageExchangeListIdentifier = "MessageExchangeList_on_SID_1_StandardMessageConnector_"+name;
       Node messageExchangeListNode = createNamedIndividual(resultDocument, messageExchangeListIdentifier, "MessageExchangeList", messageExchangeListIdentifier, "SID_1_StandardMessageConnector_"+name);
@@ -79,9 +85,13 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
     });
 
     //Then create nodes based on content
-    int mId = 1;
-    petriNets.forEach((name, pnmlContent) -> {
-      //find send messages of subject and create ;MessageSpecification and ;MessageExchangeList and ;PayloadDescription and ;StandardMessageExchange
+    int messageId = 1;
+    int stateId = 1;
+    int transitionId = 1;
+    //find send messages of subject and create ;MessageSpecification and ;MessageExchangeList and ;PayloadDescription and ;StandardMessageExchange
+    for (Map.Entry<String, String> entry : petriNets.entrySet()) {
+      String name = entry.getKey();
+      String pnmlContent = entry.getValue();
 
       try {
         final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -94,25 +104,127 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
           final Node netNode = nets.item(temp);
           if (netNode.getNodeType() == Node.ELEMENT_NODE) {
             final Element net = (Element) netNode;
-            //final HashMap<String, String> transitions = XMLParserCommons.getTransitionNameIdMap(net);
-            final HashSet<Message> messagesToSend = getMessages(net);
-            for (Message message : messagesToSend) {
-              Node messageNode = createNamedIndividual(resultDocument, "message_"+mId, "MessageSpecification", "message_"+mId, message.getName());
-              rdfNode.appendChild(messageNode);
-              addContainsElements(resultDocument, Arrays.asList(subjectNameToMessageExchangeListNodeMap.get(name), processModelNode, sidNode), messageNode);
 
-              Node payloadDescriptionNode = createNamedIndividual(resultDocument, "payload_description_of_message_"+mId, "PayloadDescription", "payload_description_of_message_"+mId, "payload_description_of_message_"+mId);
-              rdfNode.appendChild(payloadDescriptionNode);
-              addResourceElement(resultDocument, messageNode, payloadDescriptionNode, "ContainsPayloadDescription");
+            HashSet<String> allPlaces = getAllPlaceIds(net);
+            HashMap<String, List<Message>> placeIdToMessagesMap = getPlaceIdToMessagesMap(net);
 
-              Node standardMessageExchangeNode = createNamedIndividual(resultDocument, "SID_1_StandardMessageConnector_"+name+"_message_"+mId, "StandardMessageExchange", "SID_1_StandardMessageConnector_"+name+"_message_"+mId, "Message: "+message.getName() + " From: "+message.getSender() + " To: "+message.getRecipient());
-              rdfNode.appendChild(standardMessageExchangeNode);
-              addResourceElement(resultDocument, standardMessageExchangeNode, subjectNameToSubjectNodeMap.get(message.getSender()), "hasSender");
-              addResourceElement(resultDocument, standardMessageExchangeNode, subjectNameToSubjectNodeMap.get(message.getRecipient()), "hasReceiver");
-              addResourceElement(resultDocument, standardMessageExchangeNode, messageNode, "hasMessageType");
-              addContainsElements(resultDocument, Arrays.asList(processModelNode, sidNode), standardMessageExchangeNode);
+            for (Map.Entry<String, List<Message>> placeToMessageEntry : placeIdToMessagesMap.entrySet()) {
+              List<Message> messages = placeToMessageEntry.getValue();
+              for(Message message : messages) {
+                Node messageNode = createNamedIndividual(resultDocument, "message_"+messageId, "MessageSpecification", "message_"+messageId, message.getName());
+                rdfNode.appendChild(messageNode);
+                addContainsElement(resultDocument, Arrays.asList(subjectNameToMessageExchangeListNodeMap.get(name), processModelNode, sidNode), messageNode);
 
-              mId++;
+                Node payloadDescriptionNode = createNamedIndividual(resultDocument, "payload_description_of_message_"+messageId, "PayloadDescription", "payload_description_of_message_"+messageId, "payload_description_of_message_"+messageId);
+                rdfNode.appendChild(payloadDescriptionNode);
+                addResourceElement(resultDocument, messageNode, payloadDescriptionNode, "ContainsPayloadDescription");
+
+                Node standardMessageExchangeNode = createNamedIndividual(resultDocument, "SID_1_StandardMessageConnector_"+name+"_message_"+messageId, "StandardMessageExchange", "SID_1_StandardMessageConnector_"+name+"_message_"+messageId, "Message: "+message.getName() + " From: "+message.getSender() + " To: "+message.getRecipient());
+                rdfNode.appendChild(standardMessageExchangeNode);
+                addResourceElement(resultDocument, standardMessageExchangeNode, subjectNameToSubjectNodeMap.get(message.getSender()), "hasSender");
+                addResourceElement(resultDocument, standardMessageExchangeNode, subjectNameToSubjectNodeMap.get(message.getRecipient()), "hasReceiver");
+                addResourceElement(resultDocument, standardMessageExchangeNode, messageNode, "hasMessageType");
+                addContainsElement(resultDocument, Arrays.asList(processModelNode, sidNode), standardMessageExchangeNode);
+
+                messageId++;
+              }
+            }
+
+            final HashSet<Node> actionNodes = new HashSet<>();
+            final HashMap<String, Node> transitionIdToStateNodeMap = new HashMap<>();
+            final HashMap<String, String> doStatesIdToNameMap = new HashMap<>();
+            final HashMap<String, String> sendStatesIdToNameMap = new HashMap<>();
+            final HashMap<String, String> receiveStatesIdToNameMap = new HashMap<>();
+            final HashMap<String, Arc> pnmlArcIdMap = getArcIdMap(net);
+            final List<Arc> pnmlArcs = new ArrayList<>(pnmlArcIdMap.values());
+
+            HashMap<String, Message> messagePlaceIdToMessageMap = new HashMap<>();
+            for (Map.Entry<String, List<Message>> placeEntry : placeIdToMessagesMap.entrySet()) {
+              placeEntry.getValue().forEach(pe -> messagePlaceIdToMessageMap.put(pe.getMessagePlaceId(), pe));
+            }
+            HashSet<Arc> directLinksBetweenTransitions = getDirectLinksBetweenTransitions(allPlaces, messagePlaceIdToMessageMap.keySet(), pnmlArcs);
+
+            //First create all OWL states based on the PNML transitions, since the states will be referenced afterwards
+            final HashMap<String, String> transitions = XMLParserCommons.getTransitionNameIdMap(net);
+            for (Map.Entry<String, String> transitionEntry : transitions.entrySet()) {
+              String transitionName = transitionEntry.getKey();
+              String transitionIdentifier = transitionEntry.getValue();
+
+
+              String stateType = getStateType(pnmlArcs, transitionIdentifier, placeIdToMessagesMap);
+              if(stateType.equals("DoState")){
+                doStatesIdToNameMap.put(transitionIdentifier, transitionName);
+              } else if (stateType.equals("SendState")){
+                sendStatesIdToNameMap.put(transitionIdentifier, transitionName);
+              } else {
+                receiveStatesIdToNameMap.put(transitionIdentifier, transitionName);
+              }
+
+              Node stateNode = createNamedIndividual(resultDocument, "SBD_"+name+"_"+stateType+"_"+stateId, stateType, "SBD_"+name+"_"+stateType+"_"+stateId, transitionName);
+              rdfNode.appendChild(stateNode);
+              addHasFunctionSpecificationElement(resultDocument, stateNode, stateType);
+              addContainsElement(resultDocument, subjectNameToBehaviorNodeMap.get(name), stateNode);
+              if(isInitialState(directLinksBetweenTransitions, transitionIdentifier)){
+                addInitialStateElement(resultDocument, stateNode);
+                addResourceElement(resultDocument, subjectNameToBehaviorNodeMap.get(name), stateNode, "hasInitialState");
+              } else if(isEndState(directLinksBetweenTransitions, transitionIdentifier)){
+                addEndStateElement(resultDocument, stateNode);
+                addResourceElement(resultDocument, subjectNameToBehaviorNodeMap.get(name), stateNode, "hasEndState");
+              }
+
+              transitionIdToStateNodeMap.put(transitionIdentifier, stateNode);
+
+              String actionIdentifier = "action_of_SBD"+name+"_"+stateType+"_"+stateId;
+              Node actionNode = createNamedIndividual(resultDocument, actionIdentifier, "Action", actionIdentifier, actionIdentifier);
+              rdfNode.appendChild(actionNode);
+              addContainsElement(resultDocument, actionNode, stateNode);
+              actionNodes.add(actionNode);
+
+              stateId++;
+            }
+
+
+            //Then create OWL transitions, that reference the states created before
+            for(Arc arc : directLinksBetweenTransitions){
+              List<Node> transitionNodes = new ArrayList<>();
+              if(doStatesIdToNameMap.containsKey(arc.getSource())){
+                String transitionName = doStatesIdToNameMap.get(arc.getSource());
+                Node transitionNode = createNamedIndividual(resultDocument, "SBD_"+name+"_StandardTransition_"+transitionId, "StandardTransition", "SBD_"+name+"_StandardTransition_"+transitionId, transitionName+" done");
+                transitionNodes.add(transitionNode);
+                transitionId++;
+              } else if(sendStatesIdToNameMap.containsKey(arc.getSource())){
+                List<Message> messages = new ArrayList<>();
+                arc.getRefersToMessagePlaceIds().forEach(mpId -> messages.add(messagePlaceIdToMessageMap.get(mpId)));
+                Node transitionNode;
+
+                for(Message message : messages){
+                  transitionNode = createNamedIndividual(resultDocument, "SBD_"+name+"_SendTransition_"+transitionId, "SendTransition", "SBD_"+name+"_SendTransition_"+transitionId, "To: "+message.getRecipient()+" Msg:"+message.getName());
+                  transitionNodes.add(transitionNode);
+                  transitionId++;
+                }
+
+              } else {
+                List<Message> messages = new ArrayList<>();
+                arc.getRefersToMessagePlaceIds().forEach(mpId -> messages.add(messagePlaceIdToMessageMap.get(mpId)));
+                Node transitionNode;
+
+                for(Message message : messages){
+                  transitionNode = createNamedIndividual(resultDocument, "SBD_"+name+"_ReceiveTransition_"+transitionId, "ReceiveTransition", "SBD_"+name+"_ReceiveTransition_"+transitionId, "From:: "+message.getSender()+" Msg:"+message.getName());
+                  transitionNodes.add(transitionNode);
+                  transitionId++;
+                }
+              }
+
+              transitionNodes.forEach(transitionNode -> {
+                rdfNode.appendChild(transitionNode);
+                addPriorityNumberElement(resultDocument, transitionNode);
+                Node source = transitionIdToStateNodeMap.get(arc.getSource());
+                Node target = transitionIdToStateNodeMap.get(arc.getTarget());
+
+                addResourceElement(resultDocument, transitionNode, source, "hasSourceState");
+                addResourceElement(resultDocument, transitionNode, target, "hasTargetState");
+                addContainsElement(resultDocument, subjectNameToBehaviorNodeMap.get(name), transitionNode);
+              });
             }
           }
         }
@@ -120,7 +232,7 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
         LOG.error(e.getMessage());
         LOG.error("Exception while generating OWL");
       }
-    });
+    }
 
     StreamResult result;
     final DOMSource source = new DOMSource(resultDocument);
@@ -183,7 +295,7 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
     addResourceElement(doc, addToNode, resourceNode, "contains");
   }
 
-  private void addContainsElements(Document doc, List<Node> addToNodes, Node resourceNode){
+  private void addContainsElement(Document doc, List<Node> addToNodes, Node resourceNode){
     addToNodes.forEach(node -> addContainsElement(doc, node, resourceNode));
   }
 
@@ -195,10 +307,24 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
   }
 
   private void addMaximumSubjectInstanceRestrictionElement(Document doc, Node addToNode) {
-    final Element priorityNumber = doc.createElement("standard-pass-ont:hasMaximumSubjectInstanceRestriction");
-    priorityNumber.setAttribute("rdf:datatype", "http://www.w3.org/2001/XMLSchema#integer");
-    priorityNumber.appendChild(doc.createTextNode("1"));
-    addToNode.appendChild(priorityNumber);
+    final Element restriction = doc.createElement("standard-pass-ont:hasMaximumSubjectInstanceRestriction");
+    restriction.setAttribute("rdf:datatype", "http://www.w3.org/2001/XMLSchema#integer");
+    restriction.appendChild(doc.createTextNode("1"));
+    addToNode.appendChild(restriction);
+  }
+
+  private void addHasFunctionSpecificationElement(Document doc, Node addToNode, String stateType) {
+    final Element specification = doc.createElement("standard-pass-ont:hasFunctionSpecificationn");
+
+    String type = "Do1_EnvoironmentChoice";
+    if (stateType.equals("SendState")) {
+      type = "Send";
+    } else if (stateType.equals("ReceiveState")) {
+      type = "Receive";
+    }
+
+    specification.setAttribute("rdf:resource", "http://www.i2pm.net/standard-pass-ont#DefaultFunction"+type);
+    addToNode.appendChild(specification);
   }
 
   private void addResourceElement(Document doc, Node addToNode, Node resourceNode, String tag){
@@ -207,12 +333,25 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
     addToNode.appendChild(resourceElement);
   }
 
-  private HashSet<Message> getMessages(final Element net) {
-    final HashSet<Message> messages = new HashSet<>();
+  private void addInitialStateElement(Document doc, Node addToNode){
+    final Element element = doc.createElement("rdf:type");
+    element.setAttribute("rdf:resource", standardPassOntUri+"InitialState");
+    addToNode.appendChild(element);
+  }
+
+  private void addEndStateElement(Document doc, Node addToNode){
+    final Element element = doc.createElement("rdf:type");
+    element.setAttribute("rdf:resource", standardPassOntUri+"EndState");
+    addToNode.appendChild(element);
+  }
+
+  private HashMap<String, List<Message>> getPlaceIdToMessagesMap(final Element net) {
+    HashMap<String, List<Message>> placeIdToMessagesMap = new HashMap<>();
     final NodeList placeNodes = net.getElementsByTagName("place");
     for (int i = 0; i < placeNodes.getLength(); i++) {
       final Element placeNode = (Element) placeNodes.item(i);
       final NodeList toolspecificNodes = placeNode.getElementsByTagName("toolspecific");
+      String id = placeNode.getAttributes().getNamedItem("id").getNodeValue();
 
       if(toolspecificNodes.getLength() > 0){
         NamedNodeMap attributes = toolspecificNodes.item(0).getAttributes();
@@ -220,20 +359,161 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
 
         if(tool.equals("SBPM")){
           String type = attributes.getNamedItem("type").getNodeValue();
+          String message = attributes.getNamedItem("message").getNodeValue();
+          String recipient = attributes.getNamedItem("recipient").getNodeValue();
+          String sender = attributes.getNamedItem("sender").getNodeValue();
 
-          if(type.equals("send")){
-            String message = attributes.getNamedItem("message").getNodeValue();
-            String recipient = attributes.getNamedItem("recipient").getNodeValue();
-            String sender = attributes.getNamedItem("sender").getNodeValue();
+          Message messageObj = new Message(message, recipient, sender, id);
 
-            messages.add(new Message(message, recipient, sender));
+          if(type.equals("receive")){
+            id = attributes.getNamedItem("actualTargetId").getNodeValue();
+          }
+
+          if(placeIdToMessagesMap.containsKey(id)){
+            placeIdToMessagesMap.get(id).add(messageObj);
+          } else {
+            List<Message> newList = new ArrayList<>();
+            newList.add(messageObj);
+            placeIdToMessagesMap.put(id, newList);
+          }
+        }
+      }
+    }
+    return placeIdToMessagesMap;
+  }
+
+  private HashSet<String> getAllPlaceIds(final Element net) {
+    HashSet<String> allPlaceIds = new HashSet<>();
+    final NodeList placeNodes = net.getElementsByTagName("place");
+    for (int i = 0; i < placeNodes.getLength(); i++) {
+      final Element placeNode = (Element) placeNodes.item(i);
+      String id = placeNode.getAttributes().getNamedItem("id").getNodeValue();
+      allPlaceIds.add(id);
+    }
+    return allPlaceIds;
+  }
+
+  private HashSet<Arc> getDirectLinksBetweenTransitions(HashSet<String> allPlaceIds, Set<String> allMessagePlaceIds, List<Arc> pnmlArcs){
+    HashMap<String, List<String>> sourcePlaceIdToTargetTransitionIds = new HashMap<>();
+    HashMap<String, List<String>> targetPlaceIdToSourceTransitionIds = new HashMap<>();
+    HashMap<String, List<String>> transitionIdRefersToMessageIds = new HashMap<>();
+    HashSet<Arc> directLinksBetweenTransitions = new HashSet<>();
+    int arcId = 1;
+    for(Arc arc : pnmlArcs){
+      if(allMessagePlaceIds.contains(arc.getTarget())){
+        //arc is for sending
+        addToMapList(transitionIdRefersToMessageIds, arc.getSource(), arc.getTarget());
+      }
+      else if(allMessagePlaceIds.contains(arc.getTarget()) || allMessagePlaceIds.contains(arc.getSource())){
+        //arc is for receiving
+        addToMapList(transitionIdRefersToMessageIds, arc.getTarget(), arc.getSource());
+      } else if(allPlaceIds.contains(arc.getSource())){
+        //arc is from place (source) to transition (target)
+        if(sourcePlaceIdToTargetTransitionIds.containsKey(arc.getSource())){
+          sourcePlaceIdToTargetTransitionIds.get(arc.getSource()).add(arc.getTarget());
+        } else {
+          List<String> newList = new ArrayList<>();
+          newList.add(arc.getTarget());
+          sourcePlaceIdToTargetTransitionIds.put(arc.getSource(), newList);
+        }
+      } else if(allPlaceIds.contains(arc.getTarget())){
+        //arc is from transition (source) to place (target)
+        if(targetPlaceIdToSourceTransitionIds.containsKey(arc.getTarget())) {
+          targetPlaceIdToSourceTransitionIds.get(arc.getTarget()).add(arc.getSource());
+        } else {
+          List<String> newList = new ArrayList<>();
+          newList.add(arc.getSource());
+          targetPlaceIdToSourceTransitionIds.put(arc.getTarget(), newList);
+        }
+      }
+    }
+
+    for (Map.Entry<String, List<String>> entry : targetPlaceIdToSourceTransitionIds.entrySet()) {
+      String targetPlaceId = entry.getKey();
+      List<String> sourceTransitionIds = entry.getValue();
+      List<String> targetTransitionIds = sourcePlaceIdToTargetTransitionIds.get(entry.getKey());
+
+      if(targetTransitionIds != null) {
+        for(String targetTransitionId : targetTransitionIds){
+          for(String sourceTransitionId : sourceTransitionIds){
+            List<String> refersToMessageIds = new ArrayList<>();
+            if(transitionIdRefersToMessageIds.containsKey(sourceTransitionId)){
+              refersToMessageIds = transitionIdRefersToMessageIds.get(sourceTransitionId);
+            } else if (transitionIdRefersToMessageIds.containsKey(targetTransitionId)){
+              refersToMessageIds = transitionIdRefersToMessageIds.get(targetTransitionId);
+            }
+
+            Arc arc = new Arc(String.valueOf(arcId), sourceTransitionId, targetTransitionId, refersToMessageIds);
+
+            directLinksBetweenTransitions.add(arc);
+            arcId++;
           }
         }
       }
     }
 
-    return messages;
+    return directLinksBetweenTransitions;
   }
 
+  private <K,V> void addToMapList(HashMap<K,List<V>> map, K key, V value){
+    if(map.containsKey(key)){
+      map.get(key).add(value);
+    } else {
+      List<V> newList = new ArrayList<>();
+      newList.add(value);
+      map.put(key, newList);
+    }
+  }
 
+  private String getStateType(List<Arc> arcs, String transitionId, HashMap<String, List<Message>> placeIdToMessageMap){
+    String stateType = "DoState";
+
+    Predicate<Arc> sourcePredicate = p -> p.getSource().equals(transitionId);
+    List<Arc> arcsWithTransitionIdAsSource = arcs.stream().filter(sourcePredicate).collect(Collectors.toList());
+    for(Arc arc : arcsWithTransitionIdAsSource) {
+      if(placeIdToMessageMap.containsKey(arc.getTarget())){
+        stateType = "SendState";
+        break;
+      }
+    }
+
+    if(stateType.equals("DoState")){
+      Predicate<Arc> targetPredicate = p -> p.getTarget().equals(transitionId);
+      List<Arc> arcsWithTransitionIdAsTarget = arcs.stream().filter(targetPredicate).collect(Collectors.toList());
+      for(Arc arc : arcsWithTransitionIdAsTarget) {
+        if(placeIdToMessageMap.containsKey(arc.getTarget())){
+          stateType = "ReceiveState";
+          break;
+        }
+      }
+    }
+
+    return stateType;
+  }
+
+  private boolean isInitialState(Set<Arc> arcs, String transitionId){
+    Predicate<Arc> targetPredicate = p -> p.getTarget().equals(transitionId);
+    return arcs.stream().filter(targetPredicate).count() < 1;
+  }
+
+  private boolean isEndState(Set<Arc> arcs, String transitionId){
+    Predicate<Arc> sourcePredicate = p -> p.getSource().equals(transitionId);
+    return arcs.stream().filter(sourcePredicate).count() < 1;
+  }
+
+  private HashMap<String, Arc> getArcIdMap(final Element net) {
+    final HashMap<String, Arc> pnmlArcIdMap = new HashMap<>();
+    final NodeList arcNodes = net.getElementsByTagName("arc");
+
+    for (int i = 0; i < arcNodes.getLength(); i++) {
+      final Element arcNode = (Element) arcNodes.item(i);
+      String id = arcNode.getAttributes().getNamedItem("id").getNodeValue();
+      String source = arcNode.getAttributes().getNamedItem("source").getNodeValue();
+      String target = arcNode.getAttributes().getNamedItem("target").getNodeValue();
+
+      pnmlArcIdMap.put(id, new Arc(id, source, target));
+    }
+
+    return pnmlArcIdMap;
+  }
 }
