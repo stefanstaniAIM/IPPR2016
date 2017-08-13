@@ -230,7 +230,7 @@ public class ManipulatePNMLServiceImpl implements ManipulatePNMLService {
     // Name Text
     String nameText = name;
     if(name != null){
-      nameText = name +  " Recipient: " + recipient + " Sender: " + sender;
+      nameText = name +  " To: " + recipient + " From: " + sender;
     }
     final Element text = document.createElement("text");
     text.appendChild(document.createTextNode(nameText));
