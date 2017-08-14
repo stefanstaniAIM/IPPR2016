@@ -46,7 +46,7 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
     HashMap<String, Node> subjectNameToMessageExchangeListNodeMap = new HashMap<>();
     HashMap<String, Node> subjectNameToBehaviorNodeMap = new HashMap<>();
     HashMap<String, Node> messageNameToMessageNodeMap = new HashMap<>();
-    HashMap<String, Node> messageNameToStandardMessageExchangeNodeMap = new HashMap<>();
+    HashMap<String, Node> messageNameToMessageExchangeNodeMap = new HashMap<>();
 
     Node rdfNode = getOWLSkeleton(resultDocument, resultDocumentBuilder);
     Node processModelNode = createNamedIndividual(resultDocument, processModelName, "PASSProcessModel", ontologyUri, processModelName);
@@ -121,21 +121,21 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
                   rdfNode.appendChild(payloadDescriptionNode);
                   addResourceElement(resultDocument, messageNode, payloadDescriptionNode, "containsPayloadDescription");
 
-                  Node standardMessageExchangeNode = createNamedIndividual(resultDocument, "SID_1_StandardMessageConnector_"+messageConnectorId+"_message_"+messageId, "StandardMessageExchange", "SID_1_StandardMessageConnector_"+messageConnectorId+"_message_"+messageId, messageName);
-                  rdfNode.appendChild(standardMessageExchangeNode);
-                  addResourceElement(resultDocument, standardMessageExchangeNode, subjectNameToSubjectNodeMap.get(message.getSender()), "hasSender");
-                  addResourceElement(resultDocument, standardMessageExchangeNode, subjectNameToSubjectNodeMap.get(message.getRecipient()), "hasReceiver");
-                  addResourceElement(resultDocument, standardMessageExchangeNode, messageNode, "hasMessageType");
-                  addContainsElement(resultDocument, Arrays.asList(processModelNode, sidNode), standardMessageExchangeNode);
+                  Node messageExchangeNode = createNamedIndividual(resultDocument, "SID_1_StandardMessageConnector_"+messageConnectorId+"_message_"+messageId, "MessageExchange", "SID_1_StandardMessageConnector_"+messageConnectorId+"_message_"+messageId, messageName);
+                  rdfNode.appendChild(messageExchangeNode);
+                  addResourceElement(resultDocument, messageExchangeNode, subjectNameToSubjectNodeMap.get(message.getSender()), "hasSender");
+                  addResourceElement(resultDocument, messageExchangeNode, subjectNameToSubjectNodeMap.get(message.getRecipient()), "hasReceiver");
+                  addResourceElement(resultDocument, messageExchangeNode, messageNode, "hasMessageType");
+                  addContainsElement(resultDocument, Arrays.asList(processModelNode, sidNode), messageExchangeNode);
 
-                  messageNameToStandardMessageExchangeNodeMap.put(messageName, standardMessageExchangeNode);
+                  messageNameToMessageExchangeNodeMap.put(messageName, messageExchangeNode);
                   messageNameToMessageNodeMap.put(messageName, messageNode);
                   messageId++;
                   messageConnectorId++;
                 }
 
                 if(message.getSender().equals(name)){
-                  addContainsElement(resultDocument, subjectNameToMessageExchangeListNodeMap.get(name), messageNameToStandardMessageExchangeNodeMap.get(messageName));
+                  addContainsElement(resultDocument, subjectNameToMessageExchangeListNodeMap.get(name), messageNameToMessageExchangeNodeMap.get(messageName));
                 }
               }
             }
@@ -213,7 +213,7 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
                   addResourceElement(resultDocument, transitionNode, transitionConditionNode, "hasTransitionCondition");
 
                   String messageIdentifier = "Message: "+message.getName() + " From: "+message.getSender() + " To: "+message.getRecipient();
-                  addResourceElement(resultDocument, transitionNode, messageNameToStandardMessageExchangeNodeMap.get(messageIdentifier), "refersTo");
+                  addResourceElement(resultDocument, transitionNode, messageNameToMessageExchangeNodeMap.get(messageIdentifier), "refersTo");
 
                   addToMapList(transitionNodes, arc.getSource(), transitionNode);
                   transitionId++;
@@ -228,7 +228,7 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
                   transitionNode = createNamedIndividual(resultDocument, "SBD_"+name+"_ReceiveTransition_"+transitionId, "ReceiveTransition", "SBD_"+name+"_ReceiveTransition_"+transitionId, "From: "+message.getSender()+" Msg: "+message.getName());
 
                   String messageIdentifier = "Message: "+message.getName() + " From: "+message.getSender() + " To: "+message.getRecipient();
-                  addResourceElement(resultDocument, transitionNode, messageNameToStandardMessageExchangeNodeMap.get(messageIdentifier), "refersTo");
+                  addResourceElement(resultDocument, transitionNode, messageNameToMessageExchangeNodeMap.get(messageIdentifier), "refersTo");
 
                   addToMapList(transitionNodes, arc.getSource(), transitionNode);
                   transitionId++;
@@ -317,7 +317,7 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
     componentId.appendChild(doc.createTextNode(id));
     namedIndividual.appendChild(componentId);
 
-    final Element componentLabel = doc.createElement("standard-pass-ont:hasModelComponentLable");
+    final Element componentLabel = doc.createElement("standard-pass-ont:hasModelComponentLabel");
     componentLabel.setAttribute("xml:lang", "en");
     componentLabel.appendChild(doc.createTextNode(label));
     namedIndividual.appendChild(componentLabel);

@@ -39,6 +39,7 @@ public class OWLParser implements FileParser<String, OWLProcessModelDTO> {
       final String URI_STATE;
       final String URI_FUNCTION_STATE;
       final String URI_HAS_EDGE;
+      final String URI_NAME
 
       if (version.equals("0.7.5")){
         URI_STANDARD = "http://www.i2pm.net/standard-pass-ont#";
@@ -47,6 +48,7 @@ public class OWLParser implements FileParser<String, OWLProcessModelDTO> {
         URI_STATE = URI_STANDARD + "contains";
         URI_FUNCTION_STATE = URI_STANDARD + "DoState";
         URI_HAS_EDGE = URI_STANDARD + "contains";
+        URI_NAME = URI_STANDARD + "hasModelComponentLabel";
       } else {
         URI_STANDARD = "http://www.imi.kit.edu/standard-pass-ont#";
         URI_ACTOR = URI_STANDARD + "SingleActor";
@@ -54,10 +56,10 @@ public class OWLParser implements FileParser<String, OWLProcessModelDTO> {
         URI_STATE = URI_STANDARD + "hasState";
         URI_FUNCTION_STATE = URI_STANDARD + "FunctionState";
         URI_HAS_EDGE = URI_STANDARD + "hasEdge";
+        URI_NAME = URI_STANDARD + "hasModelComponentLable";
       }
 
       final String URI_PROCESS_MODEL = URI_STANDARD + "PASSProcessModel";
-      final String URI_NAME = URI_STANDARD + "hasModelComponentLable";
       final String URI_IDENTIFIER = URI_STANDARD + "hasModelComponentID";
       final String URI_SEND_STATE = URI_STANDARD + "SendState";
       final String URI_RECEIVE_STATE = URI_STANDARD + "ReceiveState";
