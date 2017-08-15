@@ -39,7 +39,7 @@ public class OWLParser implements FileParser<String, OWLProcessModelDTO> {
       final String URI_STATE;
       final String URI_FUNCTION_STATE;
       final String URI_HAS_EDGE;
-      final String URI_NAME
+      final String URI_NAME;
 
       if (version.equals("0.7.5")){
         URI_STANDARD = "http://www.i2pm.net/standard-pass-ont#";
