@@ -7,6 +7,7 @@ import at.fhjoanneum.ippr.persistence.entities.engine.enums.SubjectSubState;
 import at.fhjoanneum.ippr.persistence.entities.engine.state.SubjectStateImpl;
 import at.fhjoanneum.ippr.persistence.objects.engine.state.SubjectState;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
+import at.fhjoanneum.ippr.persistence.objects.model.messageflow.MessageFlow;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.timeout.TimeoutScheduleCancelMessage;
 import at.fhjoanneum.ippr.processengine.akka.messages.process.workflow.MessageReceiveMessage;
 import at.fhjoanneum.ippr.processengine.akka.tasks.AbstractTask;
@@ -76,10 +77,12 @@ public class MessageReceivedTask extends AbstractTask<MessageReceiveMessage.Requ
       final String state = StateFunctionType.RECEIVE.name();
       final String resource = subjectState.getSubject().getSubjectModel().getName();
       final String timestamp = DateTime.now().toString("dd.MM.yyyy HH:mm");
-      final String messageType = messageFlowRepository.findOne(request.getMfId())
+
+      final MessageFlow messageFlow = messageFlowRepository.findOne(request.getMfId());
+      final String messageType = messageFlow
           .getBusinessObjectModels().get(0).getName();
       final String recipient = resource;
-      final String msgSender = messageFlowRepository.findOne(request.getMfId()).getSender().getName();
+      final String msgSender = messageFlow.getSender().getName();
 
       final EventLoggerDTO event = new EventLoggerDTO(caseId, processModelId, timestamp, activity,
           resource, state, messageType, recipient, msgSender);
