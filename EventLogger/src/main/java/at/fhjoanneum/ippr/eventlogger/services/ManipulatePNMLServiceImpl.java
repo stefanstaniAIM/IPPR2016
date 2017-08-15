@@ -82,7 +82,7 @@ public class ManipulatePNMLServiceImpl implements ManipulatePNMLService {
             final String recipient = eventLogEntry.getRecipient();
             final String sender = eventLogEntry.getSender();
 
-            if (state.equals(StateFunctionType.SEND.name())) {
+            if (state.equals(StateFunctionType.SEND.name()) && transitions.containsKey(activity)) {
               afterReceiveStateEntry = null;
               final String placeId = addPlace(document, net, numOfCustomPlaces++, messageType, recipient, sender, "send", "");
               addArc(document, net, numOfCustomArcs++, transitions.get(activity), placeId,
@@ -96,13 +96,17 @@ public class ManipulatePNMLServiceImpl implements ManipulatePNMLService {
               final EventLogEntry nextEventLogEntry = nextEntry.getValue();
 
               final String nextActivity = nextEventLogEntry.getActivity();
-              final String nextMessageType = nextEventLogEntry.getMessageType();
 
-              final String placeId = addPlace(document, net, numOfCustomPlaces++, messageType, recipient, sender, "receive", transitions.get(activity));
-              addArc(document, net, numOfCustomArcs++, placeId, transitions.get(nextActivity),
-                  messageType);
+              if(transitions.containsKey(nextActivity)){
+                final String placeId = addPlace(document, net, numOfCustomPlaces++, messageType, recipient, sender, "receive", transitions.get(activity));
+                addArc(document, net, numOfCustomArcs++, placeId, transitions.get(nextActivity),
+                        messageType);
 
-              afterReceiveStateEntry = nextEntry;
+                afterReceiveStateEntry = nextEntry;
+              } else {
+                afterReceiveStateEntry = null;
+              }
+
             } else {
               afterReceiveStateEntry = null;
             }
