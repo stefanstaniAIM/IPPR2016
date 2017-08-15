@@ -70,7 +70,7 @@ public class EventLoggerController {
   }
 
   @RequestMapping(value = "eventlogCSV/{processModelId}/{subject}", method = RequestMethod.GET)
-  public @ResponseBody void getEventLogForCase(final HttpServletRequest request,
+  public @ResponseBody void getEventLogCSV(final HttpServletRequest request,
       @PathVariable("processModelId") final int processModelId,
       @PathVariable("subject") final String subject, final HttpServletResponse response)
       throws IOException {
