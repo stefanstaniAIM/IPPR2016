@@ -89,7 +89,7 @@ public class ManipulatePNMLServiceImpl implements ManipulatePNMLService {
                   messageType);
             } else if (state.equals(StateFunctionType.RECEIVE.name())) {
               if (!it.hasNext()) {
-                throw (new Exception("Letzter Log-Eintrag darf kein Receive State sein!"));
+                throw (new Exception("Last Log-Entry may not be of type Receive!"));
               }
 
               final Map.Entry<LogKey, EventLogEntry> nextEntry = it.next();
