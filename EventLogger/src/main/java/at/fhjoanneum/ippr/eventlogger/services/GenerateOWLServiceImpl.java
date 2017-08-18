@@ -463,7 +463,6 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
     }
 
     for (Map.Entry<String, List<String>> entry : targetPlaceIdToSourceTransitionIds.entrySet()) {
-      String targetPlaceId = entry.getKey();
       List<String> sourceTransitionIds = entry.getValue();
       List<String> targetTransitionIds = sourcePlaceIdToTargetTransitionIds.get(entry.getKey());
 
