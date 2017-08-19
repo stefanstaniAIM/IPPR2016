@@ -1,9 +1,9 @@
 package at.fhjoanneum.ippr.eventlogger.services;
 
 
+import at.fhjoanneum.ippr.eventlogger.helper.LogEntry;
 import at.fhjoanneum.ippr.eventlogger.helper.LogKey;
 import at.fhjoanneum.ippr.eventlogger.helper.XMLParserCommons;
-import at.fhjoanneum.ippr.eventlogger.persistence.EventLogEntry;
 import at.fhjoanneum.ippr.persistence.objects.model.enums.StateFunctionType;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -31,10 +31,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 
 @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -49,7 +46,8 @@ public class ManipulatePNMLServiceImpl implements ManipulatePNMLService {
     StreamResult result = new StreamResult();
 
     try {
-      final LinkedHashMap<LogKey, EventLogEntry> logQuintuplets = parseCSV(csvLog);
+      final LinkedHashSet<LogEntry> logEntries = parseCSV(csvLog);
+      final LinkedHashMap<LogKey, LogEntry> logQuintuplets = getQuintuplets(logEntries);
       final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
       final InputSource input = new InputSource(new StringReader(pnmlContent));
       final Document document = documentBuilderFactory.newDocumentBuilder().parse(input);
@@ -64,17 +62,8 @@ public class ManipulatePNMLServiceImpl implements ManipulatePNMLService {
 
           int numOfCustomPlaces = 1;
           int numOfCustomArcs = 1;
-          final Iterator<Map.Entry<LogKey, EventLogEntry>> it = logQuintuplets.entrySet().iterator();
-          Map.Entry<LogKey, EventLogEntry> afterReceiveStateEntry = null;
-          while (it.hasNext() || afterReceiveStateEntry != null) {
-            Map.Entry<LogKey, EventLogEntry> entry;
-            if (afterReceiveStateEntry != null) {
-              entry = afterReceiveStateEntry;
-            } else {
-              entry = it.next();
-            }
-
-            final EventLogEntry eventLogEntry = entry.getValue();
+          for(Map.Entry<LogKey, LogEntry> entry : logQuintuplets.entrySet()){
+            final LogEntry eventLogEntry = entry.getValue();
 
             final String state = eventLogEntry.getState();
             final String activity = eventLogEntry.getActivity();
@@ -83,32 +72,22 @@ public class ManipulatePNMLServiceImpl implements ManipulatePNMLService {
             final String sender = eventLogEntry.getSender();
 
             if (state.equals(StateFunctionType.SEND.name()) && transitions.containsKey(activity)) {
-              afterReceiveStateEntry = null;
               final String placeId = addPlace(document, net, numOfCustomPlaces++, messageType, recipient, sender, "send", "");
               addArc(document, net, numOfCustomArcs++, transitions.get(activity), placeId,
-                  messageType);
+                      messageType);
             } else if (state.equals(StateFunctionType.RECEIVE.name())) {
-              if (!it.hasNext()) {
+              if (eventLogEntry.getNextLogEntryKey() == null) {
                 throw (new Exception("Last Log-Entry may not be of type Receive!"));
               }
-
-              final Map.Entry<LogKey, EventLogEntry> nextEntry = it.next();
-              final EventLogEntry nextEventLogEntry = nextEntry.getValue();
+              final LogEntry nextEventLogEntry = logQuintuplets.get(eventLogEntry.getNextLogEntryKey());
 
               final String nextActivity = nextEventLogEntry.getActivity();
 
-              if(transitions.containsKey(nextActivity)){
+              if(transitions.containsKey(nextActivity)) {
                 final String placeId = addPlace(document, net, numOfCustomPlaces++, messageType, recipient, sender, "receive", transitions.get(activity));
                 addArc(document, net, numOfCustomArcs++, placeId, transitions.get(nextActivity),
                         messageType);
-
-                afterReceiveStateEntry = nextEntry;
-              } else {
-                afterReceiveStateEntry = null;
               }
-
-            } else {
-              afterReceiveStateEntry = null;
             }
           }
         }
@@ -129,9 +108,9 @@ public class ManipulatePNMLServiceImpl implements ManipulatePNMLService {
     return result;
   }
 
-  private LinkedHashMap<LogKey, EventLogEntry> parseCSV(final String csvLog) throws Exception {
+  private LinkedHashSet<LogEntry> parseCSV(final String csvLog) throws Exception {
 
-    final LinkedHashMap<LogKey, EventLogEntry> result = new LinkedHashMap<>();
+    final LinkedHashSet<LogEntry> result = new LinkedHashSet<>();
     ICsvBeanReader beanReader = null;
     try {
       beanReader =
@@ -146,15 +125,12 @@ public class ManipulatePNMLServiceImpl implements ManipulatePNMLService {
 
       final CellProcessor[] processors = getProcessors();
 
-      EventLogEntry eventLogEntry;
+      LogEntry eventLogEntry;
       while ((eventLogEntry =
-          beanReader.read(EventLogEntry.class, uncapitalizedHeader, processors)) != null) {
+          beanReader.read(LogEntry.class, uncapitalizedHeader, processors)) != null) {
 
-        final LogKey key = new LogKey(eventLogEntry.getActivity(), eventLogEntry.getState(),
-            eventLogEntry.getMessageType(), eventLogEntry.getRecipient(), eventLogEntry.getSender());
-        if (!result.containsKey(key)) {
-          result.put(key, eventLogEntry);
-        }
+
+        result.add(eventLogEntry);
       }
     } finally {
       if (beanReader != null) {
@@ -163,6 +139,28 @@ public class ManipulatePNMLServiceImpl implements ManipulatePNMLService {
 
       return result;
     }
+  }
+
+  private LinkedHashMap<LogKey, LogEntry> getQuintuplets(final HashSet<LogEntry> logEntries) throws Exception {
+
+    final LinkedHashMap<LogKey, LogEntry> result = new LinkedHashMap<>();
+
+    LogKey lastKey = null;
+    for(LogEntry logEntry : logEntries){
+      final LogKey key = new LogKey(logEntry.getActivity(), logEntry.getState(),
+              logEntry.getMessageType(), logEntry.getRecipient(), logEntry.getSender());
+      if (!result.containsKey(key)) {
+        result.put(key, logEntry);
+      }
+
+      if (lastKey != null){
+        result.get(lastKey).setNextLogEntryKey(key);
+      }
+
+      lastKey = key;
+    }
+
+    return result;
   }
 
   private static CellProcessor[] getProcessors() {

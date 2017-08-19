@@ -159,7 +159,6 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
               String transitionName = transitionEntry.getKey();
               String transitionIdentifier = transitionEntry.getValue();
 
-
               String stateType = getStateType(pnmlArcs, transitionIdentifier, placeIdToMessagesMap);
               if(stateType.equals("DoState")){
                 doStatesIdToNameMap.put(transitionIdentifier, transitionName);
