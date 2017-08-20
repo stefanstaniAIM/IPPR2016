@@ -312,8 +312,9 @@ public class StateObjectChangeTask extends AbstractTask<StateObjectChangeMessage
     final String state = StateFunctionType.SEND.name();
     final String resource = subjectState.getSubject().getSubjectModel().getName();
     final String timestamp = DateTime.now().toString("dd.MM.yyyy HH:mm");
-    final String messageType =
-        subjectState.getCurrentState().getBusinessObjectModels().get(0).getName();
+    final MessageFlow messageFlow = messageFlowRepository.findOne(subjectState.getCurrentState().getMessageFlow().get(0).getMfId());
+    final String messageType = messageFlow
+            .getBusinessObjectModels().get(0).getName();
     final String recipient = subjectState.getCurrentState().getMessageFlow().get(0).getReceiver().getName();
     final String msgSender = resource;
 
