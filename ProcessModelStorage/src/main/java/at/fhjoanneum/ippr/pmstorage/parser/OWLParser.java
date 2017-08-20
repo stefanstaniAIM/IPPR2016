@@ -189,7 +189,7 @@ public class OWLParser implements FileParser<String, OWLProcessModelDTO> {
                 final String messageTypeLabel = messageType.getProperty(labelProperty).getString();
                 final String bomIdentifier = messageType.getProperty(identifierProperty).getString();
 
-                final List<String> transitionStateIds = new ArrayList<>();
+                final HashSet<String> transitionStateIds = new HashSet<>();
                 transitionStateIds.add(sourceStateIdentifier);
                 transitionStateIds.add(targetStateIdentifier);
                 OWLBomDTO bomDTO = bomDTOMap.get(bomIdentifier);

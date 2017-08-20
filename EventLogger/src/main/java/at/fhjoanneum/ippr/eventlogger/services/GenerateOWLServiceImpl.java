@@ -218,17 +218,19 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
                 Node transitionNode;
 
                 for(Message message : messages){
-                  transitionNode = createNamedIndividual(resultDocument, "SBD_"+name+"_SendTransition_"+transitionId, "SendTransition", "SBD_"+name+"_SendTransition_"+transitionId, "To: "+message.getRecipient()+" Msg: "+message.getName());
-                  String transitionConditionLabel = "sendTransitionCondition_"+"SBD_"+name+"_SendTransition_"+transitionId;
-                  Node transitionConditionNode = createNamedIndividual(resultDocument, transitionConditionLabel, "SendTransitionCondition", transitionConditionLabel, transitionConditionLabel);
-                  rdfNode.appendChild(transitionConditionNode);
-                  addResourceElement(resultDocument, transitionNode, transitionConditionNode, "hasTransitionCondition");
+                  if (!message.getRecipient().equals(name)){
+                    transitionNode = createNamedIndividual(resultDocument, "SBD_"+name+"_SendTransition_"+transitionId, "SendTransition", "SBD_"+name+"_SendTransition_"+transitionId, "To: "+message.getRecipient()+" Msg: "+message.getName());
+                    String transitionConditionLabel = "sendTransitionCondition_"+"SBD_"+name+"_SendTransition_"+transitionId;
+                    Node transitionConditionNode = createNamedIndividual(resultDocument, transitionConditionLabel, "SendTransitionCondition", transitionConditionLabel, transitionConditionLabel);
+                    rdfNode.appendChild(transitionConditionNode);
+                    addResourceElement(resultDocument, transitionNode, transitionConditionNode, "hasTransitionCondition");
 
-                  String messageIdentifier = "Message: "+message.getName() + " From: "+message.getSender() + " To: "+message.getRecipient();
-                  addResourceElement(resultDocument, transitionNode, messageNameToMessageExchangeNodeMap.get(messageIdentifier), "refersTo");
+                    String messageIdentifier = "Message: "+message.getName() + " From: "+message.getSender() + " To: "+message.getRecipient();
+                    addResourceElement(resultDocument, transitionNode, messageNameToMessageExchangeNodeMap.get(messageIdentifier), "refersTo");
 
-                  addToMapList(transitionNodes, arc.getSource(), transitionNode);
-                  transitionId++;
+                    addToMapList(transitionNodes, arc.getSource(), transitionNode);
+                    transitionId++;
+                  }
                 }
 
               } else {
@@ -237,13 +239,15 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
                 Node transitionNode;
 
                 for(Message message : messages){
-                  transitionNode = createNamedIndividual(resultDocument, "SBD_"+name+"_ReceiveTransition_"+transitionId, "ReceiveTransition", "SBD_"+name+"_ReceiveTransition_"+transitionId, "From: "+message.getSender()+" Msg: "+message.getName());
+                  if (!message.getSender().equals(name)){
+                    transitionNode = createNamedIndividual(resultDocument, "SBD_"+name+"_ReceiveTransition_"+transitionId, "ReceiveTransition", "SBD_"+name+"_ReceiveTransition_"+transitionId, "From: "+message.getSender()+" Msg: "+message.getName());
 
-                  String messageIdentifier = "Message: "+message.getName() + " From: "+message.getSender() + " To: "+message.getRecipient();
-                  addResourceElement(resultDocument, transitionNode, messageNameToMessageExchangeNodeMap.get(messageIdentifier), "refersTo");
+                    String messageIdentifier = "Message: "+message.getName() + " From: "+message.getSender() + " To: "+message.getRecipient();
+                    addResourceElement(resultDocument, transitionNode, messageNameToMessageExchangeNodeMap.get(messageIdentifier), "refersTo");
 
-                  addToMapList(transitionNodes, arc.getSource(), transitionNode);
-                  transitionId++;
+                    addToMapList(transitionNodes, arc.getSource(), transitionNode);
+                    transitionId++;
+                  }
                 }
               }
 
