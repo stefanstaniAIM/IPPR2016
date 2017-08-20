@@ -154,6 +154,8 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
             HashSet<Arc> directLinksBetweenTransitions = getDirectLinksBetweenTransitions(allPlaces, messagePlaceIdToMessageMap.keySet(), pnmlArcs);
 
             //First create all OWL states based on the PNML transitions, since the states will be referenced afterwards
+            final HashMap<String, Node> stateNamesToStateNodeMap = new HashMap<>();
+            final HashMap<String, Node> stateNamesToActionNodeMap = new HashMap<>();
             final HashMap<String, String> transitions = XMLParserCommons.getTransitionNameIdMap(net);
             for (Map.Entry<String, String> transitionEntry : transitions.entrySet()) {
               String transitionName = transitionEntry.getKey();
@@ -166,10 +168,30 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
                 sendStatesIdToNameMap.put(transitionIdentifier, transitionName);
               }
 
-              Node stateNode = createNamedIndividual(resultDocument, "SBD_"+name+"_"+stateType+"_"+stateId, stateType, "SBD_"+name+"_"+stateType+"_"+stateId, transitionName);
-              rdfNode.appendChild(stateNode);
-              addHasFunctionSpecificationElement(resultDocument, stateNode, stateType);
-              addContainsElement(resultDocument, subjectNameToBehaviorNodeMap.get(name), stateNode);
+              Node stateNode;
+              Node actionNode;
+
+              if(stateNamesToStateNodeMap.containsKey(transitionName)){
+                stateNode = stateNamesToStateNodeMap.get(transitionName);
+                actionNode = stateNamesToActionNodeMap.get(transitionName);
+              } else {
+                stateNode = createNamedIndividual(resultDocument, "SBD_"+name+"_"+stateType+"_"+stateId, stateType, "SBD_"+name+"_"+stateType+"_"+stateId, transitionName);
+                rdfNode.appendChild(stateNode);
+                addHasFunctionSpecificationElement(resultDocument, stateNode, stateType);
+                addContainsElement(resultDocument, subjectNameToBehaviorNodeMap.get(name), stateNode);
+
+                String actionIdentifier = "action_of_SBD_"+name+"_"+stateType+"_"+stateId;
+                actionNode = createNamedIndividual(resultDocument, actionIdentifier, "Action", actionIdentifier, actionIdentifier);
+                rdfNode.appendChild(actionNode);
+                addContainsElement(resultDocument, actionNode, stateNode);
+                addContainsElement(resultDocument, subjectNameToBehaviorNodeMap.get(name), actionNode);
+
+
+                stateNamesToStateNodeMap.put(transitionName, stateNode);
+                stateNamesToActionNodeMap.put(transitionName, actionNode);
+                stateId++;
+              }
+
               if(isInitialState(directLinksBetweenTransitions, transitionIdentifier)){
                 addInitialStateElement(resultDocument, stateNode);
                 addResourceElement(resultDocument, subjectNameToBehaviorNodeMap.get(name), stateNode, "hasInitialState");
@@ -179,16 +201,7 @@ public class GenerateOWLServiceImpl implements GenerateOWLService {
               }
 
               transitionIdToStateNodeMap.put(transitionIdentifier, stateNode);
-
-              String actionIdentifier = "action_of_SBD_"+name+"_"+stateType+"_"+stateId;
-              Node actionNode = createNamedIndividual(resultDocument, actionIdentifier, "Action", actionIdentifier, actionIdentifier);
-              rdfNode.appendChild(actionNode);
-              addContainsElement(resultDocument, actionNode, stateNode);
-              addContainsElement(resultDocument, subjectNameToBehaviorNodeMap.get(name), actionNode);
-
               transitionIdToActionNodeMap.put(transitionIdentifier, actionNode);
-
-              stateId++;
             }
 
             //Then create OWL transitions, that reference the states created before
