@@ -5,7 +5,8 @@ Basically, the platform consists of the following modules:
  - **ServiceDiscovery:** Automatic detection of devices and services.
  - **ConfigurationService:** Central repository for configuration files.
  - **ProcessModelStorage:** This is the process repository.
- - **ProcessEngine:** Responsible for the execution of processes, based on Akka. 
+ - **ProcessEngine:** Responsible for the execution of processes, based on Akka.
+ - **EventLogger:** Logs events during execution, exports logs in CSV format, manipulates PNML files and transforms manipulated PNML files to OWL files.
  - **Gateway:** Authentication and authorization service and handles the requests of the process execution frontend (GUI).
  - **Persistence:** Hibernate mapping of the database tables.
  - **ExternalCommunicator:** For the support of external projects.
@@ -37,9 +38,10 @@ Basically, the platform consists of the following modules:
 | Start Process | Yes | - |
 | Stop Process | Yes | - |
 | Nested Business Objects | Yes | partially (Engine) || Formbuilder | Yes | - |
-| OWL-Import | Yes | standard-pass-ont |
+| OWL-Import | Yes | standard-pass-ont v0.7.2. & v0.7.2. |
 | Connected Processes | No | - |
 | Multiprocesses | No | - |
+| Event logging | Yes | Json and CSV |
 
 ### Modelling ###
 | Functionality | Implemented | Comment |
@@ -91,9 +93,11 @@ Please execute following statements to create the schema and the db user in your
  ```gradlew bootRun```
  7. Go to ExternalCommunicator and run in cmd: 
  ```gradlew bootRun```
- 8. Go to GUI and run in cmd: 
+ 8. Go to EventLogger and run in cmd: 
  ```gradlew bootRun```
- 9. Go to ```http://localhost:3000```
+ 9. Go to GUI and run in cmd: 
+ ```gradlew bootRun```
+ 10. Go to ```http://localhost:3000```
  
 ### Modelling Platform ###
  1. Go to ModellingPlatform and run in cmd: 
@@ -135,6 +139,7 @@ Basically, the following ports are used:
 |  ProcessModelStorage  |  Random  |
 |  ProcessEngine  |  Random  |
 |  ExternalCommunicator | Random |
+|  EventLogger  | Random |
 |  GUI  |  3000  |
 |  ModellingPlatform  |  4000  |
 
