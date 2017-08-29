@@ -28,7 +28,7 @@ Basically, the platform consists of the following modules:
 | ------------ | ------------ | ------- |
 | Internal Subjects | Yes | - |
 | Multisubjects | No | - |
-| External Subjects | No | - |
+| External Subjects | Yes | partially (Engine) |
 | Function States | Yes | - |
 | Send States | Yes | - |
 | Receive States | Yes | - |
@@ -39,8 +39,8 @@ Basically, the platform consists of the following modules:
 | Stop Process | Yes | - |
 | Nested Business Objects | Yes | partially (Engine) || Formbuilder | Yes | - |
 | OWL-Import | Yes | standard-pass-ont v0.7.2. & v0.7.2. |
-| Connected Processes | No | - |
-| Multiprocesses | No | - |
+| Connected Processes | Yes | partially (Engine) |
+| Multiprocesses | Yes | partially (Engine) |
 | Event logging | Yes | Json and CSV |
 
 ### Modelling ###
