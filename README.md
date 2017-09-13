@@ -38,7 +38,7 @@ Basically, the platform consists of the following modules:
 | Start Process | Yes | - |
 | Stop Process | Yes | - |
 | Nested Business Objects | Yes | partially (Engine) || Formbuilder | Yes | - |
-| OWL-Import | Yes | standard-pass-ont v0.7.2. & v0.7.2. |
+| OWL-Import | Yes | standard-pass-ont v0.7.2. & v0.7.5. |
 | Connected Processes | Yes | partially (Engine) |
 | Multiprocesses | Yes | partially (Engine) |
 | Event logging | Yes | Json and CSV |
