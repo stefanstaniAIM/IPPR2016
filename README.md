@@ -60,7 +60,7 @@ Basically, the platform consists of the following modules:
 |Customizability|no|-|
 
 ## Tutorial Videos ##
-Development of a Microservice-based Architecture for Storing and Executing Subject-oriented Processes (german) by Stefan Stani [master_theses/MA-Stani.pdf](Link) 
+ - Development of a Microservice-based Architecture for Storing and Executing Subject-oriented Processes (german) by Stefan Stani [Link](master_theses/MA-Stani.pdf) 
 
 ## Setup ##
 ### Prerequisites ###
