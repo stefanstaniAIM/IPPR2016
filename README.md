@@ -59,7 +59,9 @@ Basically, the platform consists of the following modules:
 |ZoomIn/Out|no|-|
 |Customizability|no|-|
 
-## Tutorial Videos ##
+## Master theses ##
+In this section you will find Master's theses, which provide further information about the project.
+
  - Development of a Microservice-based Architecture for Storing and Executing Subject-oriented Processes (german) by Stefan Stani [Link](master_theses/MA-Stani-Stefan.pdf) 
 
 ## Setup ##
