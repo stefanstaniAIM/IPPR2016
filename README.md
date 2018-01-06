@@ -15,6 +15,8 @@ Basically, the platform consists of the following modules:
  - **ModellingPlatform-Dev:** Development project for the Angular 1 modelling platform frontend (with node server backend).
  - **ModellingPlatform:** Production project for the Angular 1 modelling platform frontend (with Spring Boot backend).
 
+> A new version of the S-BPM modelling platform is available [here](https://github.com/mkolodiy/s-bpm-modeler).
+
 ## Tutorial Videos ##
 [ModellingPlatform](https://youtu.be/3gJXmBRKWNo)
 
